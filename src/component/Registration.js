@@ -4,12 +4,12 @@ import { Course } from './Course';
 import { EducationDetails } from './EducationDetails';
 import { TraineeInfo } from './TraineeInfo';
 import { ReferralInfo } from './ReferralInfo';
-
+import { useFormik } from 'formik';
+import { Step, StepLabel, Stepper } from '@mui/material';
 
 export default function Registration() {
   const [currentSection, setCurrentSection] = useState(1);
   const [formData, setFormData] = useState({
-
     TraineeInfo : [],
     EducationDetails : [],
     Course : [],
@@ -27,14 +27,16 @@ export default function Registration() {
     // Handle form submission here
     console.log(formData);
   };
+  const formik = useFormik(' ');
   const renderSection = () => {
     switch (currentSection) {
       case 1:
         return (
-          <TraineeInfo
+          <TraineeInfo formik={formik}
             formData={formData.TraineeInfo}
             setFormData={data => setFormData({ ...formData, TraineeInfo: data })}
             onNext={handleNext}
+            
           />
         );
       case 2:
@@ -71,6 +73,20 @@ export default function Registration() {
   return (
     <div>
       <h1>Registration</h1>
+      <Stepper activeStep={currentSection}>
+      <Step>
+          <StepLabel>TraineeInfo</StepLabel>
+        </Step>
+        <Step>
+          <StepLabel>EducationDetails</StepLabel>
+        </Step>
+        <Step>
+          <StepLabel>Course</StepLabel>
+        </Step>
+        <Step>
+          <StepLabel>ReferralInfo</StepLabel>
+        </Step>
+      </Stepper>
     {renderSection()}
     </div>
   )

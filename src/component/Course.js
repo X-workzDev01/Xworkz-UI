@@ -1,3 +1,4 @@
+import { TextField,Button } from '@mui/material';
 import React from 'react'
 import { Container } from 'react-bootstrap';
 import { Form } from 'react-bootstrap';
@@ -12,33 +13,28 @@ export const Course = ({ formData, setFormData, onNext,onPrevious }) => {
     <Container>
     <h2>Course</h2>
     <Form>
-    <Form.Group className="mb-6" controlId="formBasicEmail">
-      <Form.Control type="text"
+    <TextField type="text"
        placeholder="Course Name"
        required
        name="coursename"
         value={formData.coursename || ''}
          onChange={handleInputChange} />
-      </Form.Group>
-      <Form.Group className="mb-6" controlId="formBasicEmail">
-      <Form.Control type="text"
+      <TextField type="text"
        placeholder="Branch"
        required
        name="branch"
         value={formData.branch || ''}
          onChange={handleInputChange} />
-      </Form.Group>
-      <Form.Group className="mb-6" controlId="formBasicEmail">
-      <Form.Control type="text"
+      <TextField type="text"
        placeholder="Batch"
        required
        name="batch"
         value={formData.batch || ''}
          onChange={handleInputChange} />
-      </Form.Group>
       </Form>
-      <button onClick={onPrevious}>Previous</button>
-      <button onClick={onNext}>Next</button>
+      <Button variant="contained" onClick={onPrevious}>Previous</Button>
+      &nbsp;&nbsp;&nbsp;
+      <Button variant="contained" onClick={onNext}>Next</Button>
      
       </Container>
   )
