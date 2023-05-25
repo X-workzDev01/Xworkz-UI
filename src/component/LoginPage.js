@@ -4,12 +4,12 @@ import { useNavigate } from 'react-router-dom'
 
 const LoginPage = () => {
   const navigate = useNavigate()
-  const [email, setEmail] = useState('');
+  const [user, setUser] = useState('');
   const [password, setPassword] = useState('');
 
 
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
+  const handleUserChange = (e) => {
+    setUser(e.target.value);
   };
 
   const handlePasswordChange = (e) => {
@@ -18,8 +18,16 @@ const LoginPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert("Login Page!!")
+    alert(user)
+    navigate('/registration')
   };
+  const handleClick = (event) => {
+    if(!user){
+    navigate('/register')
+    }else{
+      navigate('/login')
+    }
+  }
 
   const handleCancel = (event) => {
     navigate('/')
@@ -30,11 +38,11 @@ const LoginPage = () => {
       <h2>Login</h2>
       <Form onSubmit={handleSubmit}>
         <Form.Group className="mb-6" controlId="formBasicEmail">
-          <Form.Control type="email"
+          <Form.Control type="text"
            placeholder="User Name"
            required
-            value={email}
-             onChange={handleEmailChange} />
+            value={user}
+             onChange={handleUserChange} />
           </Form.Group>
         
         <Form.Group className="mb-6" controlId="formBasicEmail">
@@ -45,7 +53,7 @@ const LoginPage = () => {
            onChange={handlePasswordChange} />
         </Form.Group>
         
-        <Button type="submit" >Login</Button>
+        <Button type="submit" onClick={(event) => handleClick(event)}>Login</Button>
         &nbsp;&nbsp;&nbsp;
         <Button type='submit' onClick={(event) => handleCancel(event)}>Cancel</Button>
       </Form>
