@@ -13,7 +13,6 @@ function App() {
       <Route path="login" element={<LoginPage/>}/>
       <Route path="register" element={<Registration/>}/>
     </Routes>    
-  
     <Footer/>
     </div>
   );

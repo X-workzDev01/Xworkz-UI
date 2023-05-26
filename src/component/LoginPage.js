@@ -1,63 +1,61 @@
 import React, { useState } from 'react';
-import { Form, Button, Container } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom'
+import { Container, Typography, TextField, Button } from '@mui/material';
+import { Form } from 'react-bootstrap';
+
 
 const LoginPage = () => {
-  const navigate = useNavigate()
-  const [user, setUser] = useState('');
+  let navigate = useNavigate()
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-
-  const handleUserChange = (e) => {
-    setUser(e.target.value);
+  const handleEmailChange = (event) => {
+    setEmail(event.target.value);
   };
 
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    alert(user)
-    navigate('/registration')
-  };
-  const handleClick = (event) => {
-    if(!user){
-    navigate('/register')
-    }else{
-      navigate('/login')
-    }
-  }
-
-  const handleCancel = (event) => {
-    navigate('/')
-  }
+  const handleFormSubmit = (event) => {
+    event.preventDefault();
+    if(!email){
   
+      navigate("/register");
+    }else{
+      navigate("/")
+    }
+    console.log(email);
+  };
+
   return (
-    <Container>
+    <Container maxWidth="sm">
       <h2>Login</h2>
-      <Form onSubmit={handleSubmit}>
-        <Form.Group className="mb-6" controlId="formBasicEmail">
-          <Form.Control type="text"
-           placeholder="User Name"
-           required
-            value={user}
-             onChange={handleUserChange} />
-          </Form.Group>
-        
-        <Form.Group className="mb-6" controlId="formBasicEmail">
-            <Form.Control type="password"
-           placeholder="password"  
-           required
-           value={password} 
-           onChange={handlePasswordChange} />
-        </Form.Group>
-        
-        <Button type="submit" onClick={(event) => handleClick(event)}>Login</Button>
-        &nbsp;&nbsp;&nbsp;
-        <Button type='submit' onClick={(event) => handleCancel(event)}>Cancel</Button>
+      <Typography variant="h4" align="center" gutterBottom>
+        Login
+      </Typography>
+      <Form onSubmit={handleFormSubmit}>
+        <TextField
+          label="Email"
+          type="email"
+          value={email}
+          onChange={handleEmailChange}
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="Password"
+          type="password"
+          value={password}
+          onChange={handlePasswordChange}
+          fullWidth
+          margin="normal"
+        />
+        <Button type="submit" variant="contained" color="primary">
+          Login
+        </Button>
       </Form>
-      </Container>
+    </Container>
   );
 };
 

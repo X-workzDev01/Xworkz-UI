@@ -3,7 +3,7 @@ import React from 'react'
 import {  Container } from 'react-bootstrap';
 import { Form } from 'react-bootstrap';
 
-export const ReferralInfo  = ({ formData, setFormData, onNext ,onPrevious}) => {
+export const Referral  = ({ formData, setFormData, onNext ,onPrevious}) => {
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
@@ -22,21 +22,20 @@ export const ReferralInfo  = ({ formData, setFormData, onNext ,onPrevious}) => {
       <TextField type="text"
        placeholder="Name "
        required
-       name="refName"
-        value={formData.refName || ''}
+       name="refname"
+        value={formData.refname || ''}
          onChange={handleInputChange} />
-      <TextField type="tel"
+      <TextField type="number"
        placeholder="Contact Number"
        required
-       name="contactnumber"
-        value={formData.contactnumber || ''}
+       name="refnumber"
+        value={formData.refnumber || ''}
          onChange={handleInputChange} />
       </Form>
       <Button  variant="contained" onClick={onPrevious}>Previous</Button>
       &nbsp;&nbsp;&nbsp;
       <Button  variant="contained" onClick={onNext}>Rgister</Button>
-      
-     
+
       </Container>
   )
 }

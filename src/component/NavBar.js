@@ -1,20 +1,29 @@
 import React from 'react';
 import './NavBar.css';
-import { Nav, Navbar } from 'react-bootstrap';
-import { Link, NavLink } from 'react-router-dom';
-function NavBar() {
+import { AppBar, Toolbar, Tab, Tabs, IconButton } from '@mui/material';
+import { Link } from 'react-router-dom'
 
+function NavBar() {
+  
   return (
-    <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
-      <Navbar.Collapse id="responsive-navbar-nav">
-        <Nav className="header-social-icon mr-auto">
-          <img src='https://www.x-workz.in/Logo.png' width="140" height="70" alt='Xworkz' className='logo-img' />
-          <NavLink className="btn btn-primary nav-link" as={Link} to="/">Home</NavLink>
-          <NavLink className="btn btn-primary nav-link" as={Link} to="/login">Login</NavLink>
-        </Nav>
-      </Navbar.Collapse>
-    </Navbar>
+    <React.Fragment>
+      <AppBar sx={{ background: "#070606" }}>
+        <Toolbar>
+          <IconButton edge="start" color="inherit" aria-label="logo">
+            <a href="https://www.x-workz.in/Logo.png">
+            <img src='https://www.x-workz.in/Logo.png'  width={60} height={40} alt="Logo"></img>
+            </a>
+          </IconButton>
+          <Tabs textColor='inherit'>
+            <Tab label="Home" />
+          </Tabs>
+          <Link sx={{ marginLeft: '100px' }} variant='outlined' to={"/login"}>Login</Link>
+        </Toolbar>
+
+      </AppBar>
+
+    </React.Fragment>
   );
-}
+};
 
 export default NavBar;

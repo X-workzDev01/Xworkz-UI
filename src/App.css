@@ -67,3 +67,7 @@ a {
   justify-content: 'center';
   align-items: 'center';
 }
+.box{
+  width: '200px'; 
+  height: '40px';
+}

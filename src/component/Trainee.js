@@ -3,7 +3,7 @@ import React from 'react'
 import { Container } from 'react-bootstrap';
 import { Form } from 'react-bootstrap';
 
-export const TraineeInfo = ({ formData, setFormData, onNext }) => {
+export const Trainee = ({ formData, setFormData, onNext }) => {
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
@@ -11,7 +11,7 @@ export const TraineeInfo = ({ formData, setFormData, onNext }) => {
 
   return (
     <Container>
-    <h2>TraineeInfo</h2>
+    <h2>Trainee</h2>
     <Form>
       <TextField type="text"
        placeholder="User Name"
@@ -19,7 +19,7 @@ export const TraineeInfo = ({ formData, setFormData, onNext }) => {
        name="username"
         value={formData.username || ''}
          onChange={handleInputChange} />
-      
+  
       <TextField type="email"
        placeholder="E-mail"
        required
@@ -27,17 +27,15 @@ export const TraineeInfo = ({ formData, setFormData, onNext }) => {
         value={formData.email || ''}
          onChange={handleInputChange} />
       
-      <TextField type="tel"
+      <TextField type="number"
        placeholder="Contact Number"
        required
        name="contactnumber"
         value={formData.contactnumber || ''}
          onChange={handleInputChange} />
-
+         
       </Form>
-
-      <Button variant="contained"  onClick={onNext}>Next</Button>
-     
+      <Button variant="contained"  onClick={onNext}>Next</Button>   
       </Container>
   )
 }

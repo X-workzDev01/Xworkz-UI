@@ -1,19 +1,19 @@
 import React from 'react'
 import { useState } from 'react';
 import { Course } from './Course';
-import { EducationDetails } from './EducationDetails';
-import { TraineeInfo } from './TraineeInfo';
-import { ReferralInfo } from './ReferralInfo';
-import { useFormik } from 'formik';
+import { Education } from './Education';
+import { Trainee} from './Trainee';
+import { Referral } from './Referral';
 import { Step, StepLabel, Stepper } from '@mui/material';
+import { Container } from 'react-bootstrap';
 
 export default function Registration() {
   const [currentSection, setCurrentSection] = useState(1);
   const [formData, setFormData] = useState({
-    TraineeInfo : [],
-    EducationDetails : [],
+    Trainee : [],
+    Education : [],
     Course : [],
-    ReferralInfo : []
+    Referral : []
   });
   const handleNext = () => {
     setCurrentSection(currentSection + 1);
@@ -27,23 +27,23 @@ export default function Registration() {
     // Handle form submission here
     console.log(formData);
   };
-  const formik = useFormik(' ');
+
   const renderSection = () => {
     switch (currentSection) {
       case 1:
         return (
-          <TraineeInfo formik={formik}
-            formData={formData.TraineeInfo}
-            setFormData={data => setFormData({ ...formData, TraineeInfo: data })}
+          <Trainee
+            formData={formData.Trainee}
+            setFormData={data => setFormData({ ...formData, Trainee: data })}
             onNext={handleNext}
             
           />
         );
       case 2:
         return (
-          <EducationDetails
-            formData={formData.EducationDetails}
-            setFormData={data => setFormData({ ...formData, EducationDetails: data })}
+          <Education
+            formData={formData.Education}
+            setFormData={data => setFormData({ ...formData, Education: data })}
             onNext={handleNext}
             onPrevious={handlePrevious}
           />
@@ -59,9 +59,9 @@ export default function Registration() {
           );
           case 4:
             return (
-              <ReferralInfo
-                formData={formData.ReferralInfo}
-                setFormData={data => setFormData({ ...formData, ReferralInfo: data })}
+              <Referral
+                formData={formData.Referral}
+                setFormData={data => setFormData({ ...formData, Referral: data })}
                 onNext={handleFormSubmit}
                 onPrevious={handlePrevious}
               />
@@ -71,23 +71,23 @@ export default function Registration() {
       }
     };
   return (
-    <div>
-      <h1>Registration</h1>
+    <Container>
+      <h2>Registration Form</h2>
       <Stepper activeStep={currentSection}>
       <Step>
-          <StepLabel>TraineeInfo</StepLabel>
+          <StepLabel>Trainee</StepLabel>
         </Step>
         <Step>
-          <StepLabel>EducationDetails</StepLabel>
+          <StepLabel>Education</StepLabel>
         </Step>
         <Step>
           <StepLabel>Course</StepLabel>
         </Step>
         <Step>
-          <StepLabel>ReferralInfo</StepLabel>
+          <StepLabel>Referral</StepLabel>
         </Step>
       </Stepper>
     {renderSection()}
-    </div>
+  </Container>
   )
 }
