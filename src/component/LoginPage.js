@@ -28,12 +28,12 @@ const LoginPage = () => {
     console.log(email);
   };
 
+
   return (
     <Container maxWidth="sm">
       <h2>Login</h2>
-      <Typography variant="h4" align="center" gutterBottom>
-        Login
-      </Typography>
+      <Typography component="div" style={{ height: '50vh' }}>
+  
       <Form onSubmit={handleFormSubmit}>
         <TextField
           label="Email"
@@ -51,13 +51,13 @@ const LoginPage = () => {
           fullWidth
           margin="normal"
         />
-        <Button type="submit" variant="contained" color="primary">
+        <Button type="submit" variant="contained" color="">
           Login
         </Button>
       </Form>
+      </Typography>
     </Container>
   );
 };
-
 export default LoginPage;
 

@@ -1,29 +1,26 @@
+import { AppBar, IconButton, Toolbar, Typography } from '@mui/material';
 import React from 'react';
-import './NavBar.css';
-import { AppBar, Toolbar, Tab, Tabs, IconButton } from '@mui/material';
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
 
-function NavBar() {
-  
+const Navbar = () => {
+
   return (
-    <React.Fragment>
-      <AppBar sx={{ background: "#070606" }}>
-        <Toolbar>
+    <AppBar sx={{ background: "#070606" }}>
+      <Toolbar>
           <IconButton edge="start" color="inherit" aria-label="logo">
             <a href="https://www.x-workz.in/Logo.png">
             <img src='https://www.x-workz.in/Logo.png'  width={60} height={40} alt="Logo"></img>
             </a>
           </IconButton>
-          <Tabs textColor='inherit'>
-            <Tab label="Home" />
-          </Tabs>
-          <Link sx={{ marginLeft: '100px' }} variant='outlined' to={"/login"}>Login</Link>
-        </Toolbar>
+          <div>
 
-      </AppBar>
-
-    </React.Fragment>
+            <Link>Home</Link>
+            <Link to="/login">Login</Link>
+          </div>
+        
+      </Toolbar>
+    </AppBar>
   );
 };
 
-export default NavBar;
+export default Navbar;

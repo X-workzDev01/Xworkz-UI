@@ -15,7 +15,7 @@ export const Course = ({ formData, setFormData, onNext, onPrevious }) => {
 
   return (
     <Container>
-      <h2>Course</h2>
+      <h2>Course Details</h2>
       <Form>
       <InputLabel>Course</InputLabel>
         <Select name="course"

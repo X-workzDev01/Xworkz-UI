@@ -6,14 +6,13 @@ function Footer() {
     return (
         <footer className="footer-section">
             <div className="container">
-
                 <div className="footer-content pt-5 pb-5">
                 </div>
             </div>
             <div className="header-social-icon">
                 <a href="https://www.facebook.com/xworkzdevelopmentcenter/"><FaFacebook /></a>
                 <a href="https://twitter.com/workz_x"><FaTwitter /></a>
-                <a href="#"><FaInstagram /></a>
+                <a href="https://instagram"><FaInstagram /></a>
             </div>
             <div className="copyright-area">
                 <div className="container">
