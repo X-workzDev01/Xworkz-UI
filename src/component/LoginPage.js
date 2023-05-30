@@ -19,13 +19,15 @@ const LoginPage = () => {
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
-    if(!email){
-  
-      navigate("/register");
+    if(!email||!password){
+      navigate("/x-workz/login");
     }else{
-      navigate("/")
+      console.log(email);
+      console.log(password);
+      //backend code check
+      navigate("/x-workz/register")
     }
-    console.log(email);
+    
   };
 
 
@@ -40,6 +42,7 @@ const LoginPage = () => {
           type="email"
           value={email}
           onChange={handleEmailChange}
+          required
           fullWidth
           margin="normal"
         />
@@ -51,7 +54,7 @@ const LoginPage = () => {
           fullWidth
           margin="normal"
         />
-        <Button type="submit" variant="contained" color="">
+        <Button type="submit" variant="contained" color='primary'>
           Login
         </Button>
       </Form>

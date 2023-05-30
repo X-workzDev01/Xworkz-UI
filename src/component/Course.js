@@ -1,12 +1,11 @@
-import { InputLabel,Button, MenuItem, Select, TextField } from '@mui/material';
+import { Button, MenuItem, Select, TextField, Container, Typography, InputLabel } from '@mui/material';
 import React from 'react'
-import { Container } from 'react-bootstrap';
 import { Form } from 'react-bootstrap';
 
 export const Course = ({ formData, setFormData, onNext, onPrevious }) => {
-  const courseName=['JAVA','Web Technology','SQL','JPA','FrameWork']
-  const branchName=['Rajajinagar','BTM']
-  
+  const courseName = ['JAVA', 'Web Technology', 'SQL', 'JPA', 'FrameWork']
+  const branchName = ['Rajajinagar', 'BTM']
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -14,47 +13,55 @@ export const Course = ({ formData, setFormData, onNext, onPrevious }) => {
   };
 
   return (
-    <Container>
+    <Container maxWidth="sm">
       <h2>Course Details</h2>
-      <Form>
-      <InputLabel>Course</InputLabel>
-        <Select name="course"
-        sx={{
-          width: '200px',
-          height: '40px', 
-        }}
-          value={formData.course || ''}
-          onChange={handleInputChange}
-        >
-          {courseName.map((item, index) => (
-           <MenuItem value={item} key={index}>{item}</MenuItem>
-        ))}
-        </Select>
-        <InputLabel>Branch</InputLabel>
-        <Select name="branch"
-          value={formData.branch || ''}
-          onChange={handleInputChange}
-          sx={{
-            width: '200px',
-            height: '40px', 
-          }}
-        >
-           {branchName.map((item, index) => (
-           <MenuItem value={item} key={index}>{item}</MenuItem>
-        ))}
-        </Select>
+      <Typography component="div" style={{ height: '50vh' }}>
+      <InputLabel id="demo-simple-select-label">Course</InputLabel>
+        <Form>
+          <Select name="course"
+            required
+            fullWidth
+            margin="normal"
+            id="outlined-basic"
+            variant="outlined"
+            value={formData.course || ''}
+            onChange={handleInputChange}
+          >
+            {courseName.map((item, index) => (
+              <MenuItem value={item} key={index}>{item}</MenuItem>
+            ))}
+          </Select>
 
-        <InputLabel>Batch</InputLabel>
+          <InputLabel id="demo-simple-select-label">Branch</InputLabel>
+          <Select name="branch"
+            value={formData.branch || ''}
+            onChange={handleInputChange}
+            required
+            fullWidth
+            margin="normal"
+            id="outlined-basic"
+            variant="outlined"
+          >
+            {branchName.map((item, index) => (
+              <MenuItem value={item} key={index}>{item}</MenuItem>
+            ))}
+          </Select>
 
-        <TextField  type="date"
+          <TextField type="date"
             name="batch"
             value={formData.batch || ''}
-               onChange={handleInputChange}
-            />
-      </Form>
-      <Button variant="contained" onClick={onPrevious}>Previous</Button>
-      &nbsp;&nbsp;&nbsp;
-      <Button variant="contained" onClick={onNext}>Next</Button>
+            onChange={handleInputChange}
+            required
+            fullWidth
+            margin="normal"
+            id="outlined-basic"
+            variant="outlined"
+          />
+        </Form>
+        <Button variant="contained" onClick={onPrevious}>Previous</Button>
+        &nbsp;&nbsp;&nbsp;
+        <Button variant="contained" onClick={onNext}>Next</Button>
+      </Typography>
     </Container>
   )
 }

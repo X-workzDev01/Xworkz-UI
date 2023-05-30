@@ -1,64 +1,65 @@
 
-import { TextField ,Button, InputLabel, Alert} from '@mui/material';
-import React, { useState } from 'react'
-import { Container } from 'react-bootstrap';
+import { TextField, Button, Alert, Typography, Container } from '@mui/material';
+import React, { useState } from 'react';
 import { Form } from 'react-bootstrap';
 
 export const Trainee = ({ formData, setFormData, onNext }) => {
-  const [error,setError]=useState();  
-  
-  const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-      };
+  const [error, setError] = useState();
 
-      const handleStep1Next = () => {
-        if(!formData.name||!formData.email||!formData.contactnumber){
-          setError("Please fill all the required fields");
-        
-        }
-        
-    }
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleStep1Next = () => {
+    onNext();
+
+  }
   return (
-    <Container>
-    <h2>Trainee</h2>
-    <Form>
-    {error && <Alert severity="error">{error}</Alert>}
-    <InputLabel>Trainee Name</InputLabel>
-      <TextField type="text"
-       placeholder="User Name"
-      
-       name="username"
-        value={formData.username || ''}
-         onChange={handleInputChange}
-         InputProps={{
-          style: { paddingRight: '1rem' },
-        }} 
-        required
-        />
-  
-  <InputLabel>E-mail</InputLabel>
-      <TextField type="email"
-       placeholder="E-mail"
-       required
-       name="email"
-        value={formData.email || ''}
-         onChange={handleInputChange}
-         InputProps={{
-          style: { paddingRight: '1rem' },
-        }} />
-      <InputLabel>Contact Number</InputLabel>
-      <TextField type="number"
-       placeholder="Contact Number"
-       required
-       name="contactnumber"
-        value={formData.contactnumber || ''}
-         onChange={handleInputChange} 
-         InputProps={{
-          style: { paddingRight: '1rem' },
-        }}/>
-      </Form>
-      <Button variant="contained"  onClick={handleStep1Next}>Next</Button>   
-      </Container>
+    <Container maxWidth="sm">
+      <Typography component="div" style={{ height: '50vh' }}>
+        <h2>Trainee</h2>
+        <Form>
+          {error && <Alert severity="error">{error}</Alert>}
+          <TextField type="text"
+            label="User Name"
+            name="username"
+            value={formData.username || ''}
+            onChange={handleInputChange}
+            fullWidth
+            margin="normal"
+            required
+            id="outlined-basic"
+            variant="outlined"
+          />
+
+          <TextField type="email"
+            label="E-mail"
+            required
+            name="email"
+            fullWidth
+            margin="normal"
+            id="outlined-basic"
+            variant="outlined"
+            value={formData.email || ''}
+            onChange={handleInputChange}
+
+          />
+          <TextField type="number"
+            label="Contact Number"
+            required
+            fullWidth
+            margin="normal"
+            id="outlined-basic"
+            variant="outlined"
+            name="contactnumber"
+            value={formData.contactnumber || ''}
+            onChange={handleInputChange}
+          />
+        </Form>
+        <Button variant="contained" onClick={handleStep1Next}>Next</Button>
+
+      </Typography>
+    </Container>
   )
 }
