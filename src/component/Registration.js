@@ -9,6 +9,7 @@ import { Container } from 'react-bootstrap';
 
 export default function Registration() {
   const [currentSection, setCurrentSection] = useState(1);
+  const [messages, setMessages] =useState('');
   const [formData, setFormData] = useState({
     Trainee : [],
     Education : [],
@@ -25,6 +26,7 @@ export default function Registration() {
 
   const handleFormSubmit = () => {
     // Handle form submission here
+    setMessages("Registration done successfully!!!")
     console.log(formData);
   };
 
@@ -73,7 +75,11 @@ export default function Registration() {
   return (
     <Container>
       <h2>Registration Form</h2>
+      <div key={messages} style={{ color: 'Green' }} >
+           <h4> {messages}</h4>
+          </div>
       <Stepper activeStep={currentSection}>
+      
       <Step>
           <StepLabel>Trainee</StepLabel>
         </Step>

@@ -11,6 +11,7 @@ export const Course = ({ formData, setFormData, onNext, onPrevious }) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
+  const isDisabled=!formData.course||!formData.branch||!formData.batch;
 
   return (
     <Container maxWidth="sm">
@@ -60,7 +61,7 @@ export const Course = ({ formData, setFormData, onNext, onPrevious }) => {
         </Form>
         <Button variant="contained" onClick={onPrevious}>Previous</Button>
         &nbsp;&nbsp;&nbsp;
-        <Button variant="contained" onClick={onNext}>Next</Button>
+        <Button variant="contained" disabled={isDisabled} onClick={onNext}>Next</Button>
       </Typography>
     </Container>
   )

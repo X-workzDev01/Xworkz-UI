@@ -11,10 +11,7 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleStep1Next = () => {
-    onNext();
-
-  }
+  const isDisabled = !formData.username || !formData.email || !formData.contactnumber;
   return (
     <Container maxWidth="sm">
       <Typography component="div" style={{ height: '50vh' }}>
@@ -57,7 +54,7 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
             onChange={handleInputChange}
           />
         </Form>
-        <Button variant="contained" onClick={handleStep1Next}>Next</Button>
+        <Button variant="contained" disabled={isDisabled} onClick={onNext}>Next</Button>
 
       </Typography>
     </Container>

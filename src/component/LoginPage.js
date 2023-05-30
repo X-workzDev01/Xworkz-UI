@@ -33,7 +33,7 @@ const LoginPage = () => {
 
   return (
     <Container maxWidth="sm">
-      <h2>Login</h2>
+      <h2>Login </h2>
       <Typography component="div" style={{ height: '50vh' }}>
   
       <Form onSubmit={handleFormSubmit}>

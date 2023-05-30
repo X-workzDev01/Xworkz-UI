@@ -11,7 +11,7 @@ export const Education = ({ formData, setFormData, onNext, onPrevious }) => {
       const { name, value } = e.target;
       setFormData({ ...formData, [name]: value });
    };
-
+   const isDisabled=!formData.qualification||!formData.stream||!formData.yearofpass||!formData.collegename;
    return (
       <Container maxWidth="sm">
          <Typography component="div" style={{ height: '50vh' }}>
@@ -76,7 +76,7 @@ export const Education = ({ formData, setFormData, onNext, onPrevious }) => {
             </Form>
             <Button variant="contained" onClick={onPrevious}>Previous</Button>
                &nbsp;&nbsp;&nbsp;
-               <Button variant="contained" onClick={onNext}>Next</Button>
+               <Button variant="contained" disabled={isDisabled} onClick={onNext}>Next</Button>
          </Typography>
       </Container>
    )
