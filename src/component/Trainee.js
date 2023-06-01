@@ -11,7 +11,7 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const isDisabled = !formData.username || !formData.email || !formData.contactnumber;
+  const isDisabled = !formData.traineeName || !formData.email || !formData.contactNumber;
   return (
     <Container maxWidth="sm">
       <Typography component="div" style={{ height: '50vh' }}>
@@ -20,8 +20,8 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
           {error && <Alert severity="error">{error}</Alert>}
           <TextField type="text"
             label="User Name"
-            name="username"
-            value={formData.username || ''}
+            name="traineeName"
+            value={formData.traineeName || ''}
             onChange={handleInputChange}
             fullWidth
             margin="normal"
@@ -49,8 +49,8 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
             margin="normal"
             id="outlined-basic"
             variant="outlined"
-            name="contactnumber"
-            value={formData.contactnumber || ''}
+            name="contactNumber"
+            value={formData.contactNumber || ''}
             onChange={handleInputChange}
           />
         </Form>

@@ -15,19 +15,8 @@ export const Referral = ({ formData, setFormData, onNext, onPrevious }) => {
         <Form>
           <TextField type="text"
             label="Discription"
-            name="discription"
-            value={formData.discription || ''}
-            onChange={handleInputChange}
-            fullWidth
-            margin="normal"
-            id="outlined-basic"
-            variant="outlined"
-          />
-
-          <TextField type="text"
-            label="Name "
-            name="refname"
-            value={formData.refname || ''}
+            name="referalName"
+            value={formData.referalName || ''}
             onChange={handleInputChange}
             fullWidth
             margin="normal"
@@ -37,8 +26,8 @@ export const Referral = ({ formData, setFormData, onNext, onPrevious }) => {
 
           <TextField type="number"
             label="Contact Number"
-            name="refnumber"
-            value={formData.refnumber || ''}
+            name="referalContactNumber"
+            value={formData.referalContactNumber || ''}
             onChange={handleInputChange}
             fullWidth
             margin="normal"
@@ -46,6 +35,16 @@ export const Referral = ({ formData, setFormData, onNext, onPrevious }) => {
             variant="outlined"
           />
 
+          <TextField type="text"
+            label="Name "
+            name="comments"
+            value={formData.comments || ''}
+            onChange={handleInputChange}
+            fullWidth
+            margin="normal"
+            id="outlined-basic"
+            variant="outlined"
+          />
         </Form>
         <Button variant="contained" onClick={onPrevious}>Previous</Button>
         &nbsp;&nbsp;&nbsp;

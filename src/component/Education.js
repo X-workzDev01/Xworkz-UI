@@ -11,7 +11,7 @@ export const Education = ({ formData, setFormData, onNext, onPrevious }) => {
       const { name, value } = e.target;
       setFormData({ ...formData, [name]: value });
    };
-   const isDisabled=!formData.qualification||!formData.stream||!formData.yearofpass||!formData.collegename;
+   const isDisabled=!formData.qualification||!formData.stream||!formData.yearOfPassout||!formData.collegeName;
    return (
       <Container maxWidth="sm">
          <Typography component="div" style={{ height: '50vh' }}>
@@ -49,8 +49,8 @@ export const Education = ({ formData, setFormData, onNext, onPrevious }) => {
                </Select>
 
                <TextField type="date"
-                  name="yearofpass"
-                  value={formData.yearofpass || ''}
+                  name="yearOfPassout"
+                  value={formData.yearOfPassout || ''}
                   onChange={handleInputChange}
                   fullWidth
                   margin="normal"
@@ -59,8 +59,8 @@ export const Education = ({ formData, setFormData, onNext, onPrevious }) => {
                   variant="outlined"
                />
                <InputLabel id="demo-simple-select-label">College</InputLabel>
-               <Select name="collegename"
-                  value={formData.collegename || ''}
+               <Select name="collegeName"
+                  value={formData.collegeName || ''}
                   onChange={handleInputChange}
                   placeholder="College Name"
                   fullWidth

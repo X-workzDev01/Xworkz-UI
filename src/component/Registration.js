@@ -6,15 +6,16 @@ import { Trainee} from './Trainee';
 import { Referral } from './Referral';
 import { Step, StepLabel, Stepper } from '@mui/material';
 import { Container } from 'react-bootstrap';
+import axios from 'axios';
 
 export default function Registration() {
   const [currentSection, setCurrentSection] = useState(1);
   const [messages, setMessages] =useState('');
   const [formData, setFormData] = useState({
-    Trainee : [],
-    Education : [],
-    Course : [],
-    Referral : []
+    basicInfo: [],
+    educationInfo : [],
+    courseInfo : [],
+    referralInfo : []
   });
   const handleNext = () => {
     setCurrentSection(currentSection + 1);
@@ -25,7 +26,11 @@ export default function Registration() {
   };
 
   const handleFormSubmit = () => {
-    // Handle form submission here
+    axios.post('http://localhost:8080/api/register',formData,{
+      headers:{
+        'spreadsheetId':'1p3G4et36vkzSDs3W63cj6qnUFEWljLos2HHXIZd78Gg'
+      }
+    });
     setMessages("Registration done successfully!!!")
     console.log(formData);
   };
@@ -35,17 +40,16 @@ export default function Registration() {
       case 1:
         return (
           <Trainee
-            formData={formData.Trainee}
-            setFormData={data => setFormData({ ...formData, Trainee: data })}
+            formData={formData.basicInfo}
+            setFormData={data => setFormData({ ...formData, basicInfo: data })}
             onNext={handleNext}
-            
           />
         );
       case 2:
         return (
           <Education
-            formData={formData.Education}
-            setFormData={data => setFormData({ ...formData, Education: data })}
+            formData={formData.educationInfo}
+            setFormData={data => setFormData({ ...formData, educationInfo: data })}
             onNext={handleNext}
             onPrevious={handlePrevious}
           />
@@ -53,8 +57,8 @@ export default function Registration() {
         case 3:
           return (
             <Course
-              formData={formData.Course}
-              setFormData={data => setFormData({ ...formData, Course: data })}
+              formData={formData.courseInfo}
+              setFormData={data => setFormData({ ...formData, courseInfo: data })}
               onNext={handleNext}
               onPrevious={handlePrevious}
             />
@@ -62,8 +66,8 @@ export default function Registration() {
           case 4:
             return (
               <Referral
-                formData={formData.Referral}
-                setFormData={data => setFormData({ ...formData, Referral: data })}
+                formData={formData.referralInfo}
+                setFormData={data => setFormData({ ...formData, referralInfo: data })}
                 onNext={handleFormSubmit}
                 onPrevious={handlePrevious}
               />
