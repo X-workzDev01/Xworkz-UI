@@ -1,5 +1,6 @@
 
 import { TextField, Button, Alert, Typography, Container } from '@mui/material';
+import axios from 'axios';
 import React, { useState } from 'react';
 import { Form } from 'react-bootstrap';
 
@@ -11,6 +12,15 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
     setFormData({ ...formData, [name]: value });
   };
 
+  const handleEmail=(e)=>{
+    console.log("Email check")
+    axios.post('http://localhost:8080/api/emailCheck=${formData.email}',{
+      headers:{
+        'spreadsheetId':'1p3G4et36vkzSDs3W63cj6qnUFEWljLos2HHXIZd78Gg'
+      }
+    });
+    console.log(formData.email)
+  }
   const isDisabled = !formData.traineeName || !formData.email || !formData.contactNumber;
   return (
     <Container maxWidth="sm">
@@ -21,13 +31,13 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
           <TextField type="text"
             label="User Name"
             name="traineeName"
-            value={formData.traineeName || ''}
-            onChange={handleInputChange}
             fullWidth
             margin="normal"
             required
             id="outlined-basic"
             variant="outlined"
+            value={formData.traineeName || ''}
+            onChange={handleInputChange}
           />
 
           <TextField type="email"
@@ -40,7 +50,7 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
             variant="outlined"
             value={formData.email || ''}
             onChange={handleInputChange}
-
+            onKeyUp={handleEmail}
           />
           <TextField type="number"
             label="Contact Number"
@@ -55,7 +65,6 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
           />
         </Form>
         <Button variant="contained" disabled={isDisabled} onClick={onNext}>Next</Button>
-
       </Typography>
     </Container>
   )
