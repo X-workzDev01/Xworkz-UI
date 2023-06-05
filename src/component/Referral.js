@@ -14,7 +14,7 @@ export const Referral = ({ formData, setFormData, onNext, onPrevious }) => {
       <Typography component="div" style={{ height: '50vh' }}>
         <Form>
           <TextField type="text"
-            label="Discription"
+            label="Name"
             name="referalName"
             value={formData.referalName || ''}
             onChange={handleInputChange}
@@ -36,7 +36,7 @@ export const Referral = ({ formData, setFormData, onNext, onPrevious }) => {
           />
 
           <TextField type="text"
-            label="Name "
+            label="Discription "
             name="comments"
             value={formData.comments || ''}
             onChange={handleInputChange}
