@@ -17,6 +17,7 @@ export default function Registration() {
     courseInfo : [],
     referralInfo : []
   });
+
   const handleNext = () => {
     setCurrentSection(currentSection + 1);
   };
@@ -26,13 +27,16 @@ export default function Registration() {
   };
 
   const handleFormSubmit = () => {
-    axios.post('http://localhost:8080/api/register',formData,{
+    axios.post('https://ombn.in/Dream/api/register',formData,{
       headers:{
         'spreadsheetId':'1p3G4et36vkzSDs3W63cj6qnUFEWljLos2HHXIZd78Gg'
       }
+    }).then(response=>{
+      setMessages("Registration done successfully!!!")
+      console.log(formData);
+    }).catch(error => {
+      console.error(error);
     });
-    setMessages("Registration done successfully!!!")
-    console.log(formData);
   };
 
   const renderSection = () => {

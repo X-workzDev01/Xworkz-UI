@@ -1,21 +1,18 @@
-import React, { useContext, useState } from 'react';
+import React, {  useState } from 'react';
 import { useNavigate } from 'react-router-dom'
 import { Container, Typography, TextField, Button, Alert } from '@mui/material';
 import { Form } from 'react-bootstrap';
-import ProtectedRoutes from './ProtectedRoutes';
-import { AccountCircle, LockClock, Login } from '@mui/icons-material';
+import { AccountCircle, LockClock } from '@mui/icons-material';
 import axios from 'axios';
-import AuthContext from './AuthContext';
-import Cookies from 'js-cookie';
 
-const LoginPage = () => {
+
+const LoginPage = (props) => {
   let navigate = useNavigate()
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [enable, setEnable] = useState(true);
   const [displayMessage, setDisplayMessage] = useState();
- const {login} =useContext(AuthContext);
+  const [isLoggedIn, setLoggedIn] = useState(false);
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -30,28 +27,23 @@ const LoginPage = () => {
     if (!email || !password) {
       navigate("/x-workz/login");
     } else {
-      //await login(email,password);
-      axios.post(`http://localhost:8080/otp?email=${email}&otp=${password}`, {
+      axios.post(`https://ombn.in/Dream/otp?email=${email}&otp=${password}`, {
         headers: {
           'spreadsheetId': '1p3G4et36vkzSDs3W63cj6qnUFEWljLos2HHXIZd78Gg'
         }
       }).then(response => {
-        setIsLoggedIn(true);
+        setLoggedIn(true);
+        props.get(true);
         navigate("/x-workz/register");
-        Cookies.get("Xworkz");
-        const cookies=Cookies.get("Xworkz");
-        console.log(cookies);
-        console.log("Cookies",response.token);  
       }).catch(error => {
         console.error(error);
       });
     }
   };
 
-
   const handleOtp = () => {
     const userEmail = email;
-    axios.post(`http://localhost:8080/login?email=${userEmail}`, {
+    axios.post(`https://ombn.in/Dream/login?email=${userEmail}`, {
       headers: {
         'spreadsheetId': '1p3G4et36vkzSDs3W63cj6qnUFEWljLos2HHXIZd78Gg'
       }
@@ -65,9 +57,7 @@ const LoginPage = () => {
       alert("Sending OTP!!!!")
       setEnable(false);
       setDisplayMessage("OTP sent to your mail ID it will Expire with 10 Minutes")
-      console.log(response.data);
     }).catch(error => {
-
       console.error(error);
     });
 
@@ -120,7 +110,6 @@ const LoginPage = () => {
           <Button type="submit" variant="contained" color='primary' disabled={enable}>
             Login
           </Button>
-          <ProtectedRoutes isLoggedIn={isLoggedIn} />
         </Form>
       </Typography>
     </Container>

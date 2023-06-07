@@ -16,26 +16,27 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
 
   const handleEmail=(e)=>{
     console.log("Email check")
-     axios.get(`http://localhost:8080/api/emailCheck?email=${formData.email}`,{
+     axios.get(`https://ombn.in/Dream/api/emailCheck?email=${formData.email}`,{
       headers:{
         'spreadsheetId':'1p3G4et36vkzSDs3W63cj6qnUFEWljLos2HHXIZd78Gg'
       }
     }).then(response=>{
       setEmailCheck(response.data);
-    });
-    console.log(formData.email)
+    }).catch();
+    console.error(error);
   }
 
   const handleNumberChange=(e)=>{
     console.log("number check")
-    axios.get(`http://localhost:8080/api/contactNumberCheck?contactNumber=${formData.contactNumber}`,{
+    axios.get(`https://ombn.in/Dream/api/contactNumberCheck?contactNumber=${formData.contactNumber}`,{
       headers:{
         'spreadsheetId':'1p3G4et36vkzSDs3W63cj6qnUFEWljLos2HHXIZd78Gg'
       }
     }).then(response=>{
       setNumberCheck(response.data);
-    });;
-    console.log(formData.contactNumber)
+    }).catch(error => {
+      console.error(error);
+    });
   }
 
   const isDisabled = !formData.traineeName || !formData.email || !formData.contactNumber||!emailCheck||!numberCheck;

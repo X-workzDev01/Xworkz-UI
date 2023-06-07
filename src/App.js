@@ -4,28 +4,34 @@ import Footer from './component/Footer';
 import LoginPage from './component/LoginPage';
 import Registration from './component/Registration';
 import Navbar from './component/NavBar';
-import ProtectedRoutes from './component/ProtectedRoutes';
-import { useState } from 'react';
-import { AuthContextProovider } from './component/AuthContext';
 import Home from './component/Home';
+import { useEffect, useState } from 'react';
+import { Logout } from '@mui/icons-material';
 
 function App() {
+  const [login, setLoggedIn] = useState(false);
 
+  const getState=(userState)=>{
+    setLoggedIn(userState);
+  }
 
   return (
-    <div className="App">
-      <AuthContextProovider>
+    <>
+      <div className="App">
         <Navbar />
         <Routes>
-        <Route path="/x-workz" element={<Home/>} ></Route>
-          <Route path="/x-workz/login" element={<ProtectedRoutes accessBy="non-authenticated"><LoginPage /></ProtectedRoutes>}/>
-          <Route path="/x-workz/register" element={<ProtectedRoutes accessBy="authenticated"><Registration /></ProtectedRoutes>}>
-          </Route>
+          <Route path="/x-workz" element={<Home />} ></Route>
+          <Route path="/x-workz/login" element={<LoginPage get={getState}/>} />
+          {login ? (
+            <Route path="/x-workz/register" element={<Registration />} />
+          ) : (
+            <Route path="/x-workz" element={<Home />} ></Route>
+          )}
+
         </Routes>
         <Footer />
-        </AuthContextProovider>
-
-    </div>
+      </div>
+    </>
   );
 }
 
