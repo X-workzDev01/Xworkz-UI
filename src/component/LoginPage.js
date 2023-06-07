@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom'
 import { Container, Typography, TextField, Button, Alert } from '@mui/material';
 import { Form } from 'react-bootstrap';
 import ProtectedRoutes from './ProtectedRoutes';
-import { AccountCircle, LockClock } from '@mui/icons-material';
+import { AccountCircle, LockClock, Login } from '@mui/icons-material';
 import axios from 'axios';
-
+import AuthContext from './AuthContext';
+import Cookies from 'js-cookie';
 
 const LoginPage = () => {
   let navigate = useNavigate()
@@ -14,7 +15,7 @@ const LoginPage = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [enable, setEnable] = useState(true);
   const [displayMessage, setDisplayMessage] = useState();
-
+ const {login} =useContext(AuthContext);
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -24,24 +25,23 @@ const LoginPage = () => {
     setPassword(event.target.value);
   };
 
-  const handleFormSubmit = (event) => {
+  const handleFormSubmit =async (event) => {
     event.preventDefault();
     if (!email || !password) {
       navigate("/x-workz/login");
     } else {
+      //await login(email,password);
       axios.post(`http://localhost:8080/otp?email=${email}&otp=${password}`, {
         headers: {
           'spreadsheetId': '1p3G4et36vkzSDs3W63cj6qnUFEWljLos2HHXIZd78Gg'
         }
       }).then(response => {
-        setIsLoggedIn(true)
-        const cookies =  response.headers['set-cookie'];
+        setIsLoggedIn(true);
+        navigate("/x-workz/register");
+        Cookies.get("Xworkz");
+        const cookies=Cookies.get("Xworkz");
         console.log(cookies);
-
-        console.log("xworkz:",response)
-        navigate("/x-workz/register")
-
-        console.log(isLoggedIn)
+        console.log("Cookies",response.token);  
       }).catch(error => {
         console.error(error);
       });
@@ -56,12 +56,12 @@ const LoginPage = () => {
         'spreadsheetId': '1p3G4et36vkzSDs3W63cj6qnUFEWljLos2HHXIZd78Gg'
       }
     }).then(response => {
-      if (response.status === 200){
+      if (response.status === 200) {
         console.log(response.data)
 
-    }else{
-      console.log("user not found:",response.status)
-    }
+      } else {
+        console.log("user not found:", response.status)
+      }
       alert("Sending OTP!!!!")
       setEnable(false);
       setDisplayMessage("OTP sent to your mail ID it will Expire with 10 Minutes")
