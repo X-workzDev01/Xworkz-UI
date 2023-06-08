@@ -1,6 +1,6 @@
 import React, {  useState } from 'react';
 import { useNavigate } from 'react-router-dom'
-import { Container, Typography, TextField, Button, Alert } from '@mui/material';
+import { Container, Typography, TextField, Button, Alert} from '@mui/material';
 import { Form } from 'react-bootstrap';
 import { AccountCircle, LockClock } from '@mui/icons-material';
 import axios from 'axios';
@@ -12,7 +12,6 @@ const LoginPage = (props) => {
   const [password, setPassword] = useState('');
   const [enable, setEnable] = useState(true);
   const [displayMessage, setDisplayMessage] = useState();
-  const [isLoggedIn, setLoggedIn] = useState(false);
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -32,7 +31,6 @@ const LoginPage = (props) => {
           'spreadsheetId': '1p3G4et36vkzSDs3W63cj6qnUFEWljLos2HHXIZd78Gg'
         }
       }).then(response => {
-        setLoggedIn(true);
         props.get(true);
         navigate("/x-workz/register");
       }).catch(error => {
@@ -54,7 +52,6 @@ const LoginPage = (props) => {
       } else {
         console.log("user not found:", response.status)
       }
-      alert("Sending OTP!!!!")
       setEnable(false);
       setDisplayMessage("OTP sent to your mail ID it will Expire with 10 Minutes")
     }).catch(error => {

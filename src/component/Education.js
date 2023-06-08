@@ -3,10 +3,7 @@ import React from 'react'
 import { Form } from 'react-bootstrap';
 
 
-export const Education = ({ formData, setFormData, onNext, onPrevious }) => {
-   const degree = ['BE', 'BSC', 'BCA', 'MCA']
-   const division = ['ISE', 'CSE', 'ECE', 'EEE']
-   const cname = ['SKSIT', 'AIT', 'BKIT', 'SIT', "JNNC"]
+export const Education = ({ dropdown,formData, setFormData, onNext, onPrevious }) => {
    const handleInputChange = (e) => {
       const { name, value } = e.target;
       setFormData({ ...formData, [name]: value });
@@ -27,7 +24,7 @@ export const Education = ({ formData, setFormData, onNext, onPrevious }) => {
                   margin="normal"
                   variant="outlined"
                >
-                  {degree.map((item, index) => (
+                  {dropdown.qualification.map((item, index) => (
                      <MenuItem value={item} key={index}>{item}</MenuItem>
                   ))}
                </Select>
@@ -43,7 +40,7 @@ export const Education = ({ formData, setFormData, onNext, onPrevious }) => {
                   id="outlined-basic"
                   variant="outlined"
                >
-                  {division.map((item, index) => (
+                  {dropdown.stream.map((item, index) => (
                      <MenuItem value={item} key={index}>{item}</MenuItem>
                   ))}
                </Select>
@@ -69,7 +66,7 @@ export const Education = ({ formData, setFormData, onNext, onPrevious }) => {
                   id="outlined-basic"
                   variant="outlined"
                >
-                  {cname.map((item, index) => (
+                  {dropdown.college.map((item, index) => (
                      <MenuItem value={item} key={index}>{item}</MenuItem>
                   ))}
                </Select>              

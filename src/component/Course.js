@@ -2,8 +2,7 @@ import { Button, MenuItem, Select, TextField, Container, Typography, InputLabel 
 import React from 'react'
 import { Form } from 'react-bootstrap';
 
-export const Course = ({ formData, setFormData, onNext, onPrevious }) => {
-  const courseName = ['JAVA', 'Web Technology', 'SQL', 'JPA', 'FrameWork']
+export const Course = ({dropdown, formData, setFormData, onNext, onPrevious }) => {
   const branchName = ['Rajajinagar', 'BTM']
 
 
@@ -28,7 +27,7 @@ export const Course = ({ formData, setFormData, onNext, onPrevious }) => {
             value={formData.course || ''}
             onChange={handleInputChange}
           >
-            {courseName.map((item, index) => (
+            {dropdown.course.map((item, index) => (
               <MenuItem value={item} key={index}>{item}</MenuItem>
             ))}
           </Select>

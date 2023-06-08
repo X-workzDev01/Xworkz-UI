@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useState } from 'react';
 import { Course } from './Course';
 import { Education } from './Education';
@@ -17,7 +17,29 @@ export default function Registration() {
     courseInfo : [],
     referralInfo : []
   });
+  const [dropdown,setDropDown]=useState({
+    course: [],
+    qualification: [],
+    batch: [],
+    stream: [],
+    college: [],
+  })
 
+  useEffect(() => {
+    getDropDown();
+  }, []);
+
+  const getDropDown=()=>{
+    axios.get('https://ombn.in/Dream/utils/dropdown',{
+      headers:{
+        'spreadsheetId':'1p3G4et36vkzSDs3W63cj6qnUFEWljLos2HHXIZd78Gg'
+      }
+    }).then(response=>{
+      setDropDown(response.data)
+    }).catch(error=>{
+      console.log(error);
+    })
+  }
   const handleNext = () => {
     setCurrentSection(currentSection + 1);
   };
@@ -26,6 +48,7 @@ export default function Registration() {
     setCurrentSection(currentSection - 1);
   };
 
+  //registration api call
   const handleFormSubmit = () => {
     axios.post('https://ombn.in/Dream/api/register',formData,{
       headers:{
@@ -39,6 +62,8 @@ export default function Registration() {
     });
   };
 
+  //dropdown api call
+ 
   const renderSection = () => {
     switch (currentSection) {
       case 1:
@@ -56,6 +81,7 @@ export default function Registration() {
             setFormData={data => setFormData({ ...formData, educationInfo: data })}
             onNext={handleNext}
             onPrevious={handlePrevious}
+            dropdown={dropdown}
           />
         );
         case 3:
@@ -65,6 +91,7 @@ export default function Registration() {
               setFormData={data => setFormData({ ...formData, courseInfo: data })}
               onNext={handleNext}
               onPrevious={handlePrevious}
+              dropdown={dropdown}
             />
           );
           case 4:

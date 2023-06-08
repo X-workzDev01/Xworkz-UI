@@ -23,6 +23,7 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
     }).then(response=>{
       setEmailCheck(response.data);
     }).catch();
+    setError("Check Email Id")
     console.error(error);
   }
 

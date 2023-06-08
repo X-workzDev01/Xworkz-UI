@@ -5,8 +5,7 @@ import LoginPage from './component/LoginPage';
 import Registration from './component/Registration';
 import Navbar from './component/NavBar';
 import Home from './component/Home';
-import { useEffect, useState } from 'react';
-import { Logout } from '@mui/icons-material';
+import { useState } from 'react';
 
 function App() {
   const [login, setLoggedIn] = useState(false);
