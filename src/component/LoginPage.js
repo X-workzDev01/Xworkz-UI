@@ -26,13 +26,13 @@ const LoginPage = (props) => {
     if (!email || !password) {
       navigate("/x-workz/login");
     } else {
-      axios.post(`https://ombn.in/Dream/otp?email=${email}&otp=${password}`, {
+      axios.post(`http://localhost:8080/otp?email=${email}&otp=${password}`, {
         headers: {
           'spreadsheetId': '1p3G4et36vkzSDs3W63cj6qnUFEWljLos2HHXIZd78Gg'
         }
       }).then(response => {
         props.get(true);
-        navigate("/x-workz/register");
+        navigate("/x-workz/register",{state:{email}});
       }).catch(error => {
         console.error(error);
       });
@@ -41,7 +41,7 @@ const LoginPage = (props) => {
 
   const handleOtp = () => {
     const userEmail = email;
-    axios.post(`https://ombn.in/Dream/login?email=${userEmail}`, {
+    axios.post(`http://localhost:8080/login?email=${userEmail}`, {
       headers: {
         'spreadsheetId': '1p3G4et36vkzSDs3W63cj6qnUFEWljLos2HHXIZd78Gg'
       }

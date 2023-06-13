@@ -7,6 +7,7 @@ import { Referral } from './Referral';
 import { Step, StepLabel, Stepper } from '@mui/material';
 import { Container } from 'react-bootstrap';
 import axios from 'axios';
+import Header from './Header';
 
 export default function Registration() {
   const [currentSection, setCurrentSection] = useState(1);
@@ -30,7 +31,7 @@ export default function Registration() {
   }, []);
 
   const getDropDown=()=>{
-    axios.get('https://ombn.in/Dream/utils/dropdown',{
+    axios.get('http://localhost:8080/utils/dropdown',{
       headers:{
         'spreadsheetId':'1p3G4et36vkzSDs3W63cj6qnUFEWljLos2HHXIZd78Gg'
       }
@@ -50,7 +51,7 @@ export default function Registration() {
 
   //registration api call
   const handleFormSubmit = () => {
-    axios.post('https://ombn.in/Dream/api/register',formData,{
+    axios.post('http://localhost:8080/api/register',formData,{
       headers:{
         'spreadsheetId':'1p3G4et36vkzSDs3W63cj6qnUFEWljLos2HHXIZd78Gg'
       }
@@ -109,6 +110,7 @@ export default function Registration() {
     };
   return (
     <Container>
+      <Header/>
       <h2>Registration Form</h2>
       <div key={messages} style={{ color: 'Green' }} >
            <h4> {messages}</h4>
