@@ -26,7 +26,6 @@ export default function Header() {
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                         {email}
                     </Typography>
-
                     <Avatar>X</Avatar><br></br>
                     <Link to="/x-workz/login" >Logout</Link>
                 </Toolbar>

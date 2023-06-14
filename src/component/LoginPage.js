@@ -32,7 +32,7 @@ const LoginPage = (props) => {
         }
       }).then(response => {
         props.get(true);
-        navigate("/x-workz/register",{state:{email}});
+        navigate("/x-workz/view",{state:{email}});
       }).catch(error => {
         console.error(error);
       });

@@ -13,8 +13,8 @@ const Navbar = ({children}) => {
             <img src='https://www.x-workz.in/Logo.png'  width={60} height={40} alt="Logo"></img>
             </a>
           </IconButton>
+          
           <Typography variant="h6" component="div" sx={{ flexGrow: 3 }}>
-           
           </Typography>
           <Link to="/x-workz/login" >Login</Link>
       </Toolbar>

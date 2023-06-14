@@ -4,9 +4,10 @@ import Footer from './component/Footer';
 import LoginPage from './component/LoginPage';
 import Registration from './component/Registration';
 import Navbar from './component/NavBar';
-import Home from './component/Home';
 import { useState } from 'react';
-import Team from './component/Team';
+import View from './viewdata/View';
+import DisplayData from './viewdata/DisplayData';
+import ViewDetails from './viewdata/ViewDetails';
 
 function App() {
   const [login, setLoggedIn] = useState(false);
@@ -20,14 +21,17 @@ function App() {
       <div className="App">
         <Navbar />
         <Routes>
+          <Route path="/x-workz/view" element={<View/>}/>
+          <Route path="/x-workz/display" element={<DisplayData/>}/>
+          <Route path="/x-workz/register" element={<Registration />} />
+          <Route path="/x-workz/viewdetails" element={<ViewDetails/>}/>
           <Route path="/x-workz/login" element={<LoginPage get={getState}/>} />
           {login ? (
            <Route path="/x-workz/register" element={<Registration />} />
            // <Route path="/x-workz/team" element={<Team/>} />
           ) : (
-            <Route path="/x-workz" element={<Home />} ></Route>
+            <Route path="/x-workz/login" element={<LoginPage />} ></Route>
           )}
-
         </Routes>
         <Footer />
       </div>
