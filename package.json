@@ -4,7 +4,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@ag-grid-community/core": "^30.0.0",
     "@ag-grid-enterprise/server-side-row-model": "^30.0.0",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
@@ -18,7 +17,6 @@
     "ag-grid-react": "^30.0.0",
     "axios": "^1.4.0",
     "install": "^0.13.0",
-    "js-cookie": "^3.0.5",
     "react": "^18.2.0",
     "react-bootstrap": "^2.7.4",
     "react-dom": "^18.2.0",
