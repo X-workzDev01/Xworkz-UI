@@ -18,7 +18,7 @@ export default function DisplayData() {
     const [previousCount, setPreviousCount] = useState(1);
 
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
-    const gridStyle = useMemo(() => ({ height: '600px', width: '100%' }), []);
+
     const columnDefs = [
         { field: 'studentName' },
         { field: 'email' },
@@ -47,7 +47,7 @@ export default function DisplayData() {
         console.log(currentPage)
         console.log(pageSize)
         const startIndex = (currentPage - 1) * pageSize;
-        axios.get(`http://localhost:8080/connection/trainees/page?startIndex=${startIndex}&endIndex=${pageSize}`, {
+        const dataSource = axios.get(`http://localhost:8080/connection/trainees/page?startIndex=${startIndex}&endIndex=${pageSize}`, {
             headers: {
                 sheetId: "1WiZVpFrIsl_Wf_mpAG8LV-ObF2Gmwb8Wjw9Bev6qmY4",
             }
@@ -61,7 +61,10 @@ export default function DisplayData() {
                 console.error('Error:', error);
             });
     };
-    const onGridReady = params => {
+    /*    const onGridReady = params => {
+            setGridApi(params.api);
+    */
+    const handleGridReady = (params) => {
         setGridApi(params.api);
     };
 
@@ -71,6 +74,8 @@ export default function DisplayData() {
             sortable: true,
             filter: true,
             resizable: true,
+            flex: 1,
+            floatingFilter: true
         };
     }, []);
     const handlePaginationChanged = (event) => {
@@ -82,24 +87,21 @@ export default function DisplayData() {
 
     return (
         <div style={containerStyle}>
-            <Header/>
+            <Header />
             <h3>grid view</h3>
-            <div style={gridStyle} className="ag-theme-alpine">
+            <div className="ag-theme-alpine">
                 <AgGridReact
                     columnDefs={columnDefs}
                     rowData={rowData}
                     defaultColDef={defaultColDef}
                     pagination={true}
                     paginationPageSize={10}
-                    onGridReady={onGridReady}
-                    serverSideStoreType={'partial'}
-                    //onPaginationChanged={params => handlePageChange(params.api.paginationGetCurrentPage() + 1)}
-                    suppressCellSelection={true}
-                    cacheBlockSize={10}
-                    maxBlocksInCache={2}
+                    onGridReady={handleGridReady}
+                    domLayout='autoHeight'
                     animateRows={true}
-                    onPaginationChanged={handlePaginationChanged}
 
+                    serverSideDatasource={true}
+                    paginationAutoPageSize={true}
                 />
             </div>
         </div>
