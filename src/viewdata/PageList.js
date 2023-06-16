@@ -2,8 +2,6 @@ import { Button, Grid } from '@mui/material'
 import React from 'react'
 import Header from '../component/Header'
 import { useNavigate } from 'react-router-dom'
-import Registration from '../component/Registration';
-import DisplayData from './DisplayData';
 
 export default function PageList() {
     const navigate = useNavigate();
@@ -15,10 +13,9 @@ export default function PageList() {
         navigate("/x-workz/display")
     }
 
-    const hanledisplay = () => {
-        navigate("/x-workz/viewdetails")
+    const handleSearch=()=>{
+        navigate("/x-workz/search")
     }
-
     return (
         <>
             <h1>Hello</h1>
@@ -30,15 +27,14 @@ export default function PageList() {
                         Register
                     </Button>
                 </Grid>
-
                 <Grid item>
-                    <Button type="submit" variant="contained" color='primary' onClick={hanledisplay}>
-                        View Details
+                    <Button type="submit" variant="contained" color='primary' onClick={handleview}>
+                        View Records
                     </Button>
                 </Grid>
                 <Grid item>
-                    <Button type="submit" variant="contained" color='primary' onClick={handleview}>
-                        GridView
+                    <Button type="submit" variant="contained" color='primary' onClick={handleSearch}>
+                        Search Records
                     </Button>
                 </Grid>
                 <Grid item>

@@ -17,7 +17,7 @@ export default function Header() {
                         </a>
                     </IconButton>
                 
-                    <Link to="/x-workz/view" >View</Link>
+                    <Link to="/x-workz/view" >Home</Link>
                     <Typography variant="h6" component="div" sx={{ flexGrow: 6 }}>
                         <AccountCircle
                             sx={{ color: 'action.active', marginRight: '8px' }}

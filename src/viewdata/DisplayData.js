@@ -1,14 +1,11 @@
-
-import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow } from '@mui/material'
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
-import Header from '../component/Header';
 import { AgGridReact } from 'ag-grid-react';
-import { ModuleRegistry } from '@ag-grid-community/core';
 import { useMemo } from 'react';
 
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
+import Header from '../component/Header';
 
 export default function DisplayData() {
     const [gridApi, setGridApi] = useState(null);
@@ -44,9 +41,11 @@ export default function DisplayData() {
             setPageSize(response.data.length)
         })
     }
-    console.log(totalRecords)
+
     const fetchData = () => {
         // Calculate the start index based on current page and page size
+        console.log(currentPage)
+        console.log(pageSize)
         const startIndex = (currentPage - 1) * pageSize;
         axios.get(`http://localhost:8080/connection/trainees/page?startIndex=${startIndex}&endIndex=${pageSize}`, {
             headers: {
@@ -55,7 +54,6 @@ export default function DisplayData() {
         })
             .then(response => {
                 //const { data, total } = response.data;
-                console.log(response.data)
                 setRowData(response.data);
 
             })
@@ -63,10 +61,7 @@ export default function DisplayData() {
                 console.error('Error:', error);
             });
     };
-
-    console.log(rowData)
     const onGridReady = params => {
-        console.log(params.api)
         setGridApi(params.api);
     };
 
@@ -81,12 +76,13 @@ export default function DisplayData() {
     const handlePaginationChanged = (event) => {
         const newPage = event.api.paginationGetCurrentPage() + 1;
         setCurrentPage(newPage);
-      };
-      console.log(previousCount,count)
+    };
+    console.log(previousCount, count)
 
 
     return (
         <div style={containerStyle}>
+            <Header/>
             <h3>grid view</h3>
             <div style={gridStyle} className="ag-theme-alpine">
                 <AgGridReact
@@ -96,6 +92,7 @@ export default function DisplayData() {
                     pagination={true}
                     paginationPageSize={10}
                     onGridReady={onGridReady}
+                    serverSideStoreType={'partial'}
                     //onPaginationChanged={params => handlePageChange(params.api.paginationGetCurrentPage() + 1)}
                     suppressCellSelection={true}
                     cacheBlockSize={10}

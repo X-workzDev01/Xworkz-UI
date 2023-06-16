@@ -1,6 +1,6 @@
-import React, {  useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'
-import { Container, Typography, TextField, Button, Alert} from '@mui/material';
+import { Container, Typography, TextField, Button, Alert } from '@mui/material';
 import { Form } from 'react-bootstrap';
 import { AccountCircle, LockClock } from '@mui/icons-material';
 import axios from 'axios';
@@ -12,6 +12,8 @@ const LoginPage = (props) => {
   const [password, setPassword] = useState('');
   const [enable, setEnable] = useState(true);
   const [displayMessage, setDisplayMessage] = useState();
+  const [emailError, setEmailError] = useState();
+  const [otpError, setOtpError] = useState();
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -21,7 +23,7 @@ const LoginPage = (props) => {
     setPassword(event.target.value);
   };
 
-  const handleFormSubmit =async (event) => {
+  const handleFormSubmit = async (event) => {
     event.preventDefault();
     if (!email || !password) {
       navigate("/x-workz/login");
@@ -32,9 +34,9 @@ const LoginPage = (props) => {
         }
       }).then(response => {
         props.get(true);
-        navigate("/x-workz/view",{state:{email}});
+        navigate("/x-workz/view", { state: { email } });
       }).catch(error => {
-        console.error(error);
+        setOtpError("OTP expired")
       });
     }
   };
@@ -55,7 +57,7 @@ const LoginPage = (props) => {
       setEnable(false);
       setDisplayMessage("OTP sent to your mail ID it will Expire with 10 Minutes")
     }).catch(error => {
-      console.error(error);
+      setEmailError("check the E-mail")
     });
 
   }
@@ -67,7 +69,7 @@ const LoginPage = (props) => {
       <h2>Login </h2>
       <Typography component="div" style={{ height: '50vh' }}>
         <Form onSubmit={handleFormSubmit}>
-
+        {emailError && <Alert severity="error">{emailError}</Alert>}
           <TextField
             label="Email"
             type="email"
@@ -84,11 +86,13 @@ const LoginPage = (props) => {
               ),
             }}
           />
+         
           <Button type="submit" variant="contained" color='primary' onClick={handleOtp} disabled={isDisabled}>
             Send Otp
           </Button>
           <br></br>
           {displayMessage && <Alert severity="info">{displayMessage}</Alert>}
+          {otpError && <Alert severity="error">{otpError}</Alert>}
           <TextField
             label="OTP"
             type="password"
