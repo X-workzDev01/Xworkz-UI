@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { AgGridReact } from 'ag-grid-react';
 import { useMemo } from 'react';
-
+import 'ag-grid-enterprise';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import Header from '../component/Header';
@@ -31,6 +31,7 @@ export default function DisplayData() {
         getData();
     }, [currentPage, pageSize]);
 
+    
     const getData = () => {
         axios.get(`http://localhost:8080/connection/trainee/alldata`, {
             headers: {
@@ -44,30 +45,36 @@ export default function DisplayData() {
 
     const fetchData = () => {
         // Calculate the start index based on current page and page size
-        console.log(currentPage)
-        console.log(pageSize)
-        const startIndex = (currentPage - 1) * pageSize;
-        const dataSource = axios.get(`http://localhost:8080/connection/trainees/page?startIndex=${startIndex}&endIndex=${pageSize}`, {
+       // const datasource={
+        //getRows: function (params) {
+            // /const { startIndex, endIndex } = params;
+            const startIndex = (currentPage - 1) * pageSize;
+            const endIndex = startIndex+10;
+        axios.get(`http://localhost:8080/connection/trainees/page?startIndex=${startIndex}&endIndex=${pageSize}`, {
             headers: {
                 sheetId: "1WiZVpFrIsl_Wf_mpAG8LV-ObF2Gmwb8Wjw9Bev6qmY4",
             }
         })
             .then(response => {
                 //const { data, total } = response.data;
+                //here we have to set the total count
                 setRowData(response.data);
 
             })
             .catch(error => {
                 console.error('Error:', error);
             });
-    };
+    }
+    
+      //  }
+    //}
     /*    const onGridReady = params => {
             setGridApi(params.api);
     */
     const handleGridReady = (params) => {
         setGridApi(params.api);
     };
-
+ 
     const defaultColDef = useMemo(() => {
         return {
             editable: true,
@@ -78,11 +85,7 @@ export default function DisplayData() {
             floatingFilter: true
         };
     }, []);
-    const handlePaginationChanged = (event) => {
-        const newPage = event.api.paginationGetCurrentPage() + 1;
-        setCurrentPage(newPage);
-    };
-    console.log(previousCount, count)
+
 
 
     return (
@@ -99,7 +102,6 @@ export default function DisplayData() {
                     onGridReady={handleGridReady}
                     domLayout='autoHeight'
                     animateRows={true}
-
                     serverSideDatasource={true}
                     paginationAutoPageSize={true}
                 />
@@ -108,4 +110,3 @@ export default function DisplayData() {
 
     );
 }
-

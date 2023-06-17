@@ -6,14 +6,14 @@ import axios from 'axios';
 export default function Search() {
     const [searchValue, setSearchValue] = useState('');
     const [suggestions, setSuggestions] = useState([]);
-    
+
     const handleSearchChange = (event) => {
-        alert("search data")
+        //alert("search data")
         setSearchValue(event.target.value);
     };
 
     const fetchSuggestions = async () => {
-        const response = await axios.get('http://localhost:8080/api/search/'+searchValue,{
+        const response = await axios.get('http://localhost:8080/trainee/byname/'+searchValue,{
           headers: {
             'spreadsheetId':'1p3G4et36vkzSDs3W63cj6qnUFEWljLos2HHXIZd78Gg'
           }

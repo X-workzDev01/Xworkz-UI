@@ -20,7 +20,7 @@ export default function PageList() {
         <>
             <h1>Hello</h1>
             <Header/>
-            <Grid container spacing={25}>
+            <Grid container spacing={10}>
                 
                 <Grid item>
                     <Button type="submit" variant="contained" color='primary' onClick={handleClick}>

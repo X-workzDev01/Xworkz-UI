@@ -16,6 +16,7 @@ const LoginPage = (props) => {
   const [otpError, setOtpError] = useState();
 
   const handleEmailChange = (event) => {
+    //storing 
     setEmail(event.target.value);
   };
 
@@ -42,8 +43,8 @@ const LoginPage = (props) => {
   };
 
   const handleOtp = () => {
-    const userEmail = email;
-    axios.post(`http://localhost:8080/login?email=${userEmail}`, {
+    sessionStorage.setItem("userId",email);
+    axios.post(`http://localhost:8080/login?email=${email}`, {
       headers: {
         'spreadsheetId': '1p3G4et36vkzSDs3W63cj6qnUFEWljLos2HHXIZd78Gg'
       }
@@ -92,7 +93,6 @@ const LoginPage = (props) => {
           </Button>
           <br></br>
           {displayMessage && <Alert severity="info">{displayMessage}</Alert>}
-          {otpError && <Alert severity="error">{otpError}</Alert>}
           <TextField
             label="OTP"
             type="password"

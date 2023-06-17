@@ -24,7 +24,7 @@ export default function Header() {
                         />
                     </Typography>
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                        {email}
+                        {sessionStorage.getItem("userId",email)}
                     </Typography>
                     <Avatar>X</Avatar><br></br>
                     <Link to="/x-workz/login" >Logout</Link>

@@ -8,6 +8,7 @@ import React, { useState } from 'react';
 import View from './viewdata/View';
 import DisplayData from './viewdata/DisplayData';
 import Search from './viewdata/Search';
+import Home from './component/Home';
 
 function App() {
   const [login, setLoggedIn] = useState(false);
@@ -36,10 +37,13 @@ function App() {
             </React.Fragment>
             // 
             // <Route path="/x-workz/team" element={<Team/>} />
-
-
           ) : (
-            <Route path="/x-workz/login" element={<LoginPage />} ></Route>
+            <React.Fragment>
+              <Route path="/x-workz/login" element={<LoginPage />} ></Route>
+              {sessionStorage.clear("userId")}
+              <Route path="/x-workz" element={<Home/>}/>
+            </React.Fragment>
+            
           )}
         </Routes>
         <Footer />
