@@ -9,13 +9,9 @@ import Header from '../component/Header';
 
 export default function DisplayData() {
     const [gridApi, setGridApi] = useState(null);
-    //const [columnDefs, setColumnDefs] = useState([]);
+    const [gridColumnApi, setGridColumnApi] = useState(null);
     const [rowData, setRowData] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [pageSize, setPageSize] = useState(10);
-    const [totalRecords, setTotalRecords] = useState(0);
-    const [count, setCount] = useState(10);
-    const [previousCount, setPreviousCount] = useState(1);
+    const [totalRowCount, setTotalRowCount] = useState(0);
 
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
 
@@ -28,53 +24,37 @@ export default function DisplayData() {
 
     useEffect(() => {
         fetchData();
-        getData();
-    }, [currentPage, pageSize]);
+    }, []);
 
-    
-    const getData = () => {
-        axios.get(`http://localhost:8080/connection/trainee/alldata`, {
-            headers: {
-                sheetId: "1WiZVpFrIsl_Wf_mpAG8LV-ObF2Gmwb8Wjw9Bev6qmY4",
-            }
-        }).then(response => {
-            setTotalRecords(response.data.length);
-            setPageSize(response.data.length)
-        })
-    }
 
-    const fetchData = () => {
-        // Calculate the start index based on current page and page size
-       // const datasource={
-        //getRows: function (params) {
-            // /const { startIndex, endIndex } = params;
-            const startIndex = (currentPage - 1) * pageSize;
-            const endIndex = startIndex+10;
-        axios.get(`http://localhost:8080/connection/trainees/page?startIndex=${startIndex}&endIndex=${pageSize}`, {
-            headers: {
-                sheetId: "1WiZVpFrIsl_Wf_mpAG8LV-ObF2Gmwb8Wjw9Bev6qmY4",
-            }
-        })
-            .then(response => {
-                //const { data, total } = response.data;
-                //here we have to set the total count
-                setRowData(response.data);
-
-            })
-            .catch(error => {
-                console.error('Error:', error);
+    const fetchData = async (params = {}) => {
+        console.log("inside fetch data",params.value)
+        try {
+            const response = await axios.get(`http://localhost:8080/connection/trainees/page?startIndex=${10}&endIndex=${20}`, {
+                headers: {
+                    sheetId: "1WiZVpFrIsl_Wf_mpAG8LV-ObF2Gmwb8Wjw9Bev6qmY4",
+                }
             });
-    }
-    
-      //  }
-    //}
-    /*    const onGridReady = params => {
-            setGridApi(params.api);
-    */
-    const handleGridReady = (params) => {
-        setGridApi(params.api);
+            setRowData(response.data);
+            //here we have to set the total count we will get total count from the back end
+            setTotalRowCount(100)
+            if (gridApi) {
+                gridApi.paginationSetTotalRows();
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
     };
- 
+
+    const onGridReady = (params) => {
+        setGridApi(params.api);
+       // setGridColumnApi(params.columnApi);
+        params.api.setServerSideDatasource({
+            getRows: (params) => {
+                fetchData(params);
+            },
+        });
+    };
     const defaultColDef = useMemo(() => {
         return {
             editable: true,
@@ -86,8 +66,10 @@ export default function DisplayData() {
         };
     }, []);
 
-
-
+    const formatPaginationNumber = (params) => {        
+          return `${params.value} (${totalRowCount})`;
+      };
+      
     return (
         <div style={containerStyle}>
             <Header />
@@ -99,14 +81,13 @@ export default function DisplayData() {
                     defaultColDef={defaultColDef}
                     pagination={true}
                     paginationPageSize={10}
-                    onGridReady={handleGridReady}
+                    onGridReady={onGridReady}
                     domLayout='autoHeight'
                     animateRows={true}
-                    serverSideDatasource={true}
-                    paginationAutoPageSize={true}
+                   serverSideDatasource={true}
+                   paginationNumberFormatter={formatPaginationNumber}
                 />
             </div>
         </div>
-
     );
 }

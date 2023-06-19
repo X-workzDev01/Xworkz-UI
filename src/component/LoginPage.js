@@ -4,7 +4,7 @@ import { Container, Typography, TextField, Button, Alert } from '@mui/material';
 import { Form } from 'react-bootstrap';
 import { AccountCircle, LockClock } from '@mui/icons-material';
 import axios from 'axios';
-
+import { Urlconstant } from '../constant/Urlconstant';
 
 const LoginPage = (props) => {
   let navigate = useNavigate()
@@ -29,9 +29,9 @@ const LoginPage = (props) => {
     if (!email || !password) {
       navigate("/x-workz/login");
     } else {
-      axios.post(`http://localhost:8080/otp?email=${email}&otp=${password}`, {
+      axios.post(Urlconstant.url+`otp?email=${email}&otp=${password}`, {
         headers: {
-          'spreadsheetId': '1p3G4et36vkzSDs3W63cj6qnUFEWljLos2HHXIZd78Gg'
+          'spreadsheetId': Urlconstant.spreadsheetId
         }
       }).then(response => {
         props.get(true);
@@ -44,9 +44,9 @@ const LoginPage = (props) => {
 
   const handleOtp = () => {
     sessionStorage.setItem("userId",email);
-    axios.post(`http://localhost:8080/login?email=${email}`, {
+    axios.post(Urlconstant.url+`login?email=${email}`, {
       headers: {
-        'spreadsheetId': '1p3G4et36vkzSDs3W63cj6qnUFEWljLos2HHXIZd78Gg'
+        'spreadsheetId': Urlconstant.spreadsheetId
       }
     }).then(response => {
       if (response.status === 200) {
@@ -67,6 +67,7 @@ const LoginPage = (props) => {
 
   return (
     <Container maxWidth="sm">
+      <h2>Login </h2>
       <h2>Login </h2>
       <Typography component="div" style={{ height: '50vh' }}>
         <Form onSubmit={handleFormSubmit}>

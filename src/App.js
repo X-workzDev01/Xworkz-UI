@@ -9,6 +9,7 @@ import View from './viewdata/View';
 import DisplayData from './viewdata/DisplayData';
 import Search from './viewdata/Search';
 import Home from './component/Home';
+import Header from './component/Header';
 
 function App() {
   const [login, setLoggedIn] = useState(false);
@@ -22,11 +23,8 @@ function App() {
       <div className="App">
         <Navbar />
         <Routes>
+        <Route path="/x-workz/display" element={<DisplayData />} />
           <Route path="/x-workz/login" element={<LoginPage get={getState} />} />
-          <Route path="/x-workz/register" element={<Registration />} />
-          <Route path="/x-workz/view" element={<View />} />
-          <Route path="/x-workz/display" element={<DisplayData />} />
-          <Route path="/x-workz/search" element={<Search />} />
           {login ? (
             //protected routes
             <React.Fragment>
@@ -35,8 +33,6 @@ function App() {
               <Route path="/x-workz/display" element={<DisplayData />} />
               <Route path="/x-workz/search" element={<Search />} />
             </React.Fragment>
-            // 
-            // <Route path="/x-workz/team" element={<Team/>} />
           ) : (
             <React.Fragment>
               <Route path="/x-workz/login" element={<LoginPage />} ></Route>

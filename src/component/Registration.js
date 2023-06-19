@@ -9,6 +9,7 @@ import { Container } from 'react-bootstrap';
 import axios from 'axios';
 import Header from './Header';
 import { useNavigate } from 'react-router-dom';
+import { Urlconstant } from '../constant/Urlconstant';
 
 
 export default function Registration() {
@@ -34,9 +35,9 @@ export default function Registration() {
   }, []);
 
   const getDropDown = () => {
-    axios.get('http://localhost:8080/utils/dropdown', {
+    axios.get(Urlconstant.url+'/utils/dropdown', {
       headers: {
-        'spreadsheetId': '1p3G4et36vkzSDs3W63cj6qnUFEWljLos2HHXIZd78Gg'
+        'spreadsheetId': Urlconstant.spreadsheetId
       }
     }).then(response => {
       setDropDown(response.data)
@@ -54,9 +55,9 @@ export default function Registration() {
 
   //registration api call
   const handleFormSubmit = () => {
-    axios.post('http://localhost:8080/api/register', formData, {
+    axios.post(Urlconstant.url+'api/register', formData, {
       headers: {
-        'spreadsheetId': '1p3G4et36vkzSDs3W63cj6qnUFEWljLos2HHXIZd78Gg'
+        'spreadsheetId': Urlconstant.spreadsheetId
       }
     }).then(response => {
       setMessages("Registration done successfully!!!")
