@@ -6,86 +6,81 @@ import 'ag-grid-enterprise';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import Header from '../component/Header';
+import { Grid, GridOptionsService } from 'ag-grid-enterprise';
 
 export default function DisplayData() {
-    const [gridApi, setGridApi] = useState(null);
-    const [gridColumnApi, setGridColumnApi] = useState(null);
-    const [rowData, setRowData] = useState([]);
-    const [totalRowCount, setTotalRowCount] = useState(0);
+    const [rowData, setRowData] = useState();
+    const [totalRowCount, setTotalRowCount] = useState(100)
+    const [gridOptions, setGridOptions] = useState({
+        columnDefs: [
+            { field: 'studentName' },
+            { field: 'email' },
+            { field: 'contactNumber' },
+            { field: 'address' }
+        ],
+        defaultColDef: useMemo(() => {
+            return {
+                editable: true,
+                sortable: true,
+                filter: true,
+                resizable: true,
+                flex: 1,
+                floatingFilter: true
+            };
+        }, []),
+        
+        pagination: true,
+        paginationPageSize: 10,
+        cacheBlockSize: 10,
+        serverSideDatasource:true,
+        rowModelType: 'serverSide',
+        onGridReady: (params) => {
+            params.api.setServerSideDatasource(createServerSideDatasource());
+        },
+    });
 
-    const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
 
-    const columnDefs = [
-        { field: 'studentName' },
-        { field: 'email' },
-        { field: 'contactNumber' },
-        { field: 'address' }
-    ];
-
-    useEffect(() => {
-        fetchData();
-    }, []);
-
-
-    const fetchData = async (params = {}) => {
-        console.log("inside fetch data",params.value)
-        try {
-            const response = await axios.get(`http://localhost:8080/connection/trainees/page?startIndex=${10}&endIndex=${20}`, {
-                headers: {
-                    sheetId: "1WiZVpFrIsl_Wf_mpAG8LV-ObF2Gmwb8Wjw9Bev6qmY4",
-                }
-            });
-            setRowData(response.data);
-            //here we have to set the total count we will get total count from the back end
-            setTotalRowCount(100)
-            if (gridApi) {
-                gridApi.paginationSetTotalRows();
-            }
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    };
-
-    const onGridReady = (params) => {
-        setGridApi(params.api);
-       // setGridColumnApi(params.columnApi);
-        params.api.setServerSideDatasource({
-            getRows: (params) => {
-                fetchData(params);
-            },
-        });
-    };
-    const defaultColDef = useMemo(() => {
+    const createServerSideDatasource = () => {
+        let stopLoading = false;
         return {
-            editable: true,
-            sortable: true,
-            filter: true,
-            resizable: true,
-            flex: 1,
-            floatingFilter: true
-        };
-    }, []);
+            getRows: (params) => {
+                const { startRow, endRow } = params.request;
+                console.log(startRow,endRow)
+                if (stopLoading) {
+                    return;
+                  }
+                setTimeout(() => {
+                const response = axios.get(`http://localhost:8080/connection/trainees/page?startIndex=${startRow}&endIndex=${endRow}`, {
+                    headers: {
+                        sheetId: "1WiZVpFrIsl_Wf_mpAG8LV-ObF2Gmwb8Wjw9Bev6qmY4",
+                    }
+                }).then((response) => {
+                    const data = response.data;
+                    setTotalRowCount(response.totalRowCount);
+                    setRowData(response.data)
+                    params.successCallback(data, totalRowCount);
+                    if (totalRowCount <= endRow) {
+                        stopLoading = true; // Set the flag to stop further loading
+                      }
+                }).catch((error) => {
 
-    const formatPaginationNumber = (params) => {        
-          return `${params.value} (${totalRowCount})`;
-      };
-      
+                    params.failCallback();
+                    console.error('Error fetching data:', error);
+                });
+            },1000);
+            }
+
+        }
+
+    }
     return (
-        <div style={containerStyle}>
+        <div>
             <Header />
             <h3>grid view</h3>
-            <div className="ag-theme-alpine">
+            <div className="ag-theme-alpine" id="agGrid">
                 <AgGridReact
-                    columnDefs={columnDefs}
-                    rowData={rowData}
-                    defaultColDef={defaultColDef}
-                    pagination={true}
-                    paginationPageSize={10}
-                    onGridReady={onGridReady}
-                    domLayout='autoHeight'
-                    animateRows={true}
-                   serverSideDatasource={true}
-                   paginationNumberFormatter={formatPaginationNumber}
+                    gridOptions={gridOptions}
+                    rowData= {rowData}
                 />
             </div>
         </div>
