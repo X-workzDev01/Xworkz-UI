@@ -9,10 +9,10 @@ import Header from '../component/Header';
 import { Urlconstant } from '../constant/Urlconstant';
 
 export default function DisplayData() {
-
     const [rowData, setRowData] = useState();
     const [totalRowCount, setTotalRowCount] = useState()
     const [gridApi, setGridApi] = useState(null);
+    const [columnApi,setGridColumnApi]=useState();
     const [gridOptions, setGridOptions] = useState({
     });
     const defaultColDef = useMemo(() => {
@@ -26,30 +26,40 @@ export default function DisplayData() {
         };
     }, [])
     const columnDefs = [
-        { field: 'studentName' },
-        { field: 'email' },
-        { field: 'contactNumber' },
-        { field: 'address' }
-    ];
+        { headerName: 'Student Name', field: 'studentName' },
+        { headerName: 'Email', field: 'email' },
+        { headerName: 'Contact Number', field: 'contactNumber' },
+        { headerName: 'Address', field: 'address' }
+      ];
     const onGridReady = (params) => {
         setGridApi(params.api);
-        params.api.setServerSideDatasource(createServerSideDatasource());
+        setGridColumnApi(params.columnApi);
+        params.api.setServerSideDatasource(createServerSideDatasource(params.api));
 
     }
+    //console.log(rowData)
     const createServerSideDatasource = () => {
         return {
             getRows: (params) => {
+
                 const { startRow, endRow } = params.request;
-                axios.get(Urlconstant.url + `utils/page?startIndex=${startRow}&endIndex=${endRow}`, {
+                //console.log(startRow,endRow)
+                const response =  axios.get(Urlconstant.url+"/api" + `readData?startingIndex=${startRow}&maxRows=${endRow}`, {
                     headers: {
                         'spreadsheetId': Urlconstant.spreadsheetId
                     }
                 }).then((response) => {
-                    console.log(response.data.totalRowCount)
+                    const data=response.data.data;
+                    const totalRowCount=response.data.totalRowCount;
+                    console.log(data,totalRowCount);
                     setTotalRowCount(response.data.totalRowCount);
-                    params.successCallback(response.data,response.data.totalRowCount);
+                  //  setRowData(response.data.data)
+                  //  console.log(params)
+                   params.successCallback(response.data, response.data.totalRowCount, params.request);
+                    // debugger;
                 }).catch((error) => {
-                    params.failCallback();
+                   // params.failCallback();
+                    console.error('Error fetching data:', error);
                 });
 
             }
@@ -65,6 +75,7 @@ export default function DisplayData() {
                 <AgGridReact
                     //                   gridOptions={gridOptions}
                     columnDefs={columnDefs}
+                    rowData={rowData}
                     pagination={true}
                     paginationPageSize={10}
                     cacheBlockSize={10}
@@ -75,7 +86,7 @@ export default function DisplayData() {
                     onGridReady={onGridReady}
                     maxConcurrentDatasourceRequests={1}
                     defaultColDef={defaultColDef}
-
+                //                   rowModelType='serverSide'
                 />
             </div>
         </div>
