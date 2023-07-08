@@ -1,46 +1,70 @@
-
 import { TextField, Button, Alert, Typography, Container } from '@mui/material';
 import axios from 'axios';
 import React, { useState } from 'react';
 import { Form } from 'react-bootstrap';
+import { Urlconstant } from '../constant/Urlconstant';
 
 export const Trainee = ({ formData, setFormData, onNext }) => {
   const [error, setError] = useState();
-  const [emailCheck,setEmailCheck]=useState();
-  const [numberCheck,setNumberCheck] = useState();
-
+  const [emailCheck, setEmailCheck] = useState();
+  const [numberCheck, setNumberCheck] = useState();
+  const [emailError, setEmailError] = useState('');
+  const [phoneNumberError, setPhoneNumberError] = useState('');
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleEmail=(e)=>{
-    console.log("Email check")
-     axios.get(`https://ombn.in/Dream/api/emailCheck?email=${formData.email}`,{
-      headers:{
-        'spreadsheetId':'1p3G4et36vkzSDs3W63cj6qnUFEWljLos2HHXIZd78Gg'
+  const handleEmail = (e) => {
+    validateEmail(formData.email);
+    axios.get(Urlconstant.url + `api/emailCheck?email=${formData.email}`, {
+      headers: {
+        'spreadsheetId': Urlconstant.spreadsheetId
       }
-    }).then(response=>{
+    }).then(response => {
       setEmailCheck(response.data);
     }).catch();
-    setError("Check Email Id")
-    console.error(error);
+    //setError("Check Email Id")
+    console.log(error)
   }
 
-  const handleNumberChange=(e)=>{
+  const handleNumberChange = (e) => {
     console.log("number check")
-    axios.get(`https://ombn.in/Dream/api/contactNumberCheck?contactNumber=${formData.contactNumber}`,{
-      headers:{
-        'spreadsheetId':'1p3G4et36vkzSDs3W63cj6qnUFEWljLos2HHXIZd78Gg'
+    validatePhoneNumber(formData.contactNumber)
+    axios.get(Urlconstant.url + `api/contactNumberCheck?contactNumber=${formData.contactNumber}`, {
+      headers: {
+        'spreadsheetId': Urlconstant.spreadsheetId
       }
-    }).then(response=>{
+    }).then(response => {
       setNumberCheck(response.data);
     }).catch(error => {
-      console.error(error);
+      console.log(error)
     });
   }
 
-  const isDisabled = !formData.traineeName || !formData.email || !formData.contactNumber||!emailCheck||!numberCheck;
+  const validateEmail = (value) => {
+    if (!value) {
+      setEmailError('Email is required');
+    } else if (!/\S+@\S+\.\S+/.test(value)) {
+      setEmailError('Invalid email address');
+    } else {
+      setEmailError('');
+    }
+  };
+
+  const validatePhoneNumber = (value) => {
+    if (!value) {
+      setPhoneNumberError('Phone number is required');
+    } else if (!/^\d+$/.test(value)) {
+      setPhoneNumberError('Phone number must contain only digits');
+    } else if (value.length <= 10) {
+      setPhoneNumberError('Phone number must be at least 10 digits');
+    } else {
+      setPhoneNumberError('');
+    }
+  };
+
+  const isDisabled = !formData.traineeName || !formData.email || !formData.contactNumber || !emailCheck || !numberCheck;
   return (
     <Container maxWidth="sm">
       <Typography component="div" style={{ height: '50vh' }}>
@@ -69,9 +93,11 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
             variant="outlined"
             value={formData.email || ''}
             onChange={handleInputChange}
-            onKeyUp={handleEmail}
+            onBlur={handleEmail}
+            error={!emailError}
+            helperText={emailError}
           />
-           {emailCheck && <Alert severity="info">{emailCheck}</Alert>}
+          {emailCheck && <Alert severity="info">{emailCheck}</Alert>}
           <TextField type="number"
             label="Contact Number"
             required
@@ -82,7 +108,9 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
             name="contactNumber"
             value={formData.contactNumber || ''}
             onChange={handleInputChange}
-            onKeyUp={handleNumberChange}
+            onBlur={handleNumberChange}
+            error={!phoneNumberError}
+            helperText={phoneNumberError}
           />
           {numberCheck && <Alert severity="info">{numberCheck}</Alert>}
         </Form>

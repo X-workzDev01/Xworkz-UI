@@ -35,7 +35,7 @@ const LoginPage = (props) => {
         }
       }).then(response => {
         props.get(true);
-        console.log(response.c);
+        console.log(response.headers.cookies);
         navigate("/x-workz/view", { state: { email } });
       }).catch(error => {
         setOtpError("OTP expired")

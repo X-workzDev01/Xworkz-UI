@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { AgGridReact } from 'ag-grid-react';
 import { useMemo } from 'react';
 import 'ag-grid-enterprise';
@@ -12,9 +12,10 @@ export default function DisplayData() {
     const [rowData, setRowData] = useState();
     const [totalRowCount, setTotalRowCount] = useState()
     const [gridApi, setGridApi] = useState(null);
-    const [columnApi,setGridColumnApi]=useState();
-    const [gridOptions, setGridOptions] = useState({
-    });
+    const [columnApi, setGridColumnApi] = useState();
+
+    const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
+    const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
     const defaultColDef = useMemo(() => {
         return {
             editable: true,
@@ -25,12 +26,22 @@ export default function DisplayData() {
             floatingFilter: true
         };
     }, [])
+    
     const columnDefs = [
-        { headerName: 'Student Name', field: 'studentName' },
-        { headerName: 'Email', field: 'email' },
+        { headerName: 'Trainee Name', field: 'traineeName' },
         { headerName: 'Contact Number', field: 'contactNumber' },
-        { headerName: 'Address', field: 'address' }
-      ];
+        { headerName: 'Email', field: 'email' },
+        { headerName: 'Qualification', field: 'educationInfo.qualification' },
+        { headerName: 'Stream', field: 'educationInfo.stream' },
+        { headerName: 'Year of Passout', field: 'educationInfo.yearOfPassout' },
+        { headerName: 'College Name', field: 'educationInfo.collegeName' },
+        { headerName: 'Course', field: 'courseInfo.course' },
+        { headerName: 'Branch', field: 'courseInfo.branch' },
+        { headerName: 'Batch', field: 'courseInfo.batch' },
+        { headerName: 'Referral Name', field: 'referralInfo.referalName' },
+        { headerName: 'Referral Contact Number', field: 'referralInfo.referalContactNumber' },
+        { headerName: 'Comments', field: 'referralInfo.comments' },
+    ];
     const onGridReady = (params) => {
         setGridApi(params.api);
         setGridColumnApi(params.columnApi);
@@ -41,29 +52,22 @@ export default function DisplayData() {
     const createServerSideDatasource = () => {
         return {
             getRows: (params) => {
-
                 const { startRow, endRow } = params.request;
-                //console.log(startRow,endRow)
-                const response =  axios.get(Urlconstant.url+"/api" + `readData?startingIndex=${startRow}&maxRows=${endRow}`, {
+                const response = axios.get(Urlconstant.url + "api/" + `readData?startingIndex=${startRow}&maxRows=${endRow}`, {
                     headers: {
                         'spreadsheetId': Urlconstant.spreadsheetId
                     }
                 }).then((response) => {
-                    const data=response.data.data;
-                    const totalRowCount=response.data.totalRowCount;
-                    console.log(data,totalRowCount);
-                    setTotalRowCount(response.data.totalRowCount);
-                  //  setRowData(response.data.data)
-                  //  console.log(params)
-                   params.successCallback(response.data, response.data.totalRowCount, params.request);
-                    // debugger;
-                }).catch((error) => {
-                   // params.failCallback();
-                    console.error('Error fetching data:', error);
-                });
-
+                    const totalRowCount = response.data.size;
+                    setTotalRowCount(totalRowCount);
+                    params.successCallback(response.data.sheetsData, totalRowCount);
+                    console.log(response.data.sheetsData)
+                })
+                    .catch((error) => {
+                        console.error('Error fetching data:', error);
+                        params.failCallback();
+                    });
             }
-
         }
     }
     return (
@@ -71,23 +75,25 @@ export default function DisplayData() {
             <Header />
             <h3>grid view</h3>
             <h3>Trainee Details</h3>
-            <div className="ag-theme-alpine" id="agGrid">
-                <AgGridReact
-                    //                   gridOptions={gridOptions}
-                    columnDefs={columnDefs}
-                    rowData={rowData}
-                    pagination={true}
-                    paginationPageSize={10}
-                    cacheBlockSize={10}
-                    serverSideDatasource={true}
-                    animateRows={true}
-                    rowModelType='serverSide'
-                    paginationOverflowSize={10}
-                    onGridReady={onGridReady}
-                    maxConcurrentDatasourceRequests={1}
-                    defaultColDef={defaultColDef}
-                //                   rowModelType='serverSide'
-                />
+            <div style={containerStyle}>
+                <div style={gridStyle} className="ag-theme-alpine-dark">
+                    <div className="ag-theme-alpine" id="agGrid">
+                        <AgGridReact
+                            columnDefs={columnDefs}
+                            rowData={rowData}
+                            pagination={true}
+                            paginationPageSize={10}
+                            cacheBlockSize={10}
+                            serverSideDatasource={true}
+                            animateRows={true}
+                            rowModelType='serverSide'
+                            paginationOverflowSize={10}
+                            onGridReady={onGridReady}
+                            maxConcurrentDatasourceRequests={1}
+                            defaultColDef={defaultColDef}
+                        />
+                    </div>
+                </div>
             </div>
         </div>
     );
