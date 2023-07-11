@@ -36,7 +36,7 @@ export const Referral = ({ formData, setFormData, onNext, onPrevious }) => {
           />
 
           <TextField type="text"
-            label="Discription "
+            label="comments"
             name="comments"
             value={formData.comments || ''}
             onChange={handleInputChange}

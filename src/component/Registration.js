@@ -28,7 +28,7 @@ export default function Registration() {
     batch: [],
     stream: [],
     college: [],
-  })
+  });
 
   useEffect(() => {
     getDropDown();

@@ -94,7 +94,6 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
             value={formData.email || ''}
             onChange={handleInputChange}
             onBlur={handleEmail}
-            error={!emailError}
             helperText={emailError}
           />
           {emailCheck && <Alert severity="info">{emailCheck}</Alert>}
@@ -109,7 +108,6 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
             value={formData.contactNumber || ''}
             onChange={handleInputChange}
             onBlur={handleNumberChange}
-            error={!phoneNumberError}
             helperText={phoneNumberError}
           />
           {numberCheck && <Alert severity="info">{numberCheck}</Alert>}

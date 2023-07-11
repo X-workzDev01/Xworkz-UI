@@ -1,23 +1,34 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'
-import { Container, Typography, TextField, Button, Alert } from '@mui/material';
+import { Container, Typography, TextField, Button, Alert, CircularProgress } from '@mui/material';
 import { Form } from 'react-bootstrap';
-import { AccountCircle, LockClock } from '@mui/icons-material';
+import { AccountCircle, LockClock, Send } from '@mui/icons-material';
 import axios from 'axios';
 import { Urlconstant } from '../constant/Urlconstant';
 
 const LoginPage = (props) => {
   let navigate = useNavigate()
+  const [error, setError] = useState();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [enable, setEnable] = useState(true);
   const [displayMessage, setDisplayMessage] = useState();
   const [emailError, setEmailError] = useState();
   const [otpError, setOtpError] = useState();
+  const [isSending, setIsSending] = useState(false);
 
   const handleEmailChange = (event) => {
     //storing 
     setEmail(event.target.value);
+  };
+  const validateEmail = (value) => {
+    if (!value) {
+      setEmailError('Email is required');
+    } else if (!/\S+@\S+\.\S+/.test(value)) {
+      setEmailError('Invalid email address');
+    } else {
+      setEmailError('');
+    }
   };
 
   const handlePasswordChange = (event) => {
@@ -29,13 +40,12 @@ const LoginPage = (props) => {
     if (!email || !password) {
       navigate("/x-workz/login");
     } else {
-      axios.post(Urlconstant.url+`otp?email=${email}&otp=${password}`, {
+      axios.post(Urlconstant.url + `otp?email=${email}&otp=${password}`, {
         headers: {
           'spreadsheetId': Urlconstant.spreadsheetId
         }
       }).then(response => {
         props.get(true);
-        console.log(response.headers.cookies);
         navigate("/x-workz/view", { state: { email } });
       }).catch(error => {
         setOtpError("OTP expired")
@@ -44,13 +54,17 @@ const LoginPage = (props) => {
   };
 
   const handleOtp = () => {
-    sessionStorage.setItem("userId",email);
-    axios.post(Urlconstant.url+`login?email=${email}`, {
+    setIsSending(true);
+    sessionStorage.setItem("userId", email);
+   
+    validateEmail(email)
+    axios.post(Urlconstant.url + `login?email=${email}`, {
       headers: {
         'spreadsheetId': Urlconstant.spreadsheetId
       }
     }).then(response => {
       if (response.status === 200) {
+
         console.log(response.data)
 
       } else {
@@ -60,7 +74,9 @@ const LoginPage = (props) => {
       setDisplayMessage("OTP sent to your mail ID it will Expire with 10 Minutes")
     }).catch(error => {
       setEmailError("check the E-mail")
-    });
+    }).finally(() => {
+      setIsSending(false);
+    });;
 
   }
 
@@ -72,7 +88,7 @@ const LoginPage = (props) => {
       <h2>Login </h2>
       <Typography component="div" style={{ height: '50vh' }}>
         <Form onSubmit={handleFormSubmit}>
-        {emailError && <Alert severity="error">{emailError}</Alert>}
+          {emailError && <Alert severity="error">{emailError}</Alert>}
           <TextField
             label="Email"
             type="email"
@@ -88,11 +104,17 @@ const LoginPage = (props) => {
                 />
               ),
             }}
+            helperText={emailError}
           />
-         
-          <Button type="submit" variant="contained" color='primary' onClick={handleOtp} disabled={isDisabled}>
-            Send Otp
-          </Button>
+
+          <Button type="submit" variant="contained" color='primary'
+           onClick={handleOtp} disabled={isSending} startIcon={<Send />}>     
+          {isSending ? (
+            <CircularProgress size={24} color="inherit" />
+          ) : (
+            'Send OTP'
+          )}
+           </Button>
           <br></br>
           {displayMessage && <Alert severity="info">{displayMessage}</Alert>}
           <TextField
