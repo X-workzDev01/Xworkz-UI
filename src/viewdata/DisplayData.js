@@ -6,8 +6,13 @@ import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import Header from '../component/Header';
 import { Urlconstant } from '../constant/Urlconstant';
+import { TextField } from '@mui/material';
 
 export default function DisplayData() {
+    const [gridApi, setGridApi] = useState(null);
+    const [gridColumnApi, setGridColumnApi] = useState(null);
+    const [error, setError] = useState();
+
     const columnDefs = [
         { headerName: 'Trainee Name', field: 'basicInfo.traineeName', cellStyle: { textAlign: 'center' } },
         { headerName: 'Contact Number', field: 'basicInfo.contactNumber', cellStyle: { textAlign: 'center' } },
@@ -32,15 +37,30 @@ export default function DisplayData() {
         floatingFilter: true
     };
 
+    const onFilterChanged = (event) => {
+        const searchText = event.target.value;
+        //api call
+        axios.get(Urlconstant.url + 'api/' + `filterData?searchValue=${searchText}`, {
+          headers: {
+            'spreadsheetId': Urlconstant.spreadsheetId
+          }
+        }).then(response => {
+          gridApi.setRowData(response.data);
+        }).catch(error => {
+          setError("data is not loading...")
+        });
+      };
+    
     const serverSideDatasource = {
         getRows: (params) => {
-            const { startRow, endRow, sortModel } = params.request;
-            const response = axios.get(Urlconstant.url + "api/" + `readData?startingIndex=${startRow}&maxRows=${endRow}`, {
+            const { startRow, endRow } = params.request;
+            axios.get(Urlconstant.url + "api/" + `readData?startingIndex=${startRow}&maxRows=${endRow}`, {
                 headers: {
                     'spreadsheetId': Urlconstant.spreadsheetId
                 }
             }).then((response) => {
-                params.successCallback(response.data.sheetsData, response.size);
+                const totalCount=response.size;
+                params.successCallback(response.data.sheetsData, totalCount);
             }).catch((error) => {
                 console.error('Error fetching data:', error);
                 params.failCallback();
@@ -53,18 +73,20 @@ export default function DisplayData() {
         <div className="ag-theme-alpine" style={{ height: '500px', width: '100%' }}>
             <Header />
             <h1>GridView</h1>
+            <div className="ag-search-wrapper">
+          <TextField type='text' placeholder='Search ...' onChange={onFilterChanged} />
+        </div>
             <h1>Trainee Details</h1>
             <AgGridReact
-                columnDefs={columnDefs}
-                rowModelType="serverSide"
-                serverSideDatasource={serverSideDatasource}
-                pagination={true}
-                paginationAutoPageSize={true}
-                defaultColDef={defaultColDef}
-                paginationPageSize={10}
-                cacheBlockSize={10}
-                animateRows={true}
-                maxConcurrentDatasourceRequests={1}
+               columnDefs={columnDefs}
+               rowModelType="serverSide"
+               serverSideDatasource={serverSideDatasource}
+               pagination={true}
+               paginationAutoPageSize={true}
+               defaultColDef={defaultColDef}
+               paginationPageSize={10}
+               animateRows={true}
+               maxConcurrentDatasourceRequests={1}
             />
         </div>
     );

@@ -8,7 +8,6 @@ import 'ag-grid-enterprise';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 
-
 export default function Search() {
   const [gridApi, setGridApi] = useState(null);
   const [gridColumnApi, setGridColumnApi] = useState(null);
@@ -72,7 +71,7 @@ export default function Search() {
             animateRows={true}
             paginationAutoPageSize={true}
             pagination={true}
-            paginationPageSize={20}
+            paginationPageSize={10}
           />
         </div>
       </div>

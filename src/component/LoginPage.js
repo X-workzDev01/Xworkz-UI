@@ -56,17 +56,13 @@ const LoginPage = (props) => {
   const handleOtp = () => {
     setIsSending(true);
     sessionStorage.setItem("userId", email);
-   
-    validateEmail(email)
     axios.post(Urlconstant.url + `login?email=${email}`, {
       headers: {
         'spreadsheetId': Urlconstant.spreadsheetId
       }
     }).then(response => {
       if (response.status === 200) {
-
         console.log(response.data)
-
       } else {
         console.log("user not found:", response.status)
       }
@@ -77,11 +73,8 @@ const LoginPage = (props) => {
     }).finally(() => {
       setIsSending(false);
     });;
-
   }
-
   const isDisabled = !email
-
   return (
     <Container maxWidth="sm">
       <h2>Login </h2>

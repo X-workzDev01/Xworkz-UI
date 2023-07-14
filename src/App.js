@@ -24,7 +24,6 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/x-workz/login" element={<LoginPage get={getState} />} />
-          <Route path="/x-workz/search" element={<Search />} />
           {login ? (
             //protected routes
             <React.Fragment>
