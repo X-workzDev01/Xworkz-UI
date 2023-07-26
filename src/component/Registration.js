@@ -8,12 +8,11 @@ import { Step, StepLabel, Stepper } from '@mui/material';
 import { Container } from 'react-bootstrap';
 import axios from 'axios';
 import Header from './Header';
-import { useNavigate } from 'react-router-dom';
+//import { useNavigate } from 'react-router-dom';
 import { Urlconstant } from '../constant/Urlconstant';
 
-
 export default function Registration() {
-  let navigate = useNavigate()
+ // let navigate = useNavigate()
   const [currentSection, setCurrentSection] = useState(1);
   const [messages, setMessages] = useState('');
   const [formData, setFormData] = useState({
@@ -29,13 +28,13 @@ export default function Registration() {
     stream: [],
     college: [],
   });
-
+  
   useEffect(() => {
     getDropDown();
   }, []);
 
   const getDropDown = () => {
-    axios.get(Urlconstant.url+'/utils/dropdown', {
+    axios.get(Urlconstant.url+'utils/dropdown', {
       headers: {
         'spreadsheetId': Urlconstant.spreadsheetId
       }
@@ -61,7 +60,14 @@ export default function Registration() {
       }
     }).then(response => {
       setMessages("Registration done successfully!!!")
-      navigate("/x-workz/view")
+      //navigate("/x-workz/view")
+      setFormData({
+        basicInfo: [],
+        educationInfo: [],
+        courseInfo: [],
+        referralInfo: []
+      });
+      setCurrentSection(1);
     }).catch(error => {
       console.error(error);
     });

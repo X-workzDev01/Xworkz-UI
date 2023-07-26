@@ -64,7 +64,7 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
     }
   };
 
-  const isDisabled = !formData.traineeName || !formData.email || !formData.contactNumber || !emailCheck || !numberCheck;
+  const isDisabled= !formData.traineeName || !formData.email || !formData.contactNumber || !emailCheck || !numberCheck;
   return (
     <Container maxWidth="sm">
       <Typography component="div" style={{ height: '50vh' }}>
@@ -96,7 +96,6 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
             onBlur={handleEmail}
             helperText={emailError}
           />
-          {emailCheck && <Alert severity="info">{emailCheck}</Alert>}
           <TextField type="number"
             label="Contact Number"
             required
@@ -110,7 +109,16 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
             onBlur={handleNumberChange}
             helperText={phoneNumberError}
           />
-          {numberCheck && <Alert severity="info">{numberCheck}</Alert>}
+          <TextField type="date"
+            name="dob"
+            value={formData.dob || ''}
+            onChange={handleInputChange}
+            required
+            fullWidth
+            margin="normal"
+            id="outlined-basic"
+            variant="outlined"
+          />
         </Form>
         <Button variant="contained" disabled={isDisabled} onClick={onNext}>Next</Button>
       </Typography>

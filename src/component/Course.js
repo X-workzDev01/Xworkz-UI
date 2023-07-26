@@ -1,27 +1,20 @@
 import { Button, MenuItem, Select, TextField, Container, Typography, InputLabel } from '@mui/material';
 import React from 'react'
-import { useEffect } from 'react';
-import { useState } from 'react';
 import { Form } from 'react-bootstrap';
 
 export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious }) => {
-  const branchName = ['Rajajinagar', 'BTM']
-  const [maxDate, setMaxDate] = useState('');
+  const branchName = ['BTM','Rajajinagar']
+  const offered = ['CSR Offered', 'CSR Non-Offered', 'NON CSR']
+  const sortedCourse = dropdown.course.slice().sort((a, b) => a.localeCompare(b));
 
-  useEffect(() => {
-    const dtToday = new Date();
-    const month = dtToday.getMonth() + 1;
-    const day = dtToday.getDate();
-    const year = dtToday.getFullYear();
+  const getCurrentDate = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = (now.getMonth() + 1).toString().padStart(2, '0');
+    const day = now.getDate().toString().padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
 
-    const formattedMonth = month < 10 ? `0${month}` : month;
-    const formattedDay = day < 10 ? `0${day}` : day;
-
-    const currentDate = `${year}-${formattedMonth}-${formattedDay}`;
-    setMaxDate(currentDate);
-    
-  }, []);
-console.log(maxDate)
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -43,7 +36,7 @@ console.log(maxDate)
             value={formData.course || ''}
             onChange={handleInputChange}
           >
-            {dropdown.course.map((item, index) => (
+            {sortedCourse.map((item, index) => (
               <MenuItem value={item} key={index}>{item}</MenuItem>
             ))}
           </Select>
@@ -64,7 +57,7 @@ console.log(maxDate)
           </Select>
 
           <TextField type="date"
-            min={maxDate}
+            inputProps={{ min: getCurrentDate() }}
             name="batch"
             value={formData.batch || ''}
             onChange={handleInputChange}
@@ -74,6 +67,20 @@ console.log(maxDate)
             id="outlined-basic"
             variant="outlined"
           />
+          <InputLabel id="demo-simple-select-label">Offered As</InputLabel>
+          <Select name="offer"
+            value={formData.offer || ''}
+            onChange={handleInputChange}
+            required
+            fullWidth
+            margin="normal"
+            id="outlined-basic"
+            variant="outlined"
+          >
+            {offered.map((item, index) => (
+              <MenuItem value={item} key={index}>{item}</MenuItem>
+            ))}
+          </Select>
         </Form>
         <Button variant="contained" onClick={onPrevious}>Previous</Button>
         &nbsp;&nbsp;&nbsp;

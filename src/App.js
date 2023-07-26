@@ -9,7 +9,7 @@ import View from './viewdata/View';
 import DisplayData from './viewdata/DisplayData';
 import Search from './viewdata/Search';
 import Home from './component/Home';
-import Header from './component/Header';
+//import Header from './component/Header';
 
 function App() {
   const [login, setLoggedIn] = useState(false);
