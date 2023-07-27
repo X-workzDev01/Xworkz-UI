@@ -30,6 +30,10 @@ export default function DisplayData() {
 
   const columnDefs = [
     {
+      headerName: 'ID', field: 'id',
+      cellStyle: { textAlign: 'center' }, filter: 'agTextColumnFilter', enablePivot: true
+    },
+    {
       headerName: 'Trainee Name', field: 'basicInfo.traineeName',
       cellStyle: { textAlign: 'center' }, filter: 'agTextColumnFilter', enablePivot: true
     },
@@ -98,7 +102,7 @@ export default function DisplayData() {
   const serverSideDatasource = {
     getRows: (params) => {
       let { startRow} = params.request;
-      axios.get(Urlconstant.url + "api/" + `readData?startingIndex=${startRow}&maxRows=10`, {
+      axios.get(Urlconstant.url + "api/" + `readData?startingIndex=${startRow}&maxRows=15`, {
         headers: {
           'spreadsheetId': Urlconstant.spreadsheetId
         }
@@ -118,7 +122,7 @@ export default function DisplayData() {
     };
   }, []);
   return (
-    <div className="ag-theme-alpine" style={{ height: '500px', width: '100%' }}>
+    <div className="ag-theme-alpine" style={{ height: '100vh', width: '100%' }}>
       <Header />
       <h1>GridView</h1>
       <div className="ag-search-wrapper">       
@@ -130,11 +134,11 @@ export default function DisplayData() {
         serverSideDatasource={serverSideDatasource}
         pagination={true}
         defaultColDef={defaultColDef}
-        paginationPageSize={10}
+        paginationPageSize={15}
         animateRows={true}
         maxConcurrentDatasourceRequests={1}
         sideBar={sideBar}
-        cacheBlockSize={10}
+        cacheBlockSize={15}
         frameworkComponents={{
           editButtonRenderer: editButtonRenderer,
         }}

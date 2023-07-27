@@ -46,9 +46,12 @@ const LoginPage = (props) => {
         }
       }).then(response => {
         props.get(true);
+        console.log("sucess");
         navigate("/x-workz/view", { state: { email } });
       }).catch(error => {
-        setOtpError("OTP expired")
+        
+
+        setOtpError("Wrong Otp entered");
       });
     }
   };
@@ -125,6 +128,7 @@ const LoginPage = (props) => {
               ),
             }}
           />
+          {otpError && <Alert severity="error">{otpError}</Alert>}
           <Button type="submit" variant="contained" color='primary' disabled={enable}>
             Login
           </Button>
