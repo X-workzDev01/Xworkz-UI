@@ -32,11 +32,7 @@ export default function PageList() {
                         View Records
                     </Button>
                 </Grid>
-                <Grid item>
-                    <Button type="submit" variant="contained" color='primary' onClick={handleSearch}>
-                        Search Records
-                    </Button>
-                </Grid>
+                
                 <Grid item>
                     <Button variant="contained" color="primary">
                         Fee
