@@ -88,6 +88,7 @@ async function fetchFilteredData(searchValue) {
       },
     };
     const response = await axios.get(apiUrl, requestOptions);
+    console.log(response);
     return response.data; // The API response already contains the list of suggestions without an id
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -110,7 +111,7 @@ function debounce(func, delay) {
 
 export default function ControlledSelectionServerPaginationGrid() {
 
-  
+
   const initialPageSize = 10; // Set the initial page size for server-side pagination
 
   const [paginationModel, setPaginationModel] = React.useState({
@@ -142,38 +143,38 @@ export default function ControlledSelectionServerPaginationGrid() {
   // };
 
   const handleSearchClick = () => {
-   
-      // Call the search API with the final search value when the search button is clicked
-      searchServerRows(searchValue).then((newGridData) => {
-        console.log(newGridData);
-        setGridData(newGridData);
-  
-        // Reset the pagination model to initial state
-        setPaginationModel({ page: 0, pageSize: initialPageSize });
-  
-        // Reset the search field after handling the search click
-        
-        setSearchInputValue('');
-        console.log("set to null");
-        console.log(searchInputValue);
-        
-      });
-    
+
+    // Call the search API with the final search value when the search button is clicked
+    searchServerRows(searchValue).then((newGridData) => {
+      console.log(newGridData);
+      setGridData(newGridData);
+
+      // Reset the pagination model to initial state
+      setPaginationModel({ page: 0, pageSize: initialPageSize });
+
+      // Reset the search field after handling the search click
+
+      setSearchInputValue('');
+      console.log("set to null");
+      console.log(searchInputValue);
+
+    });
+
   };
- 
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
   const handleAutocompleteChange = (event, newValue) => {
     setSearchValue(newValue || '');
   };
 
-  
 
-  
+
+
   const debouncedFetchSuggestions = React.useMemo(
     () => debounce((searchValue) => fetchFilteredData(searchValue)
       .then((suggestions) => {
@@ -213,7 +214,7 @@ export default function ControlledSelectionServerPaginationGrid() {
         });
     } else {
       console.log("client search");
-      
+
 
       setLoading(false);
       debouncedFetchSuggestions(searchValue);
@@ -223,7 +224,7 @@ export default function ControlledSelectionServerPaginationGrid() {
       active = false;
     };
   }, [paginationModel.page, paginationModel.pageSize, searchValue]);
-  
+
 
   return (
     <div>
@@ -233,30 +234,34 @@ export default function ControlledSelectionServerPaginationGrid() {
           freeSolo
           id="free-solo-2-demo"
           disableClearable
-          getOptionLabel={(option) => option}
-          style={{ width: '20vw' , padding : '10px 20px' }}
-          // value={searchInputValue}
-          onChange={handleAutocompleteChange}
-          // onChange={handleSearchChange}
+          getOptionLabel={(option) => option.name}
+          style={{ width: '20vw', padding: '10px 20px' }}
+          value={searchInputValue}
           // onChange={(e) => setSearchValue(e.target.value)}
+          renderOption={(option) => (
+            <div>
+              <span style={{ fontWeight: 'bold' }}>Name:</span> {option.name} <br />
+              <span style={{ fontWeight: 'bold' }}>Email:</span> {option.email}
+            </div>
+          )}
           renderInput={(params) => (
             <TextField
-            {...params}
-            type="text"
-            value={searchInputValue}
-            onChange={(e) => setSearchValue(e.target.value)}
-            placeholder="Search..."
-          />
+              {...params}
+              type="text"
+              value={searchInputValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              placeholder="Search..."
+            />
           )}
         />
         <Button variant="contained" color="primary" onClick={handleSearchClick}>
           Search
         </Button>
       </div>
-      <div style={{ height: '650px', width: '100%'}}>
+      <div style={{ height: '650px', width: '100%' }}>
         <DataGrid
           columns={[
-            { headerName: 'ID' , field: 'id', flex: 1 },
+            { headerName: 'ID', field: 'id', flex: 1 },
             { field: 'traineeName', headerName: 'Trainee Name', flex: 1, valueGetter: (params) => params.row.basicInfo.traineeName },
             { field: 'email', headerName: 'Email', flex: 1, valueGetter: (params) => params.row.basicInfo.email },
             { field: 'contactNumber', headerName: 'Contact Number', flex: 1, valueGetter: (params) => params.row.basicInfo.contactNumber },
@@ -273,7 +278,7 @@ export default function ControlledSelectionServerPaginationGrid() {
           ]}
           rows={gridData.rows}
           pagination
-          
+
           paginationModel={paginationModel}
           pageSizeOptions={[5, 10, 15]}
           rowCount={gridData.rowCount}
