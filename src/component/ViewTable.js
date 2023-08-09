@@ -6,7 +6,7 @@ import Button from '@mui/material/Button';
 import ClearIcon from '@mui/icons-material/Clear';
 import Autocomplete from '@mui/material/Autocomplete';
 import axios from 'axios';
-
+import EditModal from './EditModal';
 
 function loadServerRows(page, pageSize) {
   const startingIndex = page * pageSize;
@@ -129,6 +129,8 @@ export default function ControlledSelectionServerPaginationGrid() {
   const [searchResults, setSearchResults] = React.useState([]);
 
   const [autocompleteOptions, setAutocompleteOptions] = React.useState([]);
+  const [isModalOpen, setModalOpen] = React.useState(false);
+  const [editedRowData, setEditedRowData] = React.useState(null);
   const searchFieldRef = React.useRef(null);
 
   // const handleSearchChange = async (event, newValue) => {
@@ -141,6 +143,21 @@ export default function ControlledSelectionServerPaginationGrid() {
   //     setAutocompleteOptions([]);
   //   }
   // };
+
+  const handleEditClick = (row) => {
+    setEditedRowData(row);
+    setModalOpen(true);
+  };
+
+  
+
+  
+  const handleSaveClick = () => {
+    // Perform save operation here with editedRowData
+    console.log('Edited Data:', editedRowData);
+    // After saving, you may want to update the grid data or reload the data to reflect the changes
+    setModalOpen(false);
+  };
 
   const handleSearchClick = () => {
 
@@ -169,7 +186,8 @@ export default function ControlledSelectionServerPaginationGrid() {
 
 
   const handleAutocompleteChange = (event, newValue) => {
-    setSearchValue(newValue || '');
+    setSearchValue(newValue || ''); 
+
   };
 
 
@@ -178,8 +196,10 @@ export default function ControlledSelectionServerPaginationGrid() {
   const debouncedFetchSuggestions = React.useMemo(
     () => debounce((searchValue) => fetchFilteredData(searchValue)
       .then((suggestions) => {
-        console.log(suggestions);
+        // console.log(suggestions);
+
         setAutocompleteOptions(suggestions);
+        console.log(autocompleteOptions)
         setLoading(false);
       })
       .catch((error) => {
@@ -214,8 +234,6 @@ export default function ControlledSelectionServerPaginationGrid() {
         });
     } else {
       console.log("client search");
-
-
       setLoading(false);
       debouncedFetchSuggestions(searchValue);
     }
@@ -236,9 +254,10 @@ export default function ControlledSelectionServerPaginationGrid() {
           disableClearable
           getOptionLabel={(option) => option.name}
           style={{ width: '20vw', padding: '10px 20px' }}
-          value={searchInputValue}
-          // onChange={(e) => setSearchValue(e.target.value)}
+          
+          onChange={(event, newValue) => setSearchValue(newValue)} 
           renderOption={(option) => (
+            
             <div>
               <span style={{ fontWeight: 'bold' }}>Name:</span> {option.name} <br />
               <span style={{ fontWeight: 'bold' }}>Email:</span> {option.email}
@@ -248,7 +267,7 @@ export default function ControlledSelectionServerPaginationGrid() {
             <TextField
               {...params}
               type="text"
-              value={searchInputValue}
+              
               onChange={(e) => setSearchValue(e.target.value)}
               placeholder="Search..."
             />
@@ -272,13 +291,22 @@ export default function ControlledSelectionServerPaginationGrid() {
             { field: 'course', headerName: 'Course', flex: 1, valueGetter: (params) => params.row.courseInfo.course },
             { field: 'branch', headerName: 'Branch', flex: 1, valueGetter: (params) => params.row.courseInfo.branch },
             { field: 'batch', headerName: 'Batch', flex: 1, valueGetter: (params) => params.row.courseInfo.batch },
-            { field: 'referalName', headerName: 'Referral Name', flex: 1, valueGetter: (params) => params.row.referralInfo.referalName },
-            { field: 'referalContactNumber', headerName: 'Referral Contact Number', flex: 1, valueGetter: (params) => params.row.referralInfo.referalContactNumber },
-            { field: 'comments', headerName: 'Comments', flex: 1, valueGetter: (params) => params.row.referralInfo.comments },
+            // { field: 'referalName', headerName: 'Referral Name', flex: 1, valueGetter: (params) => params.row.referralInfo.referalName },
+            // { field: 'referalContactNumber', headerName: 'Referral Contact Number', flex: 1, valueGetter: (params) => params.row.referralInfo.referalContactNumber },
+            // { field: 'comments', headerName: 'Comments', flex: 1, valueGetter: (params) => params.row.referralInfo.comments},
+            {
+              field: 'actions',
+              headerName: 'Actions',
+              width: 120,
+              renderCell: (params) => (
+                <Button variant="outlined" color="primary" onClick={() => handleEditClick(params.row)}>
+                  Edit
+                </Button>
+              ),
+            }
           ]}
           rows={gridData.rows}
           pagination
-
           paginationModel={paginationModel}
           pageSizeOptions={[5, 10, 15]}
           rowCount={gridData.rowCount}
@@ -292,6 +320,13 @@ export default function ControlledSelectionServerPaginationGrid() {
           keepNonExistentRowsSelected
         />
       </div>
+      <EditModal
+        open={isModalOpen}
+        handleClose={() => setModalOpen(false)}
+        rowData={editedRowData}
+        setRowData={setEditedRowData}
+        handleSaveClick={handleSaveClick}
+      />
     </div>
-  );
+     );
 }

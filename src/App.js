@@ -10,6 +10,7 @@ import DisplayData from './viewdata/DisplayData';
 import Search from './viewdata/Search';
 import Home from './component/Home';
 import ViewTable from './component/ViewTable';
+import TraineeTable from './viewdata/TraineeTable';
 
 //import Header from './component/Header';
 
@@ -31,13 +32,14 @@ function App() {
             <React.Fragment>
               <Route path="/x-workz/register" element={<Registration />} />
               <Route path="/x-workz/view" element={<View />} />
-              <Route path="/x-workz/display" element={<ViewTable />} />
+             
               <Route path="/x-workz/search" element={<Search />} />
             </React.Fragment>
           ) : (
             <React.Fragment>
               
               <Route path="/x-workz/login" element={<LoginPage />} ></Route>
+               <Route path="/x-workz/display" element={<ViewTable />} />
               {sessionStorage.clear("userId")}
               <Route path="/x-workz" element={<Home/>}/>
             </React.Fragment>

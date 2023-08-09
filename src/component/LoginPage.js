@@ -50,7 +50,6 @@ const LoginPage = (props) => {
         navigate("/x-workz/view", { state: { email } });
       }).catch(error => {
         
-
         setOtpError("Wrong Otp entered");
       });
     }
