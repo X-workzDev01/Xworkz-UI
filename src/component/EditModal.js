@@ -46,8 +46,9 @@ const EditModal = ({ open, handleClose, rowData }) => {
     if (isConfirming) {
       setLoading(true);
       const updatedData = editedData;
+      console.log(updatedData);
       axios
-        .put(Urlconstant.url + `api/update?email=${rowData.basicInfo.email}`, updatedData, {
+        .put(Urlconstant.url + `api/updateFollowUp?email=${rowData.basicInfo.email}`, updatedData, {
           headers: {
             'Content-Type': 'application/json',
             spreadsheetId: Urlconstant.spreadsheetId,

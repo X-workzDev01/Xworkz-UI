@@ -6,131 +6,131 @@ import axios from 'axios';
 import EditFollowUp from './EditFollowUp';
 
 export default function FollowUp() {
-  const initialPageSize = 10; // Set the initial page size for server-side pagination
-
-  const [paginationModel, setPaginationModel] = React.useState({
-    page: 0,
-    pageSize: initialPageSize,
-  });
-  const [gridData, setGridData] = React.useState({
-    rows: [],
-    rowCount: 0,
-  });
-  const [loading, setLoading] = React.useState(false);
-  const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
   const [isModalOpen, setModalOpen] = React.useState(false);
-  const [editedRowData, setEditedRowData] = React.useState(null);
-
-  const [statusValues, setStatusValues] = useState();
-
-
-
-
-  const handleSaveClick = () => {
-    // Perform save operation here with editedRowData
-    console.log('Edited Data:', editedRowData);
-    // After saving, you may want to update the grid data or reload the data to reflect the changes
-    setModalOpen(false);
-  };
-
-
-
-  function loadServerRows(page, pageSize) {
-    const startingIndex = page * pageSize;
-    const maxRows = pageSize;
-    console.log('Loading server rows with page:', page, 'pageSize:', pageSize, 'status:', statusValues);
-    const spreadsheetId = Urlconstant.spreadsheetId; // Replace this with the actual spreadsheet ID
-
-    const apiUrl = Urlconstant.url + `api/followUp?startingIndex=${startingIndex}&maxRows=${maxRows}&status=${statusValues}`;
-    console.log(apiUrl)
-    const requestOptions = {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        spreadsheetId: spreadsheetId,
-      },
-    };
-    return new Promise((resolve) => {
-      fetch(apiUrl, requestOptions)
-        .then((response) => response.json())
-        .then((data) => {
-          console.log('Received data from server:', data);
-          resolve({
-            rows: data.followUpData.map((row) => ({ id: row.id.toString(), ...row })), // Merge and set id
-            rowCount: data.size, // Set rowCount to the total number of rows (size) in the dataset
-          });
-        })
-        .catch((error) => {
-          console.error('Error fetching data:', error);
-          resolve({ rows: [], rowCount: 0 }); // Return an empty dataset in case of an error
-        });
-    });
-  }
-
-  const handleStatus = () => {
-    setLoading(true);
-    setPaginationModel((prevPaginationModel) => ({ ...prevPaginationModel, page: 0 }));
-    loadServerRows(0, paginationModel.pageSize)
-      .then((data) => {
-        setGridData(data);
-        setLoading(false);
+    const [editedRowData, setEditedRowData] = React.useState(null);
+    const [dropdown, setDropDown] = useState({
+        status: [],
       });
-  }
 
-  const handleEditClick = (row) => {
-    setEditedRowData(row);
-    setModalOpen(true);
-    //console.log(row);
-   // alert(row)
-  };
+    const initialPageSize = 10;
+    const [paginationModel, setPaginationModel] = useState({
+      page: 0,
+      pageSize: initialPageSize,
+    });
+    const [gridData, setGridData] = useState({
+      rows: [],
+      rowCount: 0,
+    });
+    const [loading, setLoading] = useState(false);
+    const [searchValue, setSearchValue] = useState('');
+    useEffect(() => {
+        getDropDown();
+        setLoading(true);
+        searchServerRows(searchValue, paginationModel.page, paginationModel.pageSize)
+          .then((newGridData) => {
+            setGridData(newGridData);
+            setLoading(false);
+          })
+          .catch((error) => {
+            console.error('Error fetching data:', error);
+            setGridData({ rows: [], rowCount: 0 });
+            setLoading(false);
+          });
+      }, [paginationModel.page, paginationModel.pageSize, searchValue]);
 
-  const [dropdown, setDropDown] = useState({
-    status: [],
-  });
+      const handleSearchClick = () => {
+        // Reset the pagination model to initial state
+        setPaginationModel({ page: 0, pageSize: initialPageSize });
+      };
 
-  useEffect(() => {
-    getDropDown();
-  }, []);
-
-  const getDropDown = () => {
-    axios.get(Urlconstant.url + 'utils/dropdown', {
-      headers: {
-        'spreadsheetId': Urlconstant.spreadsheetId
+      function searchServerRows(page, pageSize) {
+        const startingIndex = page * pageSize;
+        const maxRows = pageSize;
+        console.log('Loading server rows with page:', page, 'pageSize:', pageSize, 'status:', searchValue);
+        const spreadsheetId = Urlconstant.spreadsheetId; // Replace this with the actual spreadsheet ID
+    
+        const apiUrl = Urlconstant.url + `api/followUp?startingIndex=${maxRows}&maxRows=10&status=${searchValue}`;
+        console.log(apiUrl)
+        const requestOptions = {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            spreadsheetId: spreadsheetId,
+          },
+        };
+        return new Promise((resolve) => {
+          fetch(apiUrl, requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+              console.log('Received data from server:', data);
+              resolve({
+                rows: data.followUpData.map((row) => ({ id: row.id.toString(), ...row })), // Merge and set id
+                rowCount: data.size, // Set rowCount to the total number of rows (size) in the dataset
+              });
+            })
+            .catch((error) => {
+              console.error('Error fetching data:', error);
+              resolve({ rows: [], rowCount: 0 }); // Return an empty dataset in case of an error
+            });
+        });
       }
-    }).then(response => {
-      setDropDown(response.data)
-    }).catch(error => {
-      console.log(error);
-    })
-  }
-  const handleInputChange = (e) => {
-    setStatusValues(e.target.value);
-    console.log(e.target.value)
-  };
+
+      const handleEditClick = (row) => {
+        setEditedRowData(row);
+        setModalOpen(true);
+      };
+
+      const handleSaveClick = () => {
+        // Perform save operation here with editedRowData
+        console.log('Edited Data:', editedRowData);
+        // After saving, you may want to update the grid data or reload the data to reflect the changes
+        setModalOpen(false);
+      };
+    
+      const getDropDown = () => {
+        axios.get(Urlconstant.url + 'utils/dropdown', {
+          headers: {
+            'spreadsheetId': Urlconstant.spreadsheetId
+          }
+        }).then(response => {
+          setDropDown(response.data)
+        }).catch(error => {
+          console.log(error);
+        })
+      }
+      const handleInputChange = (e) => {
+        setSearchValue(e.target.value);
+        console.log(e.target.value)
+      };
+
   return (
     <div>
-      <div className="search" style={{ display: 'flex', alignItems: 'center', marginTop: '100px' }}>
-
-        <Select name="statusValues"
-          onChange={handleInputChange}
-          value={statusValues}
+        <h2>VeiwFollowUp</h2>
+        <h2>FollowUp List</h2>
+        <div className="search" style={{ marginTop: '50px', display: 'flex', alignItems: 'center' }}>
+       <Select name="statusValues"
+         onChange={handleInputChange}
+          value={searchValue}
           fullWidth
           required
           id="outlined-basic"
           variant="outlined"
+          sx={{
+            marginRight: '10px',
+            p: '4px', // Adjust padding for a smaller size
+            fontSize: '12px', // Adjust font size for a smaller size
+          }}
         >
           {dropdown.status.map((item, index) => (
             <MenuItem value={item} key={index}>{item}</MenuItem>
           ))}
 
         </Select>
-        <Button variant="contained" color="primary" onClick={handleStatus}>
-          Search
-        </Button>
+       
       </div>
-      <div style={{ marginTop: '20px' }}>
-        <DataGrid
-          columns={[
+      <div style={{ height: '650px', width: '100%' }}>
+      <DataGrid
+           columns={[
             { headerName: 'ID', field: 'id', flex: 1 },
             { field: 'traineeName', headerName: 'Trainee Name', flex: 1, valueGetter: (params) => params.row.basicInfo.traineeName },
             { field: 'email', headerName: 'Email', flex: 1, valueGetter: (params) => params.row.basicInfo.email },
@@ -153,51 +153,11 @@ export default function FollowUp() {
           ]}
           rows={gridData.rows}
           pagination
+          paginationModel={paginationModel}
+          pageSizeOptions={[5, 10, 15]}
           rowCount={gridData.rowCount}
-          loading={loading}
-          keepNonExistentRowsSelected
           onPaginationModelChange={setPaginationModel}
-          paginationMode="server" // Set pagination mode to 'server'
-          onRowSelectionModelChange={(newRowSelectionModel) => {
-            setRowSelectionModel(newRowSelectionModel);
-          }}
-          initialState={{
-            pagination: { paginationModel: { pageSize: 10 } },
-          }}
-          // onPageChange={(newPage) => {
-          //   console.log('New page:', newPage);
-
-          //   setLoading(true);
-          //   setPaginationModel((prevPaginationModel) => ({
-          //     ...prevPaginationModel,
-          //     page: newPage,
-          //   }));
-
-          //   loadServerRows(newPage, paginationModel.pageSize)
-          //     .then((data) => {
-          //       console.log('Received data for new page:', data);
-          //       setGridData(data);
-          //       setLoading(false);
-          //     });
-          // }}
-          onPageChange={async (newPage) => {
-            setLoading(true);
-            setPaginationModel((prevPaginationModel) => ({
-              ...prevPaginationModel,
-              page: newPage,
-            }));
-
-            try {
-              const data = await loadServerRows(newPage, paginationModel.pageSize);
-              setGridData(data);
-            } catch (error) {
-              console.error('Error loading data for new page:', error);
-              setGridData({ rows: [], rowCount: 0 });
-            } finally {
-              setLoading(false);
-            }
-          }}
-          pageSizeOptions={[5, 10, 25]}
+          loading={loading}
         />
         <EditFollowUp
         open={isModalOpen}
@@ -206,7 +166,7 @@ export default function FollowUp() {
         setRowData={setEditedRowData}
         handleSaveClick={handleSaveClick}
       />
-      </div>
+        </div>
     </div>
   )
 }

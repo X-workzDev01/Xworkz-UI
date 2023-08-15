@@ -56,7 +56,7 @@ console.log(rowData)
       const statusDto = editedData;
       console.log(editedData)
       axios
-        .post(Urlconstant.url + `api/updateFollowStatus?email=${rowData.basicInfo.email}`, statusDto, {
+        .put(Urlconstant.url + `api/updateFollowUp?email=${rowData.basicInfo.email}`, statusDto, {
           headers: {
             'Content-Type': 'application/json',
             spreadsheetId: Urlconstant.spreadsheetId,
@@ -119,6 +119,7 @@ console.log(rowData)
           name="basicInfo.email"
           value={rowData.basicInfo.email}
           onChange={handleInputChange}
+          defaultValue={rowData.basicInfo.email}
           style={fieldStyle}
           InputProps={{
             readOnly: true,
