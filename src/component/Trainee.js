@@ -10,6 +10,7 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
   const [numberCheck, setNumberCheck] = useState(null);
   const [emailError, setEmailError] = useState(null);
   const [nameError, setNameError] = useState(null);
+  const [buttonEnabled , setButtonEnabled] = useState(false);
   const [phoneNumberError, setPhoneNumberError] = useState('');
 
 

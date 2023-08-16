@@ -96,6 +96,7 @@ async function fetchFilteredData(searchValue) {
   }
 }
 
+
 function debounce(func, delay) {
   let timeout;
   return function executedFunction(...args) {
@@ -126,12 +127,12 @@ export default function ControlledSelectionServerPaginationGrid() {
   const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
   const [searchValue, setSearchValue] = React.useState('');
   const [searchInputValue, setSearchInputValue] = React.useState('');
-  const [searchResults, setSearchResults] = React.useState([]);
+
 
   const [autocompleteOptions, setAutocompleteOptions] = React.useState([]);
   const [isModalOpen, setModalOpen] = React.useState(false);
   const [editedRowData, setEditedRowData] = React.useState(null);
-  const searchFieldRef = React.useRef(null);
+
 
   // const handleSearchChange = async (event, newValue) => {
   //   setSearchValue(newValue);
@@ -143,6 +144,10 @@ export default function ControlledSelectionServerPaginationGrid() {
   //     setAutocompleteOptions([]);
   //   }
   // };
+
+  // React.useEffect(() => {
+  //   console.log('autocompleteOptions updated:', autocompleteOptions);
+  // }, [autocompleteOptions]);
 
   const handleEditClick = (row) => {
     setEditedRowData(row);
@@ -199,7 +204,8 @@ export default function ControlledSelectionServerPaginationGrid() {
         // console.log(suggestions);
 
         setAutocompleteOptions(suggestions);
-        console.log(autocompleteOptions)
+        console.log(suggestions);
+        console.log(autocompleteOptions);
         setLoading(false);
       })
       .catch((error) => {
@@ -215,7 +221,6 @@ export default function ControlledSelectionServerPaginationGrid() {
     setLoading(true);
 
     if (searchValue === '') {
-      console.log("server rows");
 
       // Load data using server-side pagination for the initial load or when search value is empty
       loadServerRows(paginationModel.page, paginationModel.pageSize)
@@ -223,6 +228,9 @@ export default function ControlledSelectionServerPaginationGrid() {
           if (active) {
             setGridData(newGridData);
             setLoading(false);
+            
+            setAutocompleteOptions([]);
+            console.log("suggestion set to null")
           }
         })
         .catch((error) => {
@@ -252,17 +260,10 @@ export default function ControlledSelectionServerPaginationGrid() {
           freeSolo
           id="free-solo-2-demo"
           disableClearable
-          getOptionLabel={(option) => option.name}
+          getOptionLabel={(option) => option}
           style={{ width: '20vw', padding: '10px 20px' }}
           
           onChange={(event, newValue) => setSearchValue(newValue)} 
-          renderOption={(option) => (
-            
-            <div>
-              <span style={{ fontWeight: 'bold' }}>Name:</span> {option.name} <br />
-              <span style={{ fontWeight: 'bold' }}>Email:</span> {option.email}
-            </div>
-          )}
           renderInput={(params) => (
             <TextField
               {...params}

@@ -31,7 +31,8 @@ function App() {
             //protected routes
             <React.Fragment>
               <Route path="/x-workz/register" element={<Registration />} />
-              <Route path="/x-workz/view" element={<View />} />
+              {/* <Route path="/x-workz/view" element={<View />} /> */}
+              <Route path="/x-workz/display" element={<ViewTable />} />
              
               <Route path="/x-workz/search" element={<Search />} />
             </React.Fragment>
@@ -39,7 +40,8 @@ function App() {
             <React.Fragment>
               
               <Route path="/x-workz/login" element={<LoginPage />} ></Route>
-               <Route path="/x-workz/display" element={<ViewTable />} />
+               
+               
               {sessionStorage.clear("userId")}
               <Route path="/x-workz" element={<Home/>}/>
             </React.Fragment>
