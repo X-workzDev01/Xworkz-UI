@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -21,9 +21,16 @@ console.log(rowData)
   const [responseMessage, setResponseMessage] = React.useState('');
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
 
+
+  React.useEffect(()=>{
+    setEditedData(rowData); // Use rowData directly
+
+  }, [rowData]);
+
   if (!rowData) {
     return null; // Render nothing if rowData is not available yet
   }
+  
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -55,6 +62,7 @@ console.log(rowData)
       setLoading(true);
       const statusDto = editedData;
       console.log(editedData)
+      console.log(rowData.basicInfo.email)
       axios
         .put(Urlconstant.url + `api/updateFollowUp?email=${rowData.basicInfo.email}`, statusDto, {
           headers: {
@@ -87,8 +95,6 @@ console.log(rowData)
     setIsConfirming(false);
 
   }
-
-
 
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
