@@ -31,7 +31,7 @@ function App() {
             //protected routes
             <React.Fragment>
               <Route path="/x-workz/register" element={<Registration />} />
-              {/* <Route path="/x-workz/view" element={<View />} /> */}
+              <Route path="/x-workz/view" element={<View />} />
               <Route path="/x-workz/display" element={<ViewTable />} />
              
               <Route path="/x-workz/search" element={<Search />} />
