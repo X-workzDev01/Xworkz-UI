@@ -67,3 +67,13 @@ a {
   justify-content: 'center';
   align-items: 'center';
 }
+.box{
+  width: '200px'; 
+  height: '40px';
+}
+/*changing the header color*/
+.custom-header {
+  background-color: #252020;
+  color: #ffffff; 
+}
+

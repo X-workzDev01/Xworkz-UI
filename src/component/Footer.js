@@ -6,23 +6,13 @@ function Footer() {
     return (
         <footer className="footer-section">
             <div className="container">
-
                 <div className="footer-content pt-5 pb-5">
-                    <div className="row">
-                        <div className="col-xl-4 col-lg-4 mb-50">
-                            <div className="footer-widget">
-                                <div className="footer-logo">
-                                    <img src='https://www.x-workz.in/Logo.png' width="140" height="70" alt='Xworkz' className='logo-img' />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
             <div className="header-social-icon">
                 <a href="https://www.facebook.com/xworkzdevelopmentcenter/"><FaFacebook /></a>
                 <a href="https://twitter.com/workz_x"><FaTwitter /></a>
-                <a href="#"><FaInstagram /></a>
+                <a href="https://instagram"><FaInstagram /></a>
             </div>
             <div className="copyright-area">
                 <div className="container">
