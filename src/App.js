@@ -9,6 +9,10 @@ import View from './viewdata/View';
 import DisplayData from './viewdata/DisplayData';
 import Search from './viewdata/Search';
 import Home from './component/Home';
+import ViewTable from './component/ViewTable';
+import TraineeTable from './viewdata/TraineeTable';
+import FollowUp from './component/FollowUp';
+
 //import Header from './component/Header';
 
 function App() {
@@ -24,17 +28,20 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/x-workz/login" element={<LoginPage get={getState} />} />
+          <Route path="/x-workz/followup" element={<FollowUp />} />
           {login ? (
             //protected routes
             <React.Fragment>
               <Route path="/x-workz/register" element={<Registration />} />
               <Route path="/x-workz/view" element={<View />} />
-              <Route path="/x-workz/display" element={<DisplayData />} />
-              <Route path="/x-workz/search" element={<Search />} />
+              <Route path="/x-workz/display" element={<ViewTable />} />
+              <Route path="/x-workz/followup" element={<FollowUp />} />
             </React.Fragment>
           ) : (
             <React.Fragment>
+              
               <Route path="/x-workz/login" element={<LoginPage />} ></Route>
+               <Route path="/x-workz/display" element={<ViewTable />} />
               {sessionStorage.clear("userId")}
               <Route path="/x-workz" element={<Home/>}/>
             </React.Fragment>
