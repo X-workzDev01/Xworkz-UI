@@ -26,7 +26,7 @@ export default function FollowUp() {
     useEffect(() => {
         getDropDown();
         setLoading(true);
-        searchServerRows(searchValue, paginationModel.page, paginationModel.pageSize)
+        searchServerRows( paginationModel.page, paginationModel.pageSize)
           .then((newGridData) => {
             setGridData(newGridData);
             setLoading(false);
@@ -44,13 +44,17 @@ export default function FollowUp() {
       };
 
       function searchServerRows(page, pageSize) {
-        const startingIndex = page * pageSize;
+        console.log(page)
+        console.log(pageSize)
+        const startingIndex = page*pageSize; 
         const maxRows = pageSize;
         console.log('Loading server rows with page:', page, 'pageSize:', pageSize, 'status:', searchValue);
         const spreadsheetId = Urlconstant.spreadsheetId; // Replace this with the actual spreadsheet ID
     
-        const apiUrl = Urlconstant.url + `api/followUp?startingIndex=${maxRows}&maxRows=10&status=${searchValue}`;
+        const apiUrl = Urlconstant.url + `api/followUp?startingIndex=${startingIndex}&maxRows=10&status=${searchValue}`;
         console.log(apiUrl)
+        console.log(page)
+        console.log(pageSize)
         const requestOptions = {
           method: 'GET',
           headers: {
@@ -158,6 +162,7 @@ export default function FollowUp() {
           rowCount={gridData.rowCount}
           onPaginationModelChange={setPaginationModel}
           loading={loading}
+
         />
         <EditFollowUp
         open={isModalOpen}

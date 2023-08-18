@@ -13,7 +13,7 @@ import { Urlconstant } from '../constant/Urlconstant';
 const fieldStyle = { margin: '20px' };
 
 const EditModal = ({ open, handleClose, rowData }) => {
- 
+
 
   const [isConfirming, setIsConfirming] = React.useState(false);
   const [editedData, setEditedData] = React.useState({ ...rowData });
@@ -46,9 +46,9 @@ const EditModal = ({ open, handleClose, rowData }) => {
     if (isConfirming) {
       setLoading(true);
       const updatedData = editedData;
-      console.log(updatedData);
+      console.log(updatedData)
       axios
-        .put(Urlconstant.url + `api/updateFollowUp?email=${rowData.basicInfo.email}`, updatedData, {
+        .put(Urlconstant.url + `api/update?email=${rowData.basicInfo.email}`, updatedData, {
           headers: {
             'Content-Type': 'application/json',
             spreadsheetId: Urlconstant.spreadsheetId,
@@ -87,11 +87,11 @@ const EditModal = ({ open, handleClose, rowData }) => {
       <DialogTitle>Edit Details</DialogTitle>
       <DialogContent>
         {/* Render your form fields here */}
-        
+
         <TextField
           label="Email"
           name="basicInfo.email"
-        
+
           value={rowData.basicInfo.email}
           onChange={handleInputChange}
           style={fieldStyle}
@@ -176,27 +176,34 @@ const EditModal = ({ open, handleClose, rowData }) => {
           onChange={handleInputChange}
           style={fieldStyle}
         />
-         <TextField
+        <TextField
           label="Comments"
           name="referralInfo.comments"
           defaultValue={rowData.referralInfo.comments}
           onChange={handleInputChange}
           style={fieldStyle}
         />
-        
-       
-        </DialogContent>
+
+        <TextField
+          label="X-workz E-mail"
+          name="xworkzEmail"
+          onChange={handleInputChange}
+          style={fieldStyle}
+        />
+
+
+      </DialogContent>
       <DialogActions>
         <Button onClick={handleClose} color="secondary">
           Cancel
         </Button>
         {loading ? (
-        <CircularProgress size={20} /> // Show loading spinner
-      ) : (
-        <Button onClick={handleEditClick} color="primary">
-          Edit
-        </Button>
-      )}
+          <CircularProgress size={20} /> // Show loading spinner
+        ) : (
+          <Button onClick={handleEditClick} color="primary">
+            Edit
+          </Button>
+        )}
       </DialogActions>
 
       {/* Snackbar for response message */}

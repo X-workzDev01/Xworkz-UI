@@ -9,6 +9,8 @@ import axios from 'axios';
 import EditModal from './EditModal';
 
 function loadServerRows(page, pageSize) {
+  console.log(page)
+        console.log(pageSize)
   const startingIndex = page * pageSize;
   const maxRows = pageSize;
   const spreadsheetId = Urlconstant.spreadsheetId; // Replace this with the actual spreadsheet ID
@@ -178,11 +180,6 @@ export default function ControlledSelectionServerPaginationGrid() {
     });
 
   };
-
-
-
-
-
 
 
   const handleAutocompleteChange = (event, newValue) => {
