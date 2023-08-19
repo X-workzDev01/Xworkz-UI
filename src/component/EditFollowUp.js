@@ -24,7 +24,6 @@ console.log(rowData)
 
   React.useEffect(()=>{
     setEditedData(rowData); // Use rowData directly
-
   }, [rowData]);
 
   if (!rowData) {
