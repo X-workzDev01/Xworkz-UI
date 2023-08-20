@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Urlconstant } from '../constant/Urlconstant';
-import { Button, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import { Button, InputLabel, MenuItem, Select, TextField, debounce } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import axios from 'axios';
 import EditFollowUp from './EditFollowUp';
@@ -26,7 +26,8 @@ export default function FollowUp() {
     useEffect(() => {
         getDropDown();
         setLoading(true);
-        searchServerRows(searchValue, paginationModel.page, paginationModel.pageSize)
+        searchServerRows( paginationModel.page, paginationModel.pageSize)
+        
           .then((newGridData) => {
             setGridData(newGridData);
             setLoading(false);
@@ -44,13 +45,12 @@ export default function FollowUp() {
       };
 
       function searchServerRows(page, pageSize) {
-        const startingIndex = page * pageSize;
-        const maxRows = pageSize;
+        const startingIndex = page*pageSize; 
         console.log('Loading server rows with page:', page, 'pageSize:', pageSize, 'status:', searchValue);
         const spreadsheetId = Urlconstant.spreadsheetId; // Replace this with the actual spreadsheet ID
     
-        const apiUrl = Urlconstant.url + `api/followUp?startingIndex=${maxRows}&maxRows=10&status=${searchValue}`;
-        console.log(apiUrl)
+        const apiUrl = Urlconstant.url + `api/followUp?startingIndex=${startingIndex}&maxRows=10&status=${searchValue}`;
+    
         const requestOptions = {
           method: 'GET',
           headers: {
@@ -64,16 +64,21 @@ export default function FollowUp() {
             .then((data) => {
               console.log('Received data from server:', data);
               resolve({
-                rows: data.followUpData.map((row) => ({ id: row.id.toString(), ...row })), // Merge and set id
-                rowCount: data.size, // Set rowCount to the total number of rows (size) in the dataset
-              });
+                rows: gridData.rows.concat(
+                  data.followUpData.map((row) => ({ id: row.id.toString(), ...row }))
+                ),
+                rowCount: data.size,// Set rowCount to the total number of rows (size) in the dataset
+              },1000);
             })
             .catch((error) => {
               console.error('Error fetching data:', error);
               resolve({ rows: [], rowCount: 0 }); // Return an empty dataset in case of an error
             });
         });
-      }
+      };
+
+
+    
 
       const handleEditClick = (row) => {
         setEditedRowData(row);
@@ -158,6 +163,7 @@ export default function FollowUp() {
           rowCount={gridData.rowCount}
           onPaginationModelChange={setPaginationModel}
           loading={loading}
+
         />
         <EditFollowUp
         open={isModalOpen}

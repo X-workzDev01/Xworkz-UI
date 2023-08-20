@@ -13,13 +13,14 @@ import { Urlconstant } from '../constant/Urlconstant';
 const fieldStyle = { margin: '20px' };
 
 const EditModal = ({ open, handleClose, rowData }) => {
- 
+
 
   const [isConfirming, setIsConfirming] = React.useState(false);
   const [editedData, setEditedData] = React.useState({ ...rowData });
   const [loading, setLoading] = React.useState(false);
   const [responseMessage, setResponseMessage] = React.useState('');
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
+  const [xworkzEmail, setXworkzEmail] = React.useState('');
 
   if (!rowData) {
     return null; // Render nothing if rowData is not available yet
@@ -43,12 +44,13 @@ const EditModal = ({ open, handleClose, rowData }) => {
   };
 
   const handleSaveClick = () => {
+    editedData.xworkzEmail = xworkzEmail;
     if (isConfirming) {
       setLoading(true);
-      const updatedData = editedData;
-      console.log(updatedData);
+      const updatedData = { ...editedData, xworkzEmail };
+      console.log(updatedData)
       axios
-        .put(Urlconstant.url + `api/updateFollowUp?email=${rowData.basicInfo.email}`, updatedData, {
+        .put(Urlconstant.url + `api/update?email=${rowData.basicInfo.email}`, updatedData, {
           headers: {
             'Content-Type': 'application/json',
             spreadsheetId: Urlconstant.spreadsheetId,
@@ -87,11 +89,11 @@ const EditModal = ({ open, handleClose, rowData }) => {
       <DialogTitle>Edit Details</DialogTitle>
       <DialogContent>
         {/* Render your form fields here */}
-        
+
         <TextField
           label="Email"
           name="basicInfo.email"
-        
+
           value={rowData.basicInfo.email}
           onChange={handleInputChange}
           style={fieldStyle}
@@ -176,27 +178,35 @@ const EditModal = ({ open, handleClose, rowData }) => {
           onChange={handleInputChange}
           style={fieldStyle}
         />
-         <TextField
+        <TextField
           label="Comments"
           name="referralInfo.comments"
           defaultValue={rowData.referralInfo.comments}
           onChange={handleInputChange}
           style={fieldStyle}
         />
-        
-       
-        </DialogContent>
+<TextField
+  label="X-workz E-mail"
+  name="xworkzEmail"
+  value={xworkzEmail}
+  onChange={(event) => setXworkzEmail(event.target.value)}
+  style={fieldStyle}
+/>
+
+
+
+      </DialogContent>
       <DialogActions>
         <Button onClick={handleClose} color="secondary">
           Cancel
         </Button>
         {loading ? (
-        <CircularProgress size={20} /> // Show loading spinner
-      ) : (
-        <Button onClick={handleEditClick} color="primary">
-          Edit
-        </Button>
-      )}
+          <CircularProgress size={20} /> // Show loading spinner
+        ) : (
+          <Button onClick={handleEditClick} color="primary">
+            Edit
+          </Button>
+        )}
       </DialogActions>
 
       {/* Snackbar for response message */}

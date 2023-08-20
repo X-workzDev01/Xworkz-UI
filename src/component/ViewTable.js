@@ -180,18 +180,10 @@ export default function ControlledSelectionServerPaginationGrid() {
   };
 
 
-
-
-
-
-
   const handleAutocompleteChange = (event, newValue) => {
     setSearchValue(newValue || ''); 
 
   };
-
-
-
 
   const debouncedFetchSuggestions = React.useMemo(
     () => debounce((searchValue) => fetchFilteredData(searchValue)
