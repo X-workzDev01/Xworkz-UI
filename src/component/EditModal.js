@@ -187,7 +187,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
         />
         <TextField
           label="X-workz E-mail"
-          name="xworkzEmail"
+          name="referralInfo.xworkzEmail"
           value={rowData.referralInfo.xworkzEmail}
           onChange={handleInputChange}
           style={fieldStyle}
