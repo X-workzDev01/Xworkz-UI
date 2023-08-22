@@ -20,6 +20,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
   const [loading, setLoading] = React.useState(false);
   const [responseMessage, setResponseMessage] = React.useState('');
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
+  
 
   if (!rowData) {
     return null; // Render nothing if rowData is not available yet
@@ -43,6 +44,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
   };
 
   const handleSaveClick = () => {
+  
     if (isConfirming) {
       setLoading(true);
       const updatedData = editedData
@@ -185,7 +187,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
         />
         <TextField
           label="X-workz E-mail"
-          name="referralInfo.xworkzEmail"
+          name="xworkzEmail"
           value={rowData.referralInfo.xworkzEmail}
           onChange={handleInputChange}
           style={fieldStyle}
