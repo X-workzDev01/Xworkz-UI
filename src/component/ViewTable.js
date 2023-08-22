@@ -7,6 +7,8 @@ import ClearIcon from '@mui/icons-material/Clear';
 import Autocomplete from '@mui/material/Autocomplete';
 import axios from 'axios';
 import EditModal from './EditModal';
+import Profile from './Profile';
+import { Link } from 'react-router-dom';
 
 function loadServerRows(page, pageSize) {
   const startingIndex = page * pageSize;
@@ -184,6 +186,13 @@ export default function ControlledSelectionServerPaginationGrid() {
 
   };
 
+  const handleViewProfile = (rowData) => {
+    // Open the profile page and pass rowData as a prop
+    // You can use a state or a modal to display the profile page
+    // Example:
+    <Profile rowData={rowData} />
+  };
+
 
 
 
@@ -300,9 +309,24 @@ export default function ControlledSelectionServerPaginationGrid() {
               headerName: 'Actions',
               width: 120,
               renderCell: (params) => (
-                <Button variant="outlined" color="primary" onClick={() => handleEditClick(params.row)}>
+                <div>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  onClick={() => handleEditClick(params.row)}
+                >
                   Edit
                 </Button>
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  component={Link} // Use Link component for navigation
+                  to={`x-workz/profile/${params.row.basicInfo.email}`} // Pass email as a parameter
+                >
+                  View
+                </Button>
+              </div>
+                
               ),
             }
           ]}
