@@ -58,18 +58,17 @@ export default function FollowUp() {
             spreadsheetId: spreadsheetId,
           },
         };
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
           fetch(apiUrl, requestOptions)
             .then((response) => response.json())
             .then((data) => {
               console.log('Received data from server:', data);
-              resolve({
-                rows: gridData.rows.concat(
-                  data.followUpData.map((row) => ({ id: row.id.toString(), ...row }))
-                ),
-                rowCount: data.size,// Set rowCount to the total number of rows (size) in the dataset
-              },1000);
-            })
+              const newGridData = {
+                rows: data.followUpData.map((row) => ({ id: row.id.toString(), ...row })),
+                rowCount: data.size,
+              };
+              resolve(newGridData);
+            },1000)
             .catch((error) => {
               console.error('Error fetching data:', error);
               resolve({ rows: [], rowCount: 0 }); // Return an empty dataset in case of an error
@@ -122,7 +121,7 @@ export default function FollowUp() {
           variant="outlined"
           sx={{
             marginRight: '10px',
-            p: '4px', // Adjust padding for a smaller size
+            width:'200px', // Adjust padding for a smaller size
             fontSize: '12px', // Adjust font size for a smaller size
           }}
         >
