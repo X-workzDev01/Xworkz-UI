@@ -23,25 +23,33 @@ export default function FollowUp() {
     });
     const [loading, setLoading] = useState(false);
     const [searchValue, setSearchValue] = useState('');
-    useEffect(() => {
-        getDropDown();
-        setLoading(true);
-        searchServerRows( paginationModel.page, paginationModel.pageSize)
-        
-          .then((newGridData) => {
-            setGridData(newGridData);
-            setLoading(false);
-          })
-          .catch((error) => {
-            console.error('Error fetching data:', error);
-            setGridData({ rows: [], rowCount: 0 });
-            setLoading(false);
-          });
-      }, [paginationModel.page, paginationModel.pageSize, searchValue]);
+
+    React.useEffect(() => {
+      getDropDown();
+      setLoading(true);
+      // When searchValue changes, we need to reset the page back to 0
+      setPaginationModel({ page: 0, pageSize: initialPageSize });
+    
+      // Fetch data with updated searchValue
+      searchServerRows(0, initialPageSize).then((newGridData) => {
+        setGridData(newGridData);
+        setLoading(false);
+      });
+    }, [searchValue]);
+
+
+    React.useEffect(() => {
+  setLoading(true);
+  searchServerRows(paginationModel.page, paginationModel.pageSize).then((newGridData) => {
+    setGridData(newGridData);
+    setLoading(false);
+  });
+}, [paginationModel.page, paginationModel.pageSize]);
+    
 
       const handleSearchClick = () => {
-        // Reset the pagination model to initial state
         setPaginationModel({ page: 0, pageSize: initialPageSize });
+        setSearchValue(searchValue);
       };
 
       function searchServerRows(page, pageSize) {
@@ -160,8 +168,10 @@ export default function FollowUp() {
           paginationModel={paginationModel}
           pageSizeOptions={[5, 10, 15]}
           rowCount={gridData.rowCount}
+          paginationMode="server"
           onPaginationModelChange={setPaginationModel}
           loading={loading}
+          keepNonExistentRowsSelected
 
         />
         <EditFollowUp

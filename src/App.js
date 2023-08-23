@@ -12,7 +12,6 @@ import Home from './component/Home';
 import ViewTable from './component/ViewTable';
 import TraineeTable from './viewdata/TraineeTable';
 import FollowUp from './component/FollowUp';
-
 //import Header from './component/Header';
 
 function App() {
