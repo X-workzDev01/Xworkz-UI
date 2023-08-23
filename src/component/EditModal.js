@@ -20,7 +20,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
   const [loading, setLoading] = React.useState(false);
   const [responseMessage, setResponseMessage] = React.useState('');
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
-  
+
 
   if (!rowData) {
     return null; // Render nothing if rowData is not available yet

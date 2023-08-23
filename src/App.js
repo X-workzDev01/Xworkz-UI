@@ -27,7 +27,11 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/x-workz/login" element={<LoginPage get={getState} />} />
+<<<<<<< Updated upstream
           <Route path="/x-workz/followup" element={<FollowUp />} />
+=======
+
+>>>>>>> Stashed changes
           {login ? (
             //protected routes
             <React.Fragment>
