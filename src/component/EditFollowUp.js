@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -12,35 +12,43 @@ import { Urlconstant } from '../constant/Urlconstant';
 
 const fieldStyle = { margin: '20px' };
 
-const EditModal = ({ open, handleClose, rowData }) => {
+const EditFollowUp = ({ open, handleClose, rowData }) => {
+ 
+console.log(rowData)
   const [isConfirming, setIsConfirming] = React.useState(false);
-  const [editedData, setEditedData] = React.useState(rowData); // Use rowData directly
+  const [editedData, setEditedData] = React.useState({ ...rowData });
   const [loading, setLoading] = React.useState(false);
   const [responseMessage, setResponseMessage] = React.useState('');
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
-  const [xworkzEmail, setXworkzEmail] = React.useState('');
 
-  // Update editedData when rowData changes
-  React.useEffect(() => {
+
+  React.useEffect(()=>{
     setEditedData(rowData); // Use rowData directly
   }, [rowData]);
+
   if (!rowData) {
     return null; // Render nothing if rowData is not available yet
   }
+  
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    const [section, field] = name.split('.');
-
-
-    setEditedData((prevData) => ({
-      ...prevData,
-      [section]: {
-        ...prevData[section],
-        [field]: value,
-      },
-    }));
-
+    const keys = name.split('.'); // Split the name attribute
+    let updatedData = { ...editedData };
+  
+    // Traverse the keys and update the data accordingly
+    let currentData = updatedData;
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i];
+      if (i === keys.length - 1) {
+        currentData[key] = value;
+      } else {
+        currentData[key] = currentData[key] || {}; // Ensure nested object exists
+        currentData = currentData[key];
+      }
+    }
+  
+    setEditedData(updatedData);
   };
 
   const handleEditClick = () => {
@@ -49,15 +57,13 @@ const EditModal = ({ open, handleClose, rowData }) => {
   };
 
   const handleSaveClick = () => {
-
-
-    editedData.xworkzEmail = xworkzEmail;
     if (isConfirming) {
       setLoading(true);
-      const updatedData = { ...editedData, xworkzEmail };
-      console.log(updatedData)
+      const statusDto = editedData;
+      console.log(editedData)
+      console.log(rowData.basicInfo.email)
       axios
-        .put(Urlconstant.url + `api/update?email=${rowData.basicInfo.email}`, updatedData, {
+        .put(Urlconstant.url + `api/updateFollowUp?email=${rowData.basicInfo.email}`, statusDto, {
           headers: {
             'Content-Type': 'application/json',
             spreadsheetId: Urlconstant.spreadsheetId,
@@ -89,27 +95,23 @@ const EditModal = ({ open, handleClose, rowData }) => {
 
   }
 
-
-
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle>Edit Details</DialogTitle>
       <DialogContent>
         {/* Render your form fields here */}
 
-
-        <TextField
-          label="Email"
-          name="basicInfo.email"
-
-
-          value={rowData.basicInfo.email}
-          onChange={handleInputChange}
+       <TextField
+          label="ID"
+          name="basicInfo.id"
+          defaultValue={rowData.basicInfo.id}
           style={fieldStyle}
+          onChange={handleInputChange}
           InputProps={{
             readOnly: true,
           }}
         />
+
         <TextField
           label="Name"
           name="basicInfo.traineeName"
@@ -118,111 +120,72 @@ const EditModal = ({ open, handleClose, rowData }) => {
           onChange={handleInputChange}
         />
         <TextField
+          label="Email"
+          name="basicInfo.email"
+          value={rowData.basicInfo.email}
+          onChange={handleInputChange}
+          defaultValue={rowData.basicInfo.email}
+          style={fieldStyle}
+          InputProps={{
+            readOnly: true,
+          }}
+        />
+        
+        <TextField
           label="Contact Number"
           name="basicInfo.contactNumber"
           defaultValue={rowData.basicInfo.contactNumber}
           onChange={handleInputChange}
           style={fieldStyle}
         />
-        <TextField
-          label="Qualification"
-          name="educationInfo.qualification"
-          defaultValue={rowData.educationInfo.qualification}
+         <TextField
+          label="Registation Date"
+          name="registrationDate"
+          defaultValue={rowData.registrationDate}
+          onChange={handleInputChange}
+          style={fieldStyle}
+        />
+         <TextField
+          label="Joining Date"
+          name="joiningDate"
+          defaultValue={rowData.joiningDate}
           onChange={handleInputChange}
           style={fieldStyle}
         />
         <TextField
-          label="Stream"
-          name="educationInfo.stream"
-          defaultValue={rowData.educationInfo.stream}
+          label="Course Name"
+          name="courseName"
+          defaultValue={rowData.courseName}
           onChange={handleInputChange}
           style={fieldStyle}
         />
         <TextField
-          label="YOP"
-          name="educationInfo.yearOfPassout"
-          defaultValue={rowData.educationInfo.yearOfPassout}
+          label="Currently FollowedBy"
+          name="currentlyFollowedBy"
+          defaultValue={rowData.currentlyFollowedBy}
           onChange={handleInputChange}
           style={fieldStyle}
         />
         <TextField
-          label="College Name"
-          name="educationInfo.collegeName"
-          defaultValue={rowData.educationInfo.collegeName}
+          label="Current status"
+          name="currentStatus"
+          defaultValue={rowData.currentStatus}
           onChange={handleInputChange}
           style={fieldStyle}
         />
-        <TextField
-          label="Course"
-          name="courseInfo.course"
-          defaultValue={rowData.courseInfo.course}
-          onChange={handleInputChange}
-          style={fieldStyle}
-        />
-        <TextField
-          label="Branch"
-          name="courseInfo.branch"
-          defaultValue={rowData.courseInfo.branch}
-          onChange={handleInputChange}
-          style={fieldStyle}
-        />
-        <TextField
-          label="Batch"
-          name="courseInfo.batch"
-          defaultValue={rowData.courseInfo.batch}
-          onChange={handleInputChange}
-          style={fieldStyle}
-        />
-        <TextField
-          label="Referal Name"
-          name="referralInfo.referalName"
-          defaultValue={rowData.referralInfo.referalName}
-          onChange={handleInputChange}
-          style={fieldStyle}
-        />
-        <TextField
-          label="Referal Contact Number"
-          name="referralInfo.referalContactNumber"
-          defaultValue={rowData.referralInfo.referalContactNumber}
-          onChange={handleInputChange}
-          style={fieldStyle}
-        />
-
-        <TextField
-
-          label="Comments"
-          name="referralInfo.comments"
-          defaultValue={rowData.referralInfo.comments}
-          onChange={handleInputChange}
-          style={fieldStyle}
-        />
-
-<TextField
-  label="X-workz E-mail"
-  name="xworkzEmail"
-  value={xworkzEmail}
-  onChange={(event) => setXworkzEmail(event.target.value)}
-  style={fieldStyle}
-/>
-
-
-
-      </DialogContent>
-
+       
+        </DialogContent>
       <DialogActions>
         <Button onClick={handleClose} color="secondary">
           Cancel
         </Button>
         {loading ? (
-
-
-          <CircularProgress size={20} /> // Show loading spinner
-        ) : (
-          <Button onClick={handleEditClick} color="primary">
-            Edit
-          </Button>
-        )}
-
+        <CircularProgress size={20} /> // Show loading spinner
+      ) : (
+        <Button onClick={handleEditClick} color="primary">
+          Edit
+        </Button>
+      )}
       </DialogActions>
 
       {/* Snackbar for response message */}
@@ -252,4 +215,4 @@ const EditModal = ({ open, handleClose, rowData }) => {
   );
 };
 
-export default EditModal;
+export default EditFollowUp;

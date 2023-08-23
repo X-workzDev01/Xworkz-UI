@@ -10,6 +10,7 @@ import EditModal from './EditModal';
 import Profile from './Profile';
 import { Link } from 'react-router-dom';
 
+
 function loadServerRows(page, pageSize) {
   const startingIndex = page * pageSize;
   const maxRows = pageSize;
@@ -129,6 +130,7 @@ export default function ControlledSelectionServerPaginationGrid() {
   const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
   const [searchValue, setSearchValue] = React.useState('');
   const [searchInputValue, setSearchInputValue] = React.useState('');
+  const [searchResults, setSearchResults] = React.useState([]);
 
 
   const [autocompleteOptions, setAutocompleteOptions] = React.useState([]);
@@ -147,9 +149,11 @@ export default function ControlledSelectionServerPaginationGrid() {
   //   }
   // };
 
+
   // React.useEffect(() => {
   //   console.log('autocompleteOptions updated:', autocompleteOptions);
   // }, [autocompleteOptions]);
+
 
   const handleEditClick = (row) => {
     setEditedRowData(row);
@@ -186,12 +190,14 @@ export default function ControlledSelectionServerPaginationGrid() {
 
   };
 
+
   const handleViewProfile = (rowData) => {
     // Open the profile page and pass rowData as a prop
     // You can use a state or a modal to display the profile page
     // Example:
     <Profile rowData={rowData} />
-  };
+  }
+
 
 
 
@@ -206,15 +212,15 @@ export default function ControlledSelectionServerPaginationGrid() {
 
 
 
-
   const debouncedFetchSuggestions = React.useMemo(
     () => debounce((searchValue) => fetchFilteredData(searchValue)
       .then((suggestions) => {
         // console.log(suggestions);
 
         setAutocompleteOptions(suggestions);
-        console.log(suggestions);
-        console.log(autocompleteOptions);
+
+        console.log(autocompleteOptions)
+
         setLoading(false);
       })
       .catch((error) => {
@@ -231,15 +237,18 @@ export default function ControlledSelectionServerPaginationGrid() {
 
     if (searchValue === '') {
 
+
       // Load data using server-side pagination for the initial load or when search value is empty
       loadServerRows(paginationModel.page, paginationModel.pageSize)
         .then((newGridData) => {
           if (active) {
             setGridData(newGridData);
             setLoading(false);
+
             
             setAutocompleteOptions([]);
             console.log("suggestion set to null")
+
           }
         })
         .catch((error) => {
@@ -269,10 +278,13 @@ export default function ControlledSelectionServerPaginationGrid() {
           freeSolo
           id="free-solo-2-demo"
           disableClearable
+
           getOptionLabel={(option) => option}
           style={{ width: '20vw', padding: '10px 20px' }}
           
           onChange={(event, newValue) => setSearchValue(newValue)} 
+
+
           renderInput={(params) => (
             <TextField
               {...params}
@@ -309,6 +321,7 @@ export default function ControlledSelectionServerPaginationGrid() {
               headerName: 'Actions',
               width: 120,
               renderCell: (params) => (
+
                 <div>
                 <Button
                   variant="outlined"
@@ -321,12 +334,14 @@ export default function ControlledSelectionServerPaginationGrid() {
                   variant="outlined"
                   color="secondary"
                   component={Link} // Use Link component for navigation
-                  to={`x-workz/profile/${params.row.basicInfo.email}`} // Pass email as a parameter
+                  to={`/x-workz/profile/${params.row.basicInfo.email}`} // Pass email as a parameter
                 >
                   View
                 </Button>
               </div>
                 
+
+
               ),
             }
           ]}
