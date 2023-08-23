@@ -16,6 +16,10 @@ export default function PageList() {
     const handleSearch=()=>{
         navigate("/x-workz/search")
     }
+
+    const handlefollowup=()=>{
+        navigate("/x-workz/followup")
+    }
     return (
         <>
             <h1>Hello</h1>
@@ -32,6 +36,13 @@ export default function PageList() {
                         View Records
                     </Button>
                 </Grid>
+
+                <Grid item>
+                    <Button type="submit" variant="contained" color='primary' onClick={handlefollowup}>
+                        Follow Up
+                    </Button>
+                </Grid>
+
                 
                 <Grid item>
                     <Button variant="contained" color="primary">

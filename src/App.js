@@ -12,6 +12,7 @@ import Home from './component/Home';
 import ViewTable from './component/ViewTable';
 import TraineeTable from './viewdata/TraineeTable';
 import Profile from './component/Profile';
+import FollowUp from './component/FollowUp'
 
 //import Header from './component/Header';
 
@@ -34,7 +35,10 @@ function App() {
               <Route path="/x-workz/register" element={<Registration />} />
               <Route path="/x-workz/view" element={<View />} />
               <Route path="/x-workz/display" element={<ViewTable />} />
+              <Route path="/x-workz/followup" element={<FollowUp />} />
+
               <Route path="/x-workz/profile/:email"  element={<Profile />} />
+
             
              
               <Route path="/x-workz/search" element={<Search />} />
@@ -43,7 +47,6 @@ function App() {
             <React.Fragment>
               
               <Route path="/x-workz/login" element={<LoginPage />} ></Route>
-              
               {sessionStorage.clear("userId")}
               <Route path="/x-workz" element={<Home/>}/>
             </React.Fragment>
