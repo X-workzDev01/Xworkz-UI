@@ -13,15 +13,17 @@ import { Urlconstant } from '../constant/Urlconstant';
 const fieldStyle = { margin: '20px' };
 
 const EditModal = ({ open, handleClose, rowData }) => {
-
-
   const [isConfirming, setIsConfirming] = React.useState(false);
-  const [editedData, setEditedData] = React.useState({ ...rowData });
+  const [editedData, setEditedData] = React.useState(rowData); // Use rowData directly
   const [loading, setLoading] = React.useState(false);
   const [responseMessage, setResponseMessage] = React.useState('');
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   
 
+  // Update editedData when rowData changes
+  React.useEffect(() => {
+    setEditedData(rowData); // Use rowData directly
+  }, [rowData]);
   if (!rowData) {
     return null; // Render nothing if rowData is not available yet
   }
@@ -29,6 +31,8 @@ const EditModal = ({ open, handleClose, rowData }) => {
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     const [section, field] = name.split('.');
+
+
     setEditedData((prevData) => ({
       ...prevData,
       [section]: {
@@ -36,6 +40,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
         [field]: value,
       },
     }));
+
   };
 
   const handleEditClick = () => {
@@ -44,7 +49,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
   };
 
   const handleSaveClick = () => {
-  
+    editedData.xworkzEmail = xworkzEmail;
     if (isConfirming) {
       setLoading(true);
       const updatedData = editedData
@@ -90,9 +95,11 @@ const EditModal = ({ open, handleClose, rowData }) => {
       <DialogContent>
         {/* Render your form fields here */}
 
+
         <TextField
           label="Email"
           name="basicInfo.email"
+
 
           value={rowData.basicInfo.email}
           onChange={handleInputChange}
@@ -178,13 +185,16 @@ const EditModal = ({ open, handleClose, rowData }) => {
           onChange={handleInputChange}
           style={fieldStyle}
         />
+
         <TextField
+
           label="Comments"
           name="referralInfo.comments"
           defaultValue={rowData.referralInfo.comments}
           onChange={handleInputChange}
           style={fieldStyle}
         />
+
         <TextField
           label="X-workz E-mail"
           name="referralInfo.xworkzEmail"
@@ -195,18 +205,23 @@ const EditModal = ({ open, handleClose, rowData }) => {
 
 
 
+
       </DialogContent>
+
       <DialogActions>
         <Button onClick={handleClose} color="secondary">
           Cancel
         </Button>
         {loading ? (
+
+
           <CircularProgress size={20} /> // Show loading spinner
         ) : (
           <Button onClick={handleEditClick} color="primary">
             Edit
           </Button>
         )}
+
       </DialogActions>
 
       {/* Snackbar for response message */}
