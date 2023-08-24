@@ -18,7 +18,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
   const [loading, setLoading] = React.useState(false);
   const [responseMessage, setResponseMessage] = React.useState('');
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
-  const [xworkzEmail, setXworkzEmail] = React.useState('');
+  
 
   // Update editedData when rowData changes
   React.useEffect(() => {
@@ -49,12 +49,10 @@ const EditModal = ({ open, handleClose, rowData }) => {
   };
 
   const handleSaveClick = () => {
-
-
     editedData.xworkzEmail = xworkzEmail;
     if (isConfirming) {
       setLoading(true);
-      const updatedData = { ...editedData, xworkzEmail };
+      const updatedData = editedData
       console.log(updatedData)
       axios
         .put(Urlconstant.url + `api/update?email=${rowData.basicInfo.email}`, updatedData, {
@@ -197,13 +195,14 @@ const EditModal = ({ open, handleClose, rowData }) => {
           style={fieldStyle}
         />
 
-<TextField
-  label="X-workz E-mail"
-  name="xworkzEmail"
-  value={xworkzEmail}
-  onChange={(event) => setXworkzEmail(event.target.value)}
-  style={fieldStyle}
-/>
+        <TextField
+          label="X-workz E-mail"
+          name="referralInfo.xworkzEmail"
+          value={rowData.referralInfo.xworkzEmail}
+          onChange={handleInputChange}
+          style={fieldStyle}
+        />
+
 
 
 
