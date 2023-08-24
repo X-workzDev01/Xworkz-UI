@@ -18,7 +18,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
   const [loading, setLoading] = React.useState(false);
   const [responseMessage, setResponseMessage] = React.useState('');
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
-  
+
 
   // Update editedData when rowData changes
   React.useEffect(() => {

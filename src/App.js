@@ -11,6 +11,7 @@ import Search from './viewdata/Search';
 import Home from './component/Home';
 import ViewTable from './component/ViewTable';
 import TraineeTable from './viewdata/TraineeTable';
+
 import Profile from './component/Profile';
 import FollowUp from './component/FollowUp'
 
@@ -29,6 +30,7 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/x-workz/login" element={<LoginPage get={getState} />} />
+
           {login ? (
             //protected routes
             <React.Fragment>
