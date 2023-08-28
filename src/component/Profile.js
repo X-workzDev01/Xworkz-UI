@@ -10,51 +10,58 @@ import AddIcon from '@mui/icons-material/Add';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import FollowStatusGrid from './FollowStatusGrid';
 import Avatar from '@mui/material/Avatar';
+import EditFollowUp from './EditFollowUp';
+import EditModal from './EditModal';
 
 function stringToColor(string) {
     let hash = 0;
     let i;
-  
+
     /* eslint-disable no-bitwise */
     for (i = 0; i < string.length; i += 1) {
-      hash = string.charCodeAt(i) + ((hash << 5) - hash);
+        hash = string.charCodeAt(i) + ((hash << 5) - hash);
     }
-  
+
     let color = '#';
-  
+
     for (i = 0; i < 3; i += 1) {
-      const value = (hash >> (i * 8)) & 0xff;
-      color += `00${value.toString(16)}`.slice(-2);
+        const value = (hash >> (i * 8)) & 0xff;
+        color += `00${value.toString(16)}`.slice(-2);
     }
     /* eslint-enable no-bitwise */
-  
+
     return color;
-  }
-  
-  function stringAvatar(name) {
+}
+
+function stringAvatar(name) {
     let avatarText = '';
-  
+
     if (name.includes(' ')) {
-      // Two-word name
-      const [firstName, lastName] = name.split(' ');
-      avatarText = `${firstName[0]}${lastName[0]}`;
+        // Two-word name
+        const [firstName, lastName] = name.split(' ');
+        avatarText = `${firstName[0]}${lastName[0]}`;
     } else {
-      // One-word name
-      avatarText = name[0];
+        // One-word name
+        avatarText = name[0];
     }
-  
+
     return {
-      sx: {
-        bgcolor: stringToColor(name),
-      },
-      children: avatarText,
+        sx: {
+            bgcolor: stringToColor(name),
+        },
+        children: avatarText,
     };
-  }
+}
 const Profile = () => {
     const { email } = useParams(); // Get the email from the URL parameter
     const [profileData, setProfileData] = useState(null);
     const [followUpData, setFollowUpData] = useState(null);
     const [statusData, setStatusData] = useState(null);
+    const [isModalOpen, setModalOpen] = React.useState(false);
+    const [editedRowData, setEditedRowData] = React.useState(null);
+
+    // const [isModalOpen, setModalOpen] = React.useState(false);
+    // const [editedRowData, setEditedRowData] = React.useState(null);
 
     useEffect(() => {
         // Define the URL for your API endpoint using the email parameter
@@ -85,7 +92,7 @@ const Profile = () => {
                 }),
             ])
             .then(
-                axios.spread((profileResponse, followUpResponse , statusResponse) => {
+                axios.spread((profileResponse, followUpResponse, statusResponse) => {
                     setProfileData(profileResponse.data);
                     setFollowUpData(followUpResponse.data);
                     setStatusData(statusResponse.data);
@@ -100,12 +107,30 @@ const Profile = () => {
         return <div>Loading...</div>;
     }
 
+    const handleEditClick = (row) => {
+        setEditedRowData(row);
+        setModalOpen(true);
+    };
+    const handleSaveClick = () => {
+        setModalOpen(false)
+    };
+    const handleEditFollowUp=(row)=>{
+        alert("Edit Follow Up");
+        console.log(row);
+        setModalOpen(true);
+    };
+
+    const handleFollowUp=(row)=>{
+        alert("Add follow up")
+        console.log(row);
+    }
+
     return (
         <div>
             <div className="card">
-            
+
                 <div className="infos">
-                <Avatar {...stringAvatar(profileData.basicInfo.traineeName)} />
+                    <Avatar {...stringAvatar(profileData.basicInfo.traineeName)} />
                     <div className="name">
                         <h1>{profileData.basicInfo.traineeName}</h1>
                         <h3>
@@ -132,7 +157,7 @@ const Profile = () => {
                         </li>
                     </ul>
                     <ul className="stats">
-                       
+
                         <li>
                             <h3>{followUpData.registrationDate}</h3>
                             <h4>Registration Date</h4>
@@ -151,19 +176,30 @@ const Profile = () => {
                         </li>
                     </ul>
                     <div className="links">
-                        <Button variant="outlined" startIcon={<AddIcon />}>
+                        <Button variant="outlined" startIcon={<AddIcon />} onClick={()=> handleFollowUp()}>
                             Add FollowUp
                         </Button>
-                        <Button variant="outlined" startIcon={<ModeEditIcon />}>
-                            Edit
+                        <Button variant="outlined" startIcon={<ModeEditIcon />} onClick={() => handleEditClick(profileData)}>
+                            Edit Profile
+                        </Button>
+                        <Button variant="outlined" startIcon={<ModeEditIcon />} onClick={()=>handleEditFollowUp(followUpData)}>
+                            Edit FollowUp
                         </Button>
                     </div>
                 </div>
+                
             </div>
             
+            <EditModal
+                open={isModalOpen}
+                handleClose={() => setModalOpen(false)}
+                rowData={editedRowData}
+                setRowData={setEditedRowData}
+                handleSaveClick={handleSaveClick}
+            />
             {statusData ? <FollowStatusGrid rows={statusData} /> : null}
         </div>
-        
+
     );
 };
 

@@ -3,9 +3,6 @@ import React from 'react'
 import { Form } from 'react-bootstrap';
 
 export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious }) => {
-  const branchName = ['BTM','Rajajinagar']
-  const offered = ['CSR Offered', 'CSR Non-Offered', 'NON CSR']
-  const sortedCourse = dropdown.course.slice().sort((a, b) => a.localeCompare(b));
 
   const getCurrentDate = () => {
     const now = new Date();
@@ -36,7 +33,7 @@ export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious }) 
             value={formData.course || ''}
             onChange={handleInputChange}
           >
-            {sortedCourse.map((item, index) => (
+            {dropdown.course.map((item, index) => (
               <MenuItem value={item} key={index}>{item}</MenuItem>
             ))}
           </Select>
@@ -51,7 +48,7 @@ export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious }) 
             id="outlined-basic"
             variant="outlined"
           >
-            {branchName.map((item, index) => (
+            {dropdown.branchname.map((item, index) => (
               <MenuItem value={item} key={index}>{item}</MenuItem>
             ))}
           </Select>
@@ -77,7 +74,7 @@ export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious }) 
             id="outlined-basic"
             variant="outlined"
           >
-            {offered.map((item, index) => (
+            {dropdown.offered.map((item, index) => (
               <MenuItem value={item} key={index}>{item}</MenuItem>
             ))}
           </Select>
