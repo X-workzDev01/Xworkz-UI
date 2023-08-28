@@ -6,7 +6,7 @@ import axios from 'axios';
 import { Urlconstant } from '../constant/Urlconstant';
 
 export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious }) => {
-  const [selectedValue, setSelectedValue] = useState('');
+  const [selectedValue, setSelectedValue] = useState('Java');
   const [value ,setValue ]=useState('');
   useEffect(()=>{
     if (selectedValue) {
@@ -61,12 +61,18 @@ export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious }) 
             id="outlined-basic"
             variant="outlined"
             onChange={handleInputChange}
-          >
+            displayEmpty
+          >  
+           <MenuItem value=' '>
+           <em>{selectedValue}</em>
+          </MenuItem> 
 
             {sortedCourse.map((item, index) => (
 
+
               <MenuItem  value={item}  key={index}>{item}</MenuItem>
-            ))}
+
+            ))} 
           </Select>
 
           <InputLabel id="demo-simple-select-label">Branch</InputLabel>
@@ -87,6 +93,7 @@ export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious }) 
             name="trainerName"
             value={value.trainerName}
             required
+            
             aria-readonly
             fullWidth
             margin="normal"
