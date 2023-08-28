@@ -11,6 +11,7 @@ const PrimaryMenuItem = styled(MenuItem)({
 export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious }) => {
   const [selectedValue, setSelectedValue] = useState('Java');
   const [value ,setValue ]=useState('');
+  const [loading ,setLoading]=useState(false)
   useEffect(()=>{
     if (selectedValue) {
       fetchData();
@@ -18,11 +19,13 @@ export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious }) 
   }, [selectedValue]);
    const fetchData = async () => {
     try {
+      setLoading(true);
       console.log("coursede"+selectedValue)
       axios.get(Urlconstant.url + `api/getCourseDetails?courseName=${selectedValue}`, {headers: 
        { 'spreadsheetId': Urlconstant.spreadsheetId}
-      }).then((res) =>
-        setValue(res.data));
+      }).then((res) =>(
+        setValue(res.data),setLoading(false)));
+        
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -54,6 +57,7 @@ export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious }) 
       <h2>Course Details</h2>
       <Typography component="div" style={{ height: '50vh' }}>
         <InputLabel id="demo-simple-select-label">Course</InputLabel>
+        {loading ? <p>Wait Loading...........</p>:''}
         <Form>
           <Select name="course"
 
