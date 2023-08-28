@@ -4,7 +4,10 @@ import React, { useEffect, useState } from 'react';
 import { Form } from 'react-bootstrap';
 import axios from 'axios';
 import { Urlconstant } from '../constant/Urlconstant';
-
+import styled from '@emotion/styled';
+const PrimaryMenuItem = styled(MenuItem)({
+  color: 'Black', // Set your desired primary color here
+});
 export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious }) => {
   const [selectedValue, setSelectedValue] = useState('Java');
   const [value ,setValue ]=useState('');
@@ -61,16 +64,17 @@ export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious }) 
             id="outlined-basic"
             variant="outlined"
             onChange={handleInputChange}
-            displayEmpty
+          displayEmpty
           >  
-           <MenuItem value=' '>
-           <em>{selectedValue}</em>
+
+           <MenuItem value="">
+              <em>{selectedValue}</em>
           </MenuItem> 
 
             {sortedCourse.map((item, index) => (
 
 
-              <MenuItem  value={item}  key={index}>{item}</MenuItem>
+              <PrimaryMenuItem  value={item}  key={index}>{item}</PrimaryMenuItem>
 
             ))} 
           </Select>
