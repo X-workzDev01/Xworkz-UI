@@ -12,6 +12,7 @@ import FollowStatusGrid from './FollowStatusGrid';
 import Avatar from '@mui/material/Avatar';
 import EditFollowUp from './EditFollowUp';
 import EditModal from './EditModal';
+import FollowUpStatus from './FollowUpStatus';
 
 function stringToColor(string) {
     let hash = 0;
@@ -60,8 +61,11 @@ const Profile = () => {
     const [isModalOpen, setModalOpen] = React.useState(false);
     const [editedRowData, setEditedRowData] = React.useState(null);
 
-    // const [isModalOpen, setModalOpen] = React.useState(false);
-    // const [editedRowData, setEditedRowData] = React.useState(null);
+    const [isFollowUpModalOpen, setFollowUpModalOpen] = React.useState(false);
+    const [editedFollowUpRowData, setEditedFollowUpRowData] = React.useState(null);
+
+    const [isFollowUpStatusModalOpen, setFollowUpStatusModalOpen] = React.useState(false);
+    const [editedFollowUpStatusRowData, setEditedFollowUpStatusRowData] = React.useState(null);
 
     useEffect(() => {
         // Define the URL for your API endpoint using the email parameter
@@ -114,16 +118,25 @@ const Profile = () => {
     const handleSaveClick = () => {
         setModalOpen(false)
     };
-    const handleEditFollowUp=(row)=>{
-        alert("Edit Follow Up");
-        console.log(row);
-        setModalOpen(true);
-    };
+    const handleEditFollowUp = (row) => {
+        setEditedFollowUpRowData(row);
+        setFollowUpModalOpen(true);
 
-    const handleFollowUp=(row)=>{
-        alert("Add follow up")
-        console.log(row);
+    };
+    const handleFollowUpSave = () => {
+        setFollowUpModalOpen(false)
     }
+
+    const handleFollowUp = (row) => {
+        setEditedFollowUpStatusRowData(row);
+        setFollowUpStatusModalOpen(true);
+    }
+
+    const handleFollowUpStatusSave = () => {
+        setFollowUpStatusModalOpen(false)
+    }
+
+
 
     return (
         <div>
@@ -176,20 +189,20 @@ const Profile = () => {
                         </li>
                     </ul>
                     <div className="links">
-                        <Button variant="outlined" startIcon={<AddIcon />} onClick={()=> handleFollowUp()}>
+                        <Button variant="outlined" startIcon={<AddIcon />} onClick={() => handleFollowUp(profileData)}>
                             Add FollowUp
                         </Button>
                         <Button variant="outlined" startIcon={<ModeEditIcon />} onClick={() => handleEditClick(profileData)}>
                             Edit Profile
                         </Button>
-                        <Button variant="outlined" startIcon={<ModeEditIcon />} onClick={()=>handleEditFollowUp(followUpData)}>
-                            Edit FollowUp
+                        <Button variant="outlined" startIcon={<ModeEditIcon />} onClick={() => handleEditFollowUp(followUpData)}>
+                            Update FollowUp
                         </Button>
                     </div>
                 </div>
-                
+
             </div>
-            
+
             <EditModal
                 open={isModalOpen}
                 handleClose={() => setModalOpen(false)}
@@ -197,6 +210,21 @@ const Profile = () => {
                 setRowData={setEditedRowData}
                 handleSaveClick={handleSaveClick}
             />
+            <EditFollowUp
+                open={isFollowUpModalOpen}
+                handleClose={() => setFollowUpModalOpen(false)}
+                rowData={editedFollowUpRowData}
+                setRowData={setEditedFollowUpRowData}
+                handleSaveClick={handleFollowUpSave}
+            />
+            <FollowUpStatus
+                open={isFollowUpStatusModalOpen}
+                handleClose={() => setFollowUpStatusModalOpen(false)}
+                rowData={editedFollowUpStatusRowData}
+                setRowData={setEditedFollowUpStatusRowData}
+                handleSaveClick={handleFollowUpStatusSave}
+            />
+
             {statusData ? <FollowStatusGrid rows={statusData} /> : null}
         </div>
 
