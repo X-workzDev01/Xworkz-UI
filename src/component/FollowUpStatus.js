@@ -41,11 +41,16 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
         setIsConfirming(true);
         setSnackbarOpen(false);
     };
+    const attemtedUser=sessionStorage.getItem("userId");
 
     const handleSaveClick = () => {
         if (isConfirming) {
             setLoading(true);
-            const statusDto = { ...editedData };
+            const statusDto = {
+                ...editedData,
+                attemptedBy: attemtedUser,
+            };
+            console.log("status Dto")
             console.log(statusDto)
             axios
                 .post(Urlconstant.url + `api/updateFollowStatus`, statusDto, {
@@ -87,40 +92,35 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                 {/* Render your form fields here */}
 
                 <TextField
-                    label="ID"
-                    name="id"
-                    defaultValue={rowData.basicInfo?.id || ''}
+                    label="Email"
+                    name="basicInfo.email"
+                    value={rowData.basicInfo.email}
+                    onChange={handleInputChange}
                     style={fieldStyle}
                     InputProps={{
                         readOnly: true,
                     }}
                 />
-
                 <TextField
                     label="Name"
-                    name="name"
-                    defaultValue={rowData.basicInfo?.traineeName || ''}
+                    name="basicInfo.traineeName"
+                    defaultValue={rowData.basicInfo.traineeName}
                     style={fieldStyle}
+                    onChange={handleInputChange}
                     InputProps={{
                         readOnly: true,
                     }}
                 />
-                <TextField
-                    label="Email"
-                    name="email"
-                    value={rowData.basicInfo?.email || ''}
-                    style={fieldStyle}
-                    InputProps={{
-                        readOnly: true,
-                    }}
-                />
-
                 <TextField
                     label="Attempted By"
                     name="attemptedBy"
+                    value={attemtedUser}
                     defaultValue={rowData.attemptedBy}
                     onChange={handleInputChange}
                     style={fieldStyle}
+                    InputProps={{
+                        readOnly: true,
+                      }}
                 />
                 <TextField
                     label="Attempt Status"
@@ -143,12 +143,21 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                     onChange={handleInputChange}
                     style={fieldStyle}
                 />
-                <TextField
-                    label="Call Back"
+                <TextField type="date"
                     name="callBack"
                     defaultValue={rowData.callBack}
                     onChange={handleInputChange}
                     style={fieldStyle}
+                />
+                 <TextField type="time"
+                    label="Call Back Time"
+                    name="callBackTime"
+                    defaultValue={rowData.callBackTime}
+                    onChange={handleInputChange}
+                    style={fieldStyle}
+                    InputLabelProps={{
+                        shrink: true,
+                      }}
                 />
 
             </DialogContent>

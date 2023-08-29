@@ -195,9 +195,7 @@ const Profile = () => {
                         <Button variant="outlined" startIcon={<ModeEditIcon />} onClick={() => handleEditClick(profileData)}>
                             Edit Profile
                         </Button>
-                        <Button variant="outlined" startIcon={<ModeEditIcon />} onClick={() => handleEditFollowUp(followUpData)}>
-                            Update FollowUp
-                        </Button>
+                        
                     </div>
                 </div>
 
