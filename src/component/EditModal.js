@@ -49,7 +49,6 @@ const EditModal = ({ open, handleClose, rowData }) => {
   };
 
   const handleSaveClick = () => {
-    editedData.xworkzEmail = xworkzEmail;
     if (isConfirming) {
       setLoading(true);
       const updatedData = editedData

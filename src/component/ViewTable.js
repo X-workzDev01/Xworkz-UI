@@ -325,13 +325,6 @@ export default function ControlledSelectionServerPaginationGrid() {
                 <div>
                 <Button
                   variant="outlined"
-                  color="primary"
-                  onClick={() => handleEditClick(params.row)}
-                >
-                  Edit
-                </Button>
-                <Button
-                  variant="outlined"
                   color="secondary"
                   component={Link} // Use Link component for navigation
                   to={`/x-workz/profile/${params.row.basicInfo.email}`} // Pass email as a parameter

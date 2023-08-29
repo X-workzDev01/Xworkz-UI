@@ -31,9 +31,7 @@ export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious }) 
     }
   };
 
-  const offered = ['CSR Offered', 'CSR Non-Offered', 'NON CSR']
-  const sortedCourse = dropdown.course.slice().sort((a, b) => a.localeCompare(b));
-
+ 
   
 
   
@@ -75,7 +73,7 @@ export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious }) 
               <em>{selectedValue}</em>
           </MenuItem> 
 
-            {sortedCourse.map((item, index) => (
+            {dropdown.course.map((item, index) => (
 
 
               <PrimaryMenuItem  value={item}  key={index}>{item}</PrimaryMenuItem>
@@ -111,6 +109,7 @@ export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious }) 
            
           </TextField>
           <InputLabel id="demo-simple-select-label">Batch Type </InputLabel>
+
 
           <TextField           
             name="batchType"
@@ -161,7 +160,7 @@ export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious }) 
             id="outlined-basic"
             variant="outlined"
           >
-            {offered.map((item, index) => (
+            {dropdown.offered.map((item, index) => (
               <MenuItem value={item} key={index}>{item}</MenuItem>
             ))}
           </Select>

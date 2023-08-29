@@ -149,7 +149,6 @@ export default function FollowUp() {
             { field: 'contactNumber', headerName: 'Contact Number', flex: 1, valueGetter: (params) => params.row.basicInfo.contactNumber },
             { field: 'joiningDate', headerName: 'Joining Date', flex: 1, valueGetter: (params) => params.row.joiningDate },
             { field: 'courseName', headerName: 'Course Name', flex: 1, valueGetter: (params) => params.row.courseName },
-            { field: 'currentlyFollowedBy', headerName: 'Currently FollowedBy', flex: 1, valueGetter: (params) => params.row.currentlyFollowedBy },
             { field: 'currentStatus', headerName: 'Current Status', flex: 1, valueGetter: (params) => params.row.currentStatus },
             { field: 'registrationDate', headerName: 'RegistrationDate', flex: 1, valueGetter: (params) => params.row.registrationDate },
             {
