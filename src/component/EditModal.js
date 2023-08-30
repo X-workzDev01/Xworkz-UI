@@ -98,8 +98,6 @@ const EditModal = ({ open, handleClose, rowData }) => {
         <TextField
           label="Email"
           name="basicInfo.email"
-
-
           value={rowData.basicInfo.email}
           onChange={handleInputChange}
           style={fieldStyle}

@@ -161,7 +161,8 @@ export default function FollowUp() {
                   variant="outlined"
                   color="secondary"
                   component={Link} // Use Link component for navigation
-                  to={`/x-workz/profile/${params.row.basicInfo.email}`} // Pass email as a parameter
+                  to={`/x-workz/profile/${params.row.basicInfo.email}`} 
+                  // Pass email as a parameter
                 >
                   View
                 </Button>
@@ -188,6 +189,7 @@ export default function FollowUp() {
           rowData={editedRowData}
           setRowData={setEditedRowData}
           handleSaveClick={handleSaveClick}
+          dropdown={dropdown}
         />
       </div>
     </div>

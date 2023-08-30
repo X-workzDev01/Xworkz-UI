@@ -9,6 +9,7 @@ import axios from 'axios';
 import Snackbar from '@mui/material/Snackbar';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Urlconstant } from '../constant/Urlconstant';
+import { InputLabel, MenuItem, Select } from '@mui/material';
 
 const fieldStyle = { margin: '20px' };
 
@@ -18,16 +19,32 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
     const [loading, setLoading] = React.useState(false);
     const [responseMessage, setResponseMessage] = React.useState('');
     const [snackbarOpen, setSnackbarOpen] = React.useState(false);
+    const [dropdownData, setDropdownData] = React.useState([]);
 
+    useEffect(() => {
+        // Fetch your dropdown data from the API here
+        axios.get(Urlconstant.url + 'utils/dropdown', {
+            headers: {
+                'spreadsheetId': Urlconstant.spreadsheetId
+            }
+        }).then((response) => {
+            setDropdownData(response.data); // Assuming the response contains an array of dropdown options
+        })
+            .catch((error) => {
+                console.error('Error fetching dropdown data:', error);
+            });
+    }, []);
+
+    console.log(dropdownData)
 
     React.useEffect(() => {
-        setEditedData(rowData); // Use rowData directly
+        setEditedData(rowData);
+        // Use rowData directly
     }, [rowData]);
 
     if (!rowData) {
         return null; // Render nothing if rowData is not available yet
     }
-
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
@@ -41,7 +58,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
         setIsConfirming(true);
         setSnackbarOpen(false);
     };
-    const attemtedUser=sessionStorage.getItem("userId");
+    const attemtedUser = sessionStorage.getItem("userId");
 
     const handleSaveClick = () => {
         if (isConfirming) {
@@ -85,6 +102,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
 
     }
 
+
     return (
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
             <DialogTitle>Edit Details</DialogTitle>
@@ -120,15 +138,30 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                     style={fieldStyle}
                     InputProps={{
                         readOnly: true,
-                      }}
+                    }}
                 />
-                <TextField
-                    label="Attempt Status"
+                <Select
                     name="attemptStatus"
-                    defaultValue={rowData.attemptStatus}
                     onChange={handleInputChange}
-                    style={fieldStyle}
-                />
+                    defaultValue={rowData.attemptStatus}
+                    id="outlined-basic"
+                    variant="outlined"
+                    sx={{
+                        marginRight: '20px',
+                        width: '200px', // Adjust padding for a smaller size
+                        fontSize: '12px', // Adjust font size for a smaller size
+                    }}
+                    label="Attempt Status" // This label will show on top of the select
+                    inputProps={{
+                        'aria-label': 'Attempt Status',
+                    }}
+                >
+                    {dropdownData.status.map((item, index) => (
+                        <MenuItem value={item} key={index}>{item}</MenuItem>
+                    ))}
+
+                </Select>
+
                 <TextField
                     label="Comments"
                     name="comments"
@@ -143,13 +176,18 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                     onChange={handleInputChange}
                     style={fieldStyle}
                 />
+
                 <TextField type="date"
+                    label="Call Back Date"
                     name="callBack"
                     defaultValue={rowData.callBack}
                     onChange={handleInputChange}
                     style={fieldStyle}
+                    InputLabelProps={{
+                        shrink: true,
+                    }}
                 />
-                 <TextField type="time"
+                <TextField type="time"
                     label="Call Back Time"
                     name="callBackTime"
                     defaultValue={rowData.callBackTime}
@@ -157,7 +195,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                     style={fieldStyle}
                     InputLabelProps={{
                         shrink: true,
-                      }}
+                    }}
                 />
 
             </DialogContent>
