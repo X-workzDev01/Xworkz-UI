@@ -20,6 +20,15 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
     const [responseMessage, setResponseMessage] = React.useState('');
     const [snackbarOpen, setSnackbarOpen] = React.useState(false);
     const [dropdownData, setDropdownData] = React.useState([]);
+    const [minDate, setMinDate] = React.useState('');
+
+    const getCurrentDate = () => {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = (now.getMonth() + 1).toString().padStart(2, '0');
+        const day = now.getDate().toString().padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
 
     useEffect(() => {
         // Fetch your dropdown data from the API here
@@ -34,8 +43,6 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                 console.error('Error fetching dropdown data:', error);
             });
     }, []);
-
-    console.log(dropdownData)
 
     React.useEffect(() => {
         setEditedData(rowData);
@@ -105,7 +112,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
 
     return (
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
-            <DialogTitle>Edit Details</DialogTitle>
+            <DialogTitle>Add to Follow Up</DialogTitle>
             <DialogContent>
                 {/* Render your form fields here */}
 
@@ -186,6 +193,9 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                     InputLabelProps={{
                         shrink: true,
                     }}
+                    inputProps={{
+                        min: getCurrentDate()
+                    }}
                 />
                 <TextField type="time"
                     label="Call Back Time"
@@ -207,7 +217,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                     <CircularProgress size={20} /> // Show loading spinner
                 ) : (
                     <Button onClick={handleEditClick} color="primary">
-                        Edit
+                        Add
                     </Button>
                 )}
             </DialogActions>
