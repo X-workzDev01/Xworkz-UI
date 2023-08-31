@@ -41,8 +41,6 @@ function App() {
 
               <Route path="/x-workz/profile/:email"  element={<Profile />} />
 
-            
-             
               <Route path="/x-workz/search" element={<Search />} />
             </React.Fragment>
           ) : (
@@ -51,6 +49,9 @@ function App() {
               <Route path="/x-workz/login" element={<LoginPage />} ></Route>
               {sessionStorage.clear("userId")}
               <Route path="/x-workz" element={<Home/>}/>
+              <Route path="/x-workz/followup" element={<FollowUp />} />
+
+              <Route path="/x-workz/profile/:email"  element={<Profile />} />
             </React.Fragment>
           )}
         </Routes>

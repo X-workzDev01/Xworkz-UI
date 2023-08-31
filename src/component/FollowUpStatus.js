@@ -9,6 +9,8 @@ import axios from 'axios';
 import Snackbar from '@mui/material/Snackbar';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Urlconstant } from '../constant/Urlconstant';
+import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import styled from '@emotion/styled';
 
 const fieldStyle = { margin: '20px' };
 
@@ -18,16 +20,39 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
     const [loading, setLoading] = React.useState(false);
     const [responseMessage, setResponseMessage] = React.useState('');
     const [snackbarOpen, setSnackbarOpen] = React.useState(false);
+    const [dropdownData, setDropdownData] = React.useState([]);
+    const [minDate, setMinDate] = React.useState('');
 
+    const getCurrentDate = () => {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = (now.getMonth() + 1).toString().padStart(2, '0');
+        const day = now.getDate().toString().padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    useEffect(() => {
+        // Fetch your dropdown data from the API here
+        axios.get(Urlconstant.url + 'utils/dropdown', {
+            headers: {
+                'spreadsheetId': Urlconstant.spreadsheetId
+            }
+        }).then((response) => {
+            setDropdownData(response.data); // Assuming the response contains an array of dropdown options
+        })
+            .catch((error) => {
+                console.error('Error fetching dropdown data:', error);
+            });
+    }, []);
 
     React.useEffect(() => {
-        setEditedData(rowData); // Use rowData directly
+        setEditedData(rowData);
+        // Use rowData directly
     }, [rowData]);
 
     if (!rowData) {
         return null; // Render nothing if rowData is not available yet
     }
-
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
@@ -41,7 +66,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
         setIsConfirming(true);
         setSnackbarOpen(false);
     };
-    const attemtedUser=sessionStorage.getItem("userId");
+    const attemtedUser = sessionStorage.getItem("userId");
 
     const handleSaveClick = () => {
         if (isConfirming) {
@@ -85,9 +110,10 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
 
     }
 
+
     return (
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
-            <DialogTitle>Edit Details</DialogTitle>
+            <DialogTitle>Add to Follow Up</DialogTitle>
             <DialogContent>
                 {/* Render your form fields here */}
 
@@ -120,15 +146,32 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                     style={fieldStyle}
                     InputProps={{
                         readOnly: true,
-                      }}
+                    }}
+
                 />
-                <TextField
-                    label="Attempt Status"
-                    name="attemptStatus"
-                    defaultValue={rowData.attemptStatus}
-                    onChange={handleInputChange}
-                    style={fieldStyle}
-                />
+                <FormControl>
+                <InputLabel id="demo-simple-select-label">attemptStatus</InputLabel>
+                    <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        label="Attempt Status"
+                        name="attemptStatus"
+                        onChange={handleInputChange}
+                        defaultValue={rowData.attemptStatus}
+                        variant="outlined"
+                        sx={{
+                            marginRight: '20px',
+                            width: '200px', // Adjust padding for a smaller size
+                            fontSize: '20px', // Adjust font size for a smaller size
+                        }}
+                    >
+                        {dropdownData.status.map((item, index) => (
+                            <MenuItem value={item} key={index}>{item}</MenuItem>
+                        ))}
+
+                    </Select>
+                </FormControl>
+
                 <TextField
                     label="Comments"
                     name="comments"
@@ -143,13 +186,21 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                     onChange={handleInputChange}
                     style={fieldStyle}
                 />
+
                 <TextField type="date"
+                    label="Call Back Date"
                     name="callBack"
                     defaultValue={rowData.callBack}
                     onChange={handleInputChange}
                     style={fieldStyle}
+                    InputLabelProps={{
+                        shrink: true,
+                    }}
+                    inputProps={{
+                        min: getCurrentDate()
+                    }}
                 />
-                 <TextField type="time"
+                <TextField type="time"
                     label="Call Back Time"
                     name="callBackTime"
                     defaultValue={rowData.callBackTime}
@@ -157,8 +208,9 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                     style={fieldStyle}
                     InputLabelProps={{
                         shrink: true,
-                      }}
+                    }}
                 />
+                
 
             </DialogContent>
             <DialogActions>
@@ -169,7 +221,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                     <CircularProgress size={20} /> // Show loading spinner
                 ) : (
                     <Button onClick={handleEditClick} color="primary">
-                        Edit
+                        Add
                     </Button>
                 )}
             </DialogActions>

@@ -151,6 +151,9 @@ console.log(rowData)
           defaultValue={rowData.joiningDate}
           onChange={handleInputChange}
           style={fieldStyle}
+          InputLabelProps={{
+            shrink: true,
+        }}
         />
         <TextField
           label="Course Name"

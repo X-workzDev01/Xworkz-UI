@@ -4,6 +4,7 @@ import { DataGrid } from '@mui/x-data-grid';
 
 const columns = [
   { headerName: 'ID', field: 'id', flex: 1 },
+
   { field: 'attemptedOn', headerName: 'Attempted On', width: 150 },
   { field: 'attemptedBy', headerName: 'Attempted By', width: 150 },
   { field: 'attemptStatus', headerName: 'Attempt Status', width: 150 },
