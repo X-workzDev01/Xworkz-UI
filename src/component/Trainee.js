@@ -191,6 +191,7 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
           {numberCheck && <Alert severity="error">{numberCheck}</Alert>}
           <TextField type="date"
             name="dateOfBirth"
+            label="Date Of Birth"
             value={formData.dateOfBirth || ''}
             onChange={handleInputChange}
             required
@@ -198,6 +199,9 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
             margin="normal"
             id="outlined-basic"
             variant="outlined"
+            InputLabelProps={{
+              shrink: true,
+          }}
           />
         </Form>
         <Button variant="contained" disabled={isDisabled} onClick={onNext}>Next</Button>
