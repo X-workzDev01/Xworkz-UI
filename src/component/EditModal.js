@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -9,15 +9,40 @@ import axios from 'axios';
 import Snackbar from '@mui/material/Snackbar';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Urlconstant } from '../constant/Urlconstant';
+import { Select , MenuItem , FormHelperText} from '@mui/material';
 
 const fieldStyle = { margin: '20px' };
 
 const EditModal = ({ open, handleClose, rowData }) => {
   const [isConfirming, setIsConfirming] = React.useState(false);
-  const [editedData, setEditedData] = React.useState(rowData); // Use rowData directly
+
+  const [editedData, setEditedData] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
   const [responseMessage, setResponseMessage] = React.useState('');
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
+  const [xworkzEmail, setXworkzEmail] = React.useState('');
+  const [dropdown, setDropDown] = React.useState([]);
+
+
+  React.useEffect(() => {
+    setEditedData(rowData); // Use rowData directly
+  }, [rowData]);
+
+  useEffect(() => {
+
+   
+    // Fetch dropdown data from your API
+    axios.get(Urlconstant.url+'utils/dropdown', {
+      headers: {
+        'spreadsheetId': Urlconstant.spreadsheetId
+      }
+    }).then(response => {
+      setDropDown(response.data)
+    }).catch(error => {
+      console.log(error);
+    })
+  }, []); 
+
 
 
   // Update editedData when rowData changes
@@ -28,6 +53,9 @@ const EditModal = ({ open, handleClose, rowData }) => {
     return null; // Render nothing if rowData is not available yet
   }
 
+
+  
+
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     const [section, field] = name.split('.');
@@ -37,8 +65,10 @@ const EditModal = ({ open, handleClose, rowData }) => {
       ...prevData,
       [section]: {
         ...prevData[section],
+
         [field]: value,
       },
+      
     }));
 
   };
@@ -86,6 +116,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
 
   }
 
+  
 
 
   return (
@@ -121,55 +152,108 @@ const EditModal = ({ open, handleClose, rowData }) => {
           onChange={handleInputChange}
           style={fieldStyle}
         />
-        <TextField
-          label="Qualification"
+        <Select
           name="educationInfo.qualification"
           defaultValue={rowData.educationInfo.qualification}
           onChange={handleInputChange}
           style={fieldStyle}
-        />
-        <TextField
-          label="Stream"
+          sx={{
+            marginRight: '20px',
+            width: '300px', // Adjust padding for a smaller size
+            // Adjust font size for a smaller size
+        }}
+          
+        >
+          {
+            dropdown.qualification.map((item, index) => (
+              <MenuItem value={item} key={index}>{item}</MenuItem>
+            ))}
+        </Select>
+        <Select
           name="educationInfo.stream"
           defaultValue={rowData.educationInfo.stream}
           onChange={handleInputChange}
           style={fieldStyle}
-        />
-        <TextField
-          label="YOP"
+        >
+          {
+            dropdown.stream.map((item, index) => (
+              <MenuItem value={item} key={index}>{item}</MenuItem>
+            ))}
+
+        </Select>
+
+        <Select
           name="educationInfo.yearOfPassout"
           defaultValue={rowData.educationInfo.yearOfPassout}
           onChange={handleInputChange}
           style={fieldStyle}
-        />
-        <TextField
-          label="College Name"
+         
+        >
+           {
+            dropdown.yearofpass.map((item, index) => (
+              <MenuItem value={item} key={index}>{item}</MenuItem>
+            ))}
+
+        </Select>
+        <Select
+         
           name="educationInfo.collegeName"
           defaultValue={rowData.educationInfo.collegeName}
           onChange={handleInputChange}
           style={fieldStyle}
-        />
-        <TextField
-          label="Course"
+          sx={{
+            marginRight: '20px',
+            width: '500px', // Adjust padding for a smaller size
+            // Adjust font size for a smaller size
+        }}
+          
+        >
+           {
+            dropdown.college.map((item, index) => (
+              <MenuItem value={item} key={index}>{item}</MenuItem>
+            ))}
+
+        </Select>
+        <Select
+      
           name="courseInfo.course"
           defaultValue={rowData.courseInfo.course}
           onChange={handleInputChange}
           style={fieldStyle}
-        />
-        <TextField
-          label="Branch"
+        >
+           {
+            dropdown.course.map((item, index) => (
+              <MenuItem value={item} key={index}>{item}</MenuItem>
+            ))}
+
+
+        </Select>
+        <Select
+         
           name="courseInfo.branch"
           defaultValue={rowData.courseInfo.branch}
           onChange={handleInputChange}
           style={fieldStyle}
-        />
-        <TextField
-          label="Batch"
+        >
+          {
+            dropdown.branchname.map((item, index) => (
+              <MenuItem value={item} key={index}>{item}</MenuItem>
+            ))}
+
+        </Select>
+        <Select
+         
           name="courseInfo.batch"
           defaultValue={rowData.courseInfo.batch}
           onChange={handleInputChange}
-          style={fieldStyle}
-        />
+       
+        >
+           {
+            dropdown.batch.map((item, index) => (
+              <MenuItem value={item} key={index}>{item}</MenuItem>
+            ))}
+
+        </Select>
         <TextField
           label="Referal Name"
           name="referralInfo.referalName"
@@ -201,8 +285,6 @@ const EditModal = ({ open, handleClose, rowData }) => {
           onChange={handleInputChange}
           style={fieldStyle}
         />
-
-
 
 
       </DialogContent>
