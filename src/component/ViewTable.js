@@ -7,6 +7,9 @@ import ClearIcon from '@mui/icons-material/Clear';
 import Autocomplete from '@mui/material/Autocomplete';
 import axios from 'axios';
 import EditModal from './EditModal';
+import Profile from './Profile';
+import { Link } from 'react-router-dom';
+
 
 function loadServerRows(page, pageSize) {
   const startingIndex = page * pageSize;
@@ -96,6 +99,7 @@ async function fetchFilteredData(searchValue) {
   }
 }
 
+
 function debounce(func, delay) {
   let timeout;
   return function executedFunction(...args) {
@@ -128,10 +132,11 @@ export default function ControlledSelectionServerPaginationGrid() {
   const [searchInputValue, setSearchInputValue] = React.useState('');
   const [searchResults, setSearchResults] = React.useState([]);
 
+
   const [autocompleteOptions, setAutocompleteOptions] = React.useState([]);
   const [isModalOpen, setModalOpen] = React.useState(false);
   const [editedRowData, setEditedRowData] = React.useState(null);
-  const searchFieldRef = React.useRef(null);
+
 
   // const handleSearchChange = async (event, newValue) => {
   //   setSearchValue(newValue);
@@ -143,6 +148,12 @@ export default function ControlledSelectionServerPaginationGrid() {
   //     setAutocompleteOptions([]);
   //   }
   // };
+
+
+  // React.useEffect(() => {
+  //   console.log('autocompleteOptions updated:', autocompleteOptions);
+  // }, [autocompleteOptions]);
+
 
   const handleEditClick = (row) => {
     setEditedRowData(row);
@@ -180,10 +191,26 @@ export default function ControlledSelectionServerPaginationGrid() {
   };
 
 
+  const handleViewProfile = (rowData) => {
+    // Open the profile page and pass rowData as a prop
+    // You can use a state or a modal to display the profile page
+    // Example:
+    <Profile rowData={rowData} />
+  }
+
+
+
+
+
+
+
+
   const handleAutocompleteChange = (event, newValue) => {
     setSearchValue(newValue || ''); 
 
   };
+
+
 
   const debouncedFetchSuggestions = React.useMemo(
     () => debounce((searchValue) => fetchFilteredData(searchValue)
@@ -191,7 +218,9 @@ export default function ControlledSelectionServerPaginationGrid() {
         // console.log(suggestions);
 
         setAutocompleteOptions(suggestions);
+
         console.log(autocompleteOptions)
+
         setLoading(false);
       })
       .catch((error) => {
@@ -207,7 +236,7 @@ export default function ControlledSelectionServerPaginationGrid() {
     setLoading(true);
 
     if (searchValue === '') {
-      console.log("server rows");
+
 
       // Load data using server-side pagination for the initial load or when search value is empty
       loadServerRows(paginationModel.page, paginationModel.pageSize)
@@ -215,6 +244,11 @@ export default function ControlledSelectionServerPaginationGrid() {
           if (active) {
             setGridData(newGridData);
             setLoading(false);
+
+            
+            setAutocompleteOptions([]);
+            console.log("suggestion set to null")
+
           }
         })
         .catch((error) => {
@@ -244,17 +278,13 @@ export default function ControlledSelectionServerPaginationGrid() {
           freeSolo
           id="free-solo-2-demo"
           disableClearable
-          getOptionLabel={(option) => option.name}
+
+          getOptionLabel={(option) => option}
           style={{ width: '20vw', padding: '10px 20px' }}
           
           onChange={(event, newValue) => setSearchValue(newValue)} 
-          renderOption={(option) => (
-            
-            <div>
-              <span style={{ fontWeight: 'bold' }}>Name:</span> {option.name} <br />
-              <span style={{ fontWeight: 'bold' }}>Email:</span> {option.email}
-            </div>
-          )}
+
+
           renderInput={(params) => (
             <TextField
               {...params}
@@ -291,9 +321,20 @@ export default function ControlledSelectionServerPaginationGrid() {
               headerName: 'Actions',
               width: 120,
               renderCell: (params) => (
-                <Button variant="outlined" color="primary" onClick={() => handleEditClick(params.row)}>
-                  Edit
+
+                <div>
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  component={Link} // Use Link component for navigation
+                  to={`/x-workz/profile/${params.row.basicInfo.email}`} // Pass email as a parameter
+                >
+                  View
                 </Button>
+              </div>
+                
+
+
               ),
             }
           ]}

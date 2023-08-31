@@ -10,6 +10,10 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
   const [numberCheck, setNumberCheck] = useState(null);
   const [emailError, setEmailError] = useState(null);
   const [nameError, setNameError] = useState(null);
+
+  const [buttonEnabled , setButtonEnabled] = useState(false);
+
+
   const [phoneNumberError, setPhoneNumberError] = useState('');
 
 
@@ -135,7 +139,7 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
   //   }
   // };
 
-  const isDisabled= !formData.traineeName || !formData.email || !formData.contactNumber;
+  const isDisabled= !formData.traineeName || !formData.email || !formData.contactNumber||!formData.dateOfBirth;
   return (
     <Container maxWidth="sm">
       <Typography component="div" style={{ height: '50vh' }}>
@@ -186,8 +190,8 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
           {phoneNumberError && <Alert severity="error">{phoneNumberError}</Alert>}
           {numberCheck && <Alert severity="error">{numberCheck}</Alert>}
           <TextField type="date"
-            name="dob"
-            value={formData.dob || ''}
+            name="dateOfBirth"
+            value={formData.dateOfBirth || ''}
             onChange={handleInputChange}
             required
             fullWidth

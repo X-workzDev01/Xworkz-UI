@@ -5,9 +5,6 @@ export const Education = ({ dropdown, formData, setFormData, onNext, onPrevious 
    const yearOfPass = ['2010', '2011', '2012', '2013', '2014', '2015', '2016',
       '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025']
 
-   const sortedQualifications = dropdown.qualification.slice().sort((a, b) => a.localeCompare(b));
-   const sortedStream = dropdown.stream.slice().sort((a, b) => a.localeCompare(b));
-   const sortedColleges = dropdown.college.slice().sort((a, b) => a.localeCompare(b));
 
    const handleInputChange = (e) => {
       const { name, value } = e.target;
@@ -31,7 +28,7 @@ export const Education = ({ dropdown, formData, setFormData, onNext, onPrevious 
                   variant="outlined"
                >
                   {
-                     sortedQualifications.map((item, index) => (
+                     dropdown.qualification.map((item, index) => (
                         <MenuItem value={item} key={index}>{item}</MenuItem>
                      ))}
                </Select>
@@ -46,7 +43,7 @@ export const Education = ({ dropdown, formData, setFormData, onNext, onPrevious 
                   id="outlined-basic"
                   variant="outlined"
                >
-                  {sortedStream.map((item, index) => (
+                  {dropdown.stream.map((item, index) => (
                      <MenuItem value={item} key={index}>{item}</MenuItem>
                   ))}
                </Select>
@@ -59,7 +56,7 @@ export const Education = ({ dropdown, formData, setFormData, onNext, onPrevious 
                   id="outlined-basic"
                   variant="outlined"
                >
-                  {yearOfPass.map((item, index) => (
+                  {dropdown.yearofpass.map((item, index) => (
                      <MenuItem value={item} key={index}>{item}</MenuItem>
                   ))}
                </Select>
@@ -73,7 +70,7 @@ export const Education = ({ dropdown, formData, setFormData, onNext, onPrevious 
                   id="outlined-basic"
                   variant="outlined"
                >
-                  {sortedColleges.map((item, index) => (
+                  {dropdown.college.map((item, index) => (
                      <MenuItem value={item} key={index}>{item}</MenuItem>
                   ))}
                </Select>

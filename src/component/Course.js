@@ -1,66 +1,149 @@
 import { Button, MenuItem, Select, TextField, Container, Typography, InputLabel } from '@mui/material';
-import React from 'react'
+import React, { useEffect, useState } from 'react';
+
 import { Form } from 'react-bootstrap';
-
+import axios from 'axios';
+import { Urlconstant } from '../constant/Urlconstant';
+import styled from '@emotion/styled';
+const PrimaryMenuItem = styled(MenuItem)({
+  color: 'Black', // Set your desired primary color here
+});
 export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious }) => {
-  const branchName = ['BTM','Rajajinagar']
-  const offered = ['CSR Offered', 'CSR Non-Offered', 'NON CSR']
-  const sortedCourse = dropdown.course.slice().sort((a, b) => a.localeCompare(b));
-
-  const getCurrentDate = () => {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = (now.getMonth() + 1).toString().padStart(2, '0');
-    const day = now.getDate().toString().padStart(2, '0');
-    return `${year}-${month}-${day}`;
+  const [selectedValue, setSelectedValue] = useState('Java');
+  const [value ,setValue ]=useState('');
+  const [loading ,setLoading]=useState(false)
+  useEffect(()=>{
+    if (selectedValue) {
+      fetchData();
+    }
+  }, [selectedValue]);
+   const fetchData = async () => {
+    try {
+      setLoading(true);
+      console.log("coursede"+selectedValue)
+      axios.get(Urlconstant.url + `api/getCourseDetails?courseName=${selectedValue}`, {headers: 
+       { 'spreadsheetId': Urlconstant.spreadsheetId}
+      }).then((res) =>(
+        setValue(res.data),setLoading(false)));
+        
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   };
 
-  const handleInputChange = (e) => {
+ 
+  
+
+  
+  const handleInputChange = (e) => {  
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    setSelectedValue(e.target.value);  
   };
-  const isDisabled = !formData.course || !formData.branch || !formData.batch;
+
+  const setSelect =(e)=>
+  {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    console.log(formData);
+  };
+  
+  const isDisabled = !formData.course  || !formData.offeredAs;
 
   return (
     <Container maxWidth="sm">
       <h2>Course Details</h2>
       <Typography component="div" style={{ height: '50vh' }}>
         <InputLabel id="demo-simple-select-label">Course</InputLabel>
+        {loading ? <p>Wait Loading...........</p>:''}
         <Form>
           <Select name="course"
+
+            value={formData.course || ''}
             required
             fullWidth
             margin="normal"
             id="outlined-basic"
             variant="outlined"
-            value={formData.course || ''}
             onChange={handleInputChange}
-          >
-            {sortedCourse.map((item, index) => (
-              <MenuItem value={item} key={index}>{item}</MenuItem>
-            ))}
+          displayEmpty
+          >  
+
+           <MenuItem value="">
+              <em>{selectedValue}</em>
+          </MenuItem> 
+
+            {dropdown.course.map((item, index) => (
+
+
+              <PrimaryMenuItem  value={item}  key={index}>{item}</PrimaryMenuItem>
+
+            ))} 
           </Select>
 
           <InputLabel id="demo-simple-select-label">Branch</InputLabel>
-          <Select name="branch"
-            value={formData.branch || ''}
-            onChange={handleInputChange}
+          <TextField           
+            name="branch"
+            value={value.branch}
             required
+            aria-readonly
             fullWidth
             margin="normal"
             id="outlined-basic"
             variant="outlined"
           >
-            {branchName.map((item, index) => (
-              <MenuItem value={item} key={index}>{item}</MenuItem>
-            ))}
-          </Select>
+            
+          </TextField>
+          <InputLabel id="demo-simple-select-label">Trainer Name</InputLabel>
+          <TextField           
+            name="trainerName"
+            value={value.trainerName}
+            required
+            
+            aria-readonly
+            fullWidth
+            margin="normal"
+            id="outlined-basic"
+            variant="outlined"
+          >
+           
+          </TextField>
+          <InputLabel id="demo-simple-select-label">Batch Type </InputLabel>
 
-          <TextField type="date"
-            inputProps={{ min: getCurrentDate() }}
-            name="batch"
-            value={formData.batch || ''}
-            onChange={handleInputChange}
+
+          <TextField           
+            name="batchType"
+            value={value.batchType}
+            required
+            aria-readonly
+            fullWidth
+            margin="normal"
+            id="outlined-basic"
+            variant="outlined"
+          >
+           
+          </TextField>
+          <InputLabel id="demo-simple-select-label">Batch Timing </InputLabel>
+
+          <TextField           
+            name="batchTiming "
+            value={value.timing}
+            required
+            aria-readonly
+            fullWidth
+            margin="normal"
+            id="outlined-basic"
+            variant="outlined"
+          >
+           
+          </TextField>
+          <InputLabel id="demo-simple-select-label">StartTime Timing </InputLabel>
+
+          <TextField 
+            name="startTime"
+            aria-readonly
+
+            value={value.startTime}
             required
             fullWidth
             margin="normal"
@@ -68,16 +151,16 @@ export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious }) 
             variant="outlined"
           />
           <InputLabel id="demo-simple-select-label">Offered As</InputLabel>
-          <Select name="offer"
-            value={formData.offer || ''}
-            onChange={handleInputChange}
+          <Select name="offeredAs"
+            value={formData.offeredAs || ''}
+            onChange={setSelect}
             required
             fullWidth
             margin="normal"
             id="outlined-basic"
             variant="outlined"
           >
-            {offered.map((item, index) => (
+            {dropdown.offered.map((item, index) => (
               <MenuItem value={item} key={index}>{item}</MenuItem>
             ))}
           </Select>
