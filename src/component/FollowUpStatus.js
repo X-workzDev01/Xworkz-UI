@@ -9,7 +9,8 @@ import axios from 'axios';
 import Snackbar from '@mui/material/Snackbar';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Urlconstant } from '../constant/Urlconstant';
-import { InputLabel, MenuItem, Select } from '@mui/material';
+import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import styled from '@emotion/styled';
 
 const fieldStyle = { margin: '20px' };
 
@@ -146,28 +147,30 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                     InputProps={{
                         readOnly: true,
                     }}
-                />
-                <Select
-                    name="attemptStatus"
-                    onChange={handleInputChange}
-                    defaultValue={rowData.attemptStatus}
-                    id="outlined-basic"
-                    variant="outlined"
-                    sx={{
-                        marginRight: '20px',
-                        width: '200px', // Adjust padding for a smaller size
-                        fontSize: '12px', // Adjust font size for a smaller size
-                    }}
-                    label="Attempt Status" // This label will show on top of the select
-                    inputProps={{
-                        'aria-label': 'Attempt Status',
-                    }}
-                >
-                    {dropdownData.status.map((item, index) => (
-                        <MenuItem value={item} key={index}>{item}</MenuItem>
-                    ))}
 
-                </Select>
+                />
+                <FormControl>
+                <InputLabel id="demo-simple-select-label">attemptStatus</InputLabel>
+                    <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        label="Attempt Status"
+                        name="attemptStatus"
+                        onChange={handleInputChange}
+                        defaultValue={rowData.attemptStatus}
+                        variant="outlined"
+                        sx={{
+                            marginRight: '20px',
+                            width: '200px', // Adjust padding for a smaller size
+                            fontSize: '20px', // Adjust font size for a smaller size
+                        }}
+                    >
+                        {dropdownData.status.map((item, index) => (
+                            <MenuItem value={item} key={index}>{item}</MenuItem>
+                        ))}
+
+                    </Select>
+                </FormControl>
 
                 <TextField
                     label="Comments"
@@ -207,6 +210,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                         shrink: true,
                     }}
                 />
+                
 
             </DialogContent>
             <DialogActions>

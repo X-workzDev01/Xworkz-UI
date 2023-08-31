@@ -3,6 +3,7 @@ import { DataGrid } from '@mui/x-data-grid';
 
 
 const columns = [
+
   { field: 'attemptedOn', headerName: 'Attempted On', width: 150 },
   { field: 'attemptedBy', headerName: 'Attempted By', width: 150 },
   { field: 'attemptStatus', headerName: 'Attempt Status', width: 150 },
@@ -16,7 +17,6 @@ const columns = [
 
 const FollowStatusGrid = ({rows}) => {
     
-
   return (
     <div
       style={{
