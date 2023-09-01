@@ -9,7 +9,7 @@ import axios from 'axios';
 import Snackbar from '@mui/material/Snackbar';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Urlconstant } from '../constant/Urlconstant';
-import { Select, MenuItem, FormHelperText, FormControl, InputLabel, Link } from '@mui/material';
+import { Select, MenuItem, FormHelperText, FormControl, InputLabel } from '@mui/material';
 
 const fieldStyle = { margin: '20px' };
 
@@ -345,9 +345,8 @@ const EditModal = ({ open, handleClose, rowData }) => {
       </DialogContent>
 
       <DialogActions>
-        <Button 
-          component={Link} // Use Link component for navigation
-                    to={`/x-workz/profile/${rowData.basicInfo.email}`}>
+        <Button onClick={handleClose} color="secondary">
+          Cancel
         </Button>
         {loading ? (
 
