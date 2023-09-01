@@ -133,7 +133,9 @@ const Profile = () => {
     }
 
     const handleFollowUpStatusSave = () => {
+        window.location.reload();
         setFollowUpStatusModalOpen(false)
+        //window.location.reload();
     }
 
 
