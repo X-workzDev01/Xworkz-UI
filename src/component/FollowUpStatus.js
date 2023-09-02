@@ -11,6 +11,8 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { Urlconstant } from '../constant/Urlconstant';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import styled from '@emotion/styled';
+import FollowStatusGrid from './FollowStatusGrid';
+import { Link } from 'react-router-dom';
 
 const fieldStyle = { margin: '20px' };
 
@@ -21,7 +23,8 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
     const [responseMessage, setResponseMessage] = React.useState('');
     const [snackbarOpen, setSnackbarOpen] = React.useState(false);
     const [dropdownData, setDropdownData] = React.useState([]);
-    const [minDate, setMinDate] = React.useState('');
+    const [statusData, setStatusData] = React.useState(null);
+    const [bind,setbind]=React.useState(false);
 
     const getCurrentDate = () => {
         const now = new Date();
@@ -102,6 +105,8 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
 
     const handleSnackbarClose = () => {
         setSnackbarOpen(false);
+        window.location.reload();
+        getFollowUpStatus();
         handleClose();
     };
 
@@ -109,9 +114,23 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
         setIsConfirming(false);
 
     }
-
+    const getFollowUpStatus = () =>{
+        console.log(rowData.basicInfo.email)
+        const statusApi = Urlconstant.url + `api/getFollowUpStatusByEmail/${rowData.basicInfo.email}`;
+        axios.get(statusApi, {
+            headers: {
+                'Content-Type': 'application/json',
+                spreadsheetId: Urlconstant.spreadsheetId,
+            },
+        }).then((response) => {
+            console.log('Update success:', response);
+            setStatusData(response.data);
+          })
+      }
+      console.log(statusData);
 
     return (
+        
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
             <DialogTitle>Add to Follow Up</DialogTitle>
             <DialogContent>
@@ -214,9 +233,11 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
 
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleClose} color="secondary">
+                <Button onClick={handleClose} color="secondary"
+                >
                     Cancel
                 </Button>
+                
                 {loading ? (
                     <CircularProgress size={20} /> // Show loading spinner
                 ) : (
@@ -244,12 +265,15 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                     <Button onClick={() => setIsConfirming(false)} color="secondary">
                         Cancel
                     </Button>
+                    
                     <Button onClick={handleSaveClick} color="primary">
                         Confirm
                     </Button>
+
                 </DialogActions>
             </Dialog>
         </Dialog>
+      
     );
 };
 
