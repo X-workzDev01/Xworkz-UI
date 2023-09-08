@@ -10,9 +10,7 @@ import Snackbar from '@mui/material/Snackbar';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Urlconstant } from '../constant/Urlconstant';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
-import styled from '@emotion/styled';
-import FollowStatusGrid from './FollowStatusGrid';
-import { Link } from 'react-router-dom';
+
 
 const fieldStyle = { margin: '20px' };
 
@@ -23,8 +21,8 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
     const [responseMessage, setResponseMessage] = React.useState('');
     const [snackbarOpen, setSnackbarOpen] = React.useState(false);
     const [dropdownData, setDropdownData] = React.useState([]);
+
     const [statusData, setStatusData] = React.useState(null);
-    const [bind,setbind]=React.useState(false);
 
     const getCurrentDate = () => {
         const now = new Date();
@@ -78,8 +76,6 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                 ...editedData,
                 attemptedBy: attemtedUser,
             };
-            console.log("status Dto")
-            console.log(statusDto)
             axios
                 .post(Urlconstant.url + `api/updateFollowStatus`, statusDto, {
                     headers: {
@@ -114,20 +110,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
         setIsConfirming(false);
 
     }
-    const getFollowUpStatus = () =>{
-        console.log(rowData.basicInfo.email)
-        const statusApi = Urlconstant.url + `api/getFollowUpStatusByEmail/${rowData.basicInfo.email}`;
-        axios.get(statusApi, {
-            headers: {
-                'Content-Type': 'application/json',
-                spreadsheetId: Urlconstant.spreadsheetId,
-            },
-        }).then((response) => {
-            console.log('Update success:', response);
-            setStatusData(response.data);
-          })
-      }
-      console.log(statusData);
+
 
     return (
         
@@ -169,7 +152,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
 
                 />
                 <FormControl>
-                <InputLabel id="demo-simple-select-label">attemptStatus</InputLabel>
+                    <InputLabel id="demo-simple-select-label">Attempt Status</InputLabel>
                     <Select
                         labelId="demo-simple-select-label"
                         id="demo-simple-select"
@@ -229,12 +212,14 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                         shrink: true,
                     }}
                 />
-                
+
 
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleClose} color="secondary"
-                >
+
+
+                <Button onClick={handleSnackbarClose} color="secondary">
+
                     Cancel
                 </Button>
                 
