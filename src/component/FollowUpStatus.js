@@ -10,10 +10,7 @@ import Snackbar from '@mui/material/Snackbar';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Urlconstant } from '../constant/Urlconstant';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
-import styled from '@emotion/styled';
-import { Link } from 'react-router-dom';
-import Profile from './Profile';
-import { History } from '@mui/icons-material';
+
 
 const fieldStyle = { margin: '20px' };
 
@@ -24,9 +21,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
     const [responseMessage, setResponseMessage] = React.useState('');
     const [snackbarOpen, setSnackbarOpen] = React.useState(false);
     const [dropdownData, setDropdownData] = React.useState([]);
-    const [minDate, setMinDate] = React.useState('');
-
-
+    
     const getCurrentDate = () => {
         const now = new Date();
         const year = now.getFullYear();
@@ -156,7 +151,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                         labelId="demo-simple-select-label"
                         id="demo-simple-select"
                         label="Attempt Status"
-                        name="AttemptStatus"
+                        name="attemptStatus"
                         onChange={handleInputChange}
                         defaultValue={rowData.attemptStatus}
                         variant="outlined"
