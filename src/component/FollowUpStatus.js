@@ -21,7 +21,9 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
     const [responseMessage, setResponseMessage] = React.useState('');
     const [snackbarOpen, setSnackbarOpen] = React.useState(false);
     const [dropdownData, setDropdownData] = React.useState([]);
-    
+
+    const [statusData, setStatusData] = React.useState(null);
+
     const getCurrentDate = () => {
         const now = new Date();
         const year = now.getFullYear();
@@ -99,6 +101,8 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
 
     const handleSnackbarClose = () => {
         setSnackbarOpen(false);
+        window.location.reload();
+        getFollowUpStatus();
         handleClose();
     };
 
@@ -107,7 +111,9 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
 
     }
 
+
     return (
+        
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
             <DialogTitle>Add to Follow Up</DialogTitle>
             <DialogContent>
@@ -213,8 +219,10 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
 
 
                 <Button onClick={handleSnackbarClose} color="secondary">
+
                     Cancel
                 </Button>
+                
                 {loading ? (
                     <CircularProgress size={20} /> // Show loading spinner
                 ) : (
@@ -242,12 +250,15 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                     <Button onClick={() => setIsConfirming(false)} color="secondary">
                         Cancel
                     </Button>
+                    
                     <Button onClick={handleSaveClick} color="primary">
                         Confirm
                     </Button>
+
                 </DialogActions>
             </Dialog>
         </Dialog>
+      
     );
 };
 
