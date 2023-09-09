@@ -3,6 +3,7 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { Form } from 'react-bootstrap';
 import { Urlconstant } from '../constant/Urlconstant';
+import Header from './Header';
 
 export const Trainee = ({ formData, setFormData, onNext }) => {
   const [error, setError] = useState();
@@ -141,6 +142,9 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
 
   const isDisabled= !formData.traineeName || !formData.email || !formData.contactNumber||!formData.dateOfBirth;
   return (
+<div>
+
+
     <Container maxWidth="sm">
       <Typography component="div" style={{ height: '50vh' }}>
         <h2>Trainee</h2>
@@ -207,5 +211,6 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
         <Button variant="contained" disabled={isDisabled} onClick={onNext}>Next</Button>
       </Typography>
     </Container>
+    </div>
   )
 }

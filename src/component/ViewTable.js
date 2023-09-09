@@ -252,6 +252,8 @@ export default function ControlledSelectionServerPaginationGrid() {
 
   return (
     <div>
+      <Header />
+
       <div
         className="search"
         style={{ display: "flex", alignItems: "center", marginTop: "100px" }}
@@ -368,12 +370,10 @@ export default function ControlledSelectionServerPaginationGrid() {
                     color="secondary"
                     component={Link} // Use Link component for navigation
                     to={`/x-workz/profile/${params.row.basicInfo.email}`} // Pass email as a parameter
-
                   >
                     View
                   </Button>
                   {params.row.basicInfo.email}
-
                 </div>
               ),
             },

@@ -13,6 +13,7 @@ import { Form } from "react-bootstrap";
 import axios from "axios";
 import { Urlconstant } from "../constant/Urlconstant";
 import styled from "@emotion/styled";
+import { useLocation } from "react-router-dom";
 const PrimaryMenuItem = styled(MenuItem)({
   color: "Black", // Set your desired primary color here
 });
@@ -23,6 +24,10 @@ export const Course = ({
   onNext,
   onPrevious,
 }) => {
+  const location = useLocation();
+
+  const email = location.state && location.state.email;
+
   const [selectedValue, setSelectedValue] = useState("");
   useEffect(() => {
     if (selectedValue) {
@@ -37,7 +42,8 @@ export const Course = ({
         { headers: { spreadsheetId: Urlconstant.spreadsheetId } }
       );
       const data = await response.data;
-      console.log(data.courseName)
+      console.log(data.courseName);
+      console.log("7777777777777777777777777777777777777" + email);
 
       // Update the formData state with fetched data
       setFormData({
@@ -47,11 +53,8 @@ export const Course = ({
         course: data.courseName,
         batchTiming: data.timing,
         startTime: data.startTime,
-
-
       });
     } catch (error) {
-
       console.error("Error fetching data:", error);
     }
   };
@@ -78,7 +81,7 @@ export const Course = ({
         <Form>
           <Select
             name="course"
-            value={formData.course }
+            value={formData.course}
             required
             fullWidth
             margin="normal"

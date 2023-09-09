@@ -34,6 +34,7 @@ export default function Header() {
         })
         .catch((e) => {});
     }
+    console.log(location);
   }, [email]);
   const handleClose = () => {
     setAnchorEl(null);

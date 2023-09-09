@@ -80,6 +80,7 @@ export default function Registration() {
     switch (currentSection) {
       case 1:
         return (
+
           <Trainee
             formData={formData.basicInfo}
             setFormData={data => setFormData({ ...formData, basicInfo: data })}
@@ -121,7 +122,7 @@ export default function Registration() {
   };
   return (
     <Container>
-      <Header />
+      <Header  />
       <h2>Registration Form</h2>
 
       <div key={messages} style={{ color: 'Green' }} >
@@ -144,5 +145,6 @@ export default function Registration() {
       </Stepper>
       {renderSection()}
     </Container>
+  
   )
 }
