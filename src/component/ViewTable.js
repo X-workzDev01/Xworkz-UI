@@ -10,6 +10,7 @@ import EditModal from "./EditModal";
 import Profile from "./Profile";
 import { Link, Router } from "react-router-dom";
 import context from "react-bootstrap/esm/AccordionContext";
+import Header from "./Header";
 
 function loadServerRows(page, pageSize) {
   const startingIndex = page * pageSize;
@@ -367,9 +368,12 @@ export default function ControlledSelectionServerPaginationGrid() {
                     color="secondary"
                     component={Link} // Use Link component for navigation
                     to={`/x-workz/profile/${params.row.basicInfo.email}`} // Pass email as a parameter
+
                   >
                     View
                   </Button>
+                  {params.row.basicInfo.email}
+
                 </div>
               ),
             },
