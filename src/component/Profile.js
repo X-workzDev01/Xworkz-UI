@@ -67,7 +67,7 @@ const Profile = () => {
     const [isFollowUpStatusModalOpen, setFollowUpStatusModalOpen] = React.useState(false);
     const [editedFollowUpStatusRowData, setEditedFollowUpStatusRowData] = React.useState(null);
 
-    
+
     useEffect(() => {
 
         // Define the URL for your API endpoint using the email parameter
@@ -107,13 +107,13 @@ const Profile = () => {
             .catch((error) => {
                 console.error('Error fetching data:', error);
             });
-    }, [email,isFollowUpStatusModalOpen,isModalOpen]);
+    }, [email, isFollowUpStatusModalOpen, isModalOpen]);
 
     if (!profileData || !followUpData || !statusData) {
         return <div>Loading...</div>;
     }
-    
- 
+
+
 
     const handleEditClick = (row) => {
         setEditedRowData(row);
@@ -135,7 +135,7 @@ const Profile = () => {
     }
 
 
-    
+
 
     return (
         <div>
@@ -186,6 +186,12 @@ const Profile = () => {
                             <h3>{followUpData.currentStatus}</h3>
                             <h4>Current Status</h4>
                         </li>
+                        <li>
+
+                        <h3>{statusData.preferredLocation}</h3>
+                        <h4>Preferred Location</h4>
+                        </li>
+
                     </ul>
                     <div className="links">
                         <Button variant="outlined" startIcon={<AddIcon />} onClick={() => {
@@ -209,7 +215,7 @@ const Profile = () => {
                 setRowData={setEditedRowData}
                 handleSaveClick={handleSaveClick}
             />
-            
+
             <FollowUpStatus
                 open={isFollowUpStatusModalOpen}
                 handleClose={() => setFollowUpStatusModalOpen(false)}
@@ -218,7 +224,7 @@ const Profile = () => {
                 handleSaveClick={handleFollowUpStatusSave}
                 FollowUp={handleFollowUp}
             />
-            
+
 
             {statusData ? <FollowStatusGrid rows={statusData} /> : null}
         </div>
