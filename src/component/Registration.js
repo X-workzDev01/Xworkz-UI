@@ -10,16 +10,21 @@ import axios from 'axios';
 import Header from './Header';
 //import { useNavigate } from 'react-router-dom';
 import { Urlconstant } from '../constant/Urlconstant';
+import { Navigate, useLocation } from 'react-router-dom';
+import { date } from 'yup';
 
 export default function Registration() {
  // let navigate = useNavigate()
+ const location = useLocation();
+ const email = location.state && location.state.email;
   const [currentSection, setCurrentSection] = useState(1);
   const [messages, setMessages] = useState('');
   const [formData, setFormData] = useState({
     basicInfo: [],
     educationInfo: [],
     courseInfo: [],
-    referralInfo: []
+    referralInfo: [],
+    adminDto:{createdBy: email}
   });
   const [dropdown, setDropDown] = useState({
     course: [],
@@ -53,20 +58,23 @@ export default function Registration() {
     setCurrentSection(currentSection - 1);
   };
 
+ 
   //registration api call
   const handleFormSubmit = () => {
-    axios.post(Urlconstant.url+'api/register', formData, {
+    axios.post(Urlconstant.url+'api/register', formData,{
       headers: {
         'spreadsheetId': Urlconstant.spreadsheetId
       }
+
     }).then(response => {
       setMessages("Registration done successfully!!!")
-      //navigate("/x-workz/view")
+      Navigate("/x-workz/view", { state: { email } })
       setFormData({
         basicInfo: [],
         educationInfo: [],
         courseInfo: [],
-        referralInfo: []
+        referralInfo: [],
+        adminDto:[]
       });
       setCurrentSection(1);
     }).catch(error => {
@@ -80,11 +88,13 @@ export default function Registration() {
     switch (currentSection) {
       case 1:
         return (
+
           <Trainee
             formData={formData.basicInfo}
             setFormData={data => setFormData({ ...formData, basicInfo: data })}
             onNext={handleNext}
           />
+
         );
       case 2:
         return (
@@ -121,7 +131,7 @@ export default function Registration() {
   };
   return (
     <Container>
-      <Header />
+      <Header  />
       <h2>Registration Form</h2>
 
       <div key={messages} style={{ color: 'Green' }} >
@@ -144,5 +154,6 @@ export default function Registration() {
       </Stepper>
       {renderSection()}
     </Container>
+  
   )
 }

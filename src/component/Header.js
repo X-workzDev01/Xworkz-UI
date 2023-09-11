@@ -14,9 +14,6 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { Urlconstant } from "../constant/Urlconstant";
-import { Card, Modal, ModalBody } from "react-bootstrap";
-import { ClassNames } from "@emotion/react";
-import { round } from "lodash";
 
 export default function Header() {
   const location = useLocation();
@@ -26,6 +23,9 @@ export default function Header() {
   const [anchorEl, setAnchorEl] = useState(null);
   useEffect(() => {
     if (email) {
+
+
+
       axios(Urlconstant.url + `api/notification?email=${email}`)
         .then((res) => {
           setNotification(res.data);
@@ -34,6 +34,7 @@ export default function Header() {
         })
         .catch((e) => {});
     }
+    console.log(location);
   }, [email]);
   const handleClose = () => {
     setAnchorEl(null);
