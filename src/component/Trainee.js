@@ -3,8 +3,11 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Form } from 'react-bootstrap';
 import { Urlconstant } from '../constant/Urlconstant';
+import Header from './Header';
+import { useLocation } from 'react-router-dom';
 
 export const Trainee = ({ formData, setFormData, onNext }) => {
+
   const [error, setError] = useState();
   const [emailCheck, setEmailCheck] = useState(null);
   const [numberCheck, setNumberCheck] = useState(null);
@@ -154,6 +157,9 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
   const maxDate = today.toISOString().split('T')[0];
   const isDisabled = !formData.traineeName || !formData.email || !formData.contactNumber || !formData.dateOfBirth;
   return (
+<div>
+
+
     <Container maxWidth="sm">
       <Typography component="div" style={{ height: '50vh' }}>
         <h2>Trainee</h2>
@@ -226,5 +232,6 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
         <Button variant="contained" disabled={isDisabled} onClick={onNext}>Next</Button>
       </Typography>
     </Container>
+    </div>
   )
 }
