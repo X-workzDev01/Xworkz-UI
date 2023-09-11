@@ -21,9 +21,9 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
     const [responseMessage, setResponseMessage] = React.useState('');
     const [snackbarOpen, setSnackbarOpen] = React.useState(false);
     const [dropdownData, setDropdownData] = React.useState([]);
+    const [isButtonDisabled, setButtonDisabled] =React.useState(false);
 
-    const [statusData, setStatusData] = React.useState(null);
-
+    
     const getCurrentDate = () => {
         const now = new Date();
         const year = now.getFullYear();
@@ -66,12 +66,14 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
     const handleEditClick = () => {
         setIsConfirming(true);
         setSnackbarOpen(false);
+        
     };
     const attemtedUser = sessionStorage.getItem("userId");
 
     const handleSaveClick = () => {
         if (isConfirming) {
             setLoading(true);
+            setButtonDisabled(true);
             const statusDto = {
                 ...editedData,
                 attemptedBy: attemtedUser,
@@ -101,8 +103,6 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
 
     const handleSnackbarClose = () => {
         setSnackbarOpen(false);
-        window.location.reload();
-        getFollowUpStatus();
         handleClose();
     };
 
@@ -111,9 +111,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
 
     }
 
-
     return (
-        
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
             <DialogTitle>Add to Follow Up</DialogTitle>
             <DialogContent>
@@ -212,17 +210,57 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                         shrink: true,
                     }}
                 />
-
-
+                <FormControl>
+                    <InputLabel id="demo-simple-select-label">preferred Location</InputLabel>
+                    <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        label="Preferred Location"
+                        name="preferredLocation"
+                        onChange={handleInputChange}
+                        defaultValue={rowData.prefferedLocation}
+                        variant="outlined"
+                        sx={{
+                            marginRight: '20px',
+                            width: '200px', // Adjust padding for a smaller size
+                            fontSize: '20px', // Adjust font size for a smaller size
+                        }}
+                    >
+                        {dropdownData.branchname.map((item, index) => (
+                            <MenuItem value={item} key={index}>{item}</MenuItem>
+                        ))}
+                        
+                </Select>
+                </FormControl>
+                <FormControl>
+                    <InputLabel id="demo-simple-select-label">preferred Class Type</InputLabel>
+                    <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        label="Preferred Class Type"
+                        name="preferredClassType"
+                        onChange={handleInputChange}
+                        defaultValue={rowData.preferredClassType}
+                        variant="outlined"
+                        sx={{
+                            marginRight: '20px',
+                            width: '200px', // Adjust padding for a smaller size
+                            fontSize: '20px', // Adjust font size for a smaller size
+                        }}
+                    >
+                        {dropdownData.batch.map((item, index) => (
+                            <MenuItem value={item} key={index}>{item}</MenuItem>
+                        ))}
+                        
+                </Select>
+                </FormControl>
+                
             </DialogContent>
             <DialogActions>
 
-
                 <Button onClick={handleSnackbarClose} color="secondary">
-
                     Cancel
                 </Button>
-                
                 {loading ? (
                     <CircularProgress size={20} /> // Show loading spinner
                 ) : (
@@ -250,15 +288,12 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                     <Button onClick={() => setIsConfirming(false)} color="secondary">
                         Cancel
                     </Button>
-                    
                     <Button onClick={handleSaveClick} color="primary">
                         Confirm
                     </Button>
-
                 </DialogActions>
             </Dialog>
         </Dialog>
-      
     );
 };
 

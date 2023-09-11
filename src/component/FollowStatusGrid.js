@@ -10,6 +10,8 @@ const columns = [
   { field: 'callDuration', headerName: 'Call Duration', width: 100 },
   { field: 'callBack', headerName: 'Call Back', width: 150 },
   { field: 'comments', headerName: 'Comments', width: 200 },
+  { field: 'prefferedLocation', headerName: 'Preferred Location', width: 200 },
+  { field: 'prefferedClassType', headerName: 'preffered Class Type', width: 200 },
 ];
 
 const FollowStatusGrid = ({rows}) => {
