@@ -121,7 +121,7 @@ export default function Registration() {
   };
   return (
     <Container>
-      <Header />
+      
       <h2>Registration Form</h2>
 
       <div key={messages} style={{ color: 'Green' }} >

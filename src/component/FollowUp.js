@@ -23,7 +23,7 @@ export default function FollowUp() {
     rowCount: 0,
   });
   const [loading, setLoading] = useState(false);
-  const [searchValue, setSearchValue] = useState('new');
+  const [searchValue, setSearchValue] = useState('New');
 
   React.useEffect(() => {
     getDropDown();
@@ -118,12 +118,13 @@ export default function FollowUp() {
   return (
     <div>
       <h2>VeiwFollowUp</h2>
-      <h2>FollowUp List</h2>
+      {/* <h2>FollowUp List</h2> */}
       <div className="search" style={{ marginTop: '50px', display: 'flex', alignItems: 'center' }}>
         <Select name="statusValues"
           onChange={handleInputChange}
           value={searchValue}
           fullWidth
+          defaultValue={searchValue}
           required
           id="outlined-basic"
           variant="outlined"
