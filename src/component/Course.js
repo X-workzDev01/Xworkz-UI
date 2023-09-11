@@ -17,6 +17,11 @@ import { useLocation } from "react-router-dom";
 const PrimaryMenuItem = styled(MenuItem)({
   color: "Black", // Set your desired primary color here
 });
+
+export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious }) => {
+ const [selectedValue, setSelectedValue] = useState('Java');
+  const [value ,setValue ]=useState('');
+  const [loading ,setLoading]=useState(false)
 export const Course = ({
   dropdown,
   formData,
@@ -36,6 +41,7 @@ export const Course = ({
   }, [selectedValue]);
   const fetchData = async () => {
     try {
+
       console.log("course" + selectedValue);
       const response = await axios.get(
         Urlconstant.url + `api/getCourseDetails?courseName=${selectedValue}`,
@@ -70,6 +76,7 @@ export const Course = ({
     console.log(formData);
   };
 
+
   const isDisabled = !formData.course || !formData.offeredAs;
 
   return (
@@ -87,7 +94,7 @@ export const Course = ({
             id="outlined-basic"
             variant="outlined"
             onChange={handleInputChange}
-          >
+             >
             {dropdown.course.map((item, index) => (
               <MenuItem value={item} key={index}>
                 {item}
