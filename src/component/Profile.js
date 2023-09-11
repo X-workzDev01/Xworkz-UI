@@ -186,11 +186,6 @@ const Profile = () => {
                             <h3>{followUpData.currentStatus}</h3>
                             <h4>Current Status</h4>
                         </li>
-                        <li>
-
-                        <h3>{statusData.preferredLocation}</h3>
-                        <h4>Preferred Location</h4>
-                        </li>
 
                     </ul>
                     <div className="links">

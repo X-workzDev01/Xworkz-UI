@@ -211,12 +211,12 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                     }}
                 />
                 <FormControl>
-                    <InputLabel id="demo-simple-select-label">Preffered Location</InputLabel>
+                    <InputLabel id="demo-simple-select-label">preferred Location</InputLabel>
                     <Select
                         labelId="demo-simple-select-label"
                         id="demo-simple-select"
-                        label="Preffered Location"
-                        name="prefferedLocation"
+                        label="Preferred Location"
+                        name="preferredLocation"
                         onChange={handleInputChange}
                         defaultValue={rowData.prefferedLocation}
                         variant="outlined"
@@ -233,14 +233,14 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                 </Select>
                 </FormControl>
                 <FormControl>
-                    <InputLabel id="demo-simple-select-label">Preffered Class Type</InputLabel>
+                    <InputLabel id="demo-simple-select-label">preferred Class Type</InputLabel>
                     <Select
                         labelId="demo-simple-select-label"
                         id="demo-simple-select"
-                        label="Preffered Class Type"
-                        name="prefferedClassType"
+                        label="Preferred Class Type"
+                        name="preferredClassType"
                         onChange={handleInputChange}
-                        defaultValue={rowData.prefferedClassType}
+                        defaultValue={rowData.preferredClassType}
                         variant="outlined"
                         sx={{
                             marginRight: '20px',
