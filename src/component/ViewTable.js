@@ -354,7 +354,7 @@ export default function ControlledSelectionServerPaginationGrid() {
               field: "batch",
               headerName: "Batch",
               flex: 1,
-              valueGetter: (params) => params.row.courseInfo.batch,
+              valueGetter: (params) => params.row.courseInfo.batchType,
             },
             // { field: 'referalName', headerName: 'Referral Name', flex: 1, valueGetter: (params) => params.row.referralInfo.referalName },
             // { field: 'referalContactNumber', headerName: 'Referral Contact Number', flex: 1, valueGetter: (params) => params.row.referralInfo.referalContactNumber },
@@ -373,7 +373,6 @@ export default function ControlledSelectionServerPaginationGrid() {
                   >
                     View
                   </Button>
-                  {params.row.basicInfo.email}
                 </div>
               ),
             },

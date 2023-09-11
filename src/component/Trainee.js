@@ -4,8 +4,10 @@ import React, { useState } from 'react';
 import { Form } from 'react-bootstrap';
 import { Urlconstant } from '../constant/Urlconstant';
 import Header from './Header';
+import { useLocation } from 'react-router-dom';
 
 export const Trainee = ({ formData, setFormData, onNext }) => {
+
   const [error, setError] = useState();
   const [emailCheck, setEmailCheck] = useState(null);
   const [numberCheck, setNumberCheck] = useState(null);

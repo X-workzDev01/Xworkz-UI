@@ -43,7 +43,6 @@ export const Course = ({
       );
       const data = await response.data;
       console.log(data.courseName);
-      console.log("7777777777777777777777777777777777777" + email);
 
       // Update the formData state with fetched data
       setFormData({
