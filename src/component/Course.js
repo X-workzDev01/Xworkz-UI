@@ -1,149 +1,159 @@
-import { Button, MenuItem, Select, TextField, Container, Typography, InputLabel } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import {
+  Button,
+  MenuItem,
+  Select,
+  TextField,
+  Container,
+  Typography,
+  InputLabel,
+} from "@mui/material";
+import React, { useEffect, useState } from "react";
 
-import { Form } from 'react-bootstrap';
-import axios from 'axios';
-import { Urlconstant } from '../constant/Urlconstant';
-import styled from '@emotion/styled';
+import { Form } from "react-bootstrap";
+import axios from "axios";
+import { Urlconstant } from "../constant/Urlconstant";
+import styled from "@emotion/styled";
+import { useLocation } from "react-router-dom";
 const PrimaryMenuItem = styled(MenuItem)({
-  color: 'Black', // Set your desired primary color here
+  color: "Black", // Set your desired primary color here
 });
-export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious }) => {
-  const [selectedValue, setSelectedValue] = useState('Java');
-  const [value ,setValue ]=useState('');
-  const [loading ,setLoading]=useState(false)
-  useEffect(()=>{
+export const Course = ({
+  dropdown,
+  formData,
+  setFormData,
+  onNext,
+  onPrevious,
+}) => {
+  const location = useLocation();
+
+  const email = location.state && location.state.email;
+
+  const [selectedValue, setSelectedValue] = useState("");
+  useEffect(() => {
     if (selectedValue) {
       fetchData();
     }
   }, [selectedValue]);
-   const fetchData = async () => {
+  const fetchData = async () => {
     try {
-      setLoading(true);
-      console.log("coursede"+selectedValue)
-      axios.get(Urlconstant.url + `api/getCourseDetails?courseName=${selectedValue}`, {headers: 
-       { 'spreadsheetId': Urlconstant.spreadsheetId}
-      }).then((res) =>(
-        setValue(res.data),setLoading(false)));
-        
+      console.log("course" + selectedValue);
+      const response = await axios.get(
+        Urlconstant.url + `api/getCourseDetails?courseName=${selectedValue}`,
+        { headers: { spreadsheetId: Urlconstant.spreadsheetId } }
+      );
+      const data = await response.data;
+      console.log(data.courseName);
+
+      // Update the formData state with fetched data
+      setFormData({
+        branch: data.branch,
+        trainerName: data.trainerName,
+        batchType: data.batchType,
+        course: data.courseName,
+        batchTiming: data.timing,
+        startTime: data.startTime,
+      });
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error("Error fetching data:", error);
     }
   };
 
- 
-  
-
-  
-  const handleInputChange = (e) => {  
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    setSelectedValue(e.target.value);  
+    setSelectedValue(e.target.value);
   };
 
-  const setSelect =(e)=>
-  {
+  const setSelect = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
     console.log(formData);
   };
-  
-  const isDisabled = !formData.course  || !formData.offeredAs;
+
+  const isDisabled = !formData.course || !formData.offeredAs;
 
   return (
     <Container maxWidth="sm">
       <h2>Course Details</h2>
-      <Typography component="div" style={{ height: '50vh' }}>
+      <Typography component="div" style={{ height: "50vh" }}>
         <InputLabel id="demo-simple-select-label">Course</InputLabel>
-        {loading ? <p>Wait Loading...........</p>:''}
         <Form>
-          <Select name="course"
-
-            value={formData.course || ''}
+          <Select
+            name="course"
+            value={formData.course}
             required
             fullWidth
             margin="normal"
             id="outlined-basic"
             variant="outlined"
             onChange={handleInputChange}
-          displayEmpty
-          >  
-
-           <MenuItem value="">
-              <em>{selectedValue}</em>
-          </MenuItem> 
-
+          >
             {dropdown.course.map((item, index) => (
-
-
-              <PrimaryMenuItem  value={item}  key={index}>{item}</PrimaryMenuItem>
-
-            ))} 
+              <MenuItem value={item} key={index}>
+                {item}
+              </MenuItem>
+            ))}
           </Select>
 
           <InputLabel id="demo-simple-select-label">Branch</InputLabel>
-          <TextField           
+          <TextField
             name="branch"
-            value={value.branch}
+            value={formData.branch}
             required
             aria-readonly
             fullWidth
+            onBlur={setSelect}
             margin="normal"
             id="outlined-basic"
             variant="outlined"
-          >
-            
-          </TextField>
+          ></TextField>
           <InputLabel id="demo-simple-select-label">Trainer Name</InputLabel>
-          <TextField           
+          <TextField
             name="trainerName"
-            value={value.trainerName}
+            value={formData.trainerName}
             required
-            
+            onBlur={setSelect}
             aria-readonly
             fullWidth
             margin="normal"
             id="outlined-basic"
             variant="outlined"
-          >
-           
-          </TextField>
+          ></TextField>
           <InputLabel id="demo-simple-select-label">Batch Type </InputLabel>
 
-
-          <TextField           
+          <TextField
             name="batchType"
-            value={value.batchType}
+            onBlur={setSelect}
+            value={formData.batchType}
             required
             aria-readonly
             fullWidth
             margin="normal"
             id="outlined-basic"
             variant="outlined"
-          >
-           
-          </TextField>
+          ></TextField>
           <InputLabel id="demo-simple-select-label">Batch Timing </InputLabel>
 
-          <TextField           
-            name="batchTiming "
-            value={value.timing}
+          <TextField
+            name="batchTiming"
+            onBlur={setSelect}
+            value={formData.batchTiming}
             required
             aria-readonly
             fullWidth
             margin="normal"
             id="outlined-basic"
             variant="outlined"
-          >
-           
-          </TextField>
-          <InputLabel id="demo-simple-select-label">StartTime Timing </InputLabel>
+          ></TextField>
+          <InputLabel id="demo-simple-select-label">
+            StartTime Timing
+          </InputLabel>
 
-          <TextField 
+          <TextField
             name="startTime"
             aria-readonly
-
-            value={value.startTime}
+            onBlur={setSelect}
+            value={formData.startTime}
             required
             fullWidth
             margin="normal"
@@ -151,8 +161,9 @@ export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious }) 
             variant="outlined"
           />
           <InputLabel id="demo-simple-select-label">Offered As</InputLabel>
-          <Select name="offeredAs"
-            value={formData.offeredAs || ''}
+          <Select
+            name="offeredAs"
+            value={formData.offeredAs || ""}
             onChange={setSelect}
             required
             fullWidth
@@ -161,14 +172,20 @@ export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious }) 
             variant="outlined"
           >
             {dropdown.offered.map((item, index) => (
-              <MenuItem value={item} key={index}>{item}</MenuItem>
+              <MenuItem value={item} key={index}>
+                {item}
+              </MenuItem>
             ))}
           </Select>
         </Form>
-        <Button variant="contained" onClick={onPrevious}>Previous</Button>
+        <Button variant="contained" onClick={onPrevious}>
+          Previous
+        </Button>
         &nbsp;&nbsp;&nbsp;
-        <Button variant="contained" disabled={isDisabled} onClick={onNext}>Next</Button>
+        <Button variant="contained" disabled={isDisabled} onClick={onNext}>
+          Next
+        </Button>
       </Typography>
     </Container>
-  )
-}
+  );
+};
