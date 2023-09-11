@@ -29,7 +29,7 @@ console.log(rowData)
   if (!rowData) {
     return null; // Render nothing if rowData is not available yet
   }
-  
+
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -47,7 +47,6 @@ console.log(rowData)
         currentData = currentData[key];
       }
     }
-  
     setEditedData(updatedData);
   };
 
@@ -55,6 +54,7 @@ console.log(rowData)
     setIsConfirming(true);
     setSnackbarOpen(false);
   };
+
 
   const handleSaveClick = () => {
     if (isConfirming) {
@@ -82,7 +82,7 @@ console.log(rowData)
           setSnackbarOpen(true);
         });
     }
-    setIsConfirming(false);
+
   };
 
   const handleSnackbarClose = () => {
@@ -151,6 +151,9 @@ console.log(rowData)
           defaultValue={rowData.joiningDate}
           onChange={handleInputChange}
           style={fieldStyle}
+          InputLabelProps={{
+            shrink: true,
+        }}
         />
         <TextField
           label="Course Name"
@@ -176,6 +179,7 @@ console.log(rowData)
        
         </DialogContent>
       <DialogActions>
+        
         <Button onClick={handleClose} color="secondary">
           Cancel
         </Button>

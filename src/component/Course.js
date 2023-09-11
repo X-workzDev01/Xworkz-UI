@@ -9,8 +9,10 @@ const PrimaryMenuItem = styled(MenuItem)({
   color: 'Black', // Set your desired primary color here
 });
 export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious }) => {
-  const [selectedValue, setSelectedValue] = useState('');
+ const [selectedValue, setSelectedValue] = useState('Java');
   const [value ,setValue ]=useState('');
+  const [loading ,setLoading]=useState(false)
+
   useEffect(()=>{
     if (selectedValue) {
       fetchData();
@@ -18,11 +20,15 @@ export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious }) 
   }, [selectedValue]);
    const fetchData = async () => {
     try {
+
+      setLoading(true);
       console.log("coursede"+selectedValue)
       axios.get(Urlconstant.url + `api/getCourseDetails?courseName=${selectedValue}`, {headers: 
        { 'spreadsheetId': Urlconstant.spreadsheetId}
       }).then((res) =>(
-        setValue(res.data)));
+
+ setValue(res.data)));
+
         
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -45,6 +51,7 @@ export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious }) 
     setFormData({ ...formData, [name]: value });
     console.log(formData);
   };
+
   
   const isDisabled = !formData.course  || !formData.offeredAs;
 
@@ -53,9 +60,9 @@ export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious }) 
       <h2>Course Details</h2>
       <Typography component="div" style={{ height: '50vh' }}>
         <InputLabel id="demo-simple-select-label">Course</InputLabel>
+        {loading ? <p>Wait Loading...........</p>:''}
         <Form>
           <Select name="course"
-
             value={selectedValue}
             required
             fullWidth
@@ -63,8 +70,7 @@ export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious }) 
             id="outlined-basic"
             variant="outlined"
             onChange={handleInputChange}
-          >  
-
+         >
             {dropdown.course.map((item, index) => (
 
 

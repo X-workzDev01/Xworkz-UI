@@ -1,6 +1,21 @@
 .App {
   text-align: center;
+  z-index: 999999;
 }
+
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+ 
+  justify-content: center;
+  min-height: 100vh;
+  z-index: 99999;
+}
+
 
 .App-logo {
   height: 40vmin;

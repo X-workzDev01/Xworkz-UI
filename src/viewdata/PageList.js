@@ -36,11 +36,13 @@ export default function PageList() {
                         View Records
                     </Button>
                 </Grid>
+
                 <Grid item>
                     <Button type="submit" variant="contained" color='primary' onClick={handlefollowup}>
                         Follow Up
                     </Button>
                 </Grid>
+
                 
                 <Grid item>
                     <Button variant="contained" color="primary">
