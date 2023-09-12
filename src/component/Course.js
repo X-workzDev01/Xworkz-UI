@@ -18,7 +18,6 @@ const PrimaryMenuItem = styled(MenuItem)({
   color: "Black", // Set your desired primary color here
 });
 
-
 export const Course = ({
   dropdown,
   formData,
@@ -91,7 +90,7 @@ export const Course = ({
             id="outlined-basic"
             variant="outlined"
             onChange={handleInputChange}
-          >
+
             {dropdown.course.map((item, index) => (
               <MenuItem value={item} key={index}>
                 {item}

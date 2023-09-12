@@ -10,6 +10,7 @@ import EditModal from "./EditModal";
 import Profile from "./Profile";
 import { Link, Router } from "react-router-dom";
 import context from "react-bootstrap/esm/AccordionContext";
+import Header from "./Header";
 
 function loadServerRows(page, pageSize) {
   const startingIndex = page * pageSize;
@@ -251,6 +252,8 @@ export default function ControlledSelectionServerPaginationGrid() {
 
   return (
     <div>
+      <Header />
+
       <div
         className="search"
         style={{ display: "flex", alignItems: "center", marginTop: "100px" }}
@@ -351,7 +354,7 @@ export default function ControlledSelectionServerPaginationGrid() {
               field: "batch",
               headerName: "Batch",
               flex: 1,
-              valueGetter: (params) => params.row.courseInfo.batch,
+              valueGetter: (params) => params.row.courseInfo.batchType,
             },
             // { field: 'referalName', headerName: 'Referral Name', flex: 1, valueGetter: (params) => params.row.referralInfo.referalName },
             // { field: 'referalContactNumber', headerName: 'Referral Contact Number', flex: 1, valueGetter: (params) => params.row.referralInfo.referalContactNumber },

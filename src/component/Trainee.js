@@ -1,74 +1,82 @@
 import { TextField, Button, Alert, Typography, Container } from '@mui/material';
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Form } from 'react-bootstrap';
 import { Urlconstant } from '../constant/Urlconstant';
+import Header from './Header';
+import { useLocation } from 'react-router-dom';
 
 export const Trainee = ({ formData, setFormData, onNext }) => {
+
   const [error, setError] = useState();
   const [emailCheck, setEmailCheck] = useState(null);
   const [numberCheck, setNumberCheck] = useState(null);
   const [emailError, setEmailError] = useState(null);
   const [nameError, setNameError] = useState(null);
-
-  const [buttonEnabled , setButtonEnabled] = useState(false);
-
-
+  const [buttonEnabled, setButtonEnabled] = useState(false);
   const [phoneNumberError, setPhoneNumberError] = useState('');
-
-
+  const [verifyHandaleEmail, setverifyHandleEmail] = useState('');
+  const [verifyHandaleEmailerror, setverifyHandleEmailError] = useState('');
+  
   const handleInputChange = (e) => {
-  const { name, value } = e.target;
+    const { name, value } = e.target;
 
-  if (name === 'traineeName') {
-    // Perform name validation
-    if (!value) {
-      setNameError('Name is required');
-    } 
-    else if(value.length<3){
-      console.log("name length is less")
-      setNameError('Enter a Valid Name');
-    }
-    else {
-      setNameError('');
-    }
-  } else if (name === 'email') {
-    // Perform email validation
-    if (!value) {
-      setEmailError('Email is required');
-      
-    } else if (!/\S+@\S+\.\S+/.test(value)) {
-      setEmailError('Invalid email address');
-    } else {
-      setEmailError('');
-    }
-    handleEmail();
-  } else if (name === 'contactNumber') {
-    // Perform contact number validation
-    if (!value) {
-      setPhoneNumberError('Phone number is required');
-    } else if (!/^\d+$/.test(value)) {
-      setPhoneNumberError('Phone number must contain only digits');
+    if (name === 'traineeName') {
+      // Perform name validation
+      if (!value) {
+        setNameError('Name is required');
+      }
+      else if (value.length < 3) {
+        console.log("name length is less")
+        setNameError('Enter a Valid Name');
+      }
+      else {
+        setNameError('');
+      }
+    } else if (name === 'email') {
+      // Perform email validation
+      if (!value) {
+        setEmailError('Email is required');
 
-    } else if (value.length !==10) {
-      setPhoneNumberError('Phone number must contain exactly 10 digits');
-      
-    } else {
-      setPhoneNumberError('');
+      } else if (!/\S+@\S+\.\S+/.test(value)) {
+        setEmailError('Invalid email address');
+
+      } else {
+        setEmailError('');
+
+      }
+    } else if (name === 'contactNumber') {
+      // Perform contact number validation
+      if (!value) {
+        setPhoneNumberError('Phone number is required');
+      } else if (!/^\d+$/.test(value)) {
+        setPhoneNumberError('Phone number must contain only digits');
+
+      } else if (value.length !== 10) {
+        setPhoneNumberError('Phone number must contain exactly 10 digits');
+
+      } else {
+        setPhoneNumberError('');
+      }
+      handleNumberChange();
     }
-    handleNumberChange();
+    setFormData({ ...formData, [name]: value });
   }
-  setFormData({ ...formData, [name]: value });
-}
 
-  
-  
-
- 
-
+  const verifyEmail = () => {
+    axios.get(Urlconstant.url + `api/verify-email?email=${formData.email}`).then(response => {
+      if(response.data ==='accepted_email'){
+        setverifyHandleEmail(response.data);
+        console.log(response.data);
+      }else{
+        setverifyHandleEmailError(response.data);
+      }
+     } );
+  }
 
   const handleEmail = (e) => {
-    validateEmail(formData.email);
+    verifyEmail(formData.email);
+    validateEmail(formData.email) ;
     axios.get(Urlconstant.url + `api/emailCheck?email=${formData.email}`, {
       headers: {
         'spreadsheetId': Urlconstant.spreadsheetId
@@ -77,17 +85,21 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
       if (response.status === 201) {
         // Handle the 201 response differently, only setting emailCheck
         setEmailCheck(response.data);
+        
       }
-      else{
+      else {
+
         setEmailCheck(null);
+
       }
-      
+
     }).catch();
     //setError("Check Email Id")
     console.log(error)
+
   }
 
- 
+
   const handleNumberChange = (e) => {
     console.log("number check");
 
@@ -109,7 +121,7 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
         // Handle the 201 response differently, only setting numberCheck
         setNumberCheck(response.data);
       }
-      else{
+      else {
         setNumberCheck(null);
       }
     }).catch(error => {
@@ -124,8 +136,10 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
       setEmailError('Invalid email address');
     } else {
       setEmailError('');
+     
     }
   };
+
 
   // const validatePhoneNumber = (value) => {
   //   if (!value) {
@@ -139,8 +153,13 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
   //   }
   // };
 
-  const isDisabled= !formData.traineeName || !formData.email || !formData.contactNumber||!formData.dateOfBirth;
+  const today = new Date();
+  const maxDate = today.toISOString().split('T')[0];
+  const isDisabled = !formData.traineeName || !formData.email || !formData.contactNumber || !formData.dateOfBirth;
   return (
+<div>
+
+
     <Container maxWidth="sm">
       <Typography component="div" style={{ height: '50vh' }}>
         <h2>Trainee</h2>
@@ -156,9 +175,10 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
             variant="outlined"
             value={formData.traineeName || ''}
             onChange={handleInputChange}
+           
           />
-           {nameError && <Alert severity="error">{nameError}</Alert>}
-          
+          {nameError && <Alert severity="error">{nameError}</Alert>}
+
           <TextField type="email"
             label="E-mail"
             required
@@ -170,10 +190,12 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
             value={formData.email || ''}
             onChange={handleInputChange}
             onBlur={handleEmail}
-            
+
           />
-            {emailError && <Alert severity="error">{emailError}</Alert>}
-           {emailCheck && <Alert severity="error">{emailCheck}</Alert>}
+          {verifyHandaleEmail && <Alert severity="success">{verifyHandaleEmail}</Alert>}
+          {verifyHandaleEmailerror && <Alert severity="error">{verifyHandaleEmailerror}</Alert>}
+          {emailError && <Alert severity="error">{emailError}</Alert>}
+          {emailCheck && <Alert severity="error">{emailCheck}</Alert>}
           <TextField type="number"
             label="Contact Number"
             required
@@ -185,7 +207,7 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
             value={formData.contactNumber || ''}
             onChange={handleInputChange}
             onBlur={handleNumberChange}
-           
+
           />
           {phoneNumberError && <Alert severity="error">{phoneNumberError}</Alert>}
           {numberCheck && <Alert severity="error">{numberCheck}</Alert>}
@@ -201,11 +223,15 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
             variant="outlined"
             InputLabelProps={{
               shrink: true,
-          }}
+            }}
+            inputProps={{
+              max: maxDate
+            }}
           />
         </Form>
         <Button variant="contained" disabled={isDisabled} onClick={onNext}>Next</Button>
       </Typography>
     </Container>
+    </div>
   )
 }
