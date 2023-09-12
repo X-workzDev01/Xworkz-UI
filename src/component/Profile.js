@@ -163,11 +163,8 @@ const Profile = () => {
                             <h3>{profileData.educationInfo.yearOfPassout}</h3>
                             <h4>Passout</h4>
                         </li>
-                        <li>
-                            <h3>{followUpData.courseName}</h3>
-                            <h4>Course Name</h4>
-                        </li>
-                        <li>
+                        
+                    <li>
                             <h3>{profileData.referralInfo.preferredLocation}</h3>
                             <h4>Preferred Location</h4>
                         </li>
