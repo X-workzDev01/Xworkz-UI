@@ -167,6 +167,14 @@ const Profile = () => {
                             <h3>{followUpData.courseName}</h3>
                             <h4>Course Name</h4>
                         </li>
+                        <li>
+                            <h3>{profileData.referralInfo.preferredLocation}</h3>
+                            <h4>Preferred Location</h4>
+                        </li>
+                        <li>
+                            <h3>{profileData.referralInfo.preferredClassType}</h3>
+                            <h4>Preferred Class TYpe</h4>
+                        </li>
                     </ul>
                     <ul className="stats">
 

@@ -8,11 +8,29 @@ import styled from '@emotion/styled';
 const PrimaryMenuItem = styled(MenuItem)({
   color: 'Black', // Set your desired primary color here
 });
+<<<<<<< Updated upstream
 export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious }) => {
   const [selectedValue, setSelectedValue] = useState('Java');
   const [value ,setValue ]=useState('');
   const [loading ,setLoading]=useState(false)
   useEffect(()=>{
+=======
+
+
+export const Course = ({
+  dropdown,
+  formData,
+  setFormData,
+  onNext,
+  onPrevious,
+}) => {
+  const location = useLocation();
+
+  const email = location.state && location.state.email;
+
+  const [selectedValue, setSelectedValue] = useState("");
+  useEffect(() => {
+>>>>>>> Stashed changes
     if (selectedValue) {
       fetchData();
     }
