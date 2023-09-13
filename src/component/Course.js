@@ -14,22 +14,16 @@ import axios from "axios";
 import { Urlconstant } from "../constant/Urlconstant";
 import styled from "@emotion/styled";
 import { useLocation } from "react-router-dom";
-const PrimaryMenuItem = styled(MenuItem)({
-  color: "Black", // Set your desired primary color here
-});
 
-export const Course = ({
-  dropdown,
-  formData,
-  setFormData,
-  onNext,
-  onPrevious,
-}) => {
+
+
+export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious }) => {
+ const [selectedValue, setSelectedValue] = useState('Java');
+
   const location = useLocation();
 
   const email = location.state && location.state.email;
 
-  const [selectedValue, setSelectedValue] = useState("");
   useEffect(() => {
     if (selectedValue) {
       fetchData();
