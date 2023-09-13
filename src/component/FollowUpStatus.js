@@ -210,50 +210,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                         shrink: true,
                     }}
                 />
-                <FormControl>
-                    <InputLabel id="demo-simple-select-label">preferred Location</InputLabel>
-                    <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        label="Preferred Location"
-                        name="preferredLocation"
-                        onChange={handleInputChange}
-                        defaultValue={rowData.prefferedLocation}
-                        variant="outlined"
-                        sx={{
-                            marginRight: '20px',
-                            width: '200px', // Adjust padding for a smaller size
-                            fontSize: '20px', // Adjust font size for a smaller size
-                        }}
-                    >
-                        {dropdownData.branchname.map((item, index) => (
-                            <MenuItem value={item} key={index}>{item}</MenuItem>
-                        ))}
-                        
-                </Select>
-                </FormControl>
-                <FormControl>
-                    <InputLabel id="demo-simple-select-label">preferred Class Type</InputLabel>
-                    <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        label="Preferred Class Type"
-                        name="preferredClassType"
-                        onChange={handleInputChange}
-                        defaultValue={rowData.preferredClassType}
-                        variant="outlined"
-                        sx={{
-                            marginRight: '20px',
-                            width: '200px', // Adjust padding for a smaller size
-                            fontSize: '20px', // Adjust font size for a smaller size
-                        }}
-                    >
-                        {dropdownData.batch.map((item, index) => (
-                            <MenuItem value={item} key={index}>{item}</MenuItem>
-                        ))}
-                        
-                </Select>
-                </FormControl>
+               
                 
             </DialogContent>
             <DialogActions>
