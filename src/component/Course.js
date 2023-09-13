@@ -16,9 +16,9 @@ import styled from "@emotion/styled";
 import { useLocation } from "react-router-dom";
 
 
+
 export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious }) => {
  const [selectedValue, setSelectedValue] = useState('Java');
-
 
   const location = useLocation();
 
@@ -84,7 +84,7 @@ export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious }) 
             id="outlined-basic"
             variant="outlined"
             onChange={handleInputChange}
-             >
+
             {dropdown.course.map((item, index) => (
               <MenuItem value={item} key={index}>
                 {item}
@@ -186,7 +186,5 @@ export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious }) 
     </Container>
   );
 };
-
-
 
 export default Course;

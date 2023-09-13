@@ -10,10 +10,14 @@ import Snackbar from '@mui/material/Snackbar';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Urlconstant } from '../constant/Urlconstant';
 import { Select, MenuItem, FormHelperText, FormControl, InputLabel } from '@mui/material';
+import { useLocation } from 'react-router-dom';
 
 const fieldStyle = { margin: '20px' };
 
 const EditModal = ({ open, handleClose, rowData }) => {
+  const location = useLocation();
+ const email = location.state && location.state.email;
+ console.log(email)
   const [isConfirming, setIsConfirming] = React.useState(false);
 
   const [editedData, setEditedData] = React.useState([]);
@@ -77,7 +81,12 @@ const EditModal = ({ open, handleClose, rowData }) => {
   const handleSaveClick = () => {
     if (isConfirming) {
       setLoading(true);
-      const updatedData = editedData
+      const updatedData = {
+        ...editedData, // Include existing edited data
+        adminDto: {
+          updatedBy: email, // Add the updatedBy field
+        },
+      };
       console.log(updatedData)
       axios
         .put(Urlconstant.url + `api/update?email=${rowData.basicInfo.email}`, updatedData, {
@@ -295,7 +304,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
             name="courseInfo.batch"
             defaultValue={rowData.courseInfo.batch}
             onChange={handleInputChange}
-          //  value={rowData.courseInfo.batch}
+            //  value={rowData.courseInfo.batch}
             sx={{
               marginRight: '20px',
               width: '300px', // Adjust padding for a smaller size
@@ -340,13 +349,57 @@ const EditModal = ({ open, handleClose, rowData }) => {
           onChange={handleInputChange}
           style={fieldStyle}
         />
+        <FormControl>
+          <InputLabel id="demo-simple-select-label">preferred Location</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            label="Preferred Location"
+            name="referralInfo.preferredLocation"
+            onChange={handleInputChange}
+            defaultValue={rowData.referralInfo.preferredLocation}
+            variant="outlined"
+            sx={{
+              marginRight: '20px',
+              width: '200px', // Adjust padding for a smaller size
+              fontSize: '20px', // Adjust font size for a smaller size
+            }}
+          >
+            {dropdown.branchname.map((item, index) => (
+              <MenuItem value={item} key={index}>{item}</MenuItem>
+            ))}
+
+          </Select>
+        </FormControl>
+        <FormControl>
+          <InputLabel id="demo-simple-select-label">preferred Class Type</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            label="Preferred Class Type"
+            name="referralInfo.preferredClassType"
+            onChange={handleInputChange}
+            defaultValue={rowData.referralInfo.preferredClassType}
+            variant="outlined"
+            sx={{
+              marginRight: '20px',
+              width: '200px', // Adjust padding for a smaller size
+              fontSize: '20px', // Adjust font size for a smaller size
+            }}
+          >
+            {dropdown.batch.map((item, index) => (
+              <MenuItem value={item} key={index}>{item}</MenuItem>
+            ))}
+
+          </Select>
+        </FormControl>
 
 
       </DialogContent>
 
       <DialogActions>
         <Button onClick={handleClose} color="secondary">
-          Cancel
+          Cancels
         </Button>
         {loading ? (
 
