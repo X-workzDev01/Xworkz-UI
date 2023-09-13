@@ -1,9 +1,10 @@
-import { Button, Container, TextField, Typography, CircularProgress } from '@mui/material';
+import { Button, Container, TextField, Typography, CircularProgress, FormControl, FormLabel, Radio, RadioGroup, FormControlLabel } from '@mui/material';
 import React, { useState } from 'react';
 import { Form } from 'react-bootstrap';
 
 export const Referral = ({ formData, setFormData, onNext, onPrevious }) => {
   const [isLoading, setIsLoading] = useState(false);
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -60,6 +61,19 @@ export const Referral = ({ formData, setFormData, onNext, onPrevious }) => {
             id="outlined-basic"
             variant="outlined"
           />
+           <FormControl component="fieldset" style={{ marginTop: '20px' }}>
+            <FormLabel component="legend">Working</FormLabel>
+            <RadioGroup
+              aria-label="working"
+              name="working"
+              value={formData.working || 'Yes'}
+              onChange={handleInputChange}
+              row
+            >
+              <FormControlLabel value={"Yes"} control={<Radio />} label="Yes" />
+              <FormControlLabel value={"No"} control={<Radio />} label="No" />
+            </RadioGroup>
+          </FormControl>
         </Form>
         {isLoading ? (
           <CircularProgress size={24} style={{ marginTop: '20px' }} />
