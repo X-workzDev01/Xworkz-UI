@@ -8,6 +8,7 @@ import Profile from './Profile';
 import   './Dashboard.css';
 
 import { Route, Routes, Navigate } from 'react-router-dom';
+import Header from './Header';
 
 const Dashboard = ({ isLoggedIn }) => {
   if (!isLoggedIn) {
@@ -16,6 +17,7 @@ const Dashboard = ({ isLoggedIn }) => {
 
   return (
     <div className="dashboard">
+      <Header />
       <div className="Sidebar">
       <Sidebar />
       </div>
