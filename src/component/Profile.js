@@ -67,7 +67,9 @@ const Profile = () => {
     const [isFollowUpStatusModalOpen, setFollowUpStatusModalOpen] = React.useState(false);
     const [editedFollowUpStatusRowData, setEditedFollowUpStatusRowData] = React.useState(null);
 
+
     useEffect(() => {
+
         // Define the URL for your API endpoint using the email parameter
         const traineeApi = Urlconstant.url + `api/readByEmail?email=${email}`;
         const followUpApi = Urlconstant.url + `api/getFollowUpEmail/${email}`;
@@ -105,11 +107,13 @@ const Profile = () => {
             .catch((error) => {
                 console.error('Error fetching data:', error);
             });
-    }, [email]);
+    }, [email, isFollowUpStatusModalOpen, isModalOpen]);
 
     if (!profileData || !followUpData || !statusData) {
         return <div>Loading...</div>;
     }
+
+
 
     const handleEditClick = (row) => {
         setEditedRowData(row);
@@ -118,23 +122,18 @@ const Profile = () => {
     const handleSaveClick = () => {
         setModalOpen(false)
     };
-    const handleEditFollowUp = (row) => {
-        setEditedFollowUpRowData(row);
-        setFollowUpModalOpen(true);
-
-    };
-    const handleFollowUpSave = () => {
-        setFollowUpModalOpen(false)
-    }
 
     const handleFollowUp = (row) => {
+        console.log(profileData.basicInfo.email)
         setEditedFollowUpStatusRowData(row);
         setFollowUpStatusModalOpen(true);
     }
 
     const handleFollowUpStatusSave = () => {
+        console.log(profileData.basicInfo.email)
         setFollowUpStatusModalOpen(false)
     }
+
 
 
 
@@ -164,9 +163,14 @@ const Profile = () => {
                             <h3>{profileData.educationInfo.yearOfPassout}</h3>
                             <h4>Passout</h4>
                         </li>
+                        
+                    <li>
+                            <h3>{profileData.referralInfo.preferredLocation}</h3>
+                            <h4>Preferred Location</h4>
+                        </li>
                         <li>
-                            <h3>{followUpData.courseName}</h3>
-                            <h4>Course Name</h4>
+                            <h3>{profileData.referralInfo.preferredClassType}</h3>
+                            <h4>Preferred Class TYpe</h4>
                         </li>
                     </ul>
                     <ul className="stats">
@@ -187,15 +191,18 @@ const Profile = () => {
                             <h3>{followUpData.currentStatus}</h3>
                             <h4>Current Status</h4>
                         </li>
+
                     </ul>
                     <div className="links">
-                        <Button variant="outlined" startIcon={<AddIcon />} onClick={() => handleFollowUp(profileData)}>
+                        <Button variant="outlined" startIcon={<AddIcon />} onClick={() => {
+                            handleFollowUp(profileData)
+                        }}>
                             Add FollowUp
                         </Button>
                         <Button variant="outlined" startIcon={<ModeEditIcon />} onClick={() => handleEditClick(profileData)}>
                             Edit Profile
                         </Button>
-                        
+
                     </div>
                 </div>
 
@@ -208,20 +215,16 @@ const Profile = () => {
                 setRowData={setEditedRowData}
                 handleSaveClick={handleSaveClick}
             />
-            <EditFollowUp
-                open={isFollowUpModalOpen}
-                handleClose={() => setFollowUpModalOpen(false)}
-                rowData={editedFollowUpRowData}
-                setRowData={setEditedFollowUpRowData}
-                handleSaveClick={handleFollowUpSave}
-            />
+
             <FollowUpStatus
                 open={isFollowUpStatusModalOpen}
                 handleClose={() => setFollowUpStatusModalOpen(false)}
                 rowData={editedFollowUpStatusRowData}
                 setRowData={setEditedFollowUpStatusRowData}
                 handleSaveClick={handleFollowUpStatusSave}
+                FollowUp={handleFollowUp}
             />
+
 
             {statusData ? <FollowStatusGrid rows={statusData} /> : null}
         </div>

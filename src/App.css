@@ -1,5 +1,8 @@
+
 .App{
   max-height: max-content;
+  text-align: center;
+
 
 }
 
@@ -13,6 +16,7 @@ body {
  
   justify-content: center;
   min-height: 100vh;
+  z-index: 99999;
 }
 
 

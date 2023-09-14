@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom'
 import { Container, Typography, TextField, Button, Alert, CircularProgress } from '@mui/material';
 import { Form } from 'react-bootstrap';
@@ -6,22 +6,32 @@ import { AccountCircle, LockClock, Send } from '@mui/icons-material';
 import axios from 'axios';
 import { Urlconstant } from '../constant/Urlconstant';
 import Navbar from './NavBar';
+import { set } from 'lodash';
+
 
 const LoginPage = (props) => {
   let navigate = useNavigate()
   const [error, setError] = useState();
   const [email, setEmail] = useState('');
+  const [notification,setNotification]=useState([]);
   const [password, setPassword] = useState('');
   const [enable, setEnable] = useState(true);
   const [displayMessage, setDisplayMessage] = useState();
   const [emailError, setEmailError] = useState();
   const [otpError, setOtpError] = useState();
   const [isSending, setIsSending] = useState(false);
-
+const[effect,setEffect]=useState(false);
   const handleEmailChange = (event) => {
     //storing 
     setEmail(event.target.value);
   };
+
+useEffect(()=>{
+  if(effect){
+console.log("Running use effect");
+  }
+},[effect]);
+
   const validateEmail = (value) => {
     if (!value) {
       setEmailError('Email is required');
@@ -41,6 +51,7 @@ const LoginPage = (props) => {
     if (!email || !password) {
       navigate("/x-workz/login");
     } else {
+      
       axios.post(Urlconstant.url + `otp?email=${email}&otp=${password}`, {
         headers: {
           'spreadsheetId': Urlconstant.spreadsheetId
@@ -48,11 +59,17 @@ const LoginPage = (props) => {
       }).then(response => {
         props.get(true);
         console.log("sucess");
-        navigate("/x-workz/display", { state: { email } });
+
+
+        setOtpError("Wrong Otp entered");
+        setEffect(true);
+
+        navigate("/x-workz/display", { state: { email ,notification} });
+
       }).catch(error => {
         
-        setOtpError("Wrong Otp entered");
       });
+      
     }
   };
 
@@ -67,7 +84,7 @@ const LoginPage = (props) => {
       if (response.status === 200) {
         console.log(response.data)
       } else {
-        console.log("user not found:", response.status)
+        console.log("user not found:", response.status);
       }
       setEnable(false);
       setDisplayMessage("OTP sent to your mail ID it will Expire with 10 Minutes")

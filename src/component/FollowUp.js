@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Urlconstant } from '../constant/Urlconstant';
-import { Button, InputLabel, MenuItem, Select, TextField, debounce } from '@mui/material';
+import { Button, FormControl, InputLabel, MenuItem, Select, TextField, debounce } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import axios from 'axios';
 import EditFollowUp from './EditFollowUp';
@@ -120,25 +120,30 @@ export default function FollowUp() {
       <h2>VeiwFollowUp</h2>
       {/* <h2>FollowUp List</h2> */}
       <div className="search" style={{ marginTop: '50px', display: 'flex', alignItems: 'center' }}>
-        <Select name="statusValues"
-          onChange={handleInputChange}
-          value={searchValue}
-          fullWidth
-          defaultValue={searchValue}
-          required
-          id="outlined-basic"
-          variant="outlined"
-          sx={{
-            marginRight: '10px',
-            width: '200px', // Adjust padding for a smaller size
-            fontSize: '12px', // Adjust font size for a smaller size
-          }}
-        >
-          {dropdown.status.map((item, index) => (
-            <MenuItem value={item} key={index}>{item}</MenuItem>
-          ))}
 
-        </Select>
+        <FormControl>
+          <InputLabel id="demo-simple-select-label">Select Status</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            label="Status Values"
+            onChange={handleInputChange}
+            value={searchValue}
+            fullWidth
+            required
+            variant="outlined"
+            sx={{
+              marginRight: '10px',
+              width: '200px', // Adjust padding for a smaller size
+              fontSize: '12px', // Adjust font size for a smaller size
+            }}
+          >
+            {dropdown.status.map((item, index) => (
+              <MenuItem value={item} key={index}>{item}</MenuItem>
+            ))}
+
+          </Select>
+        </FormControl>
 
       </div>
       <div style={{ height: '650px', width: '100%' }}>
@@ -158,19 +163,20 @@ export default function FollowUp() {
               width: 120,
               renderCell: (params) => (
                 <div>
-                <Button
-                  variant="outlined"
-                  color="secondary"
-                  component={Link} // Use Link component for navigation
-                  to={`/x-workz/profile/${params.row.basicInfo.email}`} // Pass email as a parameter
-                >
-                  View
-                </Button>
-              </div>
-                
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    component={Link} // Use Link component for navigation
+                    to={`/x-workz/profile/${params.row.basicInfo.email}`}
+                  // Pass email as a parameter
+                  >
+                    View
+                  </Button>
+                </div>
+
               ),
             }
-            
+
           ]}
           rows={gridData.rows}
           pagination
@@ -189,6 +195,7 @@ export default function FollowUp() {
           rowData={editedRowData}
           setRowData={setEditedRowData}
           handleSaveClick={handleSaveClick}
+          dropdown={dropdown}
         />
       </div>
     </div>
