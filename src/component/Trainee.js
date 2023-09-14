@@ -155,7 +155,7 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
 
   const today = new Date();
   const maxDate = today.toISOString().split('T')[0];
-  const isDisabled = !formData.traineeName || !formData.email || !formData.contactNumber || !formData.dateOfBirth;
+  const isDisabled = !formData.traineeName || !formData.email || !formData.contactNumber || !formData.dateOfBirth ||verifyHandaleEmailerror || numberCheck ||emailCheck;
   return (
 <div>
 

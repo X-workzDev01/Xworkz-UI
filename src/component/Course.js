@@ -84,7 +84,7 @@ export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious }) 
             id="outlined-basic"
             variant="outlined"
             onChange={handleInputChange}
-
+            >
             {dropdown.course.map((item, index) => (
               <MenuItem value={item} key={index}>
                 {item}
