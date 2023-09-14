@@ -40,12 +40,18 @@ function App() {
           {login ? (
             // Show sidebar and protected routes after successful login
             <React.Fragment>
+
               <Route path="/x-workz/*" element={<Dashboard isLoggedIn={login} />} />
+
+         
             </React.Fragment>
           ) : (
             // Show only the login page when not logged in
             <React.Fragment>
+
               <Route path="/x-workz/login" element={<LoginPage />} />
+
+       
             </React.Fragment>
           )}
         </Routes>

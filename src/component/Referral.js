@@ -1,11 +1,24 @@
-import { Button, Container, TextField, Typography } from '@mui/material';
-import React from 'react'
+import { Button, Container, TextField, Typography, CircularProgress, FormControl, FormLabel, Radio, RadioGroup, FormControlLabel } from '@mui/material';
+import React, { useState } from 'react';
 import { Form } from 'react-bootstrap';
 
 export const Referral = ({ formData, setFormData, onNext, onPrevious }) => {
+  const [isLoading, setIsLoading] = useState(false);
+
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+  };
+
+  const handleRegister = () => {
+    setIsLoading(true); // Set loading state to true
+
+    // Simulate an API call or any other time-consuming operation
+    setTimeout(() => {
+      setIsLoading(false); // Set loading state back to false
+      onNext(); // Continue to the next step
+    }, 6000); // Simulating a 3-second delay, replace with your actual API call
   };
 
   return (
@@ -13,7 +26,8 @@ export const Referral = ({ formData, setFormData, onNext, onPrevious }) => {
       <h2>Referral Details </h2>
       <Typography component="div" style={{ height: '50vh' }}>
         <Form>
-          <TextField type="text"
+          <TextField
+            type="text"
             label="Name"
             name="referalName"
             value={formData.referalName || ''}
@@ -24,7 +38,8 @@ export const Referral = ({ formData, setFormData, onNext, onPrevious }) => {
             variant="outlined"
           />
 
-          <TextField type="number"
+          <TextField
+            type="number"
             label="Contact Number"
             name="referalContactNumber"
             value={formData.referalContactNumber || ''}
@@ -35,7 +50,8 @@ export const Referral = ({ formData, setFormData, onNext, onPrevious }) => {
             variant="outlined"
           />
 
-          <TextField type="text"
+          <TextField
+            type="text"
             label="comments"
             name="comments"
             value={formData.comments || ''}
@@ -45,11 +61,34 @@ export const Referral = ({ formData, setFormData, onNext, onPrevious }) => {
             id="outlined-basic"
             variant="outlined"
           />
+           <FormControl component="fieldset" style={{ marginTop: '20px' }}>
+            <FormLabel component="legend">Working</FormLabel>
+            <RadioGroup
+              aria-label="working"
+              name="working"
+              value={formData.working || 'Yes'}
+              onChange={handleInputChange}
+              row
+            >
+              <FormControlLabel value={"Yes"} control={<Radio />} label="Yes" />
+              <FormControlLabel value={"No"} control={<Radio />} label="No" />
+            </RadioGroup>
+          </FormControl>
         </Form>
-        <Button variant="contained" onClick={onPrevious}>Previous</Button>
-        &nbsp;&nbsp;&nbsp;
-        <Button variant="contained" onClick={onNext}>Register</Button>
+        {isLoading ? (
+          <CircularProgress size={24} style={{ marginTop: '20px' }} />
+        ) : (
+          <>
+            <Button variant="contained" onClick={onPrevious}>
+              Previous
+            </Button>
+            &nbsp;&nbsp;&nbsp;
+            <Button variant="contained" onClick={handleRegister}>
+              Register
+            </Button>
+          </>
+        )}
       </Typography>
     </Container>
-  )
-}
+  );
+};

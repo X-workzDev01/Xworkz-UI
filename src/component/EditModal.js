@@ -9,18 +9,21 @@ import axios from 'axios';
 import Snackbar from '@mui/material/Snackbar';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Urlconstant } from '../constant/Urlconstant';
-import { Select , MenuItem , FormHelperText} from '@mui/material';
+import { Select, MenuItem, FormHelperText, FormControl, InputLabel } from '@mui/material';
+import { useLocation } from 'react-router-dom';
 
 const fieldStyle = { margin: '20px' };
 
 const EditModal = ({ open, handleClose, rowData }) => {
+  const location = useLocation();
+ const email = location.state && location.state.email;
+ console.log(email)
   const [isConfirming, setIsConfirming] = React.useState(false);
 
   const [editedData, setEditedData] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
   const [responseMessage, setResponseMessage] = React.useState('');
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
-  const [xworkzEmail, setXworkzEmail] = React.useState('');
   const [dropdown, setDropDown] = React.useState([]);
 
 
@@ -30,9 +33,9 @@ const EditModal = ({ open, handleClose, rowData }) => {
 
   useEffect(() => {
 
-   
+
     // Fetch dropdown data from your API
-    axios.get(Urlconstant.url+'utils/dropdown', {
+    axios.get(Urlconstant.url + 'utils/dropdown', {
       headers: {
         'spreadsheetId': Urlconstant.spreadsheetId
       }
@@ -41,7 +44,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
     }).catch(error => {
       console.log(error);
     })
-  }, []); 
+  }, []);
 
 
 
@@ -52,9 +55,6 @@ const EditModal = ({ open, handleClose, rowData }) => {
   if (!rowData) {
     return null; // Render nothing if rowData is not available yet
   }
-
-
-  
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -68,7 +68,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
 
         [field]: value,
       },
-      
+
     }));
 
   };
@@ -81,7 +81,12 @@ const EditModal = ({ open, handleClose, rowData }) => {
   const handleSaveClick = () => {
     if (isConfirming) {
       setLoading(true);
-      const updatedData = editedData
+      const updatedData = {
+        ...editedData, // Include existing edited data
+        adminDto: {
+          updatedBy: email, // Add the updatedBy field
+        },
+      };
       console.log(updatedData)
       axios
         .put(Urlconstant.url + `api/update?email=${rowData.basicInfo.email}`, updatedData, {
@@ -116,7 +121,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
 
   }
 
-  
+
 
 
   return (
@@ -129,8 +134,6 @@ const EditModal = ({ open, handleClose, rowData }) => {
         <TextField
           label="Email"
           name="basicInfo.email"
-
-
           value={rowData.basicInfo.email}
           onChange={handleInputChange}
           style={fieldStyle}
@@ -152,108 +155,169 @@ const EditModal = ({ open, handleClose, rowData }) => {
           onChange={handleInputChange}
           style={fieldStyle}
         />
-        <Select
-          name="educationInfo.qualification"
-          defaultValue={rowData.educationInfo.qualification}
-          onChange={handleInputChange}
-          style={fieldStyle}
-          sx={{
-            marginRight: '20px',
-            width: '300px', // Adjust padding for a smaller size
-            // Adjust font size for a smaller size
-        }}
-          
-        >
-          {
-            dropdown.qualification.map((item, index) => (
-              <MenuItem value={item} key={index}>{item}</MenuItem>
-            ))}
-        </Select>
-        <Select
-          name="educationInfo.stream"
-          defaultValue={rowData.educationInfo.stream}
-          onChange={handleInputChange}
-          style={fieldStyle}
-        >
-          {
-            dropdown.stream.map((item, index) => (
-              <MenuItem value={item} key={index}>{item}</MenuItem>
-            ))}
+        <FormControl>
+          <InputLabel id="demo-simple-select-label">Qualification</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            inputLabel="Qualification"
+            name="educationInfo.qualification"
+            defaultValue={rowData.educationInfo.qualification}
+            onChange={handleInputChange}
+            style={fieldStyle}
+            sx={{
+              marginRight: '20px',
+              width: '300px', // Adjust padding for a smaller size
+              // Adjust font size for a smaller size
+            }}
 
-        </Select>
+          >
+            {
+              dropdown.qualification.map((item, index) => (
+                <MenuItem value={item} key={index}>{item}</MenuItem>
+              ))}
+          </Select>
+        </FormControl>
+        <FormControl>
+          <InputLabel id="demo-simple-select-label">Stream</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            inputLabel="Stream"
+            name="educationInfo.stream"
+            defaultValue={rowData.educationInfo.stream}
+            onChange={handleInputChange}
+            style={fieldStyle}
+            sx={{
+              marginRight: '20px',
+              width: '300px', // Adjust padding for a smaller size
+              // Adjust font size for a smaller size
+            }}
+          >
+            {
+              dropdown.stream.map((item, index) => (
+                <MenuItem value={item} key={index}>{item}</MenuItem>
+              ))}
 
-        <Select
-          name="educationInfo.yearOfPassout"
-          defaultValue={rowData.educationInfo.yearOfPassout}
-          onChange={handleInputChange}
-          style={fieldStyle}
-         
-        >
-           {
-            dropdown.yearofpass.map((item, index) => (
-              <MenuItem value={item} key={index}>{item}</MenuItem>
-            ))}
+          </Select>
+        </FormControl>
+        <FormControl>
+          <InputLabel id="demo-simple-select-label">Year Of Passout</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            label="Year Of Passout"
+            name="educationInfo.yearOfPassout"
+            defaultValue={rowData.educationInfo.yearOfPassout}
+            onChange={handleInputChange}
+            style={fieldStyle}
+            sx={{
+              marginRight: '20px',
+              width: '300px', // Adjust padding for a smaller size
+              // Adjust font size for a smaller size
+            }}
+          >
+            {
+              dropdown.yearofpass.map((item, index) => (
+                <MenuItem value={item} key={index}>{item}</MenuItem>
+              ))}
 
-        </Select>
-        <Select
-         
-          name="educationInfo.collegeName"
-          defaultValue={rowData.educationInfo.collegeName}
-          onChange={handleInputChange}
-          style={fieldStyle}
-          sx={{
-            marginRight: '20px',
-            width: '500px', // Adjust padding for a smaller size
-            // Adjust font size for a smaller size
-        }}
-          
-        >
-           {
-            dropdown.college.map((item, index) => (
-              <MenuItem value={item} key={index}>{item}</MenuItem>
-            ))}
+          </Select>
+        </FormControl>
+        <FormControl>
+          <InputLabel id="demo-simple-select-label">College Name</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            label="College Name"
+            name="educationInfo.collegeName"
+            defaultValue={rowData.educationInfo.collegeName}
+            onChange={handleInputChange}
+            style={fieldStyle}
+            sx={{
+              marginRight: '20px',
+              width: '500px', // Adjust padding for a smaller size
+              // Adjust font size for a smaller size
+            }}
 
-        </Select>
-        <Select
-      
-          name="courseInfo.course"
-          defaultValue={rowData.courseInfo.course}
-          onChange={handleInputChange}
-          style={fieldStyle}
-        >
-           {
-            dropdown.course.map((item, index) => (
-              <MenuItem value={item} key={index}>{item}</MenuItem>
-            ))}
+          >
+            {
+              dropdown.college.map((item, index) => (
+                <MenuItem value={item} key={index}>{item}</MenuItem>
+              ))}
+
+          </Select>
+        </FormControl>
+        <FormControl>
+          <InputLabel id="demo-simple-select-label">Course</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            label="Course"
+            name="courseInfo.course"
+            defaultValue={rowData.courseInfo.course}
+            onChange={handleInputChange}
+            style={fieldStyle}
+            sx={{
+              marginRight: '20px',
+              width: '300px', // Adjust padding for a smaller size
+              // Adjust font size for a smaller size
+            }}
+          >
+            {
+              dropdown.course.map((item, index) => (
+                <MenuItem value={item} key={index}>{item}</MenuItem>
+              ))}
 
 
-        </Select>
-        <Select
-         
-          name="courseInfo.branch"
-          defaultValue={rowData.courseInfo.branch}
-          onChange={handleInputChange}
-          style={fieldStyle}
-        >
-          {
-            dropdown.branchname.map((item, index) => (
-              <MenuItem value={item} key={index}>{item}</MenuItem>
-            ))}
+          </Select>
+        </FormControl>
+        <FormControl>
+          <InputLabel id="demo-simple-select-label">Branch</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            label="Branch"
+            name="courseInfo.branch"
+            defaultValue={rowData.courseInfo.branch}
+            onChange={handleInputChange}
+            style={fieldStyle}
+            sx={{
+              marginRight: '20px',
+              width: '300px', // Adjust padding for a smaller size
+              // Adjust font size for a smaller size
+            }}
+          >
+            {
+              dropdown.branchname.map((item, index) => (
+                <MenuItem value={item} key={index}>{item}</MenuItem>
+              ))}
 
-        </Select>
-        <Select
-         
-          name="courseInfo.batch"
-          defaultValue={rowData.courseInfo.batch}
-          onChange={handleInputChange}
-       
-        >
-           {
-            dropdown.batch.map((item, index) => (
-              <MenuItem value={item} key={index}>{item}</MenuItem>
-            ))}
+          </Select>
+        </FormControl>
+        <FormControl>
+          <InputLabel id="demo-simple-select-label">Batch</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            label="Batch"
+            name="courseInfo.batch"
+            defaultValue={rowData.courseInfo.batch}
+            onChange={handleInputChange}
+            //  value={rowData.courseInfo.batch}
+            sx={{
+              marginRight: '20px',
+              width: '300px', // Adjust padding for a smaller size
+              // Adjust font size for a smaller size
+            }}
+          >
+            {
+              dropdown.batch.map((item, index) => (
+                <MenuItem value={item} key={index}>{item}</MenuItem>
+              ))}
 
-        </Select>
+          </Select>
+        </FormControl>
         <TextField
           label="Referal Name"
           name="referralInfo.referalName"
@@ -285,13 +349,57 @@ const EditModal = ({ open, handleClose, rowData }) => {
           onChange={handleInputChange}
           style={fieldStyle}
         />
+        <FormControl>
+          <InputLabel id="demo-simple-select-label">preferred Location</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            label="Preferred Location"
+            name="referralInfo.preferredLocation"
+            onChange={handleInputChange}
+            defaultValue={rowData.referralInfo.preferredLocation}
+            variant="outlined"
+            sx={{
+              marginRight: '20px',
+              width: '200px', // Adjust padding for a smaller size
+              fontSize: '20px', // Adjust font size for a smaller size
+            }}
+          >
+            {dropdown.branchname.map((item, index) => (
+              <MenuItem value={item} key={index}>{item}</MenuItem>
+            ))}
+
+          </Select>
+        </FormControl>
+        <FormControl>
+          <InputLabel id="demo-simple-select-label">preferred Class Type</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            label="Preferred Class Type"
+            name="referralInfo.preferredClassType"
+            onChange={handleInputChange}
+            defaultValue={rowData.referralInfo.preferredClassType}
+            variant="outlined"
+            sx={{
+              marginRight: '20px',
+              width: '200px', // Adjust padding for a smaller size
+              fontSize: '20px', // Adjust font size for a smaller size
+            }}
+          >
+            {dropdown.batch.map((item, index) => (
+              <MenuItem value={item} key={index}>{item}</MenuItem>
+            ))}
+
+          </Select>
+        </FormControl>
 
 
       </DialogContent>
 
       <DialogActions>
         <Button onClick={handleClose} color="secondary">
-          Cancel
+          Cancels
         </Button>
         {loading ? (
 
