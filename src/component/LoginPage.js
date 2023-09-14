@@ -5,7 +5,9 @@ import { Form } from 'react-bootstrap';
 import { AccountCircle, LockClock, Send } from '@mui/icons-material';
 import axios from 'axios';
 import { Urlconstant } from '../constant/Urlconstant';
+import Navbar from './NavBar';
 import { set } from 'lodash';
+
 
 const LoginPage = (props) => {
   let navigate = useNavigate()
@@ -57,10 +59,13 @@ console.log("Running use effect");
       }).then(response => {
         props.get(true);
         console.log("sucess");
+
+
         setOtpError("Wrong Otp entered");
         setEffect(true);
 
-        navigate("/x-workz/view", { state: { email ,notification} });
+        navigate("/x-workz/display", { state: { email ,notification} });
+
       }).catch(error => {
         
       });
@@ -91,11 +96,13 @@ console.log("Running use effect");
   }
   const isDisabled = !email
   return (
-    <Container maxWidth="sm">
-      <h2>Login </h2>
-      <h2>Login </h2>
+    <div>
+      <Navbar />
+    <Container maxWidth="sm" style={{ border: '1px solid #C9C8C8' , maxWidth: '400px' , borderRadius: '6px' , marginTop: '80px' ,  height: '70vh'}}>
+    
       <Typography component="div" style={{ height: '50vh' }}>
-        <Form onSubmit={handleFormSubmit}>
+        <Form onSubmit={handleFormSubmit}  style={{ textAlign: 'center'}}>
+        <h2>Login</h2>
           {emailError && <Alert severity="error">{emailError}</Alert>}
           <TextField
             label="Email"
@@ -147,6 +154,7 @@ console.log("Running use effect");
         </Form>
       </Typography>
     </Container>
+    </div>
   );
 };
 export default LoginPage;

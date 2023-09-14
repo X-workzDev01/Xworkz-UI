@@ -1,24 +1,26 @@
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 import './App.css';
 import Footer from './component/Footer';
 import LoginPage from './component/LoginPage';
-import Registration from './component/Registration';
 import Navbar from './component/NavBar';
 import React, { useState } from 'react';
-import View from './viewdata/View';
-import DisplayData from './viewdata/DisplayData';
-import Search from './viewdata/Search';
-import Home from './component/Home';
-import ViewTable from './component/ViewTable';
-import TraineeTable from './viewdata/TraineeTable';
 
-import Profile from './component/Profile';
-import FollowUp from './component/FollowUp'
-
-//import Header from './component/Header';
+// Import the Dashboard component
+import Dashboard from './component/Dashboard';
 
 function App() {
   const [login, setLoggedIn] = useState(false);
+  const navigate = useNavigate();
+
+  const checkAuth = () => {
+    if (!login) {
+      navigate('/x-workz/login'); // Redirect to login if not logged in
+    }
+  };
+
+  React.useEffect(()=> {
+    checkAuth();
+  })
 
   const getState = (userState) => {
     setLoggedIn(userState);
@@ -27,36 +29,36 @@ function App() {
   return (
     <>
       <div className="App">
-        <Navbar />
+      <Navbar />
+      
         <Routes>
+         
+
+          {/* Login route */}
           <Route path="/x-workz/login" element={<LoginPage get={getState} />} />
 
           {login ? (
-            //protected routes
+            // Show sidebar and protected routes after successful login
             <React.Fragment>
-              <Route path="/x-workz/register" element={<Registration />} />
-              <Route path="/x-workz/view" element={<View />} />
-              <Route path="/x-workz/display" element={<ViewTable />} />
-              <Route path="/x-workz/followup" element={<FollowUp />} />
 
-              <Route path="/x-workz/profile/:email"  element={<Profile />} />
+              <Route path="/x-workz/*" element={<Dashboard isLoggedIn={login} />} />
 
-              <Route path="/x-workz/search" element={<Search />} />
+         
             </React.Fragment>
           ) : (
+            // Show only the login page when not logged in
             <React.Fragment>
-              
-              <Route path="/x-workz/login" element={<LoginPage />} ></Route>
-              {sessionStorage.clear("userId")}
-              <Route path="/x-workz" element={<Home/>}/>
-              <Route path="/x-workz/followup" element={<FollowUp />} />
 
-              <Route path="/x-workz/profile/:email"  element={<Profile />} />
+              <Route path="/x-workz/login" element={<LoginPage />} />
+
+       
             </React.Fragment>
           )}
         </Routes>
-        <Footer />
-      </div>
+        </div>
+       
+     
+      <Footer />
     </>
   );
 }

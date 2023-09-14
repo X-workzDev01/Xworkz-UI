@@ -23,7 +23,7 @@ export default function FollowUp() {
     rowCount: 0,
   });
   const [loading, setLoading] = useState(false);
-  const [searchValue, setSearchValue] = useState('new');
+  const [searchValue, setSearchValue] = useState('New');
 
   React.useEffect(() => {
     getDropDown();
@@ -118,8 +118,9 @@ export default function FollowUp() {
   return (
     <div>
       <h2>VeiwFollowUp</h2>
-      <h2>FollowUp List</h2>
+      {/* <h2>FollowUp List</h2> */}
       <div className="search" style={{ marginTop: '50px', display: 'flex', alignItems: 'center' }}>
+
         <FormControl>
           <InputLabel id="demo-simple-select-label">Select Status</InputLabel>
           <Select
@@ -143,6 +144,7 @@ export default function FollowUp() {
 
           </Select>
         </FormControl>
+
       </div>
       <div style={{ height: '650px', width: '100%' }}>
         <DataGrid

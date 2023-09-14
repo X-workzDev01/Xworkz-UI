@@ -1,6 +1,9 @@
-.App {
+
+.App{
+  max-height: max-content;
   text-align: center;
-  z-index: 999999;
+
+
 }
 
 
