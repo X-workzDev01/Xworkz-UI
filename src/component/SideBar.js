@@ -38,8 +38,8 @@ const Sidebar = ({ children }) => {
             icon: <FaRegChartBar />
         },
         {
-            path: "/",
-            name: "Fees",
+            path: "enquiry",
+            name: "Enquiry",
             icon: <FaCommentAlt />
         }
     ];

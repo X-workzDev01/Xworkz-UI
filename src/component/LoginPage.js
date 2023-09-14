@@ -80,7 +80,7 @@ const LoginPage = (props) => {
   const isDisabled = !email
   return (
     <div>
-      <Navbar />
+    <Navbar /> 
     <Container maxWidth="sm" style={{ border: '1px solid #C9C8C8' , maxWidth: '400px' , borderRadius: '6px' , marginTop: '80px' ,  height: '70vh'}}>
     
       <Typography component="div" style={{ height: '50vh' }}>

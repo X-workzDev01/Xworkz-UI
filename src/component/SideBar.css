@@ -1,5 +1,4 @@
 
-  
   .Content {
     flex: 1;
     display: flex;
@@ -13,14 +12,17 @@
 
 
 .sidebar{
-  
     background: #101010;
     color: #fff;
     height: 100vh;
     width: 200px;
     transition: all 0.5s;
+    top: 50px; /* Adjust top position to create space for the top section */
+    overflow-y: auto;   
     margin-top: 50px;
 }
+
+
 .top_section{
     display: flex;
     align-items:center;

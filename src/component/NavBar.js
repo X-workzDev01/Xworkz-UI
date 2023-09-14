@@ -13,7 +13,7 @@ const Navbar = ({children}) => {
             <img src='https://www.x-workz.in/Logo.png'  width={60} height={40} alt="Logo"></img>
             </a>
           </IconButton>
-          <Link to="/x-workz">Home</Link>
+          
       </Toolbar>
     </AppBar>
     <Container>{children}</Container>

@@ -1,8 +1,7 @@
 .App{
-  max-height: max-content;
-
+  text-align: center;
+  z-index: 999999;
 }
-
 
 * {
   box-sizing: border-box;
