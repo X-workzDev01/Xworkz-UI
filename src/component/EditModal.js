@@ -9,15 +9,16 @@ import axios from 'axios';
 import Snackbar from '@mui/material/Snackbar';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Urlconstant } from '../constant/Urlconstant';
-import { Select, MenuItem, FormHelperText, FormControl, InputLabel } from '@mui/material';
+import { Select, MenuItem, FormHelperText, FormControl, InputLabel, IconButton } from '@mui/material';
 import { useLocation } from 'react-router-dom';
+import { GridCloseIcon } from '@mui/x-data-grid';
 
 const fieldStyle = { margin: '20px' };
 
 const EditModal = ({ open, handleClose, rowData }) => {
   const location = useLocation();
- const email = location.state && location.state.email;
- console.log(email)
+  const email = location.state && location.state.email;
+  console.log(email)
   const [isConfirming, setIsConfirming] = React.useState(false);
 
   const [editedData, setEditedData] = React.useState([]);
@@ -100,6 +101,8 @@ const EditModal = ({ open, handleClose, rowData }) => {
           setLoading(false);
           setResponseMessage('Data updated successfully!');
           setSnackbarOpen(true);
+          setIsConfirming(false);
+          handleClose();
         })
         .catch((error) => {
           console.error('Error updating data:', error);
@@ -126,7 +129,18 @@ const EditModal = ({ open, handleClose, rowData }) => {
 
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
-      <DialogTitle>Edit Details</DialogTitle>
+      <DialogTitle>Edit Details
+        <IconButton
+          edge="start"
+          color="inherit"
+          onClick={handleClose}
+          aria-label="close"
+          style={{ position: 'absolute', right: '8px', top: '8px' }}
+        >
+          <GridCloseIcon />
+        </IconButton>
+      </DialogTitle>
+
       <DialogContent>
         {/* Render your form fields here */}
 
@@ -398,9 +412,6 @@ const EditModal = ({ open, handleClose, rowData }) => {
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={handleClose} color="secondary">
-          Cancels
-        </Button>
         {loading ? (
 
 
@@ -428,9 +439,15 @@ const EditModal = ({ open, handleClose, rowData }) => {
           Are you sure you want to update the data?
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setIsConfirming(false)} color="secondary">
-            Cancel
-          </Button>
+          <IconButton
+            color="inherit"
+            onClick={() => setIsConfirming(false)}
+            edge="start"
+            aria-label="close"
+            style={{ position: 'absolute', right: '8px', top: '8px' }}
+          >
+           <GridCloseIcon />
+          </IconButton>
           <Button onClick={handleSaveClick} color="primary">
             Confirm
           </Button>
