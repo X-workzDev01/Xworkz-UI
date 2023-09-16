@@ -7,7 +7,7 @@ import FollowUp from './FollowUp';
 import Profile from './Profile';
 import   './Dashboard.css';
 
-import { Route, Routes, Navigate } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import Header from './Header';
 
 const Dashboard = ({ isLoggedIn }) => {

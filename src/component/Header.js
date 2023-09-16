@@ -16,25 +16,20 @@ import { useLocation } from "react-router-dom";
 import { Urlconstant } from "../constant/Urlconstant";
 
 export default function Header() {
-  const location = useLocation();
-  const email = location.state && location.state.email;
+  const email = sessionStorage.getItem("userId");
   const [notification, setNotification] = useState([]);
   const [count, setCount] = useState(0);
   const [anchorEl, setAnchorEl] = useState(null);
   useEffect(() => {
     if (email) {
-
-
-
       axios(Urlconstant.url + `api/notification?email=${email}`)
         .then((res) => {
           setNotification(res.data);
-          console.log(res.data);
           setCount(res.data.length);
+         
         })
         .catch((e) => {});
     }
-    console.log(location);
   }, [email]);
   const handleClose = () => {
     setAnchorEl(null);
@@ -66,17 +61,21 @@ export default function Header() {
             <div>
               <p
                 style={{
-                  backgroundColor: "blue",
+                  backgroundColor: "white",
                   marginTop: "-1rem",
                   textAlign: "center",
                   marginLeft: "-20px",
                   marginRight: "-2rem",
-                  padding: "0.5rem 0.5rem",
-                  color: "white",
+                  color: "green",
+                  paddingBottom: "-6px",
+                  fontStyle: "bold",
                 }}
               >
                 Today followUp candidates
               </p>
+            </div>
+            <div>
+              <hr style={{ paddingBottom: "-1rem" }}></hr>
             </div>
             <div
               style={{
@@ -101,6 +100,25 @@ export default function Header() {
                   ))
                 : ""}
             </div>
+            {/* <hr></hr> */}
+            {/* <div style={{color:"red"}}>Yesterday don't followUp candidates </div>
+            <div>
+              <hr></hr>
+              <div> */}
+                <p
+                  style={{
+                    backgroundColor: "white",
+                    marginTop: "-1rem",
+                    textAlign: "center",
+                    marginLeft: "-20px",
+                    marginRight: "-2rem",
+                    color: "green",
+                    paddingBottom: "-6px",
+                    fontStyle: "bold",
+                  }}
+                ></p>
+              {/* </div>
+            </div> */}
           </Typography>
         </Popover>
       </div>
