@@ -10,7 +10,7 @@ import axios from 'axios';
 import Header from './Header';
 //import { useNavigate } from 'react-router-dom';
 import { Urlconstant } from '../constant/Urlconstant';
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate, Route, useLocation } from 'react-router-dom';
 import { date } from 'yup';
 
 export default function Registration() {
@@ -19,6 +19,7 @@ export default function Registration() {
  const email = location.state && location.state.email;
   const [currentSection, setCurrentSection] = useState(1);
   const [messages, setMessages] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     basicInfo: [],
     educationInfo: [],
@@ -61,6 +62,9 @@ export default function Registration() {
  
   //registration api call
   const handleFormSubmit = () => {
+    setIsLoading(true);
+    <Route path="/register" element={<Registration />} />
+
     axios.post(Urlconstant.url+'api/register', formData,{
       headers: {
         'spreadsheetId': Urlconstant.spreadsheetId
@@ -68,16 +72,18 @@ export default function Registration() {
 
     }).then(response => {
       setMessages("Registration done successfully!!!")
-      Navigate("/x-workz/view", { state: { email } })
+      setIsLoading(false)
       setFormData({
         basicInfo: [],
         educationInfo: [],
         courseInfo: [],
         referralInfo: [],
-        adminDto:[]
+        adminDto:[],
+
       });
       setCurrentSection(1);
-    }).catch(error => {
+    })
+    .catch(error => {
       console.error(error);
     });
   };
@@ -123,6 +129,7 @@ export default function Registration() {
             setFormData={data => setFormData({ ...formData, referralInfo: data })}
             onNext={handleFormSubmit}
             onPrevious={handlePrevious}
+            loading={isLoading}
           />
         );
       default:
