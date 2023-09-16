@@ -1,0 +1,20 @@
+
+.dialog-title {
+    position: relative;
+  }
+  
+  .close-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+  }
+
+.field-style {
+    margin: 20px;
+  }
+  
+  .custom-sx {
+    margin-right: 20px;
+    width: 300px;
+  }
+  

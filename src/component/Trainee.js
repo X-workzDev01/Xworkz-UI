@@ -27,7 +27,6 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
         setNameError('Name is required');
       }
       else if (value.length < 3) {
-        console.log("name length is less")
         setNameError('Enter a Valid Name');
       }
       else {
