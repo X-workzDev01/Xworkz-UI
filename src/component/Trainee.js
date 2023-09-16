@@ -57,7 +57,6 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
       } else {
         setPhoneNumberError('');
       }
-      handleNumberChange();
     }
     setFormData({ ...formData, [name]: value });
   }
@@ -77,7 +76,6 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
   }
 
   const handleEmail = (e) => {
-    verifyEmail(formData.email);
     validateEmail(formData.email) ;
     axios.get(Urlconstant.url + `api/emailCheck?email=${formData.email}`, {
       headers: {
@@ -99,6 +97,11 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
     //setError("Check Email Id")
     console.log(error)
 
+  }
+
+  const validEmail=()=>{
+    handleEmail(formData.email);
+    verifyEmail(formData.email);
   }
 
 
@@ -142,22 +145,9 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
     }
   };
 
-
-  // const validatePhoneNumber = (value) => {
-  //   if (!value) {
-  //     setPhoneNumberError('Phone number is required');
-  //   } else if (!/^\d+$/.test(value)) {
-  //     setPhoneNumberError('Phone number must contain only digits');
-  //   } else if (value.length < 10) {
-  //     setPhoneNumberError('Phone number must be at least 10 digits');
-  //   } else {
-  //     setPhoneNumberError('');
-  //   }
-  // };
-
   const today = new Date();
   const maxDate = today.toISOString().split('T')[0];
-  const isDisabled = !formData.traineeName || !formData.contactNumber || !formData.dateOfBirth ;
+  const isDisabled = !formData.traineeName || !formData.email || !formData.contactNumber || !formData.dateOfBirth ||verifyHandaleEmailerror || numberCheck ||emailCheck || nameError;
   return (
 <div>
 
@@ -191,7 +181,7 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
             variant="outlined"
             value={formData.email || ''}
             onChange={handleInputChange}
-            onBlur={handleEmail}
+            onBlur={validEmail}
 
           />
           {verifyHandaleEmail ? <Alert severity="success">{verifyHandaleEmail}</Alert>:""}

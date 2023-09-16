@@ -134,8 +134,6 @@ export default function ControlledSelectionServerPaginationGrid() {
   const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
   const [searchValue, setSearchValue] = React.useState("");
   const [searchInputValue, setSearchInputValue] = React.useState("");
-  const [searchResults, setSearchResults] = React.useState([]);
-
   const [autocompleteOptions, setAutocompleteOptions] = React.useState([]);
   const [isModalOpen, setModalOpen] = React.useState(false);
   const [editedRowData, setEditedRowData] = React.useState(null);

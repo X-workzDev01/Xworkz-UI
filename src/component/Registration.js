@@ -9,6 +9,7 @@ import { Container } from "react-bootstrap";
 import axios from "axios";
 import Header from "./Header";
 //import { useNavigate } from 'react-router-dom';
+
 import { Urlconstant } from "../constant/Urlconstant";
 import { Navigate, useLocation } from "react-router-dom";
 
@@ -16,6 +17,7 @@ export default function Registration() {
   // let navigate = useNavigate()
   const email = sessionStorage.getItem("userId");
   const [currentSection, setCurrentSection] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
   const [batchDetiles, setBatchDetiles] = useState("");
   const [messages, setMessages] = useState("");
   const [formData, setFormData] = useState({
@@ -72,27 +74,30 @@ export default function Registration() {
 
   //registration api call
   const handleFormSubmit = () => {
-    axios
-      .post(Urlconstant.url + "api/register", formData, {
-        headers: {
-          spreadsheetId: Urlconstant.spreadsheetId,
-        },
-      })
-      .then((response) => {
-        setMessages("Registration done successfully!!!");
-        Navigate("/x-workz/view", { state: { email } });
-        setFormData({
-          basicInfo: [],
-          educationInfo: [],
-          courseInfo: [],
-          referralInfo: [],
-        });
-        setCurrentSection(1);
-      })
-      .catch((error) => {
-        console.error(error);
+    setIsLoading(true);
+    <Route path="/register" element={<Registration />} />
+
+    axios.post(Urlconstant.url+'api/register', formData,{
+      headers: {
+        'spreadsheetId': Urlconstant.spreadsheetId
+      }
+
+    }).then(response => {
+      setMessages("Registration done successfully!!!")
+      setIsLoading(false)
+      setFormData({
+        basicInfo: [],
+        educationInfo: [],
+        courseInfo: [],
+        referralInfo: [],
+        adminDto:[],
+
       });
-  };
+      setCurrentSection(1);
+    })
+    .catch(error => {
+      console.error(error);
+    });
 
   //dropdown api call
 
@@ -143,6 +148,7 @@ export default function Registration() {
             }
             onNext={handleFormSubmit}
             onPrevious={handlePrevious}
+            loading={isLoading}
           />
         );
       default:
