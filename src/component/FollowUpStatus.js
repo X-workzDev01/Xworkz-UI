@@ -9,9 +9,10 @@ import axios from 'axios';
 import Snackbar from '@mui/material/Snackbar';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Urlconstant } from '../constant/Urlconstant';
-import { FormControl, IconButton, InputLabel, MenuItem, Select } from '@mui/material';
+import { FormControl, IconButton, InputAdornment, InputLabel, MenuItem, Select } from '@mui/material';
 import { GridCloseIcon } from '@mui/x-data-grid';
-
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import { LocalizationProvider, TimePicker } from '@mui/lab';
 
 const fieldStyle = { margin: '20px' };
 
@@ -23,7 +24,6 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
     const [snackbarOpen, setSnackbarOpen] = React.useState(false);
     const [dropdownData, setDropdownData] = React.useState([]);
     const [isButtonDisabled, setButtonDisabled] = React.useState(false);
-
 
     const getCurrentDate = () => {
         const now = new Date();
@@ -49,7 +49,6 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
 
     React.useEffect(() => {
         setEditedData(rowData);
-        // Use rowData directly
     }, [rowData]);
 
     if (!rowData) {
@@ -113,6 +112,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
         setIsConfirming(false);
 
     }
+
 
     return (
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
@@ -191,16 +191,16 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                     defaultValue={rowData.comments}
                     onChange={handleInputChange}
                     style={fieldStyle}
-                    sx={{
-                        width: '25ch' 
-                      }}
+                    rows={4}
                 />
                 <TextField
                     label="Call Duration"
                     name="callDuration"
                     defaultValue={rowData.callDuration}
+                    placeholder="hh:mm:ss"
                     onChange={handleInputChange}
                     style={fieldStyle}
+
                 />
 
                 <TextField type="date"
@@ -216,6 +216,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                         min: getCurrentDate()
                     }}
                 />
+                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <TextField type="time"
                     label="Call Back Time"
                     name="callBackTime"
@@ -226,6 +227,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                         shrink: true,
                     }}
                 />
+               </LocalizationProvider>
             </DialogContent>
             <DialogActions>
                 {loading ? (

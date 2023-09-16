@@ -12,13 +12,12 @@ import { Urlconstant } from '../constant/Urlconstant';
 import { Select, MenuItem, FormHelperText, FormControl, InputLabel, IconButton } from '@mui/material';
 import { useLocation } from 'react-router-dom';
 import { GridCloseIcon } from '@mui/x-data-grid';
-
+import './Fields.css';
 const fieldStyle = { margin: '20px' };
 
 const EditModal = ({ open, handleClose, rowData }) => {
   const location = useLocation();
   const email = location.state && location.state.email;
-  console.log(email)
   const [isConfirming, setIsConfirming] = React.useState(false);
 
   const [editedData, setEditedData] = React.useState([]);
@@ -29,13 +28,10 @@ const EditModal = ({ open, handleClose, rowData }) => {
 
 
   React.useEffect(() => {
-    setEditedData(rowData); // Use rowData directly
+    setEditedData(rowData);
   }, [rowData]);
 
   useEffect(() => {
-
-
-    // Fetch dropdown data from your API
     axios.get(Urlconstant.url + 'utils/dropdown', {
       headers: {
         'spreadsheetId': Urlconstant.spreadsheetId
@@ -49,12 +45,11 @@ const EditModal = ({ open, handleClose, rowData }) => {
 
 
 
-  // Update editedData when rowData changes
   React.useEffect(() => {
-    setEditedData(rowData); // Use rowData directly
+    setEditedData(rowData);
   }, [rowData]);
   if (!rowData) {
-    return null; // Render nothing if rowData is not available yet
+    return null;
   }
 
   const handleInputChange = (event) => {
@@ -129,7 +124,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
 
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
-      <DialogTitle>Edit Details
+      <DialogTitle className="dialog-title">Edit Details
         <IconButton
           edge="start"
           color="inherit"
@@ -142,8 +137,6 @@ const EditModal = ({ open, handleClose, rowData }) => {
       </DialogTitle>
 
       <DialogContent>
-        {/* Render your form fields here */}
-
 
         <TextField
           label="Email"
@@ -181,8 +174,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
             style={fieldStyle}
             sx={{
               marginRight: '20px',
-              width: '300px', // Adjust padding for a smaller size
-              // Adjust font size for a smaller size
+              width: '300px',
             }}
 
           >
@@ -204,8 +196,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
             style={fieldStyle}
             sx={{
               marginRight: '20px',
-              width: '300px', // Adjust padding for a smaller size
-              // Adjust font size for a smaller size
+              width: '300px',
             }}
           >
             {
@@ -446,7 +437,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
             aria-label="close"
             style={{ position: 'absolute', right: '8px', top: '8px' }}
           >
-           <GridCloseIcon />
+            <GridCloseIcon />
           </IconButton>
           <Button onClick={handleSaveClick} color="primary">
             Confirm
