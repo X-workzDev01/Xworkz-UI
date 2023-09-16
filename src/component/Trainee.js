@@ -68,6 +68,7 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
         console.log(response.data);
       }if(response.data==='rejected_email'){
         setverifyHandleEmailError(response.data);
+        setverifyHandleEmail("");
       }else{
         setverifyHandleEmailError(null);
       }
@@ -183,10 +184,10 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
             onBlur={validEmail}
 
           />
-          {verifyHandaleEmail && <Alert severity="success">{verifyHandaleEmail}</Alert>}
-          {verifyHandaleEmailerror && <Alert severity="error">{verifyHandaleEmailerror}</Alert>}
-          {emailError && <Alert severity="error">{emailError}</Alert>}
-          {emailCheck && <Alert severity="error">{emailCheck}</Alert>}
+          {verifyHandaleEmail ? <Alert severity="success">{verifyHandaleEmail}</Alert>:""}
+          {verifyHandaleEmailerror ? <Alert severity="error">{verifyHandaleEmailerror}</Alert>:""}
+          {emailError ? <Alert severity="error">{emailError}</Alert>:""}
+          {emailCheck ? <Alert severity="error">{emailCheck}</Alert>:""}
           <TextField type="number"
             label="Contact Number"
             required

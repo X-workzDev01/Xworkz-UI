@@ -12,6 +12,7 @@ import { Urlconstant } from '../constant/Urlconstant';
 import { Select, MenuItem, FormHelperText, FormControl, InputLabel, IconButton } from '@mui/material';
 import { useLocation } from 'react-router-dom';
 import { GridCloseIcon } from '@mui/x-data-grid';
+
 import './Fields.css';
 const fieldStyle = { margin: '20px' };
 
@@ -124,19 +125,18 @@ const EditModal = ({ open, handleClose, rowData }) => {
 
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
-      <DialogTitle className="dialog-title">Edit Details
-        <IconButton
-          edge="start"
-          color="inherit"
-          onClick={handleClose}
-          aria-label="close"
-          style={{ position: 'absolute', right: '8px', top: '8px' }}
-        >
-          <GridCloseIcon />
-        </IconButton>
-      </DialogTitle>
-
+      <DialogTitle>Edit Details</DialogTitle>
       <DialogContent>
+        {/* Render your form fields here */}
+        <IconButton
+                    color="inherit"
+                    onClick={handleClose}
+                    edge="start"
+                    aria-label="close"
+                    style={{ position: 'absolute', right: '8px', top: '8px' }}
+                >
+                    <GridCloseIcon />
+                </IconButton>
 
         <TextField
           label="Email"
@@ -403,6 +403,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
       </DialogContent>
 
       <DialogActions>
+
         {loading ? (
 
 
@@ -430,6 +431,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
           Are you sure you want to update the data?
         </DialogContent>
         <DialogActions>
+
           <IconButton
             color="inherit"
             onClick={() => setIsConfirming(false)}

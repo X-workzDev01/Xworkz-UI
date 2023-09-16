@@ -57,7 +57,7 @@ export const Referral = ({ formData, setFormData, onNext, onPrevious, loading}) 
             <RadioGroup
               aria-label="working"
               name="working"
-              value={formData.working || 'Yes'}
+              value={formData.working || 'No'}
               onChange={handleInputChange}
               row
             >
