@@ -66,8 +66,12 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
     axios.get(Urlconstant.url + `api/verify-email?email=${formData.email}`).then(response => {
       if(response.data ==='accepted_email'){
         setverifyHandleEmail(response.data);
-      }else{
+        console.log(response.data);
+      }if(response.data==='rejected_email'){
         setverifyHandleEmailError(response.data);
+        setverifyHandleEmail("");
+      }else{
+        setverifyHandleEmailError(null);
       }
      } );
   }
@@ -190,10 +194,10 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
             onBlur={handleEmail}
 
           />
-          {verifyHandaleEmail && <Alert severity="success">{verifyHandaleEmail}</Alert>}
-          {verifyHandaleEmailerror && <Alert severity="error">{verifyHandaleEmailerror}</Alert>}
-          {emailError && <Alert severity="error">{emailError}</Alert>}
-          {emailCheck && <Alert severity="error">{emailCheck}</Alert>}
+          {verifyHandaleEmail ? <Alert severity="success">{verifyHandaleEmail}</Alert>:""}
+          {verifyHandaleEmailerror ? <Alert severity="error">{verifyHandaleEmailerror}</Alert>:""}
+          {emailError ? <Alert severity="error">{emailError}</Alert>:""}
+          {emailCheck ? <Alert severity="error">{emailCheck}</Alert>:""}
           <TextField type="number"
             label="Contact Number"
             required
