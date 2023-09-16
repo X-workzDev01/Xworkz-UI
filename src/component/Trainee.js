@@ -27,7 +27,6 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
         setNameError('Name is required');
       }
       else if (value.length < 3) {
-        console.log("name length is less")
         setNameError('Enter a Valid Name');
       }
       else {
@@ -67,7 +66,6 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
     axios.get(Urlconstant.url + `api/verify-email?email=${formData.email}`).then(response => {
       if(response.data ==='accepted_email'){
         setverifyHandleEmail(response.data);
-        console.log(response.data);
       }else{
         setverifyHandleEmailError(response.data);
       }
@@ -155,7 +153,7 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
 
   const today = new Date();
   const maxDate = today.toISOString().split('T')[0];
-  const isDisabled = !formData.traineeName || !formData.email || !formData.contactNumber || !formData.dateOfBirth ||verifyHandaleEmailerror || numberCheck ||emailCheck;
+  const isDisabled = !formData.traineeName || !formData.contactNumber || !formData.dateOfBirth ;
   return (
 <div>
 

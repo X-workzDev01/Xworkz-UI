@@ -8,11 +8,12 @@ import Autocomplete from "@mui/material/Autocomplete";
 import axios from "axios";
 import EditModal from "./EditModal";
 import Profile from "./Profile";
-import { Link, Router } from "react-router-dom";
+import { Link, Router, useLocation } from "react-router-dom";
 import context from "react-bootstrap/esm/AccordionContext";
 import Header from "./Header";
 
 function loadServerRows(page, pageSize) {
+  
   const startingIndex = page * pageSize;
   const maxRows = pageSize;
   const spreadsheetId = Urlconstant.spreadsheetId; // Replace this with the actual spreadsheet ID
@@ -127,6 +128,8 @@ export default function ControlledSelectionServerPaginationGrid() {
     rows: [],
     rowCount: 0,
   });
+  const location = useLocation();
+  const email = location.state && location.state.email;
   const [loading, setLoading] = React.useState(false);
   const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
   const [searchValue, setSearchValue] = React.useState("");

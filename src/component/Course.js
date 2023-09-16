@@ -17,7 +17,7 @@ import { useLocation } from "react-router-dom";
 
 
 
-export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious }) => {
+export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious,batchDetiles }) => {
  const [selectedValue, setSelectedValue] = useState('Java');
 
   const location = useLocation();
@@ -85,7 +85,7 @@ export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious }) 
             variant="outlined"
             onChange={handleInputChange}
             >
-            {dropdown.course.map((item, index) => (
+            {batchDetiles.map((item, index) => (
               <MenuItem value={item} key={index}>
                 {item}
               </MenuItem>

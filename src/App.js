@@ -14,7 +14,7 @@ function App() {
 
   const checkAuth = () => {
     if (!login) {
-      navigate('/x-workz/login'); // Redirect to login if not logged in
+      navigate('/x-workz/login'); // Redirect to login if -not logged in
     }
   };
 
