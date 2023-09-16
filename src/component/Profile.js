@@ -13,6 +13,7 @@ import Avatar from '@mui/material/Avatar';
 import EditFollowUp from './EditFollowUp';
 import EditModal from './EditModal';
 import FollowUpStatus from './FollowUpStatus';
+import { Alert } from '@mui/material';
 
 function stringToColor(string) {
     let hash = 0;
@@ -60,6 +61,7 @@ const Profile = () => {
     const [statusData, setStatusData] = useState(null);
     const [isModalOpen, setModalOpen] = React.useState(false);
     const [editedRowData, setEditedRowData] = React.useState(null);
+    const [dataLoadingError,setDataLoadingError] = React.useState(null);
 
     const [isFollowUpModalOpen, setFollowUpModalOpen] = React.useState(false);
     const [editedFollowUpRowData, setEditedFollowUpRowData] = React.useState(null);
@@ -69,13 +71,9 @@ const Profile = () => {
 
 
     useEffect(() => {
-
-        // Define the URL for your API endpoint using the email parameter
         const traineeApi = Urlconstant.url + `api/readByEmail?email=${email}`;
         const followUpApi = Urlconstant.url + `api/getFollowUpEmail/${email}`;
         const statusApi = Urlconstant.url + `api/getFollowUpStatusByEmail/${email}`;
-
-        // Make the API requests for profile and follow-up data in parallel
         axios
             .all([
                 axios.get(traineeApi, {
@@ -105,14 +103,14 @@ const Profile = () => {
                 })
             )
             .catch((error) => {
-                console.error('Error fetching data:', error);
+                setDataLoadingError("Check the data loading...");
+
             });
     }, [email, isFollowUpStatusModalOpen, isModalOpen]);
 
     if (!profileData || !followUpData || !statusData) {
         return <div>Loading...</div>;
     }
-
 
 
     const handleEditClick = (row) => {
@@ -124,13 +122,11 @@ const Profile = () => {
     };
 
     const handleFollowUp = (row) => {
-        console.log(profileData.basicInfo.email)
         setEditedFollowUpStatusRowData(row);
         setFollowUpStatusModalOpen(true);
     }
 
     const handleFollowUpStatusSave = () => {
-        console.log(profileData.basicInfo.email)
         setFollowUpStatusModalOpen(false)
     }
 
@@ -140,9 +136,10 @@ const Profile = () => {
     return (
         <div>
             <div className="card">
-
+          
                 <div className="infos">
                     <Avatar {...stringAvatar(profileData.basicInfo.traineeName)} />
+                    {dataLoadingError && <Alert severity="error">{dataLoadingError}</Alert>}
                     <div className="name">
                         <h1>{profileData.basicInfo.traineeName}</h1>
                         <h3>

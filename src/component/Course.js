@@ -12,13 +12,12 @@ import React, { useEffect, useState } from "react";
 import { Form } from "react-bootstrap";
 import axios from "axios";
 import { Urlconstant } from "../constant/Urlconstant";
-import styled from "@emotion/styled";
 import { useLocation } from "react-router-dom";
 
 
 
 export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious }) => {
- const [selectedValue, setSelectedValue] = useState('Java');
+  const [selectedValue, setSelectedValue] = useState('Java');
 
   const location = useLocation();
 
@@ -84,7 +83,7 @@ export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious }) 
             id="outlined-basic"
             variant="outlined"
             onChange={handleInputChange}
-            >
+          >
             {dropdown.course.map((item, index) => (
               <MenuItem value={item} key={index}>
                 {item}
