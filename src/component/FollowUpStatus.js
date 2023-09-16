@@ -9,8 +9,10 @@ import axios from 'axios';
 import Snackbar from '@mui/material/Snackbar';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Urlconstant } from '../constant/Urlconstant';
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
-
+import { FormControl, IconButton, InputAdornment, InputLabel, MenuItem, Select } from '@mui/material';
+import { GridCloseIcon } from '@mui/x-data-grid';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import { LocalizationProvider, TimePicker } from '@mui/lab';
 
 const fieldStyle = { margin: '20px' };
 
@@ -21,9 +23,8 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
     const [responseMessage, setResponseMessage] = React.useState('');
     const [snackbarOpen, setSnackbarOpen] = React.useState(false);
     const [dropdownData, setDropdownData] = React.useState([]);
-    const [isButtonDisabled, setButtonDisabled] =React.useState(false);
+    const [isButtonDisabled, setButtonDisabled] = React.useState(false);
 
-    
     const getCurrentDate = () => {
         const now = new Date();
         const year = now.getFullYear();
@@ -48,7 +49,6 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
 
     React.useEffect(() => {
         setEditedData(rowData);
-        // Use rowData directly
     }, [rowData]);
 
     if (!rowData) {
@@ -66,7 +66,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
     const handleEditClick = () => {
         setIsConfirming(true);
         setSnackbarOpen(false);
-        
+
     };
     const attemtedUser = sessionStorage.getItem("userId");
 
@@ -90,6 +90,8 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                     setLoading(false);
                     setResponseMessage('Data updated successfully!');
                     setSnackbarOpen(true);
+                    setIsConfirming(false);
+                    handleClose();
                 })
                 .catch((error) => {
                     console.error('Error updating data:', error);
@@ -111,11 +113,22 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
 
     }
 
+
     return (
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
-            <DialogTitle>Add to Follow Up</DialogTitle>
+            <DialogTitle>Add to Follow Up
+
+                <IconButton
+                    color="inherit"
+                    onClick={handleClose}
+                    edge="start"
+                    aria-label="close"
+                    style={{ position: 'absolute', right: '8px', top: '8px' }}
+                >
+                    <GridCloseIcon />
+                </IconButton>
+            </DialogTitle>
             <DialogContent>
-                {/* Render your form fields here */}
 
                 <TextField
                     label="Email"
@@ -178,13 +191,16 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                     defaultValue={rowData.comments}
                     onChange={handleInputChange}
                     style={fieldStyle}
+                    rows={4}
                 />
                 <TextField
                     label="Call Duration"
                     name="callDuration"
                     defaultValue={rowData.callDuration}
+                    placeholder="hh:mm:ss"
                     onChange={handleInputChange}
                     style={fieldStyle}
+
                 />
 
                 <TextField type="date"
@@ -200,6 +216,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                         min: getCurrentDate()
                     }}
                 />
+                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <TextField type="time"
                     label="Call Back Time"
                     name="callBackTime"
@@ -210,14 +227,9 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                         shrink: true,
                     }}
                 />
-               
-                
+               </LocalizationProvider>
             </DialogContent>
             <DialogActions>
-
-                <Button onClick={handleSnackbarClose} color="secondary">
-                    Cancel
-                </Button>
                 {loading ? (
                     <CircularProgress size={20} /> // Show loading spinner
                 ) : (
@@ -242,9 +254,15 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                     Added Follow Up Details
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setIsConfirming(false)} color="secondary">
-                        Cancel
-                    </Button>
+                    <IconButton
+                        color="inherit"
+                        onClick={() => setIsConfirming(false)}
+                        edge="start"
+                        aria-label="close"
+                        style={{ position: 'absolute', right: '8px', top: '8px' }}
+                    >
+                        <GridCloseIcon />
+                    </IconButton>
                     <Button onClick={handleSaveClick} color="primary">
                         Confirm
                     </Button>
