@@ -20,31 +20,39 @@ const EditModal = ({ open, handleClose, rowData }) => {
   const location = useLocation();
   const email = location.state && location.state.email;
   const [isConfirming, setIsConfirming] = React.useState(false);
-
+  const [selectedValue, setSelectedValue] = React.useState(' ');
   const [editedData, setEditedData] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
   const [responseMessage, setResponseMessage] = React.useState('');
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [dropdown, setDropDown] = React.useState([]);
+  const [batchDetails, setBatchDetails] = React.useState("");
 
 
   React.useEffect(() => {
     setEditedData(rowData);
   }, [rowData]);
 
-  useEffect(() => {
+  useEffect(() => {   
     axios.get(Urlconstant.url + 'utils/dropdown', {
       headers: {
         'spreadsheetId': Urlconstant.spreadsheetId
       }
     }).then(response => {
       setDropDown(response.data)
-    }).catch(error => {
-      console.log(error);
-    })
+    }).catch(error => {})
+    axios
+      .get(Urlconstant.url + "api/getCourseName?status=Active", {
+        headers: {
+          spreadsheetId: Urlconstant.spreadsheetId,
+        },
+      })
+
+      .then((res) => {
+        setBatchDetails(res.data);
+      })
+      .catch((e) => {});
   }, []);
-
-
 
   React.useEffect(() => {
     setEditedData(rowData);
@@ -52,6 +60,9 @@ const EditModal = ({ open, handleClose, rowData }) => {
   if (!rowData) {
     return null;
   }
+
+  
+  
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -79,12 +90,11 @@ const EditModal = ({ open, handleClose, rowData }) => {
     if (isConfirming) {
       setLoading(true);
       const updatedData = {
-        ...editedData, // Include existing edited data
+        ...editedData, 
         adminDto: {
           updatedBy: email, // Add the updatedBy field
         },
       };
-      console.log(updatedData)
       axios
         .put(Urlconstant.url + `api/update?email=${rowData.basicInfo.email}`, updatedData, {
           headers: {
@@ -129,14 +139,14 @@ const EditModal = ({ open, handleClose, rowData }) => {
       <DialogContent>
         {/* Render your form fields here */}
         <IconButton
-                    color="inherit"
-                    onClick={handleClose}
-                    edge="start"
-                    aria-label="close"
-                    style={{ position: 'absolute', right: '8px', top: '8px' }}
-                >
-                    <GridCloseIcon />
-                </IconButton>
+          color="inherit"
+          onClick={handleClose}
+          edge="start"
+          aria-label="close"
+          style={{ position: 'absolute', right: '8px', top: '8px' }}
+        >
+          <GridCloseIcon />
+        </IconButton>
 
         <TextField
           label="Email"
@@ -270,7 +280,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
             }}
           >
             {
-              dropdown.course.map((item, index) => (
+              batchDetails.map((item, index) => (
                 <MenuItem value={item} key={index}>{item}</MenuItem>
               ))}
 
@@ -350,10 +360,11 @@ const EditModal = ({ open, handleClose, rowData }) => {
         <TextField
           label="X-workz E-mail"
           name="referralInfo.xworkzEmail"
-          value={rowData.referralInfo.xworkzEmail}
+          defaultValue={rowData.referralInfo.xworkzEmail}
           onChange={handleInputChange}
           style={fieldStyle}
         />
+
         <FormControl>
           <InputLabel id="demo-simple-select-label">preferred Location</InputLabel>
           <Select
