@@ -9,11 +9,8 @@ import axios from 'axios';
 import Snackbar from '@mui/material/Snackbar';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Urlconstant } from '../constant/Urlconstant';
-import { FormControl, IconButton, InputAdornment, InputLabel, MenuItem, Select } from '@mui/material';
+import { FormControl, IconButton, InputLabel, MenuItem, Select } from '@mui/material';
 import { GridCloseIcon } from '@mui/x-data-grid';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import { LocalizationProvider, TimePicker } from '@mui/lab';
-
 const fieldStyle = { margin: '20px' };
 
 const FollowUpStatus = ({ open, handleClose, rowData }) => {
@@ -23,7 +20,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
     const [responseMessage, setResponseMessage] = React.useState('');
     const [snackbarOpen, setSnackbarOpen] = React.useState(false);
     const [dropdownData, setDropdownData] = React.useState([]);
-    const [isButtonDisabled, setButtonDisabled] = React.useState(false);
+    
 
     const getCurrentDate = () => {
         const now = new Date();
@@ -34,13 +31,12 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
     }
 
     useEffect(() => {
-        // Fetch your dropdown data from the API here
         axios.get(Urlconstant.url + 'utils/dropdown', {
             headers: {
                 'spreadsheetId': Urlconstant.spreadsheetId
             }
         }).then((response) => {
-            setDropdownData(response.data); // Assuming the response contains an array of dropdown options
+            setDropdownData(response.data); 
         })
             .catch((error) => {
                 console.error('Error fetching dropdown data:', error);
@@ -52,7 +48,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
     }, [rowData]);
 
     if (!rowData) {
-        return null; // Render nothing if rowData is not available yet
+        return null; 
     }
 
     const handleInputChange = (event) => {
@@ -73,7 +69,6 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
     const handleSaveClick = () => {
         if (isConfirming) {
             setLoading(true);
-            setButtonDisabled(true);
             const statusDto = {
                 ...editedData,
                 attemptedBy: attemtedUser,
@@ -174,8 +169,8 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                         variant="outlined"
                         sx={{
                             marginRight: '20px',
-                            width: '200px', // Adjust padding for a smaller size
-                            fontSize: '20px', // Adjust font size for a smaller size
+                            width: '200px',
+                            fontSize: '20px', 
                         }}
                     >
                         {dropdownData.status.map((item, index) => (
@@ -216,7 +211,6 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                         min: getCurrentDate()
                     }}
                 />
-                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <TextField type="time"
                     label="Call Back Time"
                     name="callBackTime"
@@ -227,11 +221,10 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                         shrink: true,
                     }}
                 />
-               </LocalizationProvider>
             </DialogContent>
             <DialogActions>
                 {loading ? (
-                    <CircularProgress size={20} /> // Show loading spinner
+                    <CircularProgress size={20} />
                 ) : (
                     <Button onClick={handleEditClick} color="primary">
                         Add
@@ -239,15 +232,13 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                 )}
             </DialogActions>
 
-            {/* Snackbar for response message */}
             <Snackbar
                 open={snackbarOpen}
-                autoHideDuration={3000000} // Adjust as needed
+                autoHideDuration={3000000} 
                 onClose={handleSnackbarClose}
                 message={responseMessage}
             />
 
-            {/* Confirmation Dialog */}
             <Dialog open={isConfirming} onClose={handleClose} fullWidth maxWidth="xs">
                 <DialogTitle>Confirm Update</DialogTitle>
                 <DialogContent>

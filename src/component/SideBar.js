@@ -15,10 +15,9 @@ const Sidebar = ({ children }) => {
   const location = useLocation();
   const email= sessionStorage.getItem("userId");
 
-  const [defaultSelected, setDefaultSelected] = useState( "display"); // Set "display" as the default
+  const [defaultSelected, setDefaultSelected] = useState( "display");
 
   useEffect(() => {
-    // Update the defaultSelected when the component mounts
     setDefaultSelected(location.pathname.replace("/x-workz/", ""));
   }, [location.pathname]);
 

@@ -8,13 +8,10 @@ import { Step, StepLabel, Stepper } from "@mui/material";
 import { Container } from "react-bootstrap";
 import axios from "axios";
 import Header from "./Header";
-//import { useNavigate } from 'react-router-dom';
-
 import { Urlconstant } from "../constant/Urlconstant";
-import { Navigate, useLocation } from "react-router-dom";
+import {  Route } from "react-router-dom";
 
 export default function Registration() {
-  // let navigate = useNavigate()
   const email = sessionStorage.getItem("userId");
   const [currentSection, setCurrentSection] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
@@ -60,7 +57,6 @@ export default function Registration() {
 
       .then((res) => {
         setBatchDetiles(res.data);
-        console.log(res.data);
       })
       .catch((e) => {});
   };
@@ -72,7 +68,6 @@ export default function Registration() {
     setCurrentSection(currentSection - 1);
   };
 
-  //registration api call
   const handleFormSubmit = () => {
     setIsLoading(true);
     <Route path="/register" element={<Registration />} />
@@ -95,11 +90,8 @@ export default function Registration() {
       });
       setCurrentSection(1);
     })
-    .catch(error => {
-      console.error(error);
-    });
-
-  //dropdown api call
+    .catch((error) => {});
+  }
 
   const renderSection = () => {
     switch (currentSection) {
@@ -155,28 +147,31 @@ export default function Registration() {
         return null;
     }
   };
-  return (
-    <Container>
-      <h2>Registration Form</h2>
 
-      <div key={messages} style={{ color: "Green" }}>
-        <h4> {messages}</h4>
-      </div>
-      <Stepper activeStep={currentSection}>
-        <Step>
-          <StepLabel>Trainee</StepLabel>
-        </Step>
-        <Step>
-          <StepLabel>Education</StepLabel>
-        </Step>
-        <Step>
-          <StepLabel>Course</StepLabel>
-        </Step>
-        <Step>
-          <StepLabel>Referral</StepLabel>
-        </Step>
-      </Stepper>
-      {renderSection()}
-    </Container>
-  );
+return (
+  <Container>
+    <Header />
+    <h2>Registration Form</h2>
+
+    <div key={messages} style={{ color: 'Green' }} >
+      <h4> {messages}</h4>
+    </div>
+    <Stepper activeStep={currentSection}>
+
+      <Step>
+        <StepLabel>Trainee</StepLabel>
+      </Step>
+      <Step>
+        <StepLabel>Education</StepLabel>
+      </Step>
+      <Step>
+        <StepLabel>Course</StepLabel>
+      </Step>
+      <Step>
+        <StepLabel>Referral</StepLabel>
+      </Step>
+    </Stepper>
+    {renderSection()}
+  </Container>
+)
 }

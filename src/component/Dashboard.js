@@ -12,7 +12,7 @@ import Header from './Header';
 
 const Dashboard = ({ isLoggedIn }) => {
   if (!isLoggedIn) {
-    return null; // Render nothing if not logged in
+    return null; 
   }
 
   return (

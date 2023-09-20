@@ -1,10 +1,8 @@
 import { TextField, Button, Alert, Typography, Container } from '@mui/material';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Form } from 'react-bootstrap';
 import { Urlconstant } from '../constant/Urlconstant';
-import Header from './Header';
-import { useLocation } from 'react-router-dom';
 
 export const Trainee = ({ formData, setFormData, onNext }) => {
 
@@ -22,7 +20,6 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
     const { name, value } = e.target;
 
     if (name === 'traineeName') {
-      // Perform name validation
       if (!value) {
         setNameError('Name is required');
       }
@@ -33,7 +30,6 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
         setNameError('');
       }
     } else if (name === 'email') {
-      // Perform email validation
       if (!value) {
         setEmailError('Email is required');
 
@@ -45,7 +41,6 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
 
       }
     } else if (name === 'contactNumber') {
-      // Perform contact number validation
       if (!value) {
         setPhoneNumberError('Phone number is required');
       } else if (!/^\d+$/.test(value)) {
@@ -83,18 +78,14 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
       }
     }).then(response => {
       if (response.status === 201) {
-        // Handle the 201 response differently, only setting emailCheck
         setEmailCheck(response.data);
-        
       }
       else {
-
         setEmailCheck(null);
 
       }
 
     }).catch();
-    //setError("Check Email Id")
     console.log(error)
 
   }
@@ -106,16 +97,10 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
 
 
   const handleNumberChange = (e) => {
-    console.log("number check");
-
-    // Check if the contactNumber is blank (empty string)
     if (!formData.contactNumber) {
       console.log("Contact number is blank. Cannot make the API call.");
-      return; // This will prevent the API call from being made.
+      return; 
     }
-
-    // If the contactNumber is not blank, proceed with making the API call.
-    // validatePhoneNumber(formData.contactNumber);
 
     axios.get(Urlconstant.url + `api/contactNumberCheck?contactNumber=${formData.contactNumber}`, {
       headers: {
@@ -123,7 +108,6 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
       }
     }).then(response => {
       if (response.status === 201) {
-        // Handle the 201 response differently, only setting numberCheck
         setNumberCheck(response.data);
       }
       else {
