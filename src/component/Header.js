@@ -7,12 +7,10 @@ import {
   Popover,
   Toolbar,
   Typography,
-  makeStyles,
 } from "@mui/material";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useLocation } from "react-router-dom";
 import { Urlconstant } from "../constant/Urlconstant";
 
 export default function Header() {
@@ -100,11 +98,6 @@ export default function Header() {
                   ))
                 : ""}
             </div>
-            {/* <hr></hr> */}
-            {/* <div style={{color:"red"}}>Yesterday don't followUp candidates </div>
-            <div>
-              <hr></hr>
-              <div> */}
                 <p
                   style={{
                     backgroundColor: "white",
@@ -117,8 +110,6 @@ export default function Header() {
                     fontStyle: "bold",
                   }}
                 ></p>
-              {/* </div>
-            </div> */}
           </Typography>
         </Popover>
       </div>

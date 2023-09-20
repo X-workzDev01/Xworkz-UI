@@ -1,7 +1,6 @@
 import { Button, Container, TextField, Typography, CircularProgress, FormControl, FormLabel, Radio, RadioGroup, FormControlLabel } from '@mui/material';
-import React, { useState } from 'react';
+import React from 'react';
 import { Form } from 'react-bootstrap';
-import { Trainee } from './Trainee';
 
 export const Referral = ({ formData, setFormData, onNext, onPrevious, loading}) => {
  

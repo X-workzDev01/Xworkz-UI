@@ -16,7 +16,7 @@ function loadServerRows(page, pageSize) {
   
   const startingIndex = page * pageSize;
   const maxRows = pageSize;
-  const spreadsheetId = Urlconstant.spreadsheetId; // Replace this with the actual spreadsheet ID
+  const spreadsheetId = Urlconstant.spreadsheetId; 
 
   const apiUrl =
     Urlconstant.url +
@@ -36,13 +36,13 @@ function loadServerRows(page, pageSize) {
           rows: data.sheetsData.map((row) => ({
             id: row.id.toString(),
             ...row,
-          })), // Merge and set id
-          rowCount: data.size, // Set rowCount to the total number of rows (size) in the dataset
+          })), 
+          rowCount: data.size, 
         });
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
-        resolve({ rows: [], rowCount: 0 }); // Return an empty dataset in case of an error
+        resolve({ rows: [], rowCount: 0 }); 
       });
   });
 }
@@ -52,7 +52,6 @@ function loadClientRows(page, pageSize, allData) {
   const endingIndex = Math.min(startingIndex + pageSize, allData.length);
 
   return new Promise((resolve) => {
-    // Return the paginated portion of the data
     resolve({
       rows: allData,
       rowCount: allData.length,
@@ -93,12 +92,12 @@ async function fetchFilteredData(searchValue) {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        spreadsheetId: Urlconstant.spreadsheetId, // Replace with your actual token
+        spreadsheetId: Urlconstant.spreadsheetId,
       },
     };
     const response = await axios.get(apiUrl, requestOptions);
     console.log(response);
-    return response.data; // The API response already contains the list of suggestions without an id
+    return response.data; 
   } catch (error) {
     console.error("Error fetching data:", error);
     return [];
@@ -118,7 +117,7 @@ function debounce(func, delay) {
 }
 
 export default function ControlledSelectionServerPaginationGrid() {
-  const initialPageSize = 10; // Set the initial page size for server-side pagination
+  const initialPageSize = 10; 
 
   const [paginationModel, setPaginationModel] = React.useState({
     page: 0,
@@ -138,20 +137,7 @@ export default function ControlledSelectionServerPaginationGrid() {
   const [isModalOpen, setModalOpen] = React.useState(false);
   const [editedRowData, setEditedRowData] = React.useState(null);
 
-  // const handleSearchChange = async (event, newValue) => {
-  //   setSearchValue(newValue);
-
-  //   if (newValue) {
-  //     const filteredData = await fetchFilteredData(newValue);
-  //     setAutocompleteOptions(filteredData);
-  //   } else {
-  //     setAutocompleteOptions([]);
-  //   }
-  // };
-
-  // React.useEffect(() => {
-  //   console.log('autocompleteOptions updated:', autocompleteOptions);
-  // }, [autocompleteOptions]);
+  
 
   const handleEditClick = (row) => {
     setEditedRowData(row);
@@ -159,33 +145,19 @@ export default function ControlledSelectionServerPaginationGrid() {
   };
 
   const handleSaveClick = () => {
-    // Perform save operation here with editedRowData
-    console.log("Edited Data:", editedRowData);
-    // After saving, you may want to update the grid data or reload the data to reflect the changes
     setModalOpen(false);
   };
 
   const handleSearchClick = () => {
-    // Call the search API with the final search value when the search button is clicked
     searchServerRows(searchValue).then((newGridData) => {
-      console.log(newGridData);
       setGridData(newGridData);
-
-      // Reset the pagination model to initial state
       setPaginationModel({ page: 0, pageSize: initialPageSize });
-
-      // Reset the search field after handling the search click
-
       setSearchInputValue("");
-      console.log("set to null");
-      console.log(searchInputValue);
     });
   };
 
   const handleViewProfile = (rowData) => {
-    // Open the profile page and pass rowData as a prop
-    // You can use a state or a modal to display the profile page
-    // Example:
+ 
     <Profile rowData={rowData} />;
   };
 
@@ -213,7 +185,7 @@ export default function ControlledSelectionServerPaginationGrid() {
               setLoading(false);
             }),
         500
-      ), // Adjust the delay time (in milliseconds) as per your requirement
+      ), 
     []
   );
 
@@ -222,7 +194,6 @@ export default function ControlledSelectionServerPaginationGrid() {
     setLoading(true);
 
     if (searchValue === "") {
-      // Load data using server-side pagination for the initial load or when search value is empty
       loadServerRows(paginationModel.page, paginationModel.pageSize)
         .then((newGridData) => {
           if (active) {
@@ -241,7 +212,6 @@ export default function ControlledSelectionServerPaginationGrid() {
           }
         });
     } else {
-      console.log("client search");
       setLoading(false);
       debouncedFetchSuggestions(searchValue);
     }
@@ -357,9 +327,6 @@ export default function ControlledSelectionServerPaginationGrid() {
               flex: 1,
               valueGetter: (params) => params.row.courseInfo.batchType,
             },
-            // { field: 'referalName', headerName: 'Referral Name', flex: 1, valueGetter: (params) => params.row.referralInfo.referalName },
-            // { field: 'referalContactNumber', headerName: 'Referral Contact Number', flex: 1, valueGetter: (params) => params.row.referralInfo.referalContactNumber },
-            // { field: 'comments', headerName: 'Comments', flex: 1, valueGetter: (params) => params.row.referralInfo.comments},
             {
               field: "actions",
               headerName: "Actions",
@@ -369,8 +336,8 @@ export default function ControlledSelectionServerPaginationGrid() {
                   <Button
                     variant="outlined"
                     color="secondary"
-                    component={Link} // Use Link component for navigation
-                    to={`/x-workz/profile/${params.row.basicInfo.email}`} // Pass email as a parameter
+                    component={Link} 
+                    to={`/x-workz/profile/${params.row.basicInfo.email}`} 
                   >
                     View
                   </Button>

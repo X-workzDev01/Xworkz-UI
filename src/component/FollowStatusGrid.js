@@ -20,7 +20,7 @@ const FollowStatusGrid = ({rows}) => {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        height: 'calc(100vh - 100px)', // Adjust the height as needed
+        height: 'calc(100vh - 100px)', 
         margin: '50px',
       
       }}
