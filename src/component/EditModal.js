@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -28,12 +28,12 @@ const EditModal = ({ open, handleClose, rowData }) => {
   const [dropdown, setDropDown] = React.useState([]);
   const [batchDetails, setBatchDetails] = React.useState("");
   const [formData, setFormData] = React.useState({
-    branch: '', // Initialize with default values as needed
-    trainerName: '',
-    batchType: '',
-    course: '',
-    batchTiming: '',
-    startTime: '',
+    branch: rowData.courseInfo.branch || '',
+    trainerName: rowData.courseInfo.trainerName || '',
+    batchType: rowData.courseInfo.batchType || '',
+    course: rowData.courseInfo.course || '',
+    batchTiming: rowData.courseInfo.batchTiming || '',
+    startTime: rowData.courseInfo.startTime || '',
   });
 
   React.useEffect(() => {
@@ -59,7 +59,6 @@ const EditModal = ({ open, handleClose, rowData }) => {
 
       .then((res) => {
         setBatchDetails(res.data);
-        selectedValue = res.data;
         console.log(selectedValue);
         if (selectedValue) {
           fetchData(selectedValue); // Call fetchData with the selectedValue
@@ -69,8 +68,12 @@ const EditModal = ({ open, handleClose, rowData }) => {
   }, []);
   React.useEffect(() => {
     setEditedData(rowData);
+    if (rowData.courseInfo.course) {
+      setSelectedValue(rowData.courseInfo.course);
+      fetchData(rowData.courseInfo.course);
+    }
 
-  }, [rowData, selectedValue]);
+  }, [rowData]);
 
   if (!rowData) {
     return null;
