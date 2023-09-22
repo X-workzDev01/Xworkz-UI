@@ -1,4 +1,4 @@
-import React,   from 'react';
+import React  from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -131,38 +131,44 @@ const EditModal = ({ open, handleClose, rowData }) => {
   };
 
   const handleSaveClick = () => {
-    if (isConfirming) {
-      setLoading(true);
-      const updatedData = {
-        ...editedData,
-        adminDto: {
-          updatedBy: email, 
-        },
-      };
-      axios
-        .put(Urlconstant.url + `api/update?email=${rowData.basicInfo.email}`, updatedData, {
-          headers: {
-            'Content-Type': 'application/json',
-            spreadsheetId: Urlconstant.spreadsheetId,
-          },
-        })
-        .then((response) => {
-          console.log('Update success:', response);
-          setLoading(false);
-          setResponseMessage('Data updated successfully!');
-          setSnackbarOpen(true);
-          setIsConfirming(false);
-          handleClose();
-        })
-        .catch((error) => {
-          console.error('Error updating data:', error);
-          setLoading(false);
-          setResponseMessage('Error updating data. Please try again.');
-          setSnackbarOpen(true);
-        });
+    if (!isConfirming) {
+      setIsConfirming(false);
+      return;
     }
-    setIsConfirming(false);
+  
+    setLoading(true);
+  
+    const updatedData = {
+      ...editedData,
+      adminDto: { updatedBy: email },
+      courseInfo: {
+        ...editedData.courseInfo,
+        ...formData, // Include all formData fields in courseInfo
+      },
+    };
+  
+    axios
+      .put(Urlconstant.url + `api/update?email=${rowData.basicInfo.email}`, updatedData, {
+        headers: {
+          'Content-Type': 'application/json',
+          spreadsheetId: Urlconstant.spreadsheetId,
+        },
+      })
+      .then((response) => {
+        setLoading(false);
+        setResponseMessage('Data updated successfully!');
+        setSnackbarOpen(true);
+        setIsConfirming(false);
+        handleClose();
+      })
+      .catch((error) => {
+        console.error('Error updating data:', error);
+        setLoading(false);
+        setResponseMessage('Error updating data. Please try again.');
+        setSnackbarOpen(true);
+      });
   };
+  
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
