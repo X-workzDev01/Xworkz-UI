@@ -11,6 +11,8 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { Urlconstant } from '../constant/Urlconstant';
 import { FormControl, IconButton, InputLabel, MenuItem, Select } from '@mui/material';
 import { GridCloseIcon } from '@mui/x-data-grid';
+import ReactInputMask from 'react-input-mask';
+import TimePicker from 'react-time-picker';
 const fieldStyle = { margin: '20px' };
 
 const FollowUpStatus = ({ open, handleClose, rowData }) => {
@@ -20,7 +22,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
     const [responseMessage, setResponseMessage] = React.useState('');
     const [snackbarOpen, setSnackbarOpen] = React.useState(false);
     const [dropdownData, setDropdownData] = React.useState([]);
-    
+
 
     const getCurrentDate = () => {
         const now = new Date();
@@ -36,7 +38,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                 'spreadsheetId': Urlconstant.spreadsheetId
             }
         }).then((response) => {
-            setDropdownData(response.data); 
+            setDropdownData(response.data);
         })
             .catch((error) => {
                 console.error('Error fetching dropdown data:', error);
@@ -48,7 +50,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
     }, [rowData]);
 
     if (!rowData) {
-        return null; 
+        return null;
     }
 
     const handleInputChange = (event) => {
@@ -170,7 +172,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                         sx={{
                             marginRight: '20px',
                             width: '200px',
-                            fontSize: '20px', 
+                            fontSize: '20px',
                         }}
                     >
                         {dropdownData.status.map((item, index) => (
@@ -180,23 +182,21 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                     </Select>
                 </FormControl>
 
-                <TextField
-                    label="Comments"
-                    name="comments"
-                    defaultValue={rowData.comments}
-                    onChange={handleInputChange}
-                    style={fieldStyle}
-                    rows={4}
-                />
-                <TextField
-                    label="Call Duration"
-                    name="callDuration"
-                    defaultValue={rowData.callDuration}
-                    placeholder="hh:mm:ss"
-                    onChange={handleInputChange}
-                    style={fieldStyle}
 
-                />
+                <ReactInputMask
+                    mask="99:99:99" // Define the mask pattern for hh:mm:ss
+                    value={rowData.callDuration}
+                    onChange={handleInputChange}
+                >
+                    {() => (
+                        <TextField
+                            label="Call Duration"
+                            name="callDuration"
+                            placeholder="hh:mm:ss" // Update the placeholder here
+                            variant="outlined"
+                        />
+                    )}
+                </ReactInputMask>
 
                 <TextField type="date"
                     label="Call Back Date"
@@ -211,7 +211,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                         min: getCurrentDate()
                     }}
                 />
-                <TextField type="time"
+                <TimePicker type="time"
                     label="Call Back Time"
                     name="callBackTime"
                     defaultValue={rowData.callBackTime}
@@ -220,6 +220,16 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                     InputLabelProps={{
                         shrink: true,
                     }}
+                />
+                <TextField
+                    label="Comments"
+                    name="comments"
+                    defaultValue={rowData.comments}
+                    onChange={handleInputChange}
+                    style={fieldStyle}
+                    className="custom-textfield" // Apply the custom CSS class
+                    multiline
+                    rows={4}
                 />
             </DialogContent>
             <DialogActions>
@@ -234,7 +244,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
 
             <Snackbar
                 open={snackbarOpen}
-                autoHideDuration={3000000} 
+                autoHideDuration={3000000}
                 onClose={handleSnackbarClose}
                 message={responseMessage}
             />
