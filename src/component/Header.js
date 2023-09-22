@@ -134,6 +134,11 @@ export default function Header() {
     );
   };
 
+  // Extract the name from the email
+  const extractNameFromEmail = (email) => {
+    const parts = email.split("@");
+    return parts.length > 0 ? parts[0] : email;
+  };
   return (
     <>
       <div>
@@ -157,7 +162,7 @@ export default function Header() {
               />
             </Typography>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              {sessionStorage.getItem("userId", email)}
+            {extractNameFromEmail(sessionStorage.getItem("userId", email))}
             </Typography>
 
             {notificationDisplay()}

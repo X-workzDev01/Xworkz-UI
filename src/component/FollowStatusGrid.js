@@ -26,7 +26,7 @@ const FollowStatusGrid = ({rows}) => {
       }}
     >
     <div style={{ height: 400, width: '75%'}}>
-      <DataGrid rows={rows} columns={columns} pageSize={25} />
+      <DataGrid rows={rows} columns={columns} pageSize={40} />
       
     </div>
     </div>

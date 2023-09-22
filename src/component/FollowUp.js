@@ -13,7 +13,7 @@ export default function FollowUp() {
     status: [],
   });
 
-  const initialPageSize = 10;
+  const initialPageSize = 25;
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: initialPageSize,
@@ -54,7 +54,7 @@ export default function FollowUp() {
     console.log('Loading server rows with page:', page, 'pageSize:', pageSize, 'status:', searchValue);
     const spreadsheetId = Urlconstant.spreadsheetId; 
 
-    const apiUrl = Urlconstant.url + `api/followUp?startingIndex=${startingIndex}&maxRows=10&status=${searchValue}`;
+    const apiUrl = Urlconstant.url + `api/followUp?startingIndex=${startingIndex}&maxRows=25&status=${searchValue}`;
 
     const requestOptions = {
       method: 'GET',
