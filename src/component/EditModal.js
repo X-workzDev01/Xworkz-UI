@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React  from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -27,20 +27,31 @@ const EditModal = ({ open, handleClose, rowData }) => {
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [dropdown, setDropDown] = React.useState([]);
   const [batchDetails, setBatchDetails] = React.useState("");
+  const [formData, setFormData] = React.useState({
+    branch: '',
+    trainerName: '',
+    batchType: '',
+    course: '',
+    batchTiming: '',
+    startTime: '',
+  });
+
 
 
   React.useEffect(() => {
     setEditedData(rowData);
   }, [rowData]);
 
-  useEffect(() => {   
+
+
+  React.useEffect(() => {
     axios.get(Urlconstant.url + 'utils/dropdown', {
       headers: {
         'spreadsheetId': Urlconstant.spreadsheetId
       }
     }).then(response => {
       setDropDown(response.data)
-    }).catch(error => {})
+    }).catch(error => { })
     axios
       .get(Urlconstant.url + "api/getCourseName?status=Active", {
         headers: {
@@ -50,75 +61,114 @@ const EditModal = ({ open, handleClose, rowData }) => {
 
       .then((res) => {
         setBatchDetails(res.data);
+        console.log(selectedValue);
+        if (selectedValue) {
+          fetchData(selectedValue); // Call fetchData with the selectedValue
+        }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   }, []);
-
   React.useEffect(() => {
-    setEditedData(rowData);
+    if (rowData && rowData.courseInfo) {
+      setEditedData(rowData);
+      if (rowData.courseInfo.course) {
+        setSelectedValue(rowData.courseInfo.course);
+        fetchData(rowData.courseInfo.course);
+      }
+    }
   }, [rowData]);
   if (!rowData) {
     return null;
   }
 
-  
-  
+  const fetchData = (selectedValue) => {
+    axios
+      .get(
+        Urlconstant.url + `api/getCourseDetails?courseName=${selectedValue}`,
+        { headers: { spreadsheetId: Urlconstant.spreadsheetId } }
+      )
+      .then((response) => {
+        const data = response.data;
+        console.log(data);
+
+        // Update the formData state with fetched data
+        setFormData({
+          branch: data.branch,
+          trainerName: data.trainerName,
+          batchType: data.batchType,
+          course: data.courseName,
+          batchTiming: data.timing,
+          startTime: data.startTime,
+        });
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  };
+
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     const [section, field] = name.split('.');
-
+    if (section === 'courseInfo' && field === 'course') {
+      setSelectedValue(value);
+      fetchData(value); 
+    }
 
     setEditedData((prevData) => ({
       ...prevData,
       [section]: {
         ...prevData[section],
-
         [field]: value,
       },
 
     }));
 
   };
-
   const handleEditClick = () => {
     setIsConfirming(true);
     setSnackbarOpen(false);
   };
 
   const handleSaveClick = () => {
-    if (isConfirming) {
-      setLoading(true);
-      const updatedData = {
-        ...editedData, 
-        adminDto: {
-          updatedBy: email, // Add the updatedBy field
-        },
-      };
-      axios
-        .put(Urlconstant.url + `api/update?email=${rowData.basicInfo.email}`, updatedData, {
-          headers: {
-            'Content-Type': 'application/json',
-            spreadsheetId: Urlconstant.spreadsheetId,
-          },
-        })
-        .then((response) => {
-          console.log('Update success:', response);
-          setLoading(false);
-          setResponseMessage('Data updated successfully!');
-          setSnackbarOpen(true);
-          setIsConfirming(false);
-          handleClose();
-        })
-        .catch((error) => {
-          console.error('Error updating data:', error);
-          setLoading(false);
-          setResponseMessage('Error updating data. Please try again.');
-          setSnackbarOpen(true);
-        });
+    if (!isConfirming) {
+      setIsConfirming(false);
+      return;
     }
-    setIsConfirming(false);
+  
+    setLoading(true);
+  
+    const updatedData = {
+      ...editedData,
+      adminDto: { updatedBy: email },
+      courseInfo: {
+        ...editedData.courseInfo,
+        ...formData, // Include all formData fields in courseInfo
+      },
+    };
+  
+    axios
+      .put(Urlconstant.url + `api/update?email=${rowData.basicInfo.email}`, updatedData, {
+        headers: {
+          'Content-Type': 'application/json',
+          spreadsheetId: Urlconstant.spreadsheetId,
+        },
+      })
+      .then((response) => {
+        setLoading(false);
+        setResponseMessage('Data updated successfully!');
+        setSnackbarOpen(true);
+        setIsConfirming(false);
+        handleClose();
+      })
+      .catch((error) => {
+        console.error('Error updating data:', error);
+        setLoading(false);
+        setResponseMessage('Error updating data. Please try again.');
+        setSnackbarOpen(true);
+      });
   };
+  
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
@@ -287,50 +337,58 @@ const EditModal = ({ open, handleClose, rowData }) => {
 
           </Select>
         </FormControl>
+        <TextField
+          label="Branch"
+          name="courseInfo.branch"
+          value={formData.branch || ''}
+          onChange={handleInputChange}
+          style={fieldStyle}
+        />
+        <TextField
+          label="Batch Type"
+          name="courseInfo.batchType"
+          value={formData.batchType || ''}
+          onChange={handleInputChange}
+          style={fieldStyle}
+        />
+        <TextField
+          label="Trainer Name"
+          name="courseInfo.trainerName"
+          value={formData.trainerName || ''}
+          onChange={handleInputChange}
+          style={fieldStyle}
+        />
+        <TextField
+          label="Batch Timing"
+          name="courseInfo.batchTiming"
+          value={formData.batchTiming || ''}
+          onChange={handleInputChange}
+          style={fieldStyle}
+        />
+        <TextField
+          label="Start Time"
+          name="courseInfo.startTime"
+          value={formData.startTime || ''}
+          onChange={handleInputChange}
+          style={fieldStyle}
+        />
         <FormControl>
-          <InputLabel id="demo-simple-select-label">Branch</InputLabel>
+          <InputLabel id="demo-simple-select-label">Offered As</InputLabel>
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
-            label="Branch"
-            name="courseInfo.branch"
-            defaultValue={rowData.courseInfo.branch}
-            onChange={handleInputChange}
+            name="offeredAs"
+            defaultValue={rowData.courseInfo.offeredAs || ""}
+            required
+            margin="normal"
+            variant="outlined"
             style={fieldStyle}
-            sx={{
-              marginRight: '20px',
-              width: '300px', // Adjust padding for a smaller size
-              // Adjust font size for a smaller size
-            }}
           >
-            {
-              dropdown.branchname.map((item, index) => (
-                <MenuItem value={item} key={index}>{item}</MenuItem>
-              ))}
-
-          </Select>
-        </FormControl>
-        <FormControl>
-          <InputLabel id="demo-simple-select-label">Batch</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            label="Batch"
-            name="courseInfo.batch"
-            defaultValue={rowData.courseInfo.batch}
-            onChange={handleInputChange}
-            //  value={rowData.courseInfo.batch}
-            sx={{
-              marginRight: '20px',
-              width: '300px', // Adjust padding for a smaller size
-              // Adjust font size for a smaller size
-            }}
-          >
-            {
-              dropdown.batch.map((item, index) => (
-                <MenuItem value={item} key={index}>{item}</MenuItem>
-              ))}
-
+            {dropdown.offered.map((item, index) => (
+              <MenuItem value={item} key={index}>
+                {item}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
         <TextField
