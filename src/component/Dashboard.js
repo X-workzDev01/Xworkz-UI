@@ -9,6 +9,7 @@ import   './Dashboard.css';
 
 import { Route, Routes } from 'react-router-dom';
 import Header from './Header';
+import Attandance from './Attandance';
 
 const Dashboard = ({ isLoggedIn }) => {
   if (!isLoggedIn) {
@@ -28,6 +29,8 @@ const Dashboard = ({ isLoggedIn }) => {
         <Route path="/display" element={<ViewTable />} />
         <Route path="/followup" element={<FollowUp />} />
         <Route path="/profile/:email" element={<Profile />} />
+        <Route path="/attandance" element={<Attandance />} />
+
       </Routes>
 
       
