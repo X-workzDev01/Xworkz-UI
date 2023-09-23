@@ -1,25 +1,31 @@
-import React, { useEffect } from 'react';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import axios from 'axios';
-import Snackbar from '@mui/material/Snackbar';
-import CircularProgress from '@mui/material/CircularProgress';
-import { Urlconstant } from '../constant/Urlconstant';
-import { FormControl, IconButton, InputLabel, MenuItem, Select } from '@mui/material';
-import { GridCloseIcon } from '@mui/x-data-grid';
-import ReactInputMask from 'react-input-mask';
-import TimePicker from 'react-time-picker';
-const fieldStyle = { margin: '20px' };
+import React, { useEffect } from "react";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import axios from "axios";
+import Snackbar from "@mui/material/Snackbar";
+import CircularProgress from "@mui/material/CircularProgress";
+import { Urlconstant } from "../constant/Urlconstant";
+import {
+  FormControl,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
+} from "@mui/material";
+import { GridCloseIcon } from "@mui/x-data-grid";
+import ReactInputMask from "react-input-mask";
+import TimePicker from "react-time-picker";
+const fieldStyle = { margin: "20px" };
 
 const FollowUpStatus = ({ open, handleClose, rowData }) => {
   const [isConfirming, setIsConfirming] = React.useState(false);
   const [editedData, setEditedData] = React.useState({ ...rowData });
   const [loading, setLoading] = React.useState(false);
-  const [responseMessage, setResponseMessage] = React.useState('');
+  const [responseMessage, setResponseMessage] = React.useState("");
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [dropdownData, setDropdownData] = React.useState([]);
 
@@ -101,25 +107,27 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
           setResponseMessage("Error updating data. Please try again.");
           setSnackbarOpen(true);
         });
-
+      axios
+        .post(Urlconstant.url + `registerAttendance`, statusDto)
+        .then(() => {})
+        .catch((e) => {});
     }
   };
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
-      <DialogTitle>Add to Follow Up
-
+      <DialogTitle>
+        Add to Follow Up
         <IconButton
           color="inherit"
           onClick={handleClose}
           edge="start"
           aria-label="close"
-          style={{ position: 'absolute', right: '8px', top: '8px' }}
+          style={{ position: "absolute", right: "8px", top: "8px" }}
         >
           <GridCloseIcon />
         </IconButton>
       </DialogTitle>
       <DialogContent>
-
         <TextField
           label="Email"
           name="basicInfo.email"
@@ -150,7 +158,6 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
           InputProps={{
             readOnly: true,
           }}
-
         />
         <FormControl>
           <InputLabel id="demo-simple-select-label">Attempt Status</InputLabel>
@@ -163,18 +170,18 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
             defaultValue={rowData.attemptStatus}
             variant="outlined"
             sx={{
-              marginRight: '20px',
-              width: '200px',
-              fontSize: '20px',
+              marginRight: "20px",
+              width: "200px",
+              fontSize: "20px",
             }}
           >
             {dropdownData.status.map((item, index) => (
-              <MenuItem value={item} key={index}>{item}</MenuItem>
+              <MenuItem value={item} key={index}>
+                {item}
+              </MenuItem>
             ))}
-
           </Select>
         </FormControl>
-
 
         <ReactInputMask
           mask="99:99:99" // Define the mask pattern for hh:mm:ss
@@ -191,7 +198,8 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
           )}
         </ReactInputMask>
 
-        <TextField type="date"
+        <TextField
+          type="date"
           label="Call Back Date"
           name="callBack"
           defaultValue={rowData.callBack}
@@ -201,10 +209,10 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
             shrink: true,
           }}
           inputProps={{
-            min: getCurrentDate()
+            min: getCurrentDate(),
           }}
         />
-          <TextField
+        <TextField
           type="time"
           label="Call Back Time"
           name="callBackTime"
@@ -246,16 +254,14 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
 
       <Dialog open={isConfirming} onClose={handleClose} fullWidth maxWidth="xs">
         <DialogTitle>Confirm Update</DialogTitle>
-        <DialogContent>
-          Added Follow Up Details
-        </DialogContent>
+        <DialogContent>Added Follow Up Details</DialogContent>
         <DialogActions>
           <IconButton
             color="inherit"
             onClick={() => setIsConfirming(false)}
             edge="start"
             aria-label="close"
-            style={{ position: 'absolute', right: '8px', top: '8px' }}
+            style={{ position: "absolute", right: "8px", top: "8px" }}
           >
             <GridCloseIcon />
           </IconButton>
@@ -266,8 +272,6 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
       </Dialog>
     </Dialog>
   );
-
 };
 
 export default FollowUpStatus;
-
