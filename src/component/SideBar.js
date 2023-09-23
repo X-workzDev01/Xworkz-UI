@@ -8,14 +8,16 @@ import {
 } from "react-icons/fa";
 import "./SideBar.css";
 import { NavLink, useLocation } from "react-router-dom";
+import { FactCheckTwoTone } from "@mui/icons-material";
+import Attandance from "./Attandance";
 
 const Sidebar = ({ children }) => {
   const [isOpen, setIsOpen] = useState(true);
   const toggle = () => setIsOpen(!isOpen);
   const location = useLocation();
-  const email= sessionStorage.getItem("userId");
+  const email = sessionStorage.getItem("userId");
 
-  const [defaultSelected, setDefaultSelected] = useState( "display");
+  const [defaultSelected, setDefaultSelected] = useState("display");
 
   useEffect(() => {
     setDefaultSelected(location.pathname.replace("/x-workz/", ""));
@@ -42,8 +44,13 @@ const Sidebar = ({ children }) => {
       name: "Enquiry",
       icon: <FaCommentAlt />,
     },
+    {
+      path: "attandance",
+      name: "Attandance",
+      icon: <FaCommentAlt />,
+    },
   ];
-
+  const click = () => {};
   return (
     <div className="">
       <div style={{ width: isOpen ? "200px" : "50px" }} className="sidebar">
@@ -54,14 +61,14 @@ const Sidebar = ({ children }) => {
         </div>
         {menuItem.map((item, index) => (
           <NavLink
-            to={{ pathname: item.path}}
+            to={{ pathname: item.path }}
             key={index}
             className="link"
             activeClassName="active"
           >
             <div
               className={`icon ${
-                defaultSelected === item.path  ? "active" : ""
+                defaultSelected === item.path ? "active" : ""
               }`}
             >
               {item.icon}
@@ -69,9 +76,8 @@ const Sidebar = ({ children }) => {
             <div
               style={{ display: isOpen ? "block" : "none" }}
               className={`link_text ${
-                defaultSelected === item.path  ? "active" : ""
+                defaultSelected === item.path ? "active" : ""
               }`}
-              
             >
               {item.name}
             </div>

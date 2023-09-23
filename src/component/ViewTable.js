@@ -3,13 +3,11 @@ import { DataGrid } from "@mui/x-data-grid";
 import { Urlconstant } from "../constant/Urlconstant";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import ClearIcon from "@mui/icons-material/Clear";
 import Autocomplete from "@mui/material/Autocomplete";
 import axios from "axios";
 import EditModal from "./EditModal";
 import Profile from "./Profile";
-import { Link, Router, useLocation } from "react-router-dom";
-import context from "react-bootstrap/esm/AccordionContext";
+import { Link } from "react-router-dom";
 import Header from "./Header";
 
 function loadServerRows(page, pageSize) {
@@ -127,8 +125,6 @@ export default function ControlledSelectionServerPaginationGrid() {
     rows: [],
     rowCount: 0,
   });
-  const location = useLocation();
-  const email = location.state && location.state.email;
   const [loading, setLoading] = React.useState(false);
   const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
   const [searchValue, setSearchValue] = React.useState("");
