@@ -143,7 +143,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
       adminDto: { updatedBy: email },
       courseInfo: {
         ...editedData.courseInfo,
-        ...formData, // Include all formData fields in courseInfo
+        ...formData, 
       },
     };
   
@@ -413,6 +413,9 @@ const EditModal = ({ open, handleClose, rowData }) => {
           defaultValue={rowData.referralInfo.comments}
           onChange={handleInputChange}
           style={fieldStyle}
+          className="custom-textfield" // Apply the custom CSS class
+          multiline
+          rows={4} 
         />
 
         <TextField

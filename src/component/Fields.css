@@ -17,4 +17,8 @@
     margin-right: 20px;
     width: 300px;
   }
-  
+
+  .custom-textfield {
+    width: 50%; /* Adjust the width as needed */
+    min-height: 100px; /* Adjust the minimum height as needed */
+  }
