@@ -18,7 +18,7 @@ const fieldStyle = { margin: '20px' };
 
 const EditModal = ({ open, handleClose, rowData }) => {
   const location = useLocation();
-  const email = location.state && location.state.email;
+  const email = sessionStorage.getItem("userId");
   const [isConfirming, setIsConfirming] = React.useState(false);
   const [selectedValue, setSelectedValue] = React.useState(' ');
   const [editedData, setEditedData] = React.useState([]);
@@ -40,6 +40,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
 
   React.useEffect(() => {
     setEditedData(rowData);
+    console.log(rowData)
   }, [rowData]);
 
 
@@ -136,11 +137,13 @@ const EditModal = ({ open, handleClose, rowData }) => {
       return;
     }
   
-    setLoading(true);
-  
     const updatedData = {
       ...editedData,
-      adminDto: { updatedBy: email },
+      adminDto: {
+        updatedBy: email,
+        createdOn: editedData.adminDto.createdOn,
+        createdBy:rowData.adminDto.createdBy
+      },
       courseInfo: {
         ...editedData.courseInfo,
         ...formData, 
