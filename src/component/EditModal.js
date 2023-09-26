@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React  from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -9,107 +9,166 @@ import axios from 'axios';
 import Snackbar from '@mui/material/Snackbar';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Urlconstant } from '../constant/Urlconstant';
-import { Select, MenuItem, FormHelperText, FormControl, InputLabel } from '@mui/material';
+import { Select, MenuItem, FormControl, InputLabel, IconButton } from '@mui/material';
 import { useLocation } from 'react-router-dom';
+import { GridCloseIcon } from '@mui/x-data-grid';
 
+import './Fields.css';
 const fieldStyle = { margin: '20px' };
 
 const EditModal = ({ open, handleClose, rowData }) => {
   const location = useLocation();
- const email = location.state && location.state.email;
- console.log(email)
+  const email = location.state && location.state.email;
   const [isConfirming, setIsConfirming] = React.useState(false);
-
+  const [selectedValue, setSelectedValue] = React.useState(' ');
   const [editedData, setEditedData] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
   const [responseMessage, setResponseMessage] = React.useState('');
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [dropdown, setDropDown] = React.useState([]);
+  const [batchDetails, setBatchDetails] = React.useState("");
+  const [formData, setFormData] = React.useState({
+    branch: '',
+    trainerName: '',
+    batchType: '',
+    course: '',
+    batchTiming: '',
+    startTime: '',
+  });
+
 
 
   React.useEffect(() => {
-    setEditedData(rowData); // Use rowData directly
+    setEditedData(rowData);
   }, [rowData]);
 
-  useEffect(() => {
 
 
-    // Fetch dropdown data from your API
+  React.useEffect(() => {
     axios.get(Urlconstant.url + 'utils/dropdown', {
       headers: {
         'spreadsheetId': Urlconstant.spreadsheetId
       }
     }).then(response => {
       setDropDown(response.data)
-    }).catch(error => {
-      console.log(error);
-    })
+    }).catch(error => { })
+    axios
+      .get(Urlconstant.url + "api/getCourseName?status=Active", {
+        headers: {
+          spreadsheetId: Urlconstant.spreadsheetId,
+        },
+      })
+
+      .then((res) => {
+        setBatchDetails(res.data);
+        console.log(selectedValue);
+        if (selectedValue) {
+          fetchData(selectedValue); // Call fetchData with the selectedValue
+        }
+      })
+      .catch((e) => { });
   }, []);
-
-
-
-  // Update editedData when rowData changes
   React.useEffect(() => {
-    setEditedData(rowData); // Use rowData directly
+    if (rowData && rowData.courseInfo) {
+      setEditedData(rowData);
+      if (rowData.courseInfo.course) {
+        setSelectedValue(rowData.courseInfo.course);
+        fetchData(rowData.courseInfo.course);
+      }
+    }
   }, [rowData]);
   if (!rowData) {
-    return null; // Render nothing if rowData is not available yet
+    return null;
   }
+
+  const fetchData = (selectedValue) => {
+    axios
+      .get(
+        Urlconstant.url + `api/getCourseDetails?courseName=${selectedValue}`,
+        { headers: { spreadsheetId: Urlconstant.spreadsheetId } }
+      )
+      .then((response) => {
+        const data = response.data;
+        console.log(data);
+
+        // Update the formData state with fetched data
+        setFormData({
+          branch: data.branch,
+          trainerName: data.trainerName,
+          batchType: data.batchType,
+          course: data.courseName,
+          batchTiming: data.timing,
+          startTime: data.startTime,
+        });
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  };
+
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     const [section, field] = name.split('.');
-
+    if (section === 'courseInfo' && field === 'course') {
+      setSelectedValue(value);
+      fetchData(value); 
+    }
 
     setEditedData((prevData) => ({
       ...prevData,
       [section]: {
         ...prevData[section],
-
         [field]: value,
       },
 
     }));
 
   };
-
   const handleEditClick = () => {
     setIsConfirming(true);
     setSnackbarOpen(false);
   };
 
   const handleSaveClick = () => {
-    if (isConfirming) {
-      setLoading(true);
-      const updatedData = {
-        ...editedData, // Include existing edited data
-        adminDto: {
-          updatedBy: email, // Add the updatedBy field
-        },
-      };
-      console.log(updatedData)
-      axios
-        .put(Urlconstant.url + `api/update?email=${rowData.basicInfo.email}`, updatedData, {
-          headers: {
-            'Content-Type': 'application/json',
-            spreadsheetId: Urlconstant.spreadsheetId,
-          },
-        })
-        .then((response) => {
-          console.log('Update success:', response);
-          setLoading(false);
-          setResponseMessage('Data updated successfully!');
-          setSnackbarOpen(true);
-        })
-        .catch((error) => {
-          console.error('Error updating data:', error);
-          setLoading(false);
-          setResponseMessage('Error updating data. Please try again.');
-          setSnackbarOpen(true);
-        });
+    if (!isConfirming) {
+      setIsConfirming(false);
+      return;
     }
-    setIsConfirming(false);
+  
+    setLoading(true);
+  
+    const updatedData = {
+      ...editedData,
+      adminDto: { updatedBy: email },
+      courseInfo: {
+        ...editedData.courseInfo,
+        ...formData, 
+      },
+    };
+  
+    axios
+      .put(Urlconstant.url + `api/update?email=${rowData.basicInfo.email}`, updatedData, {
+        headers: {
+          'Content-Type': 'application/json',
+          spreadsheetId: Urlconstant.spreadsheetId,
+        },
+      })
+      .then((response) => {
+        setLoading(false);
+        setResponseMessage('Data updated successfully!');
+        setSnackbarOpen(true);
+        setIsConfirming(false);
+        handleClose();
+      })
+      .catch((error) => {
+        console.error('Error updating data:', error);
+        setLoading(false);
+        setResponseMessage('Error updating data. Please try again.');
+        setSnackbarOpen(true);
+      });
   };
+  
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
@@ -129,7 +188,15 @@ const EditModal = ({ open, handleClose, rowData }) => {
       <DialogTitle>Edit Details</DialogTitle>
       <DialogContent>
         {/* Render your form fields here */}
-
+        <IconButton
+          color="inherit"
+          onClick={handleClose}
+          edge="start"
+          aria-label="close"
+          style={{ position: 'absolute', right: '8px', top: '8px' }}
+        >
+          <GridCloseIcon />
+        </IconButton>
 
         <TextField
           label="Email"
@@ -167,8 +234,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
             style={fieldStyle}
             sx={{
               marginRight: '20px',
-              width: '300px', // Adjust padding for a smaller size
-              // Adjust font size for a smaller size
+              width: '300px',
             }}
 
           >
@@ -190,8 +256,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
             style={fieldStyle}
             sx={{
               marginRight: '20px',
-              width: '300px', // Adjust padding for a smaller size
-              // Adjust font size for a smaller size
+              width: '300px',
             }}
           >
             {
@@ -265,57 +330,65 @@ const EditModal = ({ open, handleClose, rowData }) => {
             }}
           >
             {
-              dropdown.course.map((item, index) => (
+              batchDetails.map((item, index) => (
                 <MenuItem value={item} key={index}>{item}</MenuItem>
               ))}
 
 
           </Select>
         </FormControl>
+        <TextField
+          label="Branch"
+          name="courseInfo.branch"
+          value={formData.branch || ''}
+          onChange={handleInputChange}
+          style={fieldStyle}
+        />
+        <TextField
+          label="Batch Type"
+          name="courseInfo.batchType"
+          value={formData.batchType || ''}
+          onChange={handleInputChange}
+          style={fieldStyle}
+        />
+        <TextField
+          label="Trainer Name"
+          name="courseInfo.trainerName"
+          value={formData.trainerName || ''}
+          onChange={handleInputChange}
+          style={fieldStyle}
+        />
+        <TextField
+          label="Batch Timing"
+          name="courseInfo.batchTiming"
+          value={formData.batchTiming || ''}
+          onChange={handleInputChange}
+          style={fieldStyle}
+        />
+        <TextField
+          label="Start Time"
+          name="courseInfo.startTime"
+          value={formData.startTime || ''}
+          onChange={handleInputChange}
+          style={fieldStyle}
+        />
         <FormControl>
-          <InputLabel id="demo-simple-select-label">Branch</InputLabel>
+          <InputLabel id="demo-simple-select-label">Offered As</InputLabel>
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
-            label="Branch"
-            name="courseInfo.branch"
-            defaultValue={rowData.courseInfo.branch}
-            onChange={handleInputChange}
+            name="offeredAs"
+            defaultValue={rowData.courseInfo.offeredAs || ""}
+            required
+            margin="normal"
+            variant="outlined"
             style={fieldStyle}
-            sx={{
-              marginRight: '20px',
-              width: '300px', // Adjust padding for a smaller size
-              // Adjust font size for a smaller size
-            }}
           >
-            {
-              dropdown.branchname.map((item, index) => (
-                <MenuItem value={item} key={index}>{item}</MenuItem>
-              ))}
-
-          </Select>
-        </FormControl>
-        <FormControl>
-          <InputLabel id="demo-simple-select-label">Batch</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            label="Batch"
-            name="courseInfo.batch"
-            defaultValue={rowData.courseInfo.batch}
-            onChange={handleInputChange}
-            //  value={rowData.courseInfo.batch}
-            sx={{
-              marginRight: '20px',
-              width: '300px', // Adjust padding for a smaller size
-              // Adjust font size for a smaller size
-            }}
-          >
-            {
-              dropdown.batch.map((item, index) => (
-                <MenuItem value={item} key={index}>{item}</MenuItem>
-              ))}
-
+            {dropdown.offered.map((item, index) => (
+              <MenuItem value={item} key={index}>
+                {item}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
         <TextField
@@ -340,15 +413,19 @@ const EditModal = ({ open, handleClose, rowData }) => {
           defaultValue={rowData.referralInfo.comments}
           onChange={handleInputChange}
           style={fieldStyle}
+          className="custom-textfield" // Apply the custom CSS class
+          multiline
+          rows={4} 
         />
 
         <TextField
           label="X-workz E-mail"
           name="referralInfo.xworkzEmail"
-          value={rowData.referralInfo.xworkzEmail}
+          defaultValue={rowData.referralInfo.xworkzEmail}
           onChange={handleInputChange}
           style={fieldStyle}
         />
+
         <FormControl>
           <InputLabel id="demo-simple-select-label">preferred Location</InputLabel>
           <Select
@@ -398,9 +475,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={handleClose} color="secondary">
-          Cancels
-        </Button>
+
         {loading ? (
 
 
@@ -428,9 +503,16 @@ const EditModal = ({ open, handleClose, rowData }) => {
           Are you sure you want to update the data?
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setIsConfirming(false)} color="secondary">
-            Cancel
-          </Button>
+
+          <IconButton
+            color="inherit"
+            onClick={() => setIsConfirming(false)}
+            edge="start"
+            aria-label="close"
+            style={{ position: 'absolute', right: '8px', top: '8px' }}
+          >
+            <GridCloseIcon />
+          </IconButton>
           <Button onClick={handleSaveClick} color="primary">
             Confirm
           </Button>

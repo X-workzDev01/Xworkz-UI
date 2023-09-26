@@ -2,10 +2,7 @@ import { Route, Routes, useNavigate } from 'react-router-dom';
 import './App.css';
 import Footer from './component/Footer';
 import LoginPage from './component/LoginPage';
-import Navbar from './component/NavBar';
 import React, { useState } from 'react';
-
-// Import the Dashboard component
 import Dashboard from './component/Dashboard';
 
 function App() {
@@ -14,7 +11,7 @@ function App() {
 
   const checkAuth = () => {
     if (!login) {
-      navigate('/x-workz/login'); // Redirect to login if not logged in
+      navigate('/x-workz/login');
     }
   };
 
@@ -33,12 +30,9 @@ function App() {
       
         <Routes>
          
-
-          {/* Login route */}
           <Route path="/x-workz/login" element={<LoginPage get={getState} />} />
 
           {login ? (
-            // Show sidebar and protected routes after successful login
             <React.Fragment>
 
               <Route path="/x-workz/*" element={<Dashboard isLoggedIn={login} />} />
@@ -46,7 +40,6 @@ function App() {
          
             </React.Fragment>
           ) : (
-            // Show only the login page when not logged in
             <React.Fragment>
 
               <Route path="/x-workz/login" element={<LoginPage />} />

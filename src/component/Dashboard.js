@@ -7,12 +7,13 @@ import FollowUp from './FollowUp';
 import Profile from './Profile';
 import   './Dashboard.css';
 
-import { Route, Routes, Navigate } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import Header from './Header';
+import Attandance from './Attandance';
 
 const Dashboard = ({ isLoggedIn }) => {
   if (!isLoggedIn) {
-    return null; // Render nothing if not logged in
+    return null; 
   }
 
   return (
@@ -28,6 +29,8 @@ const Dashboard = ({ isLoggedIn }) => {
         <Route path="/display" element={<ViewTable />} />
         <Route path="/followup" element={<FollowUp />} />
         <Route path="/profile/:email" element={<Profile />} />
+        <Route path="/attandance" element={<Attandance />} />
+
       </Routes>
 
       

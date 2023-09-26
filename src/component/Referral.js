@@ -1,24 +1,14 @@
 import { Button, Container, TextField, Typography, CircularProgress, FormControl, FormLabel, Radio, RadioGroup, FormControlLabel } from '@mui/material';
-import React, { useState } from 'react';
+import React from 'react';
 import { Form } from 'react-bootstrap';
 
-export const Referral = ({ formData, setFormData, onNext, onPrevious }) => {
-  const [isLoading, setIsLoading] = useState(false);
+export const Referral = ({ formData, setFormData, onNext, onPrevious, loading}) => {
+ 
 
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-  };
-
-  const handleRegister = () => {
-    setIsLoading(true); // Set loading state to true
-
-    // Simulate an API call or any other time-consuming operation
-    setTimeout(() => {
-      setIsLoading(false); // Set loading state back to false
-      onNext(); // Continue to the next step
-    }, 6000); // Simulating a 3-second delay, replace with your actual API call
   };
 
   return (
@@ -66,7 +56,7 @@ export const Referral = ({ formData, setFormData, onNext, onPrevious }) => {
             <RadioGroup
               aria-label="working"
               name="working"
-              value={formData.working || 'Yes'}
+              value={formData.working || 'No'}
               onChange={handleInputChange}
               row
             >
@@ -75,7 +65,7 @@ export const Referral = ({ formData, setFormData, onNext, onPrevious }) => {
             </RadioGroup>
           </FormControl>
         </Form>
-        {isLoading ? (
+        {loading ? (
           <CircularProgress size={24} style={{ marginTop: '20px' }} />
         ) : (
           <>
@@ -83,11 +73,13 @@ export const Referral = ({ formData, setFormData, onNext, onPrevious }) => {
               Previous
             </Button>
             &nbsp;&nbsp;&nbsp;
-            <Button variant="contained" onClick={handleRegister}>
+            <Button variant="contained" onClick={onNext}>
               Register
             </Button>
+
           </>
-        )}
+      
+       )}
       </Typography>
     </Container>
   );

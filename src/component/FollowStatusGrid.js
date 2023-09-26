@@ -20,13 +20,14 @@ const FollowStatusGrid = ({rows}) => {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        height: 'calc(100vh - 100px)', // Adjust the height as needed
+        height: 'calc(100vh - 100px)', 
         margin: '50px',
       
       }}
     >
     <div style={{ height: 400, width: '75%'}}>
-      <DataGrid rows={rows} columns={columns} pageSize={5} />
+      <DataGrid rows={rows} columns={columns} pageSize={40} />
+      
     </div>
     </div>
   );

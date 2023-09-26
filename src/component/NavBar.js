@@ -1,6 +1,4 @@
 import { AppBar, Container, IconButton, Toolbar } from '@mui/material';
-import { Link } from 'react-router-dom';
-
    
 const Navbar = ({children}) => {
  

@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, {  useState } from 'react'
 import { Urlconstant } from '../constant/Urlconstant';
-import { Button, FormControl, InputLabel, MenuItem, Select, TextField, debounce } from '@mui/material';
+import { Button, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import axios from 'axios';
 import EditFollowUp from './EditFollowUp';
@@ -13,7 +13,7 @@ export default function FollowUp() {
     status: [],
   });
 
-  const initialPageSize = 10;
+  const initialPageSize = 25;
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: initialPageSize,
@@ -28,10 +28,7 @@ export default function FollowUp() {
   React.useEffect(() => {
     getDropDown();
     setLoading(true);
-    // When searchValue changes, we need to reset the page back to 0
     setPaginationModel({ page: 0, pageSize: initialPageSize });
-
-    // Fetch data with updated searchValue
     searchServerRows(0, initialPageSize).then((newGridData) => {
       setGridData(newGridData);
       setLoading(false);
@@ -55,9 +52,9 @@ export default function FollowUp() {
   function searchServerRows(page, pageSize) {
     const startingIndex = page * pageSize;
     console.log('Loading server rows with page:', page, 'pageSize:', pageSize, 'status:', searchValue);
-    const spreadsheetId = Urlconstant.spreadsheetId; // Replace this with the actual spreadsheet ID
+    const spreadsheetId = Urlconstant.spreadsheetId; 
 
-    const apiUrl = Urlconstant.url + `api/followUp?startingIndex=${startingIndex}&maxRows=10&status=${searchValue}`;
+    const apiUrl = Urlconstant.url + `api/followUp?startingIndex=${startingIndex}&maxRows=25&status=${searchValue}`;
 
     const requestOptions = {
       method: 'GET',
@@ -79,7 +76,7 @@ export default function FollowUp() {
         }, 1000)
         .catch((error) => {
           console.error('Error fetching data:', error);
-          resolve({ rows: [], rowCount: 0 }); // Return an empty dataset in case of an error
+          resolve({ rows: [], rowCount: 0 }); 
         });
     });
   };
@@ -93,9 +90,6 @@ export default function FollowUp() {
   };
 
   const handleSaveClick = () => {
-    // Perform save operation here with editedRowData
-    console.log('Edited Data:', editedRowData);
-    // After saving, you may want to update the grid data or reload the data to reflect the changes
     setModalOpen(false);
   };
 
@@ -134,8 +128,8 @@ export default function FollowUp() {
             variant="outlined"
             sx={{
               marginRight: '10px',
-              width: '200px', // Adjust padding for a smaller size
-              fontSize: '12px', // Adjust font size for a smaller size
+              width: '200px', 
+              fontSize: '12px', 
             }}
           >
             {dropdown.status.map((item, index) => (

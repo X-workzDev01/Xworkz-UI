@@ -13,7 +13,6 @@ const LoginPage = (props) => {
   let navigate = useNavigate()
   const [error, setError] = useState();
   const [email, setEmail] = useState('');
-  const [notification,setNotification]=useState([]);
   const [password, setPassword] = useState('');
   const [enable, setEnable] = useState(true);
   const [displayMessage, setDisplayMessage] = useState();
@@ -64,7 +63,7 @@ console.log("Running use effect");
         setOtpError("Wrong Otp entered");
         setEffect(true);
 
-        navigate("/x-workz/display", { state: { email ,notification} });
+        navigate("/x-workz/display", { state: { email } });
 
       }).catch(error => {
         

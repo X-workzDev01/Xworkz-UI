@@ -2,9 +2,6 @@ import { Button, Select, MenuItem, Container, Typography, InputLabel } from '@mu
 import { Form } from 'react-bootstrap';
 
 export const Education = ({ dropdown, formData, setFormData, onNext, onPrevious }) => {
-   const yearOfPass = ['2010', '2011', '2012', '2013', '2014', '2015', '2016',
-      '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025']
-
 
    const handleInputChange = (e) => {
       const { name, value } = e.target;
