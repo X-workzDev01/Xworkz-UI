@@ -27,6 +27,9 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
   const [responseMessage, setResponseMessage] = React.useState("");
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [dropdownData, setDropdownData] = React.useState([]);
+  const fieldsToCheck = ['attemptStatus', 'joiningDate', 'callDuration', 'callBack', 'callBackTime', 'comments'];
+
+
 
   const getCurrentDate = () => {
     const now = new Date();
@@ -68,12 +71,33 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
       ...prevData,
       [name]: updatedValue,
     }));
+
     if (name === 'attemptStatus' && (updatedValue === 'Joined' || updatedValue === 'Joining')) {
       document.getElementById('joiningDate').removeAttribute('disabled');
     } else {
       document.getElementById('joiningDate').setAttribute('disabled', 'true');
     }
+    const disablingOptions = ["RNR", "Wrong Number", "Busy", "Not Reachable"];
+    const isDisablingOption = disablingOptions.includes(updatedValue);
+
+    if (name === 'attemptStatus') {
+      if (isDisablingOption) {
+
+        document.getElementById('joiningDate').setAttribute('disabled', 'true');
+        document.getElementById('callDuration').setAttribute('disabled', 'true');
+        document.getElementById('callBack').setAttribute('disabled', 'true');
+        document.getElementById('callBackTime').setAttribute('disabled', 'true');
+      } else {
+        // Enable the fields if the attempt status is not one of the disabling options
+        document.getElementById('joiningDate').removeAttribute('disabled');
+        document.getElementById('callDuration').removeAttribute('disabled');
+        document.getElementById('callBack').removeAttribute('disabled');
+        document.getElementById('callBackTime').removeAttribute('disabled');
+      }
+    }
   };
+
+
 
   const handleEditClick = () => {
     setIsConfirming(true);
@@ -92,6 +116,11 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
         ...editedData,
         attemptedBy: attemtedUser,
       };
+      fieldsToCheck.forEach((field) => {
+        if (!statusDto[field]) {
+          statusDto[field] = "NA";
+        }
+      });
       if (
         (statusDto.attemptStatus === 'Joined' || statusDto.attemptStatus === 'Joining') &&
         (!statusDto.joiningDate || !statusDto.comments)
@@ -112,7 +141,6 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
             setResponseMessage("Data updated successfully!");
             setSnackbarOpen(true);
             setIsConfirming(false);
-            handleClose();
           })
           .catch((error) => {
             setLoading(false);
@@ -172,7 +200,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
             readOnly: true,
           }}
         />
-        <FormControl>
+        {/* <FormControl>
           <InputLabel id="demo-simple-select-label">Attempt Status</InputLabel>
           <Select
             labelId="demo-simple-select-label"
@@ -194,7 +222,28 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
               </MenuItem>
             ))}
           </Select>
-        </FormControl>
+        </FormControl> */}
+          <InputLabel id="demo-simple-select-label">Attempt Status</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          label="Attempt Status"
+          name="attemptStatus"
+          onChange={handleInputChange}
+          value={rowData?.attemptStatus || 'NA'} // Use editedData here
+          variant="outlined"
+          sx={{
+            marginRight: "20px",
+            width: "200px",
+            fontSize: "20px",
+          }}
+        >
+          {dropdownData.status.map((item, index) => (
+            <MenuItem value={item} key={index}>
+              {item}
+            </MenuItem>
+          ))}
+        </Select>
 
         <TextField
           type="date"
@@ -224,7 +273,9 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
               name="callDuration"
               placeholder="hh:mm:ss" // Update the placeholder here
               variant="outlined"
+              id="callDuration"
             />
+
           )}
         </ReactInputMask>
 
@@ -241,6 +292,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
           inputProps={{
             min: getCurrentDate(),
           }}
+          id="callBack"
         />
         <TextField
           type="time"
@@ -252,6 +304,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
           InputLabelProps={{
             shrink: true,
           }}
+          id="callBackTime"
         />
 
         <TextField
@@ -263,6 +316,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
           className="custom-textfield" // Apply the custom CSS class
           multiline
           rows={4}
+          id="comments"
         />
       </DialogContent>
       <DialogActions>
