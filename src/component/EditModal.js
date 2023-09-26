@@ -140,16 +140,16 @@ const EditModal = ({ open, handleClose, rowData }) => {
     const updatedData = {
       ...editedData,
       adminDto: {
+        ...editedData.adminDto,
         updatedBy: email,
-        createdOn: editedData.adminDto.createdOn,
-        createdBy:rowData.adminDto.createdBy
       },
       courseInfo: {
         ...editedData.courseInfo,
         ...formData, 
       },
     };
-  
+    setLoading(true);
+    //setIsConfirming(false);
     axios
       .put(Urlconstant.url + `api/update?email=${rowData.basicInfo.email}`, updatedData, {
         headers: {
@@ -165,7 +165,6 @@ const EditModal = ({ open, handleClose, rowData }) => {
         handleClose();
       })
       .catch((error) => {
-        console.error('Error updating data:', error);
         setLoading(false);
         setResponseMessage('Error updating data. Please try again.');
         setSnackbarOpen(true);
@@ -175,7 +174,6 @@ const EditModal = ({ open, handleClose, rowData }) => {
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
-    handleClose();
   };
 
   const handleConfirmBoxClose = () => {
