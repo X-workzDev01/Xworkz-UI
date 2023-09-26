@@ -91,7 +91,7 @@ export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious }) 
               </MenuItem>
             ))}
           </Select>
-
+            
           <InputLabel id="demo-simple-select-label">Branch</InputLabel>
           <TextField
             name="branch"
