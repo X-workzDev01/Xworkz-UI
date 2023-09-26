@@ -18,7 +18,6 @@ import {
 } from "@mui/material";
 import { GridCloseIcon } from "@mui/x-data-grid";
 import ReactInputMask from "react-input-mask";
-import TimePicker from "react-time-picker";
 const fieldStyle = { margin: "20px" };
 
 const FollowUpStatus = ({ open, handleClose, rowData }) => {
@@ -63,10 +62,17 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
+    const updatedValue = value.trim() === "" ? "NA" : value;
+
     setEditedData((prevData) => ({
       ...prevData,
-      [name]: value,
+      [name]: updatedValue,
     }));
+    if (name === 'attemptStatus' && (updatedValue === 'Joined' || updatedValue === 'Joining')) {
+      document.getElementById('joiningDate').removeAttribute('disabled');
+    } else {
+      document.getElementById('joiningDate').setAttribute('disabled', 'true');
+    }
   };
 
   const handleEditClick = () => {
@@ -86,31 +92,38 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
         ...editedData,
         attemptedBy: attemtedUser,
       };
-      axios
-        .post(Urlconstant.url + `api/updateFollowStatus`, statusDto, {
-          headers: {
-            "Content-Type": "application/json",
-            spreadsheetId: Urlconstant.spreadsheetId,
-          },
-        })
-        .then((response) => {
-          console.log("Update success:", response);
-          setLoading(false);
-          setResponseMessage("Data updated successfully!");
-          setSnackbarOpen(true);
-          setIsConfirming(false);
-          handleClose();
-        })
-        .catch((error) => {
-          console.error("Error updating data:", error);
-          setLoading(false);
-          setResponseMessage("Error updating data. Please try again.");
-          setSnackbarOpen(true);
-        });
-      axios
-        .post(Urlconstant.url + `registerAttendance`, statusDto)
-        .then(() => {})
-        .catch((e) => {});
+      if (
+        (statusDto.attemptStatus === 'Joined' || statusDto.attemptStatus === 'Joining') &&
+        (!statusDto.joiningDate || !statusDto.comments)
+      ) {
+        setLoading(false);
+        setResponseMessage("Joining Date and Call Comments are mandatory for 'Joined' or 'Joining' status.");
+        setSnackbarOpen(true);
+      } else {
+        axios
+          .post(Urlconstant.url + `api/updateFollowStatus`, statusDto, {
+            headers: {
+              "Content-Type": "application/json",
+              spreadsheetId: Urlconstant.spreadsheetId,
+            },
+          })
+          .then((response) => {
+            setLoading(false);
+            setResponseMessage("Data updated successfully!");
+            setSnackbarOpen(true);
+            setIsConfirming(false);
+            handleClose();
+          })
+          .catch((error) => {
+            setLoading(false);
+            setResponseMessage("Error updating data. Please try again.");
+            setSnackbarOpen(true);
+          });
+        axios
+          .post(Urlconstant.url + `registerAttendance`, statusDto)
+          .then(() => { })
+          .catch((e) => { });
+      }
     }
   };
   return (
@@ -131,7 +144,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
         <TextField
           label="Email"
           name="basicInfo.email"
-          value={rowData.basicInfo.email}
+          defaultValue={rowData.basicInfo.email}
           onChange={handleInputChange}
           style={fieldStyle}
           InputProps={{
@@ -151,8 +164,8 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
         <TextField
           label="Attempted By"
           name="attemptedBy"
-          value={attemtedUser}
-          defaultValue={rowData.attemptedBy}
+          defaultValue={attemtedUser}
+          //defaultValue={rowData.attemptedBy||'NA'}
           onChange={handleInputChange}
           style={fieldStyle}
           InputProps={{
@@ -167,7 +180,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
             label="Attempt Status"
             name="attemptStatus"
             onChange={handleInputChange}
-            defaultValue={rowData.attemptStatus}
+            value={rowData.attemptStatus || 'NA'}
             variant="outlined"
             sx={{
               marginRight: "20px",
@@ -183,9 +196,26 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
           </Select>
         </FormControl>
 
+        <TextField
+          type="date"
+          label="Joining Date"
+          name="joiningDate"
+          defaultValue={rowData.joiningDate || 'NA'}
+          onChange={handleInputChange}
+          style={fieldStyle}
+          InputLabelProps={{
+            shrink: true,
+          }}
+          inputProps={{
+            min: getCurrentDate(),
+          }}
+          id="joiningDate"
+          disabled={rowData.attemptStatus !== 'Joined'}
+        />
+
         <ReactInputMask
           mask="99:99:99" // Define the mask pattern for hh:mm:ss
-          value={rowData.callDuration}
+          defaultValue={rowData.callDuration || 'NA'}
           onChange={handleInputChange}
         >
           {() => (
@@ -202,7 +232,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
           type="date"
           label="Call Back Date"
           name="callBack"
-          defaultValue={rowData.callBack}
+          defaultValue={rowData.callBack || 'NA'}
           onChange={handleInputChange}
           style={fieldStyle}
           InputLabelProps={{
@@ -216,7 +246,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
           type="time"
           label="Call Back Time"
           name="callBackTime"
-          defaultValue={rowData.callBackTime}
+          defaultValue={rowData.callBackTime || 'NA'}
           onChange={handleInputChange}
           style={fieldStyle}
           InputLabelProps={{
