@@ -28,8 +28,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [dropdownData, setDropdownData] = React.useState([]);
   const fieldsToCheck = ['attemptStatus', 'joiningDate', 'callDuration', 'callBack', 'callBackTime', 'comments'];
-
-
+  const [isEditButtonDisabled, setIsEditButtonDisabled] = React.useState(false);
 
   const getCurrentDate = () => {
     const now = new Date();
@@ -64,8 +63,9 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
   }
 
   const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    const updatedValue = value.trim() === "" ? "NA" : value;
+    const { name, value, } = event.target;
+
+    const updatedValue = value.trim() === " " ? "NA" : value;
 
     setEditedData((prevData) => ({
       ...prevData,
@@ -107,6 +107,9 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
     setSnackbarOpen(false);
     handleClose();
   };
+  const handleCloseForm = () => {
+    handleClose();
+  };
   const attemtedUser = sessionStorage.getItem("userId");
 
   const handleSaveClick = () => {
@@ -141,6 +144,11 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
             setResponseMessage("Data updated successfully!");
             setSnackbarOpen(true);
             setIsConfirming(false);
+            if (response.status === 200) {
+              setTimeout(() => {
+                handleCloseForm();
+              }, 2000);
+            }
           })
           .catch((error) => {
             setLoading(false);
@@ -200,7 +208,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
             readOnly: true,
           }}
         />
-        {/* <FormControl>
+         <FormControl>
           <InputLabel id="demo-simple-select-label">Attempt Status</InputLabel>
           <Select
             labelId="demo-simple-select-label"
@@ -222,15 +230,17 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
               </MenuItem>
             ))}
           </Select>
-        </FormControl> */}
-          <InputLabel id="demo-simple-select-label">Attempt Status</InputLabel>
+        </FormControl> 
+        {/* <InputLabel id="demo-simple-select-label">Attempt Status</InputLabel>
+
+
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
           label="Attempt Status"
           name="attemptStatus"
           onChange={handleInputChange}
-          value={rowData?.attemptStatus || 'NA'} // Use editedData here
+          value={rowData.attemptStatus || 'NA'} // Use editedData here
           variant="outlined"
           sx={{
             marginRight: "20px",
@@ -243,7 +253,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
               {item}
             </MenuItem>
           ))}
-        </Select>
+        </Select> */}
 
         <TextField
           type="date"
