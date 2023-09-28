@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import { GridCloseIcon } from "@mui/x-data-grid";
 import ReactInputMask from "react-input-mask";
+import { useState } from "react";
 const fieldStyle = { margin: "20px" };
 
 const FollowUpStatus = ({ open, handleClose, rowData }) => {
@@ -28,7 +29,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [dropdownData, setDropdownData] = React.useState([]);
   const fieldsToCheck = ['attemptStatus', 'joiningDate', 'callDuration', 'callBack', 'callBackTime', 'comments'];
-  
+  const [attemptStatus, setAttemptStatus] = useState("");
 
   const getCurrentDate = () => {
     const now = new Date();
@@ -39,7 +40,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
   };
 
   useEffect(() => {
-    // Fetch your dropdown data from the API here
+
     axios
       .get(Urlconstant.url + "utils/dropdown", {
         headers: {
@@ -47,7 +48,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
         },
       })
       .then((response) => {
-        setDropdownData(response.data); // Assuming the response contains an array of dropdown options
+        setDropdownData(response.data);
       })
       .catch((error) => {
         console.error("Error fetching dropdown data:", error);
@@ -59,12 +60,12 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
   }, [rowData]);
 
   if (!rowData) {
-    return null; // Render nothing if rowData is not available yet
+    return null;
   }
 
   const handleInputChange = (event) => {
     const { name, value, } = event.target;
-
+    setAttemptStatus(value)
     const updatedValue = value.trim() === " " ? "NA" : value;
 
     setEditedData((prevData) => ({
@@ -96,8 +97,6 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
     }
   };
 
-
-
   const handleEditClick = () => {
     setIsConfirming(true);
     setSnackbarOpen(false);
@@ -109,6 +108,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
   const handleCloseForm = () => {
     setResponseMessage("");
     setSnackbarOpen(false);
+    setAttemptStatus("");
     handleClose();
 
   };
@@ -210,15 +210,16 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
             readOnly: true,
           }}
         />
-         <FormControl>
+        <FormControl>
           <InputLabel id="demo-simple-select-label">Attempt Status</InputLabel>
           <Select
+
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             label="Attempt Status"
             name="attemptStatus"
             onChange={handleInputChange}
-            value={rowData.attemptStatus || 'NA'}
+            value={attemptStatus || 'NA'}
             variant="outlined"
             sx={{
               marginRight: "20px",
@@ -227,12 +228,12 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
             }}
           >
             {dropdownData.status.map((item, index) => (
-              <MenuItem value={item} key={index}>
+              <MenuItem value={item.id} key={index}>
                 {item}
               </MenuItem>
             ))}
           </Select>
-        </FormControl> 
+        </FormControl>
         {/* <InputLabel id="demo-simple-select-label">Attempt Status</InputLabel>
 
 
