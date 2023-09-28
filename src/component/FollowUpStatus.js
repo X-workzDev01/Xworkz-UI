@@ -65,19 +65,14 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
 
   const handleInputChange = (event) => {
     const { name, value, } = event.target;
-    setAttemptStatus(value)
-    const updatedValue = value.trim() === " " ? "NA" : value;
-
+   
+    const updatedValue = (value ?? "").trim() === "" ? "NA" : value;   
+    setAttemptStatus(updatedValue) 
     setEditedData((prevData) => ({
       ...prevData,
       [name]: updatedValue,
     }));
-
-    if (name === 'attemptStatus' && (updatedValue === 'Joined' || updatedValue === 'Joining')) {
-      document.getElementById('joiningDate').removeAttribute('disabled');
-    } else {
-      document.getElementById('joiningDate').setAttribute('disabled', 'true');
-    }
+  
     const disablingOptions = ["RNR", "Wrong Number", "Busy", "Not Reachable"];
     const isDisablingOption = disablingOptions.includes(updatedValue);
 
@@ -228,7 +223,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
             }}
           >
             {dropdownData.status.map((item, index) => (
-              <MenuItem value={item.id} key={index}>
+              <MenuItem value={item} key={index}>
                 {item}
               </MenuItem>
             ))}
@@ -272,7 +267,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
             min: getCurrentDate(),
           }}
           id="joiningDate"
-          disabled={rowData.attemptStatus !== 'Joined'}
+         disabled={rowData.attemptStatus !== 'Joined'}
         />
 
         <ReactInputMask
