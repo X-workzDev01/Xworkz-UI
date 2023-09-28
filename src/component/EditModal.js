@@ -166,7 +166,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
         if (response.status === 200) {
           setTimeout(() => {
             handleCloseForm();
-          }, 2000);
+          }, 1000);
         }
       })
       .catch((error) => {
@@ -189,6 +189,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
 
   const handleCloseForm = () => {
     setResponseMessage("");
+    setSnackbarOpen(false);
     handleClose();
   };
 
@@ -491,7 +492,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
 
           <CircularProgress size={20} /> // Show loading spinner
         ) : (
-          <Button onClick={handleEditClick} color="primary" disabled={isEditButtonDisabled}>
+          <Button onClick={handleEditClick} color="primary">
             Edit
           </Button>
         )}

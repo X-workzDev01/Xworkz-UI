@@ -28,7 +28,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [dropdownData, setDropdownData] = React.useState([]);
   const fieldsToCheck = ['attemptStatus', 'joiningDate', 'callDuration', 'callBack', 'callBackTime', 'comments'];
-  const [isEditButtonDisabled, setIsEditButtonDisabled] = React.useState(false);
+  
 
   const getCurrentDate = () => {
     const now = new Date();
@@ -88,7 +88,6 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
         document.getElementById('callBack').setAttribute('disabled', 'true');
         document.getElementById('callBackTime').setAttribute('disabled', 'true');
       } else {
-        // Enable the fields if the attempt status is not one of the disabling options
         document.getElementById('joiningDate').removeAttribute('disabled');
         document.getElementById('callDuration').removeAttribute('disabled');
         document.getElementById('callBack').removeAttribute('disabled');
@@ -108,7 +107,10 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
     handleClose();
   };
   const handleCloseForm = () => {
+    setResponseMessage("");
+    setSnackbarOpen(false);
     handleClose();
+
   };
   const attemtedUser = sessionStorage.getItem("userId");
 
@@ -147,7 +149,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
             if (response.status === 200) {
               setTimeout(() => {
                 handleCloseForm();
-              }, 2000);
+              }, 1000);
             }
           })
           .catch((error) => {

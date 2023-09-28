@@ -19,16 +19,11 @@ export default function ViewAttendance() {
         }))
         setAttendanceData(mappedData);
       })
-      .catch(error => {
-        console.error('Error fetching attendance data:', error);
-      });
+      .catch(error => {});
   }, []);
 console.log(attendanceData)
   const columns = [
     { field: 'id', headerName: 'ID', width: 100 },
-    { field: 'traineeName', headerName: 'Name', width: 150 },
-    { field: 'basicInfo.email', headerName: 'Email', width: 200 },
-    { field: 'basicInfo.contactNumber', headerName: 'Contact Number', width: 150 },
     { field: 'date', headerName: 'Date', width: 150 },
     { field: 'markAs', headerName: 'Present/Absent', width: 120 },
   ];
