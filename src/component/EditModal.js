@@ -18,7 +18,7 @@ const fieldStyle = { margin: '20px' };
 
 const EditModal = ({ open, handleClose, rowData }) => {
   const location = useLocation();
-  const email = location.state && location.state.email;
+  const email = sessionStorage.getItem("userId");
   const [isConfirming, setIsConfirming] = React.useState(false);
   const [selectedValue, setSelectedValue] = React.useState(' ');
   const [editedData, setEditedData] = React.useState([]);
@@ -40,6 +40,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
 
   React.useEffect(() => {
     setEditedData(rowData);
+    console.log(rowData)
   }, [rowData]);
 
 
@@ -136,17 +137,19 @@ const EditModal = ({ open, handleClose, rowData }) => {
       return;
     }
   
-    setLoading(true);
-  
     const updatedData = {
       ...editedData,
-      adminDto: { updatedBy: email },
+      adminDto: {
+        ...editedData.adminDto,
+        updatedBy: email,
+      },
       courseInfo: {
         ...editedData.courseInfo,
         ...formData, 
       },
     };
-  
+    setLoading(true);
+    //setIsConfirming(false);
     axios
       .put(Urlconstant.url + `api/update?email=${rowData.basicInfo.email}`, updatedData, {
         headers: {
@@ -162,7 +165,6 @@ const EditModal = ({ open, handleClose, rowData }) => {
         handleClose();
       })
       .catch((error) => {
-        console.error('Error updating data:', error);
         setLoading(false);
         setResponseMessage('Error updating data. Please try again.');
         setSnackbarOpen(true);
@@ -172,7 +174,6 @@ const EditModal = ({ open, handleClose, rowData }) => {
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
-    handleClose();
   };
 
   const handleConfirmBoxClose = () => {
