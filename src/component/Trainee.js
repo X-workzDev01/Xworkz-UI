@@ -1,213 +1,245 @@
-import { TextField, Button, Alert, Typography, Container } from '@mui/material';
-import axios from 'axios';
-import React, { useState } from 'react';
-import { Form } from 'react-bootstrap';
-import { Urlconstant } from '../constant/Urlconstant';
+import { TextField, Button, Alert, Typography, Container } from "@mui/material";
+import axios from "axios";
+import React, { useState } from "react";
+import { Form } from "react-bootstrap";
+import { Urlconstant } from "../constant/Urlconstant";
 
 export const Trainee = ({ formData, setFormData, onNext }) => {
-
   const [error, setError] = useState();
   const [emailCheck, setEmailCheck] = useState(null);
   const [numberCheck, setNumberCheck] = useState(null);
   const [emailError, setEmailError] = useState(null);
   const [nameError, setNameError] = useState(null);
   const [buttonEnabled, setButtonEnabled] = useState(false);
-  const [phoneNumberError, setPhoneNumberError] = useState('');
-  const [verifyHandaleEmail, setverifyHandleEmail] = useState('');
-  const [verifyHandaleEmailerror, setverifyHandleEmailError] = useState('');
-  
+  const [phoneNumberError, setPhoneNumberError] = useState("");
+  const [verifyHandaleEmail, setverifyHandleEmail] = useState("");
+  const [verifyHandaleEmailerror, setverifyHandleEmailError] = useState("");
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+   
 
-    if (name === 'traineeName') {
+    if (name === "traineeName") {
       if (!value) {
-        setNameError('Name is required');
+        setNameError("Name is required");
+        
+      } else if (value.length < 3) {
+        setNameError("Enter a Valid Name");
+      } else {
+        setNameError("");
       }
-      else if (value.length < 3) {
-        setNameError('Enter a Valid Name');
-      }
-      else {
-        setNameError('');
-      }
-    } else if (name === 'email') {
+    } else if (name === "email") {
       if (!value) {
-        setEmailError('Email is required');
-
+        setEmailError("Email is required");
+        setverifyHandleEmail("");
+        setEmailCheck("");
       } else if (!/\S+@\S+\.\S+/.test(value)) {
-        setEmailError('Invalid email address');
+        setEmailError("Invalid email address");
+        setverifyHandleEmail("");
+        setEmailCheck("");
 
       } else {
-        setEmailError('');
-
+        validEmail(value);
+        setEmailError("");
       }
-    } else if (name === 'contactNumber') {
+    } else if (name === "contactNumber") {
       if (!value) {
-        setPhoneNumberError('Phone number is required');
+        setPhoneNumberError("Phone number is required");
       } else if (!/^\d+$/.test(value)) {
-        setPhoneNumberError('Phone number must contain only digits');
-
+        setPhoneNumberError("Phone number must contain only digits");
       } else if (value.length !== 10) {
-        setPhoneNumberError('Phone number must contain exactly 10 digits');
-
+        setPhoneNumberError("Phone number must contain exactly 10 digits");
       } else {
-        setPhoneNumberError('');
+        setPhoneNumberError("");
       }
     }
     setFormData({ ...formData, [name]: value });
-  }
+  };
 
-  const verifyEmail = () => {
-    axios.get(Urlconstant.url + `api/verify-email?email=${formData.email}`).then(response => {
-      if(response.data ==='accepted_email'){
-        setverifyHandleEmail(response.data);
-        console.log(response.data);
-      }if(response.data==='rejected_email'){
-        setverifyHandleEmailError(response.data);
-        setverifyHandleEmail("");
-      }else{
-        setverifyHandleEmailError(null);
-      }
-     } );
-  }
+  const verifyEmail = (email) => {
+    axios
+      .get(Urlconstant.url + `api/verify-email?email=${email}`)
+      .then((response) => {
+        if (response.data === "accepted_email") {
+          setverifyHandleEmail(response.data);
+          console.log(response.data);
+        }
+        if (response.data === "rejected_email") {
+          setverifyHandleEmailError(response.data);
+          setverifyHandleEmail("");
+          setEmailError("");
+          setEmailCheck("");
+        } else {
+          setverifyHandleEmailError("");
+        }
+      });
+  };
 
-  const handleEmail = (e) => {
-    validateEmail(formData.email) ;
-    axios.get(Urlconstant.url + `api/emailCheck?email=${formData.email}`, {
-      headers: {
-        'spreadsheetId': Urlconstant.spreadsheetId
-      }
-    }).then(response => {
-      if (response.status === 201) {
-        setEmailCheck(response.data);
-      }
-      else {
-        setEmailCheck(null);
+  const handleEmail = (email) => {
+    validateEmail(email);
+    axios
+      .get(Urlconstant.url + `api/emailCheck?email=${email}`, {
+        headers: {
+          spreadsheetId: Urlconstant.spreadsheetId,
+        },
+      })
+      .then((response) => {
+        if (response.status === 201) {
+          setEmailCheck(response.data);
+        } else {
+          setEmailCheck(null);
+        }
+      })
+      .catch();
+    console.log(error);
+  };
 
-      }
-
-    }).catch();
-    console.log(error)
-
-  }
-
-  const validEmail=()=>{
-    handleEmail(formData.email);
-    verifyEmail(formData.email);
-  }
-
+  const validEmail = (email) => {
+    handleEmail(email);
+    verifyEmail(email);
+  };
 
   const handleNumberChange = (e) => {
     if (!formData.contactNumber) {
       console.log("Contact number is blank. Cannot make the API call.");
-      return; 
+      return;
     }
 
-    axios.get(Urlconstant.url + `api/contactNumberCheck?contactNumber=${formData.contactNumber}`, {
-      headers: {
-        'spreadsheetId': Urlconstant.spreadsheetId
-      }
-    }).then(response => {
-      if (response.status === 201) {
-        setNumberCheck(response.data);
-      }
-      else {
-        setNumberCheck(null);
-      }
-    }).catch(error => {
-      console.log(error);
-    });
-  }
+    axios
+      .get(
+        Urlconstant.url +
+          `api/contactNumberCheck?contactNumber=${formData.contactNumber}`,
+        {
+          headers: {
+            spreadsheetId: Urlconstant.spreadsheetId,
+          },
+        }
+      )
+      .then((response) => {
+        if (response.status === 201) {
+          setNumberCheck(response.data);
+        } else {
+          setNumberCheck(null);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   const validateEmail = (value) => {
     if (!value) {
-      setEmailError('Email is required');
+      setEmailError("Email is required");
+      setEmailCheck("");
+      setverifyHandleEmail("");
     } else if (!/\S+@\S+\.\S+/.test(value)) {
-      setEmailError('Invalid email address');
+      setEmailError("Invalid email address");
+      setverifyHandleEmail("");
+      setEmailCheck("");
     } else {
-      setEmailError('');
-     
+      setEmailError("");
+      console.log("validate email");
     }
   };
 
   const today = new Date();
-  const maxDate = today.toISOString().split('T')[0];
-  const isDisabled = !formData.traineeName || !formData.email || !formData.contactNumber || !formData.dateOfBirth ||verifyHandaleEmailerror || numberCheck ||emailCheck || nameError;
+  const maxDate = today.toISOString().split("T")[0];
+  const isDisabled =
+    !formData.traineeName ||
+    !formData.email ||
+    !formData.contactNumber ||
+    !formData.dateOfBirth ||
+    verifyHandaleEmailerror ||
+    numberCheck ||
+    emailCheck ||
+    nameError;
   return (
-<div>
+    <div>
+      <Container maxWidth="sm">
+        <Typography component="div" style={{ height: "50vh" }}>
+          <h2>Trainee</h2>
+          <Form>
+            {error && <Alert severity="error">{error}</Alert>}
+            <TextField
+              type="text"
+              label="User Name"
+              name="traineeName"
+              fullWidth
+              margin="normal"
+              required
+              id="outlined-basic"
+              variant="outlined"
+              defaultValue={"NA"}
+              value={formData.traineeName || ""}
+              onChange={handleInputChange}
+            />
+            {nameError && <Alert severity="error">{nameError}</Alert>}
 
-
-    <Container maxWidth="sm">
-      <Typography component="div" style={{ height: '50vh' }}>
-        <h2>Trainee</h2>
-        <Form>
-          {error && <Alert severity="error">{error}</Alert>}
-          <TextField type="text"
-            label="User Name"
-            name="traineeName"
-            fullWidth
-            margin="normal"
-            required
-            id="outlined-basic"
-            variant="outlined"
-            value={formData.traineeName || ''}
-            onChange={handleInputChange}
-           
-          />
-          {nameError && <Alert severity="error">{nameError}</Alert>}
-
-          <TextField type="email"
-            label="E-mail"
-            required
-            name="email"
-            fullWidth
-            margin="normal"
-            id="outlined-basic"
-            variant="outlined"
-            value={formData.email || ''}
-            onChange={handleInputChange}
-            onBlur={validEmail}
-
-          />
-          {verifyHandaleEmail ? <Alert severity="success">{verifyHandaleEmail}</Alert>:""}
-          {verifyHandaleEmailerror ? <Alert severity="error">{verifyHandaleEmailerror}</Alert>:""}
-          {emailError ? <Alert severity="error">{emailError}</Alert>:""}
-          {emailCheck ? <Alert severity="error">{emailCheck}</Alert>:""}
-          <TextField type="number"
-            label="Contact Number"
-            required
-            fullWidth
-            margin="normal"
-            id="outlined-basic"
-            variant="outlined"
-            name="contactNumber"
-            value={formData.contactNumber || ''}
-            onChange={handleInputChange}
-            onBlur={handleNumberChange}
-
-          />
-          {phoneNumberError && <Alert severity="error">{phoneNumberError}</Alert>}
-          {numberCheck && <Alert severity="error">{numberCheck}</Alert>}
-          <TextField type="date"
-            name="dateOfBirth"
-            label="Date Of Birth"
-            value={formData.dateOfBirth || ''}
-            onChange={handleInputChange}
-            required
-            fullWidth
-            margin="normal"
-            id="outlined-basic"
-            variant="outlined"
-            InputLabelProps={{
-              shrink: true,
-            }}
-            inputProps={{
-              max: maxDate
-            }}
-          />
-        </Form>
-        <Button variant="contained" disabled={isDisabled} onClick={onNext}>Next</Button>
-      </Typography>
-    </Container>
+            <TextField
+              type="email"
+              label="E-mail"
+              required
+              name="email"
+              fullWidth
+              margin="normal"
+              id="outlined-basic"
+              variant="outlined"
+              value={formData.email || ""}
+              onChange={handleInputChange}
+            />
+            {verifyHandaleEmail ? (
+              <Alert severity="success">{verifyHandaleEmail}</Alert>
+            ) : (
+              " "
+            )}
+            {verifyHandaleEmailerror ? (
+              <Alert severity="error">{verifyHandaleEmailerror}</Alert>
+            ) : (
+              " "
+            )}
+            {emailError ? <Alert severity="error">{emailError} </Alert> : " "}
+            {emailCheck ? <Alert severity="error">{emailCheck}</Alert> : " "}
+            <TextField
+              type="number"
+              label="Contact Number"
+              required
+              fullWidth
+              margin="normal"
+              id="outlined-basic"
+              variant="outlined"
+              name="contactNumber"
+              value={formData.contactNumber || ""}
+              onChange={handleInputChange}
+              onBlur={handleNumberChange}
+            />
+            {phoneNumberError && (
+              <Alert severity="error">{phoneNumberError}</Alert>
+            )}
+            {numberCheck && <Alert severity="error">{numberCheck}</Alert>}
+            <TextField
+              type="date"
+              name="dateOfBirth"
+              label="Date Of Birth"
+              value={formData.dateOfBirth || ""}
+              onChange={handleInputChange}
+              required
+              fullWidth
+              margin="normal"
+              id="outlined-basic"
+              variant="outlined"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              inputProps={{
+                max: maxDate,
+              }}
+            />
+          </Form>
+          <Button variant="contained" disabled={isDisabled} onClick={onNext}>
+            Next
+          </Button>
+        </Typography>
+      </Container>
     </div>
-  )
-}
+  );
+};

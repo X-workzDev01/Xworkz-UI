@@ -9,7 +9,7 @@ import { Container } from "react-bootstrap";
 import axios from "axios";
 import Header from "./Header";
 import { Urlconstant } from "../constant/Urlconstant";
-import {  Route } from "react-router-dom";
+import { NavLink, Navigate, Route, Router } from "react-router-dom";
 
 export default function Registration() {
   const email = sessionStorage.getItem("userId");
@@ -21,7 +21,7 @@ export default function Registration() {
     basicInfo: [],
     educationInfo: [],
     courseInfo: [],
-    referralInfo: [],
+    othersDto: [],
     adminDto: { createdBy: email },
   });
   const [dropdown, setDropDown] = useState({
@@ -70,28 +70,28 @@ export default function Registration() {
 
   const handleFormSubmit = () => {
     setIsLoading(true);
-    <Route path="/register" element={<Registration />} />
 
-    axios.post(Urlconstant.url+'api/register', formData,{
-      headers: {
-        'spreadsheetId': Urlconstant.spreadsheetId
-      }
-
-    }).then(response => {
-      setMessages("Registration done successfully!!!")
-      setIsLoading(false)
-      setFormData({
-        basicInfo: [],
-        educationInfo: [],
-        courseInfo: [],
-        referralInfo: [],
-        adminDto:[],
-
-      });
-      setCurrentSection(1);
-    })
-    .catch((error) => {});
-  }
+    axios
+      .post(Urlconstant.url + "api/register", formData, {
+        headers: {
+          spreadsheetId: Urlconstant.spreadsheetId,
+        },
+      })
+      .then((response) => {
+        setMessages("Registration done successfully!!!");
+        setIsLoading(false);
+        setFormData({
+          basicInfo: [],
+          educationInfo: [],
+          courseInfo: [],
+          othersDto: [],
+          adminDto: { createdBy: email },
+        });
+        setCurrentSection(1);
+        Navigate("/x-workz/register");
+      })
+      .catch((error) => {});
+  };
 
   const renderSection = () => {
     switch (currentSection) {
@@ -99,9 +99,9 @@ export default function Registration() {
         return (
           <Trainee
             formData={formData.basicInfo}
-            setFormData={(data) =>
-              setFormData({ ...formData, basicInfo: data })
-            }
+            setFormData={(data) => {
+              setFormData({ ...formData, basicInfo: data });
+            }}
             onNext={handleNext}
           />
         );
@@ -128,15 +128,14 @@ export default function Registration() {
             onPrevious={handlePrevious}
             dropdown={dropdown}
             batchDetiles={batchDetiles}
-
           />
         );
       case 4:
         return (
           <Referral
-            formData={formData.referralInfo}
+            formData={formData.othersDto}
             setFormData={(data) =>
-              setFormData({ ...formData, referralInfo: data })
+              setFormData({ ...formData, othersDto: data })
             }
             onNext={handleFormSubmit}
             onPrevious={handlePrevious}
@@ -148,30 +147,29 @@ export default function Registration() {
     }
   };
 
-return (
-  <Container>
-    <Header />
-    <h2>Registration Form</h2>
+  return (
+    <Container>
+      <Header />
+      <h2>Registration Form</h2>
 
-    <div key={messages} style={{ color: 'Green' }} >
-      <h4> {messages}</h4>
-    </div>
-    <Stepper activeStep={currentSection}>
-
-      <Step>
-        <StepLabel>Trainee</StepLabel>
-      </Step>
-      <Step>
-        <StepLabel>Education</StepLabel>
-      </Step>
-      <Step>
-        <StepLabel>Course</StepLabel>
-      </Step>
-      <Step>
-        <StepLabel>Referral</StepLabel>
-      </Step>
-    </Stepper>
-    {renderSection()}
-  </Container>
-)
+      <div key={messages} style={{ color: "Green" }}>
+        <h4> {messages}</h4>
+      </div>
+      <Stepper activeStep={currentSection}>
+        <Step>
+          <StepLabel>Trainee</StepLabel>
+        </Step>
+        <Step>
+          <StepLabel>Education</StepLabel>
+        </Step>
+        <Step>
+          <StepLabel>Course</StepLabel>
+        </Step>
+        <Step>
+          <StepLabel>Referral</StepLabel>
+        </Step>
+      </Stepper>
+      {renderSection()}
+    </Container>
+  );
 }
