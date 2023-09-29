@@ -116,11 +116,13 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
         ...editedData,
         attemptedBy: attemtedUser,
       };
+
       fieldsToCheck.forEach((field) => {
         if (!statusDto[field]) {
           statusDto[field] = "NA";
         }
       });
+
       if (
         (statusDto.attemptStatus === 'Joined' || statusDto.attemptStatus === 'Joining') &&
         (!statusDto.joiningDate || !statusDto.comments)
