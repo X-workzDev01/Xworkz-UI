@@ -1,4 +1,4 @@
-import React  from 'react';
+import React from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -27,6 +27,9 @@ const EditModal = ({ open, handleClose, rowData }) => {
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [dropdown, setDropDown] = React.useState([]);
   const [batchDetails, setBatchDetails] = React.useState("");
+
+  const [isEditButtonDisabled, setIsEditButtonDisabled] = React.useState(false);
+
   const [formData, setFormData] = React.useState({
     branch: '',
     trainerName: '',
@@ -40,7 +43,6 @@ const EditModal = ({ open, handleClose, rowData }) => {
 
   React.useEffect(() => {
     setEditedData(rowData);
-    console.log(rowData)
   }, [rowData]);
 
 
@@ -62,7 +64,6 @@ const EditModal = ({ open, handleClose, rowData }) => {
 
       .then((res) => {
         setBatchDetails(res.data);
-        console.log(selectedValue);
         if (selectedValue) {
           fetchData(selectedValue); // Call fetchData with the selectedValue
         }
@@ -90,9 +91,6 @@ const EditModal = ({ open, handleClose, rowData }) => {
       )
       .then((response) => {
         const data = response.data;
-        console.log(data);
-
-        // Update the formData state with fetched data
         setFormData({
           branch: data.branch,
           trainerName: data.trainerName,
@@ -113,7 +111,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
     const [section, field] = name.split('.');
     if (section === 'courseInfo' && field === 'course') {
       setSelectedValue(value);
-      fetchData(value); 
+      fetchData(value);
     }
 
     setEditedData((prevData) => ({
@@ -129,14 +127,17 @@ const EditModal = ({ open, handleClose, rowData }) => {
   const handleEditClick = () => {
     setIsConfirming(true);
     setSnackbarOpen(false);
+    setIsEditButtonDisabled(true);
   };
 
+  
+  
   const handleSaveClick = () => {
-    if (!isConfirming) {
+    if (!isConfirming||loading) {
       setIsConfirming(false);
       return;
     }
-  
+
     const updatedData = {
       ...editedData,
       adminDto: {
@@ -145,7 +146,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
       },
       courseInfo: {
         ...editedData.courseInfo,
-        ...formData, 
+        ...formData,
       },
     };
     setLoading(true);
@@ -162,15 +163,20 @@ const EditModal = ({ open, handleClose, rowData }) => {
         setResponseMessage('Data updated successfully!');
         setSnackbarOpen(true);
         setIsConfirming(false);
-        handleClose();
+        if (response.status === 200) {
+          setTimeout(() => {
+            handleCloseForm();
+          }, 1000);
+        }
       })
       .catch((error) => {
         setLoading(false);
         setResponseMessage('Error updating data. Please try again.');
         setSnackbarOpen(true);
+      
       });
   };
-  
+
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
@@ -181,7 +187,11 @@ const EditModal = ({ open, handleClose, rowData }) => {
 
   }
 
-
+  const handleCloseForm = () => {
+    setResponseMessage("");
+    setSnackbarOpen(false);
+    handleClose();
+  };
 
 
   return (
@@ -416,7 +426,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
           style={fieldStyle}
           className="custom-textfield" // Apply the custom CSS class
           multiline
-          rows={4} 
+          rows={4}
         />
 
         <TextField
