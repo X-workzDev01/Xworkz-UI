@@ -1,26 +1,47 @@
-import { Button, Container, TextField, Typography, CircularProgress, FormControl, FormLabel, Radio, RadioGroup, FormControlLabel } from '@mui/material';
-import React from 'react';
-import { Form } from 'react-bootstrap';
+import {
+  Button,
+  Container,
+  TextField,
+  Typography,
+  CircularProgress,
+  FormControl,
+  FormLabel,
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+} from "@mui/material";
+import React from "react";
+import { Form } from "react-bootstrap";
 
-export const Referral = ({ formData, setFormData, onNext, onPrevious, loading}) => {
- 
-
+export const Referral = ({
+  formData,
+  setFormData,
+  onNext,
+  onPrevious,
+  loading,
+}) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const defaultValue = value.trim() === "" ? "NA" : value;
+    setFormData({ ...formData, [name]: defaultValue });
+  };
+  const handleRadioChange = (e) => {
+    const { name, value } = e.target;
+    const defaultValue = value.trim() === "" ? "No" : value;
+    setFormData({ ...formData, [name]: defaultValue });
   };
 
   return (
     <Container maxWidth="sm">
       <h2>Referral Details </h2>
-      <Typography component="div" style={{ height: '50vh' }}>
+      <Typography component="div" style={{ height: "50vh" }}>
         <Form>
           <TextField
             type="text"
             label="Name"
             name="referalName"
-            value={formData.referalName || ''}
+            value={formData.referalName || ""}
             onChange={handleInputChange}
             fullWidth
             margin="normal"
@@ -32,7 +53,7 @@ export const Referral = ({ formData, setFormData, onNext, onPrevious, loading}) 
             type="number"
             label="Contact Number"
             name="referalContactNumber"
-            value={formData.referalContactNumber || ''}
+            value={formData.referalContactNumber ||"" }
             onChange={handleInputChange}
             fullWidth
             margin="normal"
@@ -44,21 +65,21 @@ export const Referral = ({ formData, setFormData, onNext, onPrevious, loading}) 
             type="text"
             label="comments"
             name="comments"
-            value={formData.comments || ''}
+            value={formData.comments || ""}
             onChange={handleInputChange}
             fullWidth
             margin="normal"
             id="outlined-basic"
             variant="outlined"
           />
-           <FormControl component="fieldset" style={{ marginTop: '20px' }}>
+          <FormControl component="fieldset" style={{ marginTop: "20px" }}>
             <FormLabel component="legend">Working</FormLabel>
             <RadioGroup
               aria-label="working"
-              name="working"
-              value={formData.working || 'No'}
-              onChange={handleInputChange}
-              row
+              name={"working"}
+              value={formData.working || ""}
+              onChange={handleRadioChange}
+              label={"No"}
             >
               <FormControlLabel value={"Yes"} control={<Radio />} label="Yes" />
               <FormControlLabel value={"No"} control={<Radio />} label="No" />
@@ -66,7 +87,7 @@ export const Referral = ({ formData, setFormData, onNext, onPrevious, loading}) 
           </FormControl>
         </Form>
         {loading ? (
-          <CircularProgress size={24} style={{ marginTop: '20px' }} />
+          <CircularProgress size={24} style={{ marginTop: "20px" }} />
         ) : (
           <>
             <Button variant="contained" onClick={onPrevious}>
@@ -76,10 +97,8 @@ export const Referral = ({ formData, setFormData, onNext, onPrevious, loading}) 
             <Button variant="contained" onClick={onNext}>
               Register
             </Button>
-
           </>
-      
-       )}
+        )}
       </Typography>
     </Container>
   );

@@ -158,7 +158,7 @@ const Attandance = () => {
         batchTiming: rowData.batchTiming,
       },
     };
-    everydayAttandance(attandanceData);
+    everydayAttandance(attandanceData, rowData.course);
   };
 
   const columns = [
