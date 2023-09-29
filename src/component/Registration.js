@@ -152,6 +152,7 @@ export default function Registration() {
       <Header />
       <h2>Registration Form</h2>
 
+
       <div key={messages} style={{ color: "Green" }}>
         <h4> {messages}</h4>
       </div>
@@ -171,5 +172,7 @@ export default function Registration() {
       </Stepper>
       {renderSection()}
     </Container>
-  );
+  
+     
+)
 }

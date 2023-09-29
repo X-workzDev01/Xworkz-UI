@@ -282,6 +282,12 @@ export default function ControlledSelectionServerPaginationGrid() {
               valueGetter: (params) => params.row.basicInfo.contactNumber,
             },
             {
+              field: "registrationDate",
+              headerName: "registrationDate",
+              flex: 1,
+              valueGetter: (params) => params.row.referralInfo.registrationDate,
+            },
+            {
               field: "qualification",
               headerName: "Qualification",
               flex: 1,
