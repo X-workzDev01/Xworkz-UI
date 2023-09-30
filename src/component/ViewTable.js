@@ -115,7 +115,7 @@ function debounce(func, delay) {
 }
 
 export default function ControlledSelectionServerPaginationGrid() {
-  const initialPageSize = 25; 
+  const initialPageSize = 10; 
 
   const [paginationModel, setPaginationModel] = React.useState({
     page: 0,
@@ -285,7 +285,7 @@ export default function ControlledSelectionServerPaginationGrid() {
               field: "registrationDate",
               headerName: "registrationDate",
               flex: 1,
-              valueGetter: (params) => params.row.referralInfo.registrationDate,
+              valueGetter: (params) => params.row.othersDto.registrationDate,
             },
             {
               field: "qualification",

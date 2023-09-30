@@ -68,9 +68,9 @@ export default function Registration() {
     setCurrentSection(currentSection - 1);
   };
 
-  const handleFormSubmit = () => {
+  const handleFormSubmit = (e) => {
     setIsLoading(true);
-
+console.log(formData.basicInfo+" n    "+formData.othersDto);
     axios
       .post(Urlconstant.url + "api/register", formData, {
         headers: {
@@ -134,9 +134,11 @@ export default function Registration() {
         return (
           <Referral
             formData={formData.othersDto}
-            setFormData={(data) =>
-              setFormData({ ...formData, othersDto: data })
-            }
+            setFormData={(data) => {
+              console.log( data);
+              console.log("=========================");
+              setFormData({ ...formData, othersDto: data });
+            }}
             onNext={handleFormSubmit}
             onPrevious={handlePrevious}
             loading={isLoading}
@@ -151,7 +153,6 @@ export default function Registration() {
     <Container>
       <Header />
       <h2>Registration Form</h2>
-
 
       <div key={messages} style={{ color: "Green" }}>
         <h4> {messages}</h4>
@@ -172,7 +173,5 @@ export default function Registration() {
       </Stepper>
       {renderSection()}
     </Container>
-  
-     
-)
+  );
 }

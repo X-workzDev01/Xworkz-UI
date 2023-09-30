@@ -22,7 +22,7 @@ const Attandance = () => {
     render();
   }, []);
 
-  const initialPageSize = 20;
+  const initialPageSize = 10;
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: initialPageSize,
@@ -44,13 +44,13 @@ const Attandance = () => {
 
   React.useEffect(() => {
     setLoading(true);
-    searchServerRows(paginationModel.page, paginationModel.pageSize).then(
+    searchServerRows(paginationModel.page, paginationModel.pageSize,searchValue).then(
       (newGridData) => {
         setGridData(newGridData);
         setLoading(false);
       }
     );
-  }, [paginationModel.page, paginationModel.pageSize]);
+  }, [paginationModel.page, paginationModel.pageSize,searchValue]);
 
   function searchServerRows(page, pageSize, select) {
     const startingIndex = page * pageSize;
@@ -64,10 +64,9 @@ const Attandance = () => {
     );
 
     return new Promise((resolve, reject) => {
-      console.log("HIiiiiiiiiiiiiiiiiii");
       axios(
         Urlconstant.url +
-          `api/byBatch?batch=${select}&startIndex=${startingIndex}&maxRows=20`
+          `api/byBatch?batch=${select}&startIndex=${startingIndex}&maxRows=10`
       )
         .then((json) => {
           console.log("Received data from server:", json.data.size);
@@ -112,13 +111,7 @@ const Attandance = () => {
     axios
       .post(Urlconstant.url + "api/addAttendennce", attandanceData)
       .then((res) => {
-        console.log(
-          "JIiii" +
-            paginationModel.page +
-            "         " +
-            paginationModel.pageSize
-        );
-        console.log(batch);
+       
         refresh(batch);
       })
       .catch((e) => {});
@@ -179,7 +172,7 @@ const Attandance = () => {
         <div>
           <Button
             onClick={() => handleButtonClickYes(params.row)}
-            disabled={params.row.isButtonDisabled}
+            disabled={params.row.isButtonDisabled} style={{color:"blue"}}
           >
             Yes
           </Button>
@@ -227,11 +220,11 @@ const Attandance = () => {
           ))}
         </Select>
       </div>
-      <div style={{ height: 600, width: "100%" }}>
         <DataGrid
           columns={columns}
           rows={gridData.rows}
           pagination
+          autoHeight
           paginationModel={paginationModel}
           pageSizeOptions={[5, 10, 15, 20]}
           rowCount={gridData.rowCount}
@@ -241,7 +234,6 @@ const Attandance = () => {
           keepNonExistentRowsSelected
         />
       </div>
-    </div>
   );
 };
 
