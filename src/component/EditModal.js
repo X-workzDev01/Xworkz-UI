@@ -411,6 +411,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
         />
         <TextField
           label="Referal Contact Number"
+
           name="othersDto.referalContactNumber"
           defaultValue={rowData.othersDto.referalContactNumber}
           onChange={handleInputChange}
@@ -420,6 +421,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
         <TextField
 
           label="Comments"
+
           name="othersDto.comments"
           defaultValue={rowData.othersDto.comments}
           onChange={handleInputChange}

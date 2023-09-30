@@ -9,8 +9,11 @@ import {
   Radio,
   RadioGroup,
   FormControlLabel,
+  Checkbox,
+  Alert,
 } from "@mui/material";
 import React from "react";
+import { useState } from "react";
 import { Form } from "react-bootstrap";
 
 export const Referral = ({
@@ -20,17 +23,26 @@ export const Referral = ({
   onPrevious,
   loading,
 }) => {
+  const [working, setWorking] = useState("No");
+  const [isdiesable, setIsDiesable] = useState(false);
+  const [phoneNumberError, setPhoneNumberError] = useState("");
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    const defaultValue = value.trim() === "" ? "NA" : value;
-    setFormData({ ...formData, [name]: defaultValue });
-  };
-  const handleRadioChange = (e) => {
-    const { name, value } = e.target;
-    const defaultValue = value.trim() === "" ? "No" : value;
-    setFormData({ ...formData, [name]: defaultValue });
-    console.log(formData);
+    setFormData({ ...formData, [name]: value });
+
+    if (name === "referalContactNumber") {
+      if (!value) {
+        setPhoneNumberError("Phone number is required");
+      } else if (!/^\d+$/.test(value)) {
+        setPhoneNumberError("Phone number must contain only digits");
+      } else if (value.length !== 10) {
+        setPhoneNumberError("Phone number must contain exactly 10 digits");
+      } else {
+        setPhoneNumberError("");
+      }
+    }
+    setIsDiesable(true);
   };
   
 
@@ -55,51 +67,87 @@ export const Referral = ({
             type="number"
             label="Contact Number"
             name="referalContactNumber"
-            value={formData.referalContactNumber ||"" }
+            value={formData.referalContactNumber}
             onChange={handleInputChange}
             fullWidth
             margin="normal"
             id="outlined-basic"
             variant="outlined"
           />
+          {phoneNumberError ? (
+            <Alert severity="error">{phoneNumberError}</Alert>
+          ) : (
+            " "
+          )}
 
           <TextField
             type="text"
             label="comments"
             name="comments"
-            value={formData.comments || ""}
+            value={formData.comments}
             onChange={handleInputChange}
             fullWidth
             margin="normal"
             id="outlined-basic"
             variant="outlined"
           />
-          <FormControl component="fieldset" style={{ marginTop: "20px" }}>
-            <FormLabel component="legend">Working</FormLabel>
-            <RadioGroup
-              aria-label="working"
-              name={"working"}
-              value={formData.working}
-              onChange={handleRadioChange}
-            >
-              <FormControlLabel value={"Yes"} control={<Radio />} label="Yes" />
-              <FormControlLabel value={"No"} control={<Radio />} label="No" />
-            </RadioGroup>
-          </FormControl>
+          <FormLabel id="demo-row-radio-buttons-group-label">Working</FormLabel>
+          <RadioGroup
+            row
+            aria-labelledby="demo-row-radio-buttons-group-label"
+            name={"working"}
+            style={{ marginLeft: "13rem" }}
+            value={formData.working || working}
+            onChange={handleInputChange}
+            label={"No"}
+          >
+            <FormControlLabel
+              component="legend"
+              value={"Yes"}
+              control={<Radio />}
+              label="Yes"
+            />
+            <FormControlLabel
+              component="legend"
+              value={"No"}
+              control={<Radio />}
+              label="No"
+            />
+          </RadioGroup>
+          <FormControlLabel
+            control={
+              <Checkbox
+                onChange={handleInputChange}
+                name="accept"
+                value={formData.accept}
+                disabled={isdiesable}
+              >
+                Accept
+              </Checkbox>
+            }
+            label="Confirm register *"
+          />
+
         </Form>
-        {loading ? (
-          <CircularProgress size={24} style={{ marginTop: "20px" }} />
-        ) : (
-          <>
-            <Button variant="contained" onClick={onPrevious}>
-              Previous
-            </Button>
-            &nbsp;&nbsp;&nbsp;
-            <Button variant="contained" onClick={onNext}>
-              Register
-            </Button>
-          </>
-        )}
+        <div style={{ marginTop: "20px" }}>
+          {loading ? (
+            <CircularProgress size={24} style={{ marginTop: "20px" }} />
+          ) : (
+            <>
+              <Button variant="contained" onClick={onPrevious}>
+                Previous
+              </Button>
+              &nbsp;&nbsp;&nbsp;
+              <Button
+                variant="contained"
+                onClick={onNext}
+                disabled={!isdiesable}
+              >
+                Register
+              </Button>
+            </>
+          )}
+        </div>
       </Typography>
     </Container>
   );

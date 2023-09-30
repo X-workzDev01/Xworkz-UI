@@ -6,6 +6,7 @@ import {
   Container,
   Typography,
   InputLabel,
+  FormControl,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
@@ -93,7 +94,6 @@ export const Course = ({
               </MenuItem>
             ))}
           </Select>
-
           <InputLabel id="demo-simple-select-label">Branch</InputLabel>
           <TextField
             name="branch"
@@ -177,11 +177,20 @@ export const Course = ({
             ))}
           </Select>
         </Form>
-        <Button variant="contained" onClick={onPrevious}>
+        <Button
+          style={{ marginTop: "20px" }}
+          variant="contained"
+          onClick={onPrevious}
+        >
           Previous
         </Button>
         &nbsp;&nbsp;&nbsp;
-        <Button variant="contained" disabled={isDisabled} onClick={onNext}>
+        <Button
+          style={{ marginTop: "20px" }}
+          variant="contained"
+          disabled={isDisabled}
+          onClick={onNext}
+        >
           Next
         </Button>
       </Typography>
