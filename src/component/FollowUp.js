@@ -13,7 +13,7 @@ export default function FollowUp() {
     status: [],
   });
 
-  const initialPageSize = 25;
+  const initialPageSize = 5;
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: initialPageSize,
@@ -26,23 +26,18 @@ export default function FollowUp() {
   const [searchValue, setSearchValue] = useState('New');
 
   React.useEffect(() => {
-    getDropDown();
     setLoading(true);
     setPaginationModel({ page: 0, pageSize: initialPageSize });
     searchServerRows(0, initialPageSize).then((newGridData) => {
       setGridData(newGridData);
       setLoading(false);
     });
-  }, [searchValue]);
+  }, [searchValue,paginationModel.page, paginationModel.pageSize]);
 
 
-  React.useEffect(() => {
-    setLoading(true);
-    searchServerRows(paginationModel.page, paginationModel.pageSize).then((newGridData) => {
-      setGridData(newGridData);
-      setLoading(false);
-    });
-  }, [paginationModel.page, paginationModel.pageSize]);
+ React.useEffect(() => {
+  getDropDown();
+   }, []);
 
   const handleSearchClick = () => {
     setPaginationModel({ page: 0, pageSize: initialPageSize });
@@ -100,7 +95,6 @@ export default function FollowUp() {
     }).then(response => {
       setDropDown(response.data)
     }).catch(error => {
-      console.log(error);
     })
   }
   const handleInputChange = (e) => {
