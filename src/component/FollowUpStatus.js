@@ -50,9 +50,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
       .then((response) => {
         setDropdownData(response.data);
       })
-      .catch((error) => {
-        console.error("Error fetching dropdown data:", error);
-      });
+      .catch((error) => {});
   }, []);
 
   React.useEffect(() => {

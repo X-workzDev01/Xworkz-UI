@@ -30,7 +30,9 @@ export const Referral = ({
     const { name, value } = e.target;
     const defaultValue = value.trim() === "" ? "No" : value;
     setFormData({ ...formData, [name]: defaultValue });
+    console.log(formData);
   };
+  
 
   return (
     <Container maxWidth="sm">
@@ -41,7 +43,7 @@ export const Referral = ({
             type="text"
             label="Name"
             name="referalName"
-            value={formData.referalName || ""}
+            value={formData.referalName}
             onChange={handleInputChange}
             fullWidth
             margin="normal"
@@ -77,9 +79,8 @@ export const Referral = ({
             <RadioGroup
               aria-label="working"
               name={"working"}
-              value={formData.working || ""}
+              value={formData.working}
               onChange={handleRadioChange}
-              label={"No"}
             >
               <FormControlLabel value={"Yes"} control={<Radio />} label="Yes" />
               <FormControlLabel value={"No"} control={<Radio />} label="No" />
