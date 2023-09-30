@@ -13,7 +13,7 @@ export default function FollowUp() {
     status: [],
   });
 
-  const initialPageSize = 5;
+  const initialPageSize = 10;
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: initialPageSize,
@@ -27,12 +27,11 @@ export default function FollowUp() {
 
   React.useEffect(() => {
     setLoading(true);
-    setPaginationModel({ page: 0, pageSize: initialPageSize });
-    searchServerRows(0, initialPageSize).then((newGridData) => {
+    searchServerRows(paginationModel.page, paginationModel.pageSize,searchValue).then((newGridData) => {
       setGridData(newGridData);
       setLoading(false);
     });
-  }, [searchValue,paginationModel.page, paginationModel.pageSize]);
+  }, [paginationModel.page, paginationModel.pageSize,searchValue]);
 
 
  React.useEffect(() => {
