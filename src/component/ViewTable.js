@@ -115,7 +115,7 @@ function debounce(func, delay) {
 }
 
 export default function ControlledSelectionServerPaginationGrid() {
-  const initialPageSize = 25; 
+  const initialPageSize = 10; 
 
   const [paginationModel, setPaginationModel] = React.useState({
     page: 0,
