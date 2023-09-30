@@ -41,6 +41,7 @@ export default function ViewAttendance() {
         .then((response) => response.json())
         .then((data) => {
           console.log('Received data from server:', data);
+          
           const newGridData = {
             rows: data.dto.map((row) => ({ id: row.id.toString(), ...row })),
             rowCount: data.size,
@@ -68,8 +69,17 @@ export default function ViewAttendance() {
       headerName: 'Present/Absent',
       width: 120,
       flex: 1,
-      valueGetter: (params) => params.row.markAs,
+      valueGetter: (params) =>{
+        const markAs = params.row.markAs;
+      if (typeof markAs === 'number') {
+        return markAs === 1 ? 'Yes' : 'no';
+      } else if (typeof markAs === 'string') {
+        return markAs === '1' ? 'Yes' : 'No';
+      } else {
+        return 'unknown';
+      }
     },
+  }
   ]
 
 
@@ -77,7 +87,7 @@ export default function ViewAttendance() {
     <div>
       <h1>Attendance</h1>
       <h1>Attendance Details</h1>
-      <div style={{ height: '650px', width: '50%',display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+      <div style={{ height: '650px', width: '75%',display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
         <DataGrid
           columns={columns}
           rows={gridData.rows}
