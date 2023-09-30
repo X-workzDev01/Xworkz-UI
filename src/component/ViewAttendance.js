@@ -1,7 +1,9 @@
 import React from 'react'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { Urlconstant } from '../constant/Urlconstant';
 import { DataGrid } from '@mui/x-data-grid';
+import { Button } from '@mui/material';
+import { PersonOutline} from '@mui/icons-material';
 
 export default function ViewAttendance() {
   const { email } = useParams();
@@ -85,6 +87,18 @@ export default function ViewAttendance() {
     <div>
       <h1>Attendance</h1>
       <h1>Attendance Details</h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItem:  "justify-end" }}>
+      <div style={{ textAlign: 'right' }}>
+        <Button
+          variant="outlined"
+          startIcon={<PersonOutline/>}
+          component={Link}
+          to={`/x-workz/profile/${email}`}
+        >
+          View Profile
+        </Button>
+        </div>
+        </div>
       <div style={{ height: '650px', width: '75%',display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
         <DataGrid
           columns={columns}

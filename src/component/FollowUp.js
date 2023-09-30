@@ -5,6 +5,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import axios from 'axios';
 import EditFollowUp from './EditFollowUp';
 import { Link } from 'react-router-dom';
+import { PersonOutline } from '@mui/icons-material';
 
 export default function FollowUp() {
   const [isModalOpen, setModalOpen] = React.useState(false);
@@ -152,6 +153,7 @@ export default function FollowUp() {
                   <Button
                     variant="outlined"
                     color="secondary"
+                    startIcon={<PersonOutline/>}
                     component={Link} // Use Link component for navigation
                     to={`/x-workz/profile/${params.row.basicInfo.email}`}
                   // Pass email as a parameter
