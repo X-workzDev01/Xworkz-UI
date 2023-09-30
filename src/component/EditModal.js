@@ -405,14 +405,14 @@ const EditModal = ({ open, handleClose, rowData }) => {
         <TextField
           label="Referal Name"
           name="referralInfo.referalName"
-          defaultValue={rowData.referralInfo.referalName}
+          defaultValue={rowData.othersDto.referalName}
           onChange={handleInputChange}
           style={fieldStyle}
         />
         <TextField
           label="Referal Contact Number"
-          name="referralInfo.referalContactNumber"
-          defaultValue={rowData.referralInfo.referalContactNumber}
+          name="othersDto.referalContactNumber"
+          defaultValue={rowData.othersDto.referalContactNumber}
           onChange={handleInputChange}
           style={fieldStyle}
         />
@@ -420,8 +420,8 @@ const EditModal = ({ open, handleClose, rowData }) => {
         <TextField
 
           label="Comments"
-          name="referralInfo.comments"
-          defaultValue={rowData.referralInfo.comments}
+          name="othersDto.comments"
+          defaultValue={rowData.othersDto.comments}
           onChange={handleInputChange}
           style={fieldStyle}
           className="custom-textfield" // Apply the custom CSS class
@@ -431,8 +431,8 @@ const EditModal = ({ open, handleClose, rowData }) => {
 
         <TextField
           label="X-workz E-mail"
-          name="referralInfo.xworkzEmail"
-          defaultValue={rowData.referralInfo.xworkzEmail}
+          name="othersDto.xworkzEmail"
+          defaultValue={rowData.othersDto.xworkzEmail}
           onChange={handleInputChange}
           style={fieldStyle}
         />
@@ -443,9 +443,9 @@ const EditModal = ({ open, handleClose, rowData }) => {
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             label="Preferred Location"
-            name="referralInfo.preferredLocation"
+            name="othersDto.preferredLocation"
             onChange={handleInputChange}
-            defaultValue={rowData.referralInfo.preferredLocation}
+            defaultValue={rowData.othersDto.preferredLocation}
             variant="outlined"
             sx={{
               marginRight: '20px',
@@ -465,9 +465,9 @@ const EditModal = ({ open, handleClose, rowData }) => {
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             label="Preferred Class Type"
-            name="referralInfo.preferredClassType"
+            name="othersDto.preferredClassType"
             onChange={handleInputChange}
-            defaultValue={rowData.referralInfo.preferredClassType}
+            defaultValue={rowData.othersDto.preferredClassType}
             variant="outlined"
             sx={{
               marginRight: '20px',
