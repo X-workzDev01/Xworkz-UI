@@ -9,6 +9,7 @@ import EditModal from "./EditModal";
 import Profile from "./Profile";
 import { Link } from "react-router-dom";
 import Header from "./Header";
+import { PersonOutline } from "@mui/icons-material";
 
 function loadServerRows(page, pageSize) {
   
@@ -115,7 +116,7 @@ function debounce(func, delay) {
 }
 
 export default function ControlledSelectionServerPaginationGrid() {
-  const initialPageSize = 25; 
+  const initialPageSize = 10; 
 
   const [paginationModel, setPaginationModel] = React.useState({
     page: 0,
@@ -185,38 +186,157 @@ export default function ControlledSelectionServerPaginationGrid() {
     []
   );
 
-  React.useEffect(() => {
-    let active = true;
-    setLoading(true);
-
+  // Define a function to fetch and update data
+async function fetchData(searchValue, page, pageSize, active) {
+  try {
     if (searchValue === "") {
-      loadServerRows(paginationModel.page, paginationModel.pageSize)
-        .then((newGridData) => {
-          if (active) {
-            setGridData(newGridData);
-            setLoading(false);
-
-            setAutocompleteOptions([]);
-            console.log("suggestion set to null");
-          }
-        })
-        .catch((error) => {
-          console.error("Error fetching data:", error);
-          if (active) {
-            setGridData({ rows: [], rowCount: 0 });
-            setLoading(false);
-          }
-        });
+      const newGridData = await loadServerRows(page, pageSize);
+      if (active) {
+        setGridData(newGridData);
+        setLoading(false);
+        setAutocompleteOptions([]);
+        console.log("suggestion set to null");
+      }
     } else {
       setLoading(false);
       debouncedFetchSuggestions(searchValue);
     }
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    if (active) {
+      setGridData({ rows: [], rowCount: 0 });
+      setLoading(false);
+    }
+  }
+}
 
-    return () => {
-      active = false;
-    };
-  }, [paginationModel.page, paginationModel.pageSize, searchValue]);
+// Inside your component:
+React.useEffect(() => {
+  let active = true;
+  setLoading(true);
 
+  const fetchDataAndUpdateState = async () => {
+    try {
+      if (searchValue === "") {
+        const newGridData = await loadServerRows(paginationModel.page, paginationModel.pageSize);
+        if (active) {
+          setGridData(newGridData);
+          setAutocompleteOptions([]);
+          setLoading(false);
+        }
+      } else {
+        const suggestions = await fetchFilteredData(searchValue);
+        if (active) {
+          setAutocompleteOptions(suggestions);
+          setLoading(false);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      if (active) {
+        setGridData({ rows: [], rowCount: 0 });
+        setAutocompleteOptions([]);
+        setLoading(false);
+      }
+    }
+  };
+
+  fetchDataAndUpdateState();
+
+  return () => {
+    active = false;
+  };
+}, [paginationModel.page, paginationModel.pageSize, searchValue]);
+;
+
+
+  const columns=[
+    { headerName: "ID", field: "id", flex: 1 },
+    {
+      field: "traineeName",
+      headerName: "Trainee Name",
+      flex: 1,
+      valueGetter: (params) => params.row.basicInfo.traineeName,
+    },
+    {
+      field: "email",
+      headerName: "Email",
+      flex: 1,
+      valueGetter: (params) => params.row.basicInfo.email,
+    },
+    {
+      field: "contactNumber",
+      headerName: "Contact Number",
+      flex: 1,
+      valueGetter: (params) => params.row.basicInfo.contactNumber,
+    },
+    {
+      field: "registrationDate",
+      headerName: "registrationDate",
+      flex: 1,
+      valueGetter: (params) => params.row.othersDto.registrationDate,
+    },
+    {
+      field: "qualification",
+      headerName: "Qualification",
+      flex: 1,
+      valueGetter: (params) => params.row.educationInfo.qualification,
+    },
+    {
+      field: "stream",
+      headerName: "Stream",
+      flex: 1,
+      valueGetter: (params) => params.row.educationInfo.stream,
+    },
+    {
+      field: "yearOfPassout",
+      headerName: "Year of Passout",
+      flex: 1,
+      valueGetter: (params) => params.row.educationInfo.yearOfPassout,
+    },
+    {
+      field: "collegeName",
+      headerName: "College Name",
+      flex: 1,
+      valueGetter: (params) => params.row.educationInfo.collegeName,
+    },
+    {
+      field: "course",
+      headerName: "Course",
+      flex: 1,
+      valueGetter: (params) => params.row.courseInfo.course,
+    },
+    {
+      field: "branch",
+      headerName: "Branch",
+      flex: 1,
+      valueGetter: (params) => params.row.courseInfo.branch,
+    },
+    {
+      field: "batch",
+      headerName: "Batch",
+      flex: 1,
+      valueGetter: (params) => params.row.courseInfo.batchType,
+    },
+    {
+      field: "actions",
+      headerName: "Actions",
+      width: 120,
+      renderCell: (params) => (
+        <div>
+          <Button
+            variant="outlined"
+            color="secondary"
+            startIcon={<PersonOutline/>}
+            component={Link} 
+            to={`/x-workz/profile/${params.row.basicInfo.email}`} 
+          >
+            View
+          </Button>
+        </div>
+      ),
+    },
+  ];
   return (
     <div>
       <Header />
@@ -261,86 +381,8 @@ export default function ControlledSelectionServerPaginationGrid() {
       </div>
       <div style={{ height: "650px", width: "100%" }}>
         <DataGrid
-          columns={[
-            { headerName: "ID", field: "id", flex: 1 },
-            {
-              field: "traineeName",
-              headerName: "Trainee Name",
-              flex: 1,
-              valueGetter: (params) => params.row.basicInfo.traineeName,
-            },
-            {
-              field: "email",
-              headerName: "Email",
-              flex: 1,
-              valueGetter: (params) => params.row.basicInfo.email,
-            },
-            {
-              field: "contactNumber",
-              headerName: "Contact Number",
-              flex: 1,
-              valueGetter: (params) => params.row.basicInfo.contactNumber,
-            },
-            {
-              field: "qualification",
-              headerName: "Qualification",
-              flex: 1,
-              valueGetter: (params) => params.row.educationInfo.qualification,
-            },
-            {
-              field: "stream",
-              headerName: "Stream",
-              flex: 1,
-              valueGetter: (params) => params.row.educationInfo.stream,
-            },
-            {
-              field: "yearOfPassout",
-              headerName: "Year of Passout",
-              flex: 1,
-              valueGetter: (params) => params.row.educationInfo.yearOfPassout,
-            },
-            {
-              field: "collegeName",
-              headerName: "College Name",
-              flex: 1,
-              valueGetter: (params) => params.row.educationInfo.collegeName,
-            },
-            {
-              field: "course",
-              headerName: "Course",
-              flex: 1,
-              valueGetter: (params) => params.row.courseInfo.course,
-            },
-            {
-              field: "branch",
-              headerName: "Branch",
-              flex: 1,
-              valueGetter: (params) => params.row.courseInfo.branch,
-            },
-            {
-              field: "batch",
-              headerName: "Batch",
-              flex: 1,
-              valueGetter: (params) => params.row.courseInfo.batchType,
-            },
-            {
-              field: "actions",
-              headerName: "Actions",
-              width: 120,
-              renderCell: (params) => (
-                <div>
-                  <Button
-                    variant="outlined"
-                    color="secondary"
-                    component={Link} 
-                    to={`/x-workz/profile/${params.row.basicInfo.email}`} 
-                  >
-                    View
-                  </Button>
-                </div>
-              ),
-            },
-          ]}
+        style={{ width: "100%" }}
+        columns={columns}
           rows={gridData.rows}
           pagination
           paginationModel={paginationModel}

@@ -6,6 +6,7 @@ import {
   Container,
   Typography,
   InputLabel,
+  FormControl,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
@@ -14,11 +15,15 @@ import axios from "axios";
 import { Urlconstant } from "../constant/Urlconstant";
 import { useLocation } from "react-router-dom";
 
-
-
-export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious,batchDetiles }) => {
- const [selectedValue, setSelectedValue] = useState(' ');
-
+export const Course = ({
+  dropdown,
+  formData,
+  setFormData,
+  onNext,
+  onPrevious,
+  batchDetiles,
+}) => {
+  const [selectedValue, setSelectedValue] = useState("");
 
   const location = useLocation();
 
@@ -31,7 +36,6 @@ export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious,bat
   }, [selectedValue]);
   const fetchData = async () => {
     try {
-
       console.log("course" + selectedValue);
       const response = await axios.get(
         Urlconstant.url + `api/getCourseDetails?courseName=${selectedValue}`,
@@ -66,7 +70,6 @@ export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious,bat
     console.log(formData);
   };
 
-
   const isDisabled = !formData.course || !formData.offeredAs;
 
   return (
@@ -84,15 +87,14 @@ export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious,bat
             id="outlined-basic"
             variant="outlined"
             onChange={handleInputChange}
-            >
+          >
             {batchDetiles.map((item, index) => (
-
               <MenuItem value={item} key={index}>
                 {item}
               </MenuItem>
             ))}
           </Select>
-            
+
           <InputLabel id="demo-simple-select-label">Branch</InputLabel>
           <TextField
             name="branch"
@@ -176,11 +178,20 @@ export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious,bat
             ))}
           </Select>
         </Form>
-        <Button variant="contained" onClick={onPrevious}>
+        <Button
+          style={{ marginTop: "20px" }}
+          variant="contained"
+          onClick={onPrevious}
+        >
           Previous
         </Button>
         &nbsp;&nbsp;&nbsp;
-        <Button variant="contained" disabled={isDisabled} onClick={onNext}>
+        <Button
+          style={{ marginTop: "20px" }}
+          variant="contained"
+          disabled={isDisabled}
+          onClick={onNext}
+        >
           Next
         </Button>
       </Typography>

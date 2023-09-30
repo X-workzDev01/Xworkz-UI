@@ -5,6 +5,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import axios from 'axios';
 import EditFollowUp from './EditFollowUp';
 import { Link } from 'react-router-dom';
+import { PersonOutline } from '@mui/icons-material';
 
 export default function FollowUp() {
   const [isModalOpen, setModalOpen] = React.useState(false);
@@ -13,7 +14,7 @@ export default function FollowUp() {
     status: [],
   });
 
-  const initialPageSize = 25;
+  const initialPageSize = 10;
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: initialPageSize,
@@ -26,23 +27,17 @@ export default function FollowUp() {
   const [searchValue, setSearchValue] = useState('New');
 
   React.useEffect(() => {
-    getDropDown();
     setLoading(true);
-    setPaginationModel({ page: 0, pageSize: initialPageSize });
-    searchServerRows(0, initialPageSize).then((newGridData) => {
+    searchServerRows(paginationModel.page, paginationModel.pageSize,searchValue).then((newGridData) => {
       setGridData(newGridData);
       setLoading(false);
     });
-  }, [searchValue]);
+  }, [paginationModel.page, paginationModel.pageSize,searchValue]);
 
 
-  React.useEffect(() => {
-    setLoading(true);
-    searchServerRows(paginationModel.page, paginationModel.pageSize).then((newGridData) => {
-      setGridData(newGridData);
-      setLoading(false);
-    });
-  }, [paginationModel.page, paginationModel.pageSize]);
+ React.useEffect(() => {
+  getDropDown();
+   }, []);
 
   const handleSearchClick = () => {
     setPaginationModel({ page: 0, pageSize: initialPageSize });
@@ -75,7 +70,6 @@ export default function FollowUp() {
           resolve(newGridData);
         }, 1000)
         .catch((error) => {
-          console.error('Error fetching data:', error);
           resolve({ rows: [], rowCount: 0 }); 
         });
     });
@@ -101,7 +95,6 @@ export default function FollowUp() {
     }).then(response => {
       setDropDown(response.data)
     }).catch(error => {
-      console.log(error);
     })
   }
   const handleInputChange = (e) => {
@@ -160,6 +153,7 @@ export default function FollowUp() {
                   <Button
                     variant="outlined"
                     color="secondary"
+                    startIcon={<PersonOutline/>}
                     component={Link} // Use Link component for navigation
                     to={`/x-workz/profile/${params.row.basicInfo.email}`}
                   // Pass email as a parameter

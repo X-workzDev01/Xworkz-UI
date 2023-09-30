@@ -11,6 +11,8 @@ import { Route, Routes } from 'react-router-dom';
 import Header from './Header';
 import Attandance from './Attandance';
 import Enquiry from './Enquiry';
+import ViewAttendance from './ViewAttendance';
+
 
 const Dashboard = ({ isLoggedIn }) => {
   if (!isLoggedIn) {
@@ -32,6 +34,8 @@ const Dashboard = ({ isLoggedIn }) => {
         <Route path="/profile/:email" element={<Profile />} />
         <Route path="/attandance" element={<Attandance />} />
         <Route path="/enquiry" element={<Enquiry />} />
+        <Route path="/attenance/:email" element={<ViewAttendance/>}/>
+
 
       </Routes>
 

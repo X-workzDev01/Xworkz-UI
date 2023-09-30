@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import './Profile.css';
 import axios from 'axios';
 import { Urlconstant } from '../constant/Urlconstant';
@@ -10,16 +10,14 @@ import AddIcon from '@mui/icons-material/Add';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import FollowStatusGrid from './FollowStatusGrid';
 import Avatar from '@mui/material/Avatar';
-import EditFollowUp from './EditFollowUp';
 import EditModal from './EditModal';
 import FollowUpStatus from './FollowUpStatus';
 import { Alert } from '@mui/material';
+import { VisibilityOutlined } from '@mui/icons-material';
 
 function stringToColor(string) {
     let hash = 0;
     let i;
-
-    /* eslint-disable no-bitwise */
     for (i = 0; i < string.length; i += 1) {
         hash = string.charCodeAt(i) + ((hash << 5) - hash);
     }
@@ -30,8 +28,6 @@ function stringToColor(string) {
         const value = (hash >> (i * 8)) & 0xff;
         color += `00${value.toString(16)}`.slice(-2);
     }
-    /* eslint-enable no-bitwise */
-
     return color;
 }
 
@@ -39,11 +35,9 @@ function stringAvatar(name) {
     let avatarText = '';
 
     if (name.includes(' ')) {
-        // Two-word name
         const [firstName, lastName] = name.split(' ');
         avatarText = `${firstName[0]}${lastName[0]}`;
     } else {
-        // One-word name
         avatarText = name[0];
     }
 
@@ -55,20 +49,20 @@ function stringAvatar(name) {
     };
 }
 const Profile = () => {
-    const { email } = useParams(); // Get the email from the URL parameter
+    const { email } = useParams();
     const [profileData, setProfileData] = useState(null);
     const [followUpData, setFollowUpData] = useState(null);
     const [statusData, setStatusData] = useState(null);
     const [isModalOpen, setModalOpen] = React.useState(false);
     const [editedRowData, setEditedRowData] = React.useState(null);
-    const [dataLoadingError,setDataLoadingError] = React.useState(null);
+    const [dataLoadingError, setDataLoadingError] = React.useState(null);
 
     const [isFollowUpModalOpen, setFollowUpModalOpen] = React.useState(false);
     const [editedFollowUpRowData, setEditedFollowUpRowData] = React.useState(null);
 
     const [isFollowUpStatusModalOpen, setFollowUpStatusModalOpen] = React.useState(false);
     const [editedFollowUpStatusRowData, setEditedFollowUpStatusRowData] = React.useState(null);
-
+    const [showAttendence, setShowAttendence] = useState(false);
 
     useEffect(() => {
         const traineeApi = Urlconstant.url + `api/readByEmail?email=${email}`;
@@ -131,12 +125,15 @@ const Profile = () => {
     }
 
 
-
+    const handleAttendence = (row) => {
+        console.log(row)
+        setShowAttendence(true);
+    }
 
     return (
         <div>
             <div className="card">
-          
+
                 <div className="infos">
                     <Avatar {...stringAvatar(profileData.basicInfo.traineeName)} />
                     {dataLoadingError && <Alert severity="error">{dataLoadingError}</Alert>}
@@ -160,13 +157,13 @@ const Profile = () => {
                             <h3>{profileData.educationInfo.yearOfPassout}</h3>
                             <h4>Passout</h4>
                         </li>
-                        
-                    <li>
-                            <h3>{profileData.referralInfo.preferredLocation}</h3>
+
+                        <li>
+                            <h3>{profileData.othersDto.preferredLocation}</h3>
                             <h4>Preferred Location</h4>
                         </li>
                         <li>
-                            <h3>{profileData.referralInfo.preferredClassType}</h3>
+                            <h3>{profileData.othersDto.preferredClassType}</h3>
                             <h4>Preferred Class TYpe</h4>
                         </li>
                     </ul>
@@ -199,6 +196,15 @@ const Profile = () => {
                         <Button variant="outlined" startIcon={<ModeEditIcon />} onClick={() => handleEditClick(profileData)}>
                             Edit Profile
                         </Button>
+                        <Button
+                            variant="outlined"
+                            startIcon={<VisibilityOutlined />}
+                            component={Link}
+                            to={`/x-workz/attenance/${profileData.basicInfo.email}`}
+                        >
+                            View Attendance
+                        </Button>
+
 
                     </div>
                 </div>
@@ -221,8 +227,6 @@ const Profile = () => {
                 handleSaveClick={handleFollowUpStatusSave}
                 FollowUp={handleFollowUp}
             />
-
-
             {statusData ? <FollowStatusGrid rows={statusData} /> : null}
         </div>
 

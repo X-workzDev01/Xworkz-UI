@@ -1,50 +1,99 @@
 import { DataGrid } from "@mui/x-data-grid";
 import React, { useEffect, useState } from "react";
 import "./Attandance.css";
-import { FormControl } from "react-bootstrap";
-import { Button, InputLabel, MenuItem, Select } from "@mui/material";
+import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import axios from "axios";
 import { Urlconstant } from "../constant/Urlconstant";
+import { json } from "react-router-dom";
 
 const Attandance = () => {
   const [row, setRow] = useState([]);
   const [value, setValue] = useState([]);
   const [searchValue, setSearchValue] = useState("");
-  const [byEmail, setByEmail] = useState([]);
-  const [isDisabled, setIsDisabled] = useState(false);
+
   const currentDate = new Date();
 
   const year = currentDate.getFullYear();
   const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Months are zero-based
   const day = String(currentDate.getDate()).padStart(2, "0");
+  const formattedDate = `${year}-${month}-${day}`;
 
   useEffect(() => {
     render();
   }, []);
 
-  const getBatchWise = (searchdata) => {
-    axios
-      .get(Urlconstant.url + `byBatch?batch=${searchdata}`, {
-        headers: {
-          spreadsheetId: Urlconstant.spreadsheetId,
-        },
-      })
-      .then((res) => {
-        const mappedData = res.data.map((item) => ({
-          id: item.id,
-          traineeName: item.basicInfo.traineeName,
-          email: item.basicInfo.email,
-          contactNumber: item.basicInfo.contactNumber,
-          course: item.courseInfo.course,
-          branch: item.courseInfo.branch,
-          present: item.present,
-          absent: item.absent,
-          batchTiming: item.courseInfo.batchTiming,
-        }));
-        setRow(mappedData);
-      })
-      .catch((e) => {});
+  const initialPageSize = 10;
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: initialPageSize,
+  });
+  const [gridData, setGridData] = useState({
+    rows: [],
+    rowCount: 0,
+  });
+  const [loading, setLoading] = useState(false);
+
+  const refresh = (select) => {
+    setLoading(true);
+    setPaginationModel({ page: 0, pageSize: initialPageSize });
+    searchServerRows(0, initialPageSize, select).then((newGridData) => {
+      setGridData(newGridData);
+      setLoading(false);
+    });
   };
+
+  React.useEffect(() => {
+    setLoading(true);
+    searchServerRows(paginationModel.page, paginationModel.pageSize,searchValue).then(
+      (newGridData) => {
+        setGridData(newGridData);
+        setLoading(false);
+      }
+    );
+  }, [paginationModel.page, paginationModel.pageSize,searchValue]);
+
+  function searchServerRows(page, pageSize, select) {
+    const startingIndex = page * pageSize;
+    console.log(
+      "Loading server rows with page:",
+      page,
+      "pageSize:",
+      pageSize,
+      "status:",
+      select
+    );
+
+    return new Promise((resolve, reject) => {
+      axios(
+        Urlconstant.url +
+          `api/byBatch?batch=${select}&startIndex=${startingIndex}&maxRows=10`
+      )
+        .then((json) => {
+          console.log("Received data from server:", json.data.size);
+          const newGridData = {
+            rows: json.data.dto.map((item) => ({
+              id: item.id,
+              traineeName: item.basicInfo.traineeName,
+              email: item.basicInfo.email,
+              contactNumber: item.basicInfo.contactNumber,
+              course: item.courseInfo.course,
+              branch: item.courseInfo.branch,
+              present: item.present,
+              absent: item.absent,
+              batchTiming: item.courseInfo.batchTiming,
+              isButtonDisabled: item.isButton,
+            })),
+            rowCount: json.data.size,
+          };
+          resolve(newGridData);
+        }, 1000)
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+
+          resolve({ rows: [], rowCount: 0 });
+        });
+    });
+  }
 
   const render = () => {
     axios
@@ -56,11 +105,19 @@ const Attandance = () => {
       .then((res) => {
         setValue(res.data);
       })
-      .catch((e) => {});
+      .catch((e) => { });
+  };
+  const everydayAttandance = (attandanceData, batch) => {
+    axios
+      .post(Urlconstant.url + "api/addAttendennce", attandanceData)
+      .then((res) => {
+
+        refresh(batch);
+      })
+      .catch((e) => { });
   };
 
   const handleButtonClickYes = (rowData) => {
-    const formattedDate = `${year}-${month}-${day}`;
     const attandanceData = {
       id: rowData.id,
       markAs: 1,
@@ -75,19 +132,8 @@ const Attandance = () => {
         batchTiming: rowData.batchTiming,
       },
     };
-    axios
-      .post(Urlconstant.url + "addAttendennce", attandanceData)
-      .then((res) => {
-        getBatchWise(searchValue);
-      })
-      .catch((e) => {});
 
-    axios
-      .get(Urlconstant.url + `byEmail?email=${rowData.email}`)
-      .then((res) => {
-        setByEmail(res.data);
-      })
-      .catch((e) => {});
+    everydayAttandance(attandanceData, rowData.course);
   };
 
   const handleButtonClickNo = (rowData) => {
@@ -105,12 +151,7 @@ const Attandance = () => {
         batchTiming: rowData.batchTiming,
       },
     };
-    axios
-      .post(Urlconstant.url + "addAttendennce", attandanceData)
-      .then((res) => {
-        getBatchWise(searchValue);
-      })
-      .catch((e) => {});
+    everydayAttandance(attandanceData, rowData.course);
   };
 
   const columns = [
@@ -131,13 +172,13 @@ const Attandance = () => {
         <div>
           <Button
             onClick={() => handleButtonClickYes(params.row)}
-            disabled={params.row.isDisabled}
+            disabled={params.row.isButtonDisabled} style={{color:"blue"}}
           >
             Yes
           </Button>
           <Button
             onClick={() => handleButtonClickNo(params.row)}
-            disabled={isDisabled}
+            disabled={params.row.isButtonDisabled}
           >
             No
           </Button>
@@ -147,7 +188,7 @@ const Attandance = () => {
   ];
   const handleInputChange = (e) => {
     setSearchValue(e.target.value);
-    getBatchWise(e.target.value);
+    refresh(e.target.value);
   };
 
   return (
@@ -156,33 +197,56 @@ const Attandance = () => {
         className="search"
         style={{ marginTop: "50px", display: "flex", alignItems: "center" }}
       >
-        <InputLabel id="demo-simple-select-label"></InputLabel>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          onChange={handleInputChange}
-          value={searchValue}
-          defaultValue={"Please Select Batch"}
-          fullWidth
-          required
-          variant="outlined"
-          sx={{
-            marginRight: "10px",
-            width: "200px",
-            fontSize: "12px",
+        <FormControl>
+          <InputLabel id="demo-simple-select-label">Select Batch</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            label="Select Batch"
+            onChange={handleInputChange}
+            value={searchValue}
+            defaultValue={"Please Select Batch"}
+            fullWidth
+            required
+            variant="outlined"
+            sx={{
+              marginRight: "10px",
+              width: "200px",
+              fontSize: "12px",
+            }}
+          >
+            {value.map((item, index) => (
+              <MenuItem value={item} key={index}>
+                {item}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <TextField
+          type="date"
+          label="Select Date"
+          InputLabelProps={{
+            shrink: true,
           }}
-        >
-          {value.map((item, index) => (
-            <MenuItem value={item} key={index}>
-              {item}
-            </MenuItem>
-          ))}
-        </Select>
+        />
+        <Button variant="contained" color="primary">
+          Search
+        </Button>
       </div>
-      <div style={{ height: 400, width: "100%" }}>
-        <DataGrid rows={row} columns={columns} pageSize={5} />
+        <DataGrid
+          columns={columns}
+          rows={gridData.rows}
+          pagination
+          autoHeight
+          paginationModel={paginationModel}
+          pageSizeOptions={[5, 10, 15, 20]}
+          rowCount={gridData.rowCount}
+          paginationMode="server"
+          onPaginationModelChange={setPaginationModel}
+          loading={loading}
+          keepNonExistentRowsSelected
+        />
       </div>
-    </div>
   );
 };
 
