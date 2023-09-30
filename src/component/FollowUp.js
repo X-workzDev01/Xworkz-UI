@@ -75,7 +75,6 @@ export default function FollowUp() {
           resolve(newGridData);
         }, 1000)
         .catch((error) => {
-          console.error('Error fetching data:', error);
           resolve({ rows: [], rowCount: 0 }); 
         });
     });

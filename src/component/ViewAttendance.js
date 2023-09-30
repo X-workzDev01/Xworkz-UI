@@ -1,85 +1,106 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React from 'react'
+import { useParams } from 'react-router-dom'
 import { Urlconstant } from '../constant/Urlconstant';
-import axios from 'axios';
 import { DataGrid } from '@mui/x-data-grid';
 
 export default function ViewAttendance() {
   const { email } = useParams();
-  const [data, setData] = useState({ rows: [], totalCount: 0 });
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-const[rowCount,setRowCount]=useState();
-  
-useEffect(() => {
-    const apiUrl = `${Urlconstant.url}api/byEmail?email=${email}&startIndex=0&maxRows=10`;
+  console.log(email)
+  const initialPageSize = 25;
+  const [paginationModel, setPaginationModel] = React.useState({
+    page: 0,
+    pageSize: initialPageSize,
+  });
+  const [gridData, setGridData] = React.useState({
+    rows: [],
+    rowCount: 0,
+  });
+  const [loading, setLoading] = React.useState(false);
+  console.log(initialPageSize);
+  console.log(paginationModel);
 
-    axios
-      .get(apiUrl)
-      .then(response => {
-        console.log(response)
-        setData({
-          rows: response.data.dto || [],
+  React.useEffect(() => {
+    setLoading(true);
+    console.log("use effect",email);
+    searchServerRows(paginationModel.page, paginationModel.pageSize,email).then((newGridData) => {
+      setGridData(newGridData);
+      setLoading(false);
+    });
+  }, [paginationModel.page, paginationModel.pageSize,email]);
+
+
+  function searchServerRows(page, pageSize,email) {
+    console.log("=========")
+    console.log("searchServerRows",email);
+    const startingIndex = page * pageSize;
+    console.log('Loading server rows with page:', page, 'pageSize:', pageSize);
+
+    const apiUrl = Urlconstant.url + `api/byEmail?email=${email}&startIndex=${startingIndex}&maxRows=25`;
+    return new Promise((resolve, reject) => {
+      fetch(apiUrl)
+        .then((response) => response.json())
+        .then((data) => {
+          console.log('Received data from server:', data);
+          
+          const newGridData = {
+            rows: data.dto.map((row) => ({ id: row.id.toString(), ...row })),
+            rowCount: data.size,
+          };
+          resolve(newGridData);
+        }, 1000)
+        .catch((error) => {
+          resolve({ rows: [], rowCount: 0 });
         });
-
-        setPageSize(pageSize);
-        setRowCount(response.data.size);
-      }).catch(error => {});
-  }, [email, page, pageSize]);
-  
-
-  const renderMarkAsColumn = (params) => {
-    console.log(params.field)
-    console.log( params.field === 'markAs' && params.value === 1 ? 'No' : 'Yes')
-    console.log(params.value);
-    if (params.row.markAs !== undefined) {
-      return params.row.markAs === 1 ? 'No' : 'Yes';
+    });
   }
-    return 'No';
-  };
-
 
   const columns = [
     { field: 'id', headerName: 'ID', width: 100 },
-    { field: 'name', headerName: 'Name', width: 150 },
+    {
+      field: 'basicInfo.traineeName',
+      headerName: 'Trainee Name',
+      valueGetter: (params) => params.row.basicInfo.traineeName,
+      width: 100,
+    },
     { field: 'date', headerName: 'Date', width: 150 },
+
     {
       field: 'markAs',
       headerName: 'Present/Absent',
       width: 120,
-      valueGetter: (params) => params.row.markAs, // Define the valueGetter
-      renderCell: renderMarkAsColumn, // Use the custom rendering function
+      flex: 1,
+      valueGetter: (params) =>{
+        const markAs = params.row.markAs;
+      if (typeof markAs === 'number') {
+        return markAs === 1 ? 'Yes' : 'no';
+      } else if (typeof markAs === 'string') {
+        return markAs === '1' ? 'Yes' : 'No';
+      } else {
+        return 'unknown';
+      }
     },
-  ];
+  }
+  ]
 
-  const handlePageChange = (newPage) => {
-    setPage(newPage);
-  };
-
-  const handlePageSizeChange = (newPageSize) => {
-    setPageSize(newPageSize);
-    setPage(1); // Reset to the first page when changing page size
-  };
-
-  
 
   return (
     <div>
-      <div>
-        <h2>View Attendance</h2>
-        <h2>Attendance Details</h2>
+      <h1>Attendance</h1>
+      <h1>Attendance Details</h1>
+      <div style={{ height: '650px', width: '75%',display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
         <DataGrid
-          rows={data.rows}
           columns={columns}
+          rows={gridData.rows}
           pagination
-          pageSize={pageSize}
-          rowCount={rowCount}
-          page={page}
-          onPageChange={handlePageChange}
-          onPageSizeChange={handlePageSizeChange}
+          paginationModel={paginationModel}
+          pageSizeOptions={[5, 10, 15]}
+          rowCount={gridData.rowCount}
+          paginationMode="server"
+          onPaginationModelChange={setPaginationModel}
+          loading={loading}
+          keepNonExistentRowsSelected
         />
-
       </div>
     </div>
-  );
+  )
 }

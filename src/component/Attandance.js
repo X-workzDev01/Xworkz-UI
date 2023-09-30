@@ -1,7 +1,7 @@
 import { DataGrid } from "@mui/x-data-grid";
 import React, { useEffect, useState } from "react";
 import "./Attandance.css";
-import { Button, InputLabel, MenuItem, Select } from "@mui/material";
+import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import axios from "axios";
 import { Urlconstant } from "../constant/Urlconstant";
 import { json } from "react-router-dom";
@@ -105,16 +105,16 @@ const Attandance = () => {
       .then((res) => {
         setValue(res.data);
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
   const everydayAttandance = (attandanceData, batch) => {
     axios
       .post(Urlconstant.url + "api/addAttendennce", attandanceData)
       .then((res) => {
-       
+
         refresh(batch);
       })
-      .catch((e) => {});
+      .catch((e) => { });
   };
 
   const handleButtonClickYes = (rowData) => {
@@ -197,28 +197,41 @@ const Attandance = () => {
         className="search"
         style={{ marginTop: "50px", display: "flex", alignItems: "center" }}
       >
-        <InputLabel id="demo-simple-select-label"></InputLabel>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          onChange={handleInputChange}
-          value={searchValue}
-          defaultValue={"Please Select Batch"}
-          fullWidth
-          required
-          variant="outlined"
-          sx={{
-            marginRight: "10px",
-            width: "200px",
-            fontSize: "12px",
+        <FormControl>
+          <InputLabel id="demo-simple-select-label">Select Batch</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            label="Select Batch"
+            onChange={handleInputChange}
+            value={searchValue}
+            defaultValue={"Please Select Batch"}
+            fullWidth
+            required
+            variant="outlined"
+            sx={{
+              marginRight: "10px",
+              width: "200px",
+              fontSize: "12px",
+            }}
+          >
+            {value.map((item, index) => (
+              <MenuItem value={item} key={index}>
+                {item}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <TextField
+          type="date"
+          label="Select Date"
+          InputLabelProps={{
+            shrink: true,
           }}
-        >
-          {value.map((item, index) => (
-            <MenuItem value={item} key={index}>
-              {item}
-            </MenuItem>
-          ))}
-        </Select>
+        />
+        <Button variant="contained" color="primary">
+          Search
+        </Button>
       </div>
         <DataGrid
           columns={columns}

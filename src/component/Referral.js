@@ -44,6 +44,7 @@ export const Referral = ({
     }
     setIsDiesable(true);
   };
+  
 
   return (
     <Container maxWidth="sm">
@@ -126,6 +127,7 @@ export const Referral = ({
             }
             label="Confirm register *"
           />
+
         </Form>
         <div style={{ marginTop: "20px" }}>
           {loading ? (
