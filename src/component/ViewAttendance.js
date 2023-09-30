@@ -30,10 +30,8 @@ export default function ViewAttendance() {
 
 
   function searchServerRows(page, pageSize,email) {
-    console.log("=========")
-    console.log("searchServerRows",email);
+    
     const startingIndex = page * pageSize;
-    console.log('Loading server rows with page:', page, 'pageSize:', pageSize);
 
     const apiUrl = Urlconstant.url + `api/byEmail?email=${email}&startIndex=${startingIndex}&maxRows=25`;
     return new Promise((resolve, reject) => {

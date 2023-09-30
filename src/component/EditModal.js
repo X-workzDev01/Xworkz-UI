@@ -411,7 +411,8 @@ const EditModal = ({ open, handleClose, rowData }) => {
         />
         <TextField
           label="Referal Contact Number"
-          name="referralInfo.referalContactNumber"
+
+          name="othersDto.referalContactNumber"
           defaultValue={rowData.othersDto.referalContactNumber}
           onChange={handleInputChange}
           style={fieldStyle}
@@ -420,7 +421,8 @@ const EditModal = ({ open, handleClose, rowData }) => {
         <TextField
 
           label="Comments"
-          name="referralInfo.comments"
+
+          name="othersDto.comments"
           defaultValue={rowData.othersDto.comments}
           onChange={handleInputChange}
           style={fieldStyle}
@@ -431,7 +433,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
 
         <TextField
           label="X-workz E-mail"
-          name="referralInfo.xworkzEmail"
+          name="othersDto.xworkzEmail"
           defaultValue={rowData.othersDto.xworkzEmail}
           onChange={handleInputChange}
           style={fieldStyle}
@@ -443,7 +445,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             label="Preferred Location"
-            name="referralInfo.preferredLocation"
+            name="othersDto.preferredLocation"
             onChange={handleInputChange}
             defaultValue={rowData.othersDto.preferredLocation}
             variant="outlined"
@@ -465,7 +467,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             label="Preferred Class Type"
-            name="referralInfo.preferredClassType"
+            name="othersDto.preferredClassType"
             onChange={handleInputChange}
             defaultValue={rowData.othersDto.preferredClassType}
             variant="outlined"
