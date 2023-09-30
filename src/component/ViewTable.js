@@ -9,6 +9,7 @@ import EditModal from "./EditModal";
 import Profile from "./Profile";
 import { Link } from "react-router-dom";
 import Header from "./Header";
+import { PersonOutline } from "@mui/icons-material";
 
 function loadServerRows(page, pageSize) {
   
@@ -185,37 +186,69 @@ export default function ControlledSelectionServerPaginationGrid() {
     []
   );
 
-  React.useEffect(() => {
-    let active = true;
-    setLoading(true);
-
+  // Define a function to fetch and update data
+async function fetchData(searchValue, page, pageSize, active) {
+  try {
     if (searchValue === "") {
-      loadServerRows(paginationModel.page, paginationModel.pageSize)
-        .then((newGridData) => {
-          if (active) {
-            setGridData(newGridData);
-            setLoading(false);
-
-            setAutocompleteOptions([]);
-            console.log("suggestion set to null");
-          }
-        })
-        .catch((error) => {
-          console.error("Error fetching data:", error);
-          if (active) {
-            setGridData({ rows: [], rowCount: 0 });
-            setLoading(false);
-          }
-        });
+      const newGridData = await loadServerRows(page, pageSize);
+      if (active) {
+        setGridData(newGridData);
+        setLoading(false);
+        setAutocompleteOptions([]);
+        console.log("suggestion set to null");
+      }
     } else {
       setLoading(false);
       debouncedFetchSuggestions(searchValue);
     }
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    if (active) {
+      setGridData({ rows: [], rowCount: 0 });
+      setLoading(false);
+    }
+  }
+}
 
-    return () => {
-      active = false;
-    };
-  }, [paginationModel.page, paginationModel.pageSize, searchValue]);
+// Inside your component:
+React.useEffect(() => {
+  let active = true;
+  setLoading(true);
+
+  const fetchDataAndUpdateState = async () => {
+    try {
+      if (searchValue === "") {
+        const newGridData = await loadServerRows(paginationModel.page, paginationModel.pageSize);
+        if (active) {
+          setGridData(newGridData);
+          setAutocompleteOptions([]);
+          setLoading(false);
+        }
+      } else {
+        const suggestions = await fetchFilteredData(searchValue);
+        if (active) {
+          setAutocompleteOptions(suggestions);
+          setLoading(false);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      if (active) {
+        setGridData({ rows: [], rowCount: 0 });
+        setAutocompleteOptions([]);
+        setLoading(false);
+      }
+    }
+  };
+
+  fetchDataAndUpdateState();
+
+  return () => {
+    active = false;
+  };
+}, [paginationModel.page, paginationModel.pageSize, searchValue]);
+;
+
 
   const columns=[
     { headerName: "ID", field: "id", flex: 1 },
@@ -294,6 +327,7 @@ export default function ControlledSelectionServerPaginationGrid() {
           <Button
             variant="outlined"
             color="secondary"
+            startIcon={<PersonOutline/>}
             component={Link} 
             to={`/x-workz/profile/${params.row.basicInfo.email}`} 
           >
