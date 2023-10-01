@@ -212,12 +212,10 @@ const EditModal = ({ open, handleClose, rowData }) => {
         <TextField
           label="Email"
           name="basicInfo.email"
-          value={rowData.basicInfo.email}
+          defaultValue={rowData.basicInfo.email}
           onChange={handleInputChange}
           style={fieldStyle}
-          InputProps={{
-            readOnly: true,
-          }}
+          
         />
         <TextField
           label="Name"
