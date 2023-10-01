@@ -56,6 +56,7 @@ const Profile = () => {
     const [isModalOpen, setModalOpen] = React.useState(false);
     const [editedRowData, setEditedRowData] = React.useState(null);
     const [dataLoadingError, setDataLoadingError] = React.useState(null);
+    const [tempEditedEmail, setTempEditedEmail] = useState('');
 
     const [isFollowUpModalOpen, setFollowUpModalOpen] = React.useState(false);
     const [editedFollowUpRowData, setEditedFollowUpRowData] = React.useState(null);
@@ -63,9 +64,15 @@ const Profile = () => {
     const [isFollowUpStatusModalOpen, setFollowUpStatusModalOpen] = React.useState(false);
     const [editedFollowUpStatusRowData, setEditedFollowUpStatusRowData] = React.useState(null);
     const [showAttendence, setShowAttendence] = useState(false);
+    const [editedEmail, setEditedEmail] = useState('');
+
+
+    const generateTraineeApiUrl = (email) => {
+        return Urlconstant.url + `api/readByEmail?email=${email}`;
+    };
 
     useEffect(() => {
-        const traineeApi = Urlconstant.url + `api/readByEmail?email=${email}`;
+        const traineeApi = generateTraineeApiUrl(email); 
         const followUpApi = Urlconstant.url + `api/getFollowUpEmail/${email}`;
         const statusApi = Urlconstant.url + `api/getFollowUpStatusByEmail/${email}`;
         axios
@@ -102,6 +109,24 @@ const Profile = () => {
             });
     }, [email, isFollowUpStatusModalOpen, isModalOpen]);
 
+    useEffect(() => {
+        if (editedEmail) {
+            const editedTraineeApi = generateTraineeApiUrl(editedEmail); 
+            axios
+                .get(editedTraineeApi, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        spreadsheetId: Urlconstant.spreadsheetId,
+                    },
+                })
+                .then((profileResponse) => {
+                    setProfileData(profileResponse.data);
+                })
+                .catch((error) => {});
+        }
+    }, [editedEmail, isFollowUpStatusModalOpen, isModalOpen]);
+    
+
     if (!profileData || !followUpData || !statusData) {
         return <div>Loading...</div>;
     }
@@ -129,6 +154,14 @@ const Profile = () => {
         console.log(row)
         setShowAttendence(true);
     }
+    const handleEmailChange = (newEmail) => {
+        setTempEditedEmail(newEmail);
+    };
+
+    const handleEmailEditConfirm = () => {
+        setEditedEmail(tempEditedEmail);
+        setTempEditedEmail(''); // Clear the temporary email
+    };
 
     return (
         <div>
@@ -136,7 +169,6 @@ const Profile = () => {
 
                 <div className="infos">
                     <Avatar {...stringAvatar(profileData.basicInfo.traineeName)} />
-                    {dataLoadingError && <Alert severity="error">{dataLoadingError}</Alert>}
                     <div className="name">
                         <h1>{profileData.basicInfo.traineeName}</h1>
                         <h3>
@@ -217,8 +249,10 @@ const Profile = () => {
                 rowData={editedRowData}
                 setRowData={setEditedRowData}
                 handleSaveClick={handleSaveClick}
+                onEmailChange={handleEmailChange}
+                editedEmail={tempEditedEmail}
+                handleEmailEditConfirm={handleEmailEditConfirm}
             />
-
             <FollowUpStatus
                 open={isFollowUpStatusModalOpen}
                 handleClose={() => setFollowUpStatusModalOpen(false)}

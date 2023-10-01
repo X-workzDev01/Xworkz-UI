@@ -16,7 +16,7 @@ import { GridCloseIcon } from '@mui/x-data-grid';
 import './Fields.css';
 const fieldStyle = { margin: '20px' };
 
-const EditModal = ({ open, handleClose, rowData }) => {
+const EditModal = ({ open, handleClose, rowData,onEmailChange  }) => {
   const location = useLocation();
   const email = sessionStorage.getItem("userId");
   const [isConfirming, setIsConfirming] = React.useState(false);
@@ -113,6 +113,10 @@ const EditModal = ({ open, handleClose, rowData }) => {
       setSelectedValue(value);
       fetchData(value);
     }
+    if (name === 'basicInfo.email') {
+      console.log(value)
+      onEmailChange(value);
+  }
 
     setEditedData((prevData) => ({
       ...prevData,
