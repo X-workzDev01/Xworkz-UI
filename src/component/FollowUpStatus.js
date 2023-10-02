@@ -30,6 +30,8 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
   const [dropdownData, setDropdownData] = React.useState([]);
   const fieldsToCheck = ['attemptStatus', 'joiningDate', 'callDuration', 'callBack', 'callBackTime', 'comments'];
   const [attemptStatus, setAttemptStatus] = useState("");
+  const [commentError, setCommentError] = useState(false);
+
 
   const getCurrentDate = () => {
     const now = new Date();
@@ -50,7 +52,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
       .then((response) => {
         setDropdownData(response.data);
       })
-      .catch((error) => {});
+      .catch((error) => { });
   }, []);
 
   React.useEffect(() => {
@@ -62,33 +64,40 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
   }
 
   const handleInputChange = (event) => {
-    const { name, value, } = event.target;
-   
-    const updatedValue = (value ?? "").trim() === "" ? "NA" : value;   
-    setAttemptStatus(updatedValue) 
+    const { name, value } = event.target;
+    const updatedValue = (value ?? "").trim() === "" ? "NA" : value;
+  
     setEditedData((prevData) => ({
       ...prevData,
       [name]: updatedValue,
     }));
   
-    const disablingOptions = ["RNR", "Wrong Number", "Busy", "Not Reachable"];
-    const isDisablingOption = disablingOptions.includes(updatedValue);
-
-    if (name === 'attemptStatus') {
-      if (isDisablingOption) {
-
-        document.getElementById('joiningDate').setAttribute('disabled', 'true');
-        document.getElementById('callDuration').setAttribute('disabled', 'true');
-        document.getElementById('callBack').setAttribute('disabled', 'true');
-        document.getElementById('callBackTime').setAttribute('disabled', 'true');
-      } else {
-        document.getElementById('joiningDate').removeAttribute('disabled');
-        document.getElementById('callDuration').removeAttribute('disabled');
-        document.getElementById('callBack').removeAttribute('disabled');
-        document.getElementById('callBackTime').removeAttribute('disabled');
+    if (name === "attemptStatus") {
+      setAttemptStatus(updatedValue);
+  
+      const disablingOptions = ["RNR", "Wrong Number", "Busy", "Not Reachable"];
+      const isDisablingOption = disablingOptions.includes(updatedValue);
+  
+      const fieldsToDisable = {
+        joiningDate: isDisablingOption,
+        callDuration: isDisablingOption,
+        callBack: isDisablingOption,
+        callBackTime: isDisablingOption,
+      };
+  
+      for (const field in fieldsToDisable) {
+        const element = document.getElementById(field);
+        if (element) {
+          if (fieldsToDisable[field]) {
+            element.setAttribute("disabled", "true");
+          } else {
+            element.removeAttribute("disabled");
+          }
+        }
       }
     }
   };
+  
 
   const handleEditClick = () => {
     setIsConfirming(true);
@@ -107,6 +116,51 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
   };
   const attemtedUser = sessionStorage.getItem("userId");
 
+  const validateAndSaveData = (statusDto) => {
+    if (
+      (statusDto.attemptStatus === 'Joined' || statusDto.attemptStatus === 'Joining') &&
+      (!statusDto.joiningDate || !statusDto.comments || statusDto.comments.length < 30)
+    ) {
+      setLoading(false);
+      setResponseMessage("Joining Date and Call Comments are mandatory for 'Joined' or 'Joining' status, and Comment must be at least 30 characters.");
+      setSnackbarOpen(true);
+    } else if (statusDto.attemptStatus !== 'NA' && statusDto.comments === 'NA') {
+      setCommentError(true);
+      setLoading(false);
+    } else if (statusDto.comments.length < 30) {
+      setLoading(false);
+      setResponseMessage("Comment must be at least 30 characters.");
+      setSnackbarOpen(true);
+    } else {
+      axios
+        .post(Urlconstant.url + `api/updateFollowStatus`, statusDto, {
+          headers: {
+            "Content-Type": "application/json",
+            spreadsheetId: Urlconstant.spreadsheetId,
+          },
+        })
+        .then((response) => {
+          setLoading(false);
+          setResponseMessage("Data updated successfully!");
+          setSnackbarOpen(true);
+          setIsConfirming(false);
+          if (response.status === 200) {
+            setTimeout(() => {
+              handleCloseForm();
+            }, 1000);
+          }
+        })
+        .catch((error) => {
+          setLoading(false);
+          setResponseMessage("Error updating data. Please try again.");
+          setSnackbarOpen(true);
+        });
+      axios
+        .post(Urlconstant.url + `api/registerAttendance`, statusDto)
+        .then(() => { })
+        .catch((e) => { });
+    }
+  };
   const handleSaveClick = () => {
     if (isConfirming) {
       setLoading(true);
@@ -120,45 +174,10 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
           statusDto[field] = "NA";
         }
       });
-
-      if (
-        (statusDto.attemptStatus === 'Joined' || statusDto.attemptStatus === 'Joining') &&
-        (!statusDto.joiningDate || !statusDto.comments)
-      ) {
-        setLoading(false);
-        setResponseMessage("Joining Date and Call Comments are mandatory for 'Joined' or 'Joining' status.");
-        setSnackbarOpen(true);
-      } else {
-        axios
-          .post(Urlconstant.url + `api/updateFollowStatus`, statusDto, {
-            headers: {
-              "Content-Type": "application/json",
-              spreadsheetId: Urlconstant.spreadsheetId,
-            },
-          })
-          .then((response) => {
-            setLoading(false);
-            setResponseMessage("Data updated successfully!");
-            setSnackbarOpen(true);
-            setIsConfirming(false);
-            if (response.status === 200) {
-              setTimeout(() => {
-                handleCloseForm();
-              }, 1000);
-            }
-          })
-          .catch((error) => {
-            setLoading(false);
-            setResponseMessage("Error updating data. Please try again.");
-            setSnackbarOpen(true);
-          });
-        axios
-          .post(Urlconstant.url + `registerAttendance`, statusDto)
-          .then(() => { })
-          .catch((e) => { });
-      }
+      validateAndSaveData(statusDto);
     }
   };
+
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle>
@@ -229,29 +248,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
             ))}
           </Select>
         </FormControl>
-        {/* <InputLabel id="demo-simple-select-label">Attempt Status</InputLabel>
 
-
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          label="Attempt Status"
-          name="attemptStatus"
-          onChange={handleInputChange}
-          value={rowData.attemptStatus || 'NA'} // Use editedData here
-          variant="outlined"
-          sx={{
-            marginRight: "20px",
-            width: "200px",
-            fontSize: "20px",
-          }}
-        >
-          {dropdownData.status.map((item, index) => (
-            <MenuItem value={item} key={index}>
-              {item}
-            </MenuItem>
-          ))}
-        </Select> */}
 
         <TextField
           type="date"
@@ -267,7 +264,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
             min: getCurrentDate(),
           }}
           id="joiningDate"
-         disabled={rowData.attemptStatus !== 'Joined'}
+          disabled={rowData.attemptStatus !== 'Joined'}
         />
 
         <ReactInputMask
@@ -325,6 +322,8 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
           multiline
           rows={4}
           id="comments"
+          error={commentError}
+          helperText={commentError ? 'Comment is mandatory.' : ''}
         />
       </DialogContent>
       <DialogActions>

@@ -30,7 +30,7 @@ const Dashboard = ({ isLoggedIn }) => {
         <Route path="/display" element={<ViewTable />} />
         <Route path="/followup" element={<FollowUp />} />
         <Route path="/profile/:email" element={<Profile />} />
-        <Route path="/attandance" element={<Attandance />} />
+        <Route path="/attendance" element={<Attandance />} />
         <Route path="/attenance/:email" element={<ViewAttendance/>}/>
 
       </Routes>
