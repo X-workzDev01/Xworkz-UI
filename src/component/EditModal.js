@@ -16,7 +16,7 @@ import { GridCloseIcon } from '@mui/x-data-grid';
 import './Fields.css';
 const fieldStyle = { margin: '20px' };
 
-const EditModal = ({ open, handleClose, rowData,onEmailChange  }) => {
+const EditModal = ({ open, handleClose, rowData ,updateProfileData  }) => {
   const location = useLocation();
   const email = sessionStorage.getItem("userId");
   const [isConfirming, setIsConfirming] = React.useState(false);
@@ -38,7 +38,6 @@ const EditModal = ({ open, handleClose, rowData,onEmailChange  }) => {
     batchTiming: '',
     startTime: '',
   });
-
 
 
   React.useEffect(() => {
@@ -113,10 +112,6 @@ const EditModal = ({ open, handleClose, rowData,onEmailChange  }) => {
       setSelectedValue(value);
       fetchData(value);
     }
-    if (name === 'basicInfo.email') {
-      console.log(value)
-      onEmailChange(value);
-  }
 
     setEditedData((prevData) => ({
       ...prevData,
@@ -133,14 +128,22 @@ const EditModal = ({ open, handleClose, rowData,onEmailChange  }) => {
     setSnackbarOpen(false);
     setIsEditButtonDisabled(true);
   };
-
-  
-  
   const handleSaveClick = () => {
     if (!isConfirming||loading) {
       setIsConfirming(false);
+      updateProfileData(updatedEmail);
       return;
+    
     }
+    const handleSave = () => {
+      // Perform your save operations here
+
+      // Pass the updatedEmail to the parent component
+      updateProfileData(updatedEmail);
+
+      // Close the modal
+      handleClose();
+  };
 
     const updatedData = {
       ...editedData,
@@ -177,10 +180,8 @@ const EditModal = ({ open, handleClose, rowData,onEmailChange  }) => {
         setLoading(false);
         setResponseMessage('Error updating data. Please try again.');
         setSnackbarOpen(true);
-      
       });
   };
-
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
@@ -219,6 +220,9 @@ const EditModal = ({ open, handleClose, rowData,onEmailChange  }) => {
           defaultValue={rowData.basicInfo.email}
           onChange={handleInputChange}
           style={fieldStyle}
+          // InputProps={{
+          //   readOnly: true,
+          // }}
           
         />
         <TextField

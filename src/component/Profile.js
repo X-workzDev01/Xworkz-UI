@@ -56,7 +56,6 @@ const Profile = () => {
     const [isModalOpen, setModalOpen] = React.useState(false);
     const [editedRowData, setEditedRowData] = React.useState(null);
     const [dataLoadingError, setDataLoadingError] = React.useState(null);
-    const [tempEditedEmail, setTempEditedEmail] = useState('');
 
     const [isFollowUpModalOpen, setFollowUpModalOpen] = React.useState(false);
     const [editedFollowUpRowData, setEditedFollowUpRowData] = React.useState(null);
@@ -64,15 +63,12 @@ const Profile = () => {
     const [isFollowUpStatusModalOpen, setFollowUpStatusModalOpen] = React.useState(false);
     const [editedFollowUpStatusRowData, setEditedFollowUpStatusRowData] = React.useState(null);
     const [showAttendence, setShowAttendence] = useState(false);
-    const [editedEmail, setEditedEmail] = useState('');
+    const [updatedEmail, setUpdatedEmail] = useState(email); 
 
-
-    const generateTraineeApiUrl = (email) => {
-        return Urlconstant.url + `api/readByEmail?email=${email}`;
-    };
 
     useEffect(() => {
-        const traineeApi = generateTraineeApiUrl(email); 
+        if(updatedEmail){
+        const traineeApi = Urlconstant.url + `api/readByEmail?email=${email}`;
         const followUpApi = Urlconstant.url + `api/getFollowUpEmail/${email}`;
         const statusApi = Urlconstant.url + `api/getFollowUpStatusByEmail/${email}`;
         axios
@@ -107,39 +103,45 @@ const Profile = () => {
                 setDataLoadingError("Check the data loading...");
 
             });
-    }, [email, isFollowUpStatusModalOpen, isModalOpen]);
-
-    useEffect(() => {
-        if (editedEmail) {
-            const editedTraineeApi = generateTraineeApiUrl(editedEmail); 
-            axios
-                .get(editedTraineeApi, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        spreadsheetId: Urlconstant.spreadsheetId,
-                    },
-                })
-                .then((profileResponse) => {
-                    setProfileData(profileResponse.data);
-                })
-                .catch((error) => {});
         }
-    }, [editedEmail, isFollowUpStatusModalOpen, isModalOpen]);
-    
+    }, [updatedEmail]);
 
     if (!profileData || !followUpData || !statusData) {
         return <div>Loading...</div>;
     }
 
+    const fetchUpdatedProfileData = (updatedEmail) => {
+        if (updatedEmail) {
+          const traineeApi = Urlconstant.url + `api/readByEmail?email=${updatedEmail}`;
+          axios
+            .get(traineeApi, {
+              headers: {
+                'Content-Type': 'application/json',
+                spreadsheetId: Urlconstant.spreadsheetId,
+              },
+            })
+            .then((profileResponse) => {
+              setProfileData(profileResponse.data);
+            })
+            .catch((error) => {
+              setDataLoadingError("Error fetching updated profile data...");
+            });
+        }
+      };
+      
+      
 
     const handleEditClick = (row) => {
         setEditedRowData(row);
         setModalOpen(true);
     };
     const handleSaveClick = () => {
-        setModalOpen(false)
-    };
-
+        setModalOpen(false);
+        if (updatedEmail) {
+            fetchUpdatedProfileData(updatedEmail);
+        }
+      };
+      
     const handleFollowUp = (row) => {
         setEditedFollowUpStatusRowData(row);
         setFollowUpStatusModalOpen(true);
@@ -154,13 +156,9 @@ const Profile = () => {
         console.log(row)
         setShowAttendence(true);
     }
-    const handleEmailChange = (newEmail) => {
-        setTempEditedEmail(newEmail);
-    };
-
-    const handleEmailEditConfirm = () => {
-        setEditedEmail(tempEditedEmail);
-        setTempEditedEmail(''); // Clear the temporary email
+    const updateProfileData = (newEmail) => {
+        // Update the updatedEmail state with the new email
+        setUpdatedEmail(newEmail);
     };
 
     return (
@@ -169,6 +167,7 @@ const Profile = () => {
 
                 <div className="infos">
                     <Avatar {...stringAvatar(profileData.basicInfo.traineeName)} />
+                    {dataLoadingError && <Alert severity="error">{dataLoadingError}</Alert>}
                     <div className="name">
                         <h1>{profileData.basicInfo.traineeName}</h1>
                         <h3>
@@ -248,11 +247,14 @@ const Profile = () => {
                 handleClose={() => setModalOpen(false)}
                 rowData={editedRowData}
                 setRowData={setEditedRowData}
-                handleSaveClick={handleSaveClick}
-                onEmailChange={handleEmailChange}
-                editedEmail={tempEditedEmail}
-                handleEmailEditConfirm={handleEmailEditConfirm}
+                updateProfileData={updateProfileData} 
+                handleSaveClick={() => {
+                    setModalOpen(false);
+                    // Pass the updated email to fetchUpdatedProfileData
+                    fetchUpdatedProfileData(updatedEmail);
+                }}
             />
+
             <FollowUpStatus
                 open={isFollowUpStatusModalOpen}
                 handleClose={() => setFollowUpStatusModalOpen(false)}

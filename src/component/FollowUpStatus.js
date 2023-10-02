@@ -116,8 +116,6 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
   };
   const attemtedUser = sessionStorage.getItem("userId");
 
-
-
   const validateAndSaveData = (statusDto) => {
     if (
       (statusDto.attemptStatus === 'Joined' || statusDto.attemptStatus === 'Joining') &&
@@ -127,8 +125,8 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
       setResponseMessage("Joining Date and Call Comments are mandatory for 'Joined' or 'Joining' status, and Comment must be at least 30 characters.");
       setSnackbarOpen(true);
     } else if (statusDto.attemptStatus !== 'NA' && statusDto.comments === 'NA') {
-      setLoading(false);
       setCommentError(true);
+      setLoading(false);
     } else if (statusDto.comments.length < 30) {
       setLoading(false);
       setResponseMessage("Comment must be at least 30 characters.");
