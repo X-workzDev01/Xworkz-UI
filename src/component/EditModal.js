@@ -145,7 +145,6 @@ const EditModal = ({ open, handleClose, rowData }) => {
         ...formData,
       },
     };
-    console.log(updatedData.basicInfo.email)
     setLoading(true);
     axios
       .put(Urlconstant.url + `api/update?email=${rowData.basicInfo.email}`, updatedData, {
