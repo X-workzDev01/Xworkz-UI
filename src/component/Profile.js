@@ -63,14 +63,17 @@ const Profile = () => {
     const [isFollowUpStatusModalOpen, setFollowUpStatusModalOpen] = React.useState(false);
     const [editedFollowUpStatusRowData, setEditedFollowUpStatusRowData] = React.useState(null);
     const [showAttendence, setShowAttendence] = useState(false);
-    const [updatedEmail, setUpdatedEmail] = useState(email); 
 
-
-    useEffect(() => {
-        if(updatedEmail){
+    
+    React.useEffect(() => {
+        fetchData(email, isFollowUpStatusModalOpen, isModalOpen, setProfileData, setFollowUpData, setStatusData, setDataLoadingError);
+    }, [email, isFollowUpStatusModalOpen, isModalOpen]);
+    
+    const fetchData = (email, isFollowUpStatusModalOpen, isModalOpen, setProfileData, setFollowUpData, setStatusData, setDataLoadingError) => {
         const traineeApi = Urlconstant.url + `api/readByEmail?email=${email}`;
         const followUpApi = Urlconstant.url + `api/getFollowUpEmail/${email}`;
         const statusApi = Urlconstant.url + `api/getFollowUpStatusByEmail/${email}`;
+
         axios
             .all([
                 axios.get(traineeApi, {
@@ -101,47 +104,23 @@ const Profile = () => {
             )
             .catch((error) => {
                 setDataLoadingError("Check the data loading...");
-
             });
-        }
-    }, [updatedEmail]);
+    };
+
 
     if (!profileData || !followUpData || !statusData) {
         return <div>Loading...</div>;
     }
 
-    const fetchUpdatedProfileData = (updatedEmail) => {
-        if (updatedEmail) {
-          const traineeApi = Urlconstant.url + `api/readByEmail?email=${updatedEmail}`;
-          axios
-            .get(traineeApi, {
-              headers: {
-                'Content-Type': 'application/json',
-                spreadsheetId: Urlconstant.spreadsheetId,
-              },
-            })
-            .then((profileResponse) => {
-              setProfileData(profileResponse.data);
-            })
-            .catch((error) => {
-              setDataLoadingError("Error fetching updated profile data...");
-            });
-        }
-      };
-      
-      
 
     const handleEditClick = (row) => {
         setEditedRowData(row);
         setModalOpen(true);
     };
     const handleSaveClick = () => {
-        setModalOpen(false);
-        if (updatedEmail) {
-            fetchUpdatedProfileData(updatedEmail);
-        }
-      };
-      
+        setModalOpen(false)
+    };
+
     const handleFollowUp = (row) => {
         setEditedFollowUpStatusRowData(row);
         setFollowUpStatusModalOpen(true);
@@ -156,10 +135,6 @@ const Profile = () => {
         console.log(row)
         setShowAttendence(true);
     }
-    const updateProfileData = (newEmail) => {
-        // Update the updatedEmail state with the new email
-        setUpdatedEmail(newEmail);
-    };
 
     return (
         <div>
@@ -247,12 +222,7 @@ const Profile = () => {
                 handleClose={() => setModalOpen(false)}
                 rowData={editedRowData}
                 setRowData={setEditedRowData}
-                updateProfileData={updateProfileData} 
-                handleSaveClick={() => {
-                    setModalOpen(false);
-                    // Pass the updated email to fetchUpdatedProfileData
-                    fetchUpdatedProfileData(updatedEmail);
-                }}
+                handleSaveClick={handleSaveClick}
             />
 
             <FollowUpStatus

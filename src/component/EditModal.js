@@ -10,14 +10,16 @@ import Snackbar from '@mui/material/Snackbar';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Urlconstant } from '../constant/Urlconstant';
 import { Select, MenuItem, FormControl, InputLabel, IconButton } from '@mui/material';
-import { useLocation } from 'react-router-dom';
 import { GridCloseIcon } from '@mui/x-data-grid';
 
 import './Fields.css';
+import { useNavigate } from 'react-router-dom';
+
 const fieldStyle = { margin: '20px' };
 
-const EditModal = ({ open, handleClose, rowData ,updateProfileData  }) => {
-  const location = useLocation();
+const EditModal = ({ open, handleClose, rowData }) => {
+
+  const navigate = useNavigate();
   const email = sessionStorage.getItem("userId");
   const [isConfirming, setIsConfirming] = React.useState(false);
   const [selectedValue, setSelectedValue] = React.useState(' ');
@@ -28,7 +30,6 @@ const EditModal = ({ open, handleClose, rowData ,updateProfileData  }) => {
   const [dropdown, setDropDown] = React.useState([]);
   const [batchDetails, setBatchDetails] = React.useState("");
 
-  const [isEditButtonDisabled, setIsEditButtonDisabled] = React.useState(false);
 
   const [formData, setFormData] = React.useState({
     branch: '',
@@ -38,7 +39,6 @@ const EditModal = ({ open, handleClose, rowData ,updateProfileData  }) => {
     batchTiming: '',
     startTime: '',
   });
-
 
   React.useEffect(() => {
     setEditedData(rowData);
@@ -99,9 +99,7 @@ const EditModal = ({ open, handleClose, rowData ,updateProfileData  }) => {
           startTime: data.startTime,
         });
       })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
+      .catch((error) => {});
   };
 
 
@@ -126,24 +124,15 @@ const EditModal = ({ open, handleClose, rowData ,updateProfileData  }) => {
   const handleEditClick = () => {
     setIsConfirming(true);
     setSnackbarOpen(false);
-    setIsEditButtonDisabled(true);
   };
+
+  
+  
   const handleSaveClick = () => {
     if (!isConfirming||loading) {
       setIsConfirming(false);
-      updateProfileData(updatedEmail);
       return;
-    
     }
-    const handleSave = () => {
-      // Perform your save operations here
-
-      // Pass the updatedEmail to the parent component
-      updateProfileData(updatedEmail);
-
-      // Close the modal
-      handleClose();
-  };
 
     const updatedData = {
       ...editedData,
@@ -156,8 +145,8 @@ const EditModal = ({ open, handleClose, rowData ,updateProfileData  }) => {
         ...formData,
       },
     };
+    console.log(updatedData.basicInfo.email)
     setLoading(true);
-    //setIsConfirming(false);
     axios
       .put(Urlconstant.url + `api/update?email=${rowData.basicInfo.email}`, updatedData, {
         headers: {
@@ -175,13 +164,16 @@ const EditModal = ({ open, handleClose, rowData ,updateProfileData  }) => {
             handleCloseForm();
           }, 1000);
         }
+        navigate(`/x-workz/profile/${updatedData.basicInfo.email}`);
       })
       .catch((error) => {
         setLoading(false);
         setResponseMessage('Error updating data. Please try again.');
         setSnackbarOpen(true);
+
       });
   };
+
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
@@ -223,7 +215,6 @@ const EditModal = ({ open, handleClose, rowData ,updateProfileData  }) => {
           // InputProps={{
           //   readOnly: true,
           // }}
-          
         />
         <TextField
           label="Name"
@@ -417,6 +408,7 @@ const EditModal = ({ open, handleClose, rowData ,updateProfileData  }) => {
         />
         <TextField
           label="Referal Contact Number"
+
           name="othersDto.referalContactNumber"
           defaultValue={rowData.othersDto.referalContactNumber}
           onChange={handleInputChange}
@@ -426,6 +418,7 @@ const EditModal = ({ open, handleClose, rowData ,updateProfileData  }) => {
         <TextField
 
           label="Comments"
+
           name="othersDto.comments"
           defaultValue={rowData.othersDto.comments}
           onChange={handleInputChange}
