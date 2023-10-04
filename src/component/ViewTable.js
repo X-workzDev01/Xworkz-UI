@@ -12,10 +12,9 @@ import Header from "./Header";
 import { PersonOutline } from "@mui/icons-material";
 
 function loadServerRows(page, pageSize) {
-  
   const startingIndex = page * pageSize;
   const maxRows = pageSize;
-  const spreadsheetId = Urlconstant.spreadsheetId; 
+  const spreadsheetId = Urlconstant.spreadsheetId;
 
   const apiUrl =
     Urlconstant.url +
@@ -35,13 +34,13 @@ function loadServerRows(page, pageSize) {
           rows: data.sheetsData.map((row) => ({
             id: row.id.toString(),
             ...row,
-          })), 
-          rowCount: data.size, 
+          })),
+          rowCount: data.size,
         });
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
-        resolve({ rows: [], rowCount: 0 }); 
+        resolve({ rows: [], rowCount: 0 });
       });
   });
 }
@@ -94,9 +93,11 @@ async function fetchFilteredData(searchValue) {
         spreadsheetId: Urlconstant.spreadsheetId,
       },
     };
+
     const response = await axios.get(apiUrl, requestOptions);
     console.log(response);
-    return response.data; 
+
+    return response.data;
   } catch (error) {
     console.error("Error fetching data:", error);
     return [];
@@ -115,8 +116,8 @@ function debounce(func, delay) {
   };
 }
 
-export default function ControlledSelectionServerPaginationGrid() {
-  const initialPageSize = 10; 
+export default function ControlledSelectionServerPaginationGrid(page, size) {
+  const initialPageSize = 10;
 
   const [paginationModel, setPaginationModel] = React.useState({
     page: 0,
@@ -133,8 +134,6 @@ export default function ControlledSelectionServerPaginationGrid() {
   const [autocompleteOptions, setAutocompleteOptions] = React.useState([]);
   const [isModalOpen, setModalOpen] = React.useState(false);
   const [editedRowData, setEditedRowData] = React.useState(null);
-
-  
 
   const handleEditClick = (row) => {
     setEditedRowData(row);
@@ -154,7 +153,6 @@ export default function ControlledSelectionServerPaginationGrid() {
   };
 
   const handleViewProfile = (rowData) => {
- 
     <Profile rowData={rowData} />;
   };
 
@@ -163,15 +161,19 @@ export default function ControlledSelectionServerPaginationGrid() {
   };
 
   const debouncedFetchSuggestions = React.useMemo(
-    () =>
+    (page, pageSize) =>
       debounce(
         (searchValue) =>
-          fetchFilteredData(searchValue)
+          fetchFilteredData(
+            searchValue,
+            paginationModel.page,
+            paginationModel.pageSize,
+            setPaginationModel
+          )
             .then((suggestions) => {
               console.log(suggestions);
 
               setAutocompleteOptions(suggestions);
-
               console.log(autocompleteOptions);
 
               setLoading(false);
@@ -182,75 +184,92 @@ export default function ControlledSelectionServerPaginationGrid() {
               setLoading(false);
             }),
         500
-      ), 
+      ),
+
     []
   );
 
   // Define a function to fetch and update data
-async function fetchData(searchValue, page, pageSize, active) {
-  try {
-    if (searchValue === "") {
-      const newGridData = await loadServerRows(page, pageSize);
-      if (active) {
-        setGridData(newGridData);
-        setLoading(false);
-        setAutocompleteOptions([]);
-        console.log("suggestion set to null");
-      }
-    } else {
-      setLoading(false);
-      debouncedFetchSuggestions(searchValue);
-    }
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    if (active) {
-      setGridData({ rows: [], rowCount: 0 });
-      setLoading(false);
-    }
-  }
-}
-
-// Inside your component:
-React.useEffect(() => {
-  let active = true;
-  setLoading(true);
-
-  const fetchDataAndUpdateState = async () => {
+  async function fetchData(searchValue, page, pageSize, active) {
     try {
       if (searchValue === "") {
-        const newGridData = await loadServerRows(paginationModel.page, paginationModel.pageSize);
+        const newGridData = await loadServerRows(page, pageSize);
         if (active) {
           setGridData(newGridData);
-          setAutocompleteOptions([]);
           setLoading(false);
+          setAutocompleteOptions([]);
+          console.log("suggestion set to null");
         }
       } else {
-        const suggestions = await fetchFilteredData(searchValue);
-        if (active) {
-          setAutocompleteOptions(suggestions);
-          setLoading(false);
-        }
+        setLoading(false);
+        debouncedFetchSuggestions(searchValue);
       }
     } catch (error) {
       console.error("Error fetching data:", error);
       if (active) {
         setGridData({ rows: [], rowCount: 0 });
-        setAutocompleteOptions([]);
         setLoading(false);
       }
     }
+  }
+
+  const refreshPageEveryTime = () => {
+    let active = true;
+    setLoading(true);
+
+    const fetchDataAndUpdateState = async () => {
+      try {
+        console.log("hareesha");
+
+        if (
+          searchValue === "" ||
+          searchValue.length >= 1 && searchValue.length <= 3
+        ) {
+          console.log("pagination");
+          const newGridData = await loadServerRows(
+            paginationModel.page,
+            paginationModel.pageSize
+          );
+
+          if (active) {
+            setGridData(newGridData);
+            setAutocompleteOptions([]);
+            setLoading(false);
+          }
+        } else {
+          const suggestions = await fetchFilteredData(
+            searchValue,
+            paginationModel.page,
+            paginationModel.pageSize,
+            setPaginationModel
+          );
+
+          if (active) {
+            setAutocompleteOptions(suggestions);
+            setLoading(false);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        if (active) {
+          setGridData({ rows: [], rowCount: 0 });
+          setAutocompleteOptions([]);
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchDataAndUpdateState();
+    return () => {
+      active = false;
+    };
   };
 
-  fetchDataAndUpdateState();
-
-  return () => {
-    active = false;
-  };
-}, [paginationModel.page, paginationModel.pageSize, searchValue]);
-;
-
-
-  const columns=[
+  // Inside your component:
+  React.useEffect(() => {
+    refreshPageEveryTime();
+  }, [paginationModel.page, paginationModel.pageSize, searchValue]);
+  const columns = [
     { headerName: "ID", field: "id", flex: 1 },
     {
       field: "traineeName",
@@ -327,9 +346,9 @@ React.useEffect(() => {
           <Button
             variant="outlined"
             color="secondary"
-            startIcon={<PersonOutline/>}
-            component={Link} 
-            to={`/x-workz/profile/${params.row.basicInfo.email}`} 
+            startIcon={<PersonOutline />}
+            component={Link}
+            to={`/x-workz/profile/${params.row.basicInfo.email}`}
           >
             View
           </Button>
@@ -353,7 +372,7 @@ React.useEffect(() => {
           getOptionLabel={(option) => option.basicInfo.traineeName}
           style={{ width: "22rem", padding: "10px 20px" }}
           onChange={(event, newValue) => {
-            setSearchValue(newValue.basicInfo.traineeName);
+            setSearchValue(newValue.basicInfo.email);
           }}
           renderInput={(params) => (
             <TextField
@@ -364,6 +383,10 @@ React.useEffect(() => {
 
                 if (value.length >= 3) {
                   setSearchValue(value);
+                  setPaginationModel({ page: 0, pageSize: initialPageSize });
+                }
+                if (value.length >= 1 && value.length <= 3) {
+                  setPaginationModel({ page: 0, pageSize: initialPageSize });
                 }
               }}
               placeholder="Search..."
@@ -381,8 +404,8 @@ React.useEffect(() => {
       </div>
       <div style={{ height: "650px", width: "100%" }}>
         <DataGrid
-        style={{ width: "100%" }}
-        columns={columns}
+          style={{ width: "100%" }}
+          columns={columns}
           rows={gridData.rows}
           pagination
           paginationModel={paginationModel}

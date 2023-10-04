@@ -42,7 +42,9 @@ export const Referral = ({
         setPhoneNumberError("");
       }
     }
+    if(name==="accept"){
     setIsDiesable(true);
+    }
   };
   
 

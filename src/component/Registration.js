@@ -100,7 +100,9 @@ console.log(formData.basicInfo+" n    "+formData.othersDto);
           <Trainee
             formData={formData.basicInfo}
             setFormData={(data) => {
+              setMessages("")
               setFormData({ ...formData, basicInfo: data });
+              
             }}
             onNext={handleNext}
           />
