@@ -9,7 +9,7 @@ import axios from 'axios';
 import Snackbar from '@mui/material/Snackbar';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Urlconstant } from '../constant/Urlconstant';
-import { Select, MenuItem, FormControl, InputLabel, IconButton } from '@mui/material';
+import { Select, MenuItem, FormControl, InputLabel, IconButton, Alert } from '@mui/material';
 import { GridCloseIcon } from '@mui/x-data-grid';
 
 import './Fields.css';
@@ -17,7 +17,7 @@ import { useNavigate } from 'react-router-dom';
 
 const fieldStyle = { margin: '20px' };
 
-const EditModal = ({ open, handleClose, rowData }) => {
+const EditModal = ({ open, handleClose, rowData}) => {
 
   const navigate = useNavigate();
   const email = sessionStorage.getItem("userId");
@@ -29,7 +29,12 @@ const EditModal = ({ open, handleClose, rowData }) => {
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [dropdown, setDropDown] = React.useState([]);
   const [batchDetails, setBatchDetails] = React.useState("");
-
+  const [emailCheck, setEmailCheck] =React.useState(null);
+  const [numberCheck, setNumberCheck] = React.useState(null);
+  const [emailError, setEmailError] = React.useState(null);
+  const [phoneNumberError, setPhoneNumberError] = React.useState("");
+  const [verifyHandaleEmail, setverifyHandleEmail] = React.useState("");
+  const [verifyHandaleEmailerror, setverifyHandleEmailError] = React.useState("");
 
   const [formData, setFormData] = React.useState({
     branch: '',
@@ -105,11 +110,38 @@ const EditModal = ({ open, handleClose, rowData }) => {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
+    console.log("name:",name)
     const [section, field] = name.split('.');
     if (section === 'courseInfo' && field === 'course') {
       setSelectedValue(value);
       fetchData(value);
     }
+    if (name === "email") {
+      if (!value) {
+        setEmailError("Email is required");
+        setverifyHandleEmail("");
+        setEmailCheck("");
+      } else if (!/\S+@\S+\.\S+/.test(value)) {
+        setEmailError("Invalid email address");
+        setverifyHandleEmail("");
+        setEmailCheck("");
+
+      } else {
+        validEmail(value);
+        setEmailError("");
+      }
+    } else if (name === "contactNumber") {
+      if (!value) {
+        setPhoneNumberError("Phone number is required");
+      } else if (!/^\d+$/.test(value)) {
+        setPhoneNumberError("Phone number must contain only digits");
+      } else if (value.length !== 10) {
+        setPhoneNumberError("Phone number must contain exactly 10 digits");
+      } else {
+        setPhoneNumberError("");
+      }
+    }
+
 
     setEditedData((prevData) => ({
       ...prevData,
@@ -120,6 +152,88 @@ const EditModal = ({ open, handleClose, rowData }) => {
 
     }));
 
+  };
+  const handleEmail = (email) => {
+    validateEmail(email);
+    axios
+      .get(Urlconstant.url + `api/emailCheck?email=${email}`, {
+        headers: {
+          spreadsheetId: Urlconstant.spreadsheetId,
+        },
+      })
+      .then((response) => {
+        if (response.status === 201) {
+          setEmailCheck(response.data);
+        } else {
+          setEmailCheck(null);
+        }
+      })
+      .catch({});
+  };
+
+  const validEmail = (email) => {
+    handleEmail(email);
+    verifyEmail(email);
+  };
+  const validateEmail = (value) => {
+    if (!value) {
+      setEmailError("Email is required");
+      setEmailCheck("");
+      setverifyHandleEmail("");
+    } else if (!/\S+@\S+\.\S+/.test(value)) {
+      setEmailError("Invalid email address");
+      setverifyHandleEmail("");
+      setEmailCheck("");
+    } else {
+      setEmailError("")
+    }
+  };
+
+  const verifyEmail = (email) => {
+    axios
+      .get(Urlconstant.url + `api/verify-email?email=${email}`)
+      .then((response) => {
+        if (response.data === "accepted_email") {
+          setverifyHandleEmail(response.data);
+          console.log(response.data);
+        }
+        if (response.data === "rejected_email") {
+          setverifyHandleEmailError(response.data);
+          setverifyHandleEmail("");
+          setEmailError("");
+          setEmailCheck("");
+        } else {
+          setverifyHandleEmailError("");
+        }
+      });
+  };
+
+  const handleNumberChange = (e) => {
+    if (!formData.contactNumber) {
+      console.log("Contact number is blank. Cannot make the API call.");
+      return;
+    }
+
+    axios
+      .get(
+        Urlconstant.url +
+        `api/contactNumberCheck?contactNumber=${formData.contactNumber}`,
+        {
+          headers: {
+            spreadsheetId: Urlconstant.spreadsheetId,
+          },
+        }
+      )
+      .then((response) => {
+        if (response.status === 201) {
+          setNumberCheck(response.data);
+        } else {
+          setNumberCheck(null);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
   const handleEditClick = () => {
     setIsConfirming(true);
@@ -146,6 +260,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
       },
     };
     setLoading(true);
+
     axios
       .put(Urlconstant.url + `api/update?email=${rowData.basicInfo.email}`, updatedData, {
         headers: {
@@ -189,6 +304,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
     handleClose();
   };
 
+  const isDisabled =verifyHandaleEmailerror || numberCheck || emailCheck ;
 
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
@@ -207,7 +323,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
 
         <TextField
           label="Email"
-          name="basicInfo.email"
+          name="email"
           defaultValue={rowData.basicInfo.email}
           onChange={handleInputChange}
           style={fieldStyle}
@@ -215,6 +331,18 @@ const EditModal = ({ open, handleClose, rowData }) => {
           //   readOnly: true,
           // }}
         />
+        {verifyHandaleEmail ? (
+              <Alert severity="success">{verifyHandaleEmail}</Alert>
+            ) : (
+              " "
+            )}
+            {verifyHandaleEmailerror ? (
+              <Alert severity="error">{verifyHandaleEmailerror}</Alert>
+            ) : (
+              " "
+            )}
+            {emailError ? <Alert severity="error">{emailError} </Alert> : " "}
+            {emailCheck ? <Alert severity="error">{emailCheck}</Alert> : " "}
         <TextField
           label="Name"
           name="basicInfo.traineeName"
@@ -228,7 +356,12 @@ const EditModal = ({ open, handleClose, rowData }) => {
           defaultValue={rowData.basicInfo.contactNumber}
           onChange={handleInputChange}
           style={fieldStyle}
+          onBlur={handleNumberChange}
         />
+        {phoneNumberError && (
+              <Alert severity="error">{phoneNumberError}</Alert>
+            )}
+            {numberCheck && <Alert severity="error">{numberCheck}</Alert>}
         <FormControl>
           <InputLabel id="demo-simple-select-label">Qualification</InputLabel>
           <Select
@@ -490,7 +623,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
 
           <CircularProgress size={20} /> // Show loading spinner
         ) : (
-          <Button onClick={handleEditClick} color="primary">
+          <Button onClick={handleEditClick} disabled={isDisabled} color="primary">
             Edit
           </Button>
         )}

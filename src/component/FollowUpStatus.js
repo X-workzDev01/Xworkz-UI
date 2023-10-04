@@ -19,6 +19,7 @@ import {
 import { GridCloseIcon } from "@mui/x-data-grid";
 import ReactInputMask from "react-input-mask";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 const fieldStyle = { margin: "20px" };
 
 const FollowUpStatus = ({ open, handleClose, rowData }) => {
@@ -31,6 +32,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
   const fieldsToCheck = ['attemptStatus', 'joiningDate', 'callDuration', 'callBack', 'callBackTime', 'comments'];
   const [attemptStatus, setAttemptStatus] = useState("");
   const [commentError, setCommentError] = useState(false);
+  const navigate = useNavigate();
 
 
   const getCurrentDate = () => {
@@ -149,6 +151,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
               handleCloseForm();
             }, 1000);
           }
+          navigate(`/x-workz/profile/${statusDto.basicInfo.email}`);
         })
         .catch((error) => {
           setLoading(false);

@@ -3,6 +3,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import { Form } from "react-bootstrap";
 import { Urlconstant } from "../constant/Urlconstant";
+import EditModal from "./EditModal";
 
 export const Trainee = ({ formData, setFormData, onNext }) => {
   const [error, setError] = useState();
@@ -17,12 +18,12 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-   
+
 
     if (name === "traineeName") {
       if (!value) {
         setNameError("Name is required");
-        
+
       } else if (value.length < 3) {
         setNameError("Enter a Valid Name");
       } else {
@@ -108,7 +109,7 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
     axios
       .get(
         Urlconstant.url +
-          `api/contactNumberCheck?contactNumber=${formData.contactNumber}`,
+        `api/contactNumberCheck?contactNumber=${formData.contactNumber}`,
         {
           headers: {
             spreadsheetId: Urlconstant.spreadsheetId,
