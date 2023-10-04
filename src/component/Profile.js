@@ -64,10 +64,16 @@ const Profile = () => {
     const [editedFollowUpStatusRowData, setEditedFollowUpStatusRowData] = React.useState(null);
     const [showAttendence, setShowAttendence] = useState(false);
 
-    useEffect(() => {
+    
+    React.useEffect(() => {
+        fetchData(email, isFollowUpStatusModalOpen, isModalOpen, setProfileData, setFollowUpData, setStatusData, setDataLoadingError);
+    }, [email, isFollowUpStatusModalOpen, isModalOpen]);
+    
+    const fetchData = (email, isFollowUpStatusModalOpen, isModalOpen, setProfileData, setFollowUpData, setStatusData, setDataLoadingError) => {
         const traineeApi = Urlconstant.url + `api/readByEmail?email=${email}`;
         const followUpApi = Urlconstant.url + `api/getFollowUpEmail/${email}`;
         const statusApi = Urlconstant.url + `api/getFollowUpStatusByEmail/${email}`;
+
         axios
             .all([
                 axios.get(traineeApi, {
@@ -98,9 +104,9 @@ const Profile = () => {
             )
             .catch((error) => {
                 setDataLoadingError("Check the data loading...");
-
             });
-    }, [email, isFollowUpStatusModalOpen, isModalOpen]);
+    };
+
 
     if (!profileData || !followUpData || !statusData) {
         return <div>Loading...</div>;

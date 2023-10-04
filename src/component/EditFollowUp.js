@@ -84,6 +84,26 @@ console.log(rowData)
     }
 
   };
+   const updateFollowUpData = (statusDto, email) => {
+    axios
+      .put(Urlconstant.url + `api/updateFollowUp?email=${email}`, statusDto, {
+        headers: {
+          'Content-Type': 'application/json',
+          spreadsheetId: Urlconstant.spreadsheetId,
+        },
+      })
+      .then((response) => {
+        setLoading(false);
+        setResponseMessage('Data updated successfully!');
+        setSnackbarOpen(true);
+      })
+      .catch((error) => {
+        console.error('Error updating data:', error);
+        setLoading(false);
+        setResponseMessage('Error updating data. Please try again.');
+        setSnackbarOpen(true);
+      });
+  };
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
