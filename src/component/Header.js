@@ -15,16 +15,18 @@ import { Urlconstant } from "../constant/Urlconstant";
 
 export default function Header() {
   const email = sessionStorage.getItem("userId");
-  const [notification, setNotification] = useState([]);
-  const [count, setCount] = useState(0);
+  const [yesterDayCandidate, setYesterDayCandidate] = useState([]);
+  const [todayDayCandidate, setTodayDayCandidate] = useState([]);
+  const [afterFourDayCandidate, setAfterFourDayCandidate] = useState([]);
+
   const [anchorEl, setAnchorEl] = useState(null);
   useEffect(() => {
     if (email) {
       axios(Urlconstant.url + `api/notification?email=${email}`)
         .then((res) => {
-          setNotification(res.data);
-          setCount(res.data.length);
-         
+          setYesterDayCandidate(res.data.yesterdayCandidates);
+          setTodayDayCandidate(res.data.todayCandidates);
+          setAfterFourDayCandidate(res.data.afterFourDayCandidates);
         })
         .catch((e) => {});
     }
@@ -56,60 +58,163 @@ export default function Header() {
           }}
         >
           <Typography sx={{ p: 2 }}>
-            <div>
-              <p
-                style={{
-                  backgroundColor: "white",
-                  marginTop: "-1rem",
-                  textAlign: "center",
-                  marginLeft: "-20px",
-                  marginRight: "-2rem",
-                  color: "green",
-                  paddingBottom: "-6px",
-                  fontStyle: "bold",
-                }}
-              >
-                Today followUp candidates
-              </p>
-            </div>
-            <div>
-              <hr style={{ paddingBottom: "-1rem" }}></hr>
-            </div>
             <div
               style={{
-                maxHeight: "300px",
+                maxHeight: "450px",
                 overflowY: "auto",
                 marginRight: "-1rem",
               }}
             >
-              {notification
-                ? notification.map((v, k) => (
-                    <p key={k}>
-                      {v ? (
-                        <Link
-                          to={`/x-workz/profile/${v.basicInfo.email}`}
-                          style={{ color: "blue", fontSize: "14px" }}
-                        >
-                          {v.basicInfo.traineeName} &nbsp;
-                        </Link>
-                      ) : null}
-                      {v.basicInfo.email}
+              {todayDayCandidate ? (
+                <div>
+                  <div>
+                    <p
+                      style={{
+                        backgroundColor: "white",
+                        marginTop: "0.5rem",
+                        textAlign: "center",
+                        marginLeft: "-20px",
+                        marginRight: "-2rem",
+                        color: "green",
+                        paddingBottom: "-6px",
+                        fontStyle: "bold",
+                      }}
+                    >
+                      Today followUp candidates
                     </p>
-                  ))
-                : ""}
+                    <div>
+                      <div>
+                        <hr style={{ paddingBottom: "-1rem" }}></hr>
+                      </div>
+                      {todayDayCandidate.map((v, k) => (
+                        <p key={k}>
+                          {v ? (
+                            <Link
+                              to={`/x-workz/profile/${v.basicInfo.email}`}
+                              style={{ color: "blue", fontSize: "14px" }}
+                            >
+                              {v.basicInfo.traineeName} &nbsp;
+                            </Link>
+                          ) : null}
+                          {v.basicInfo.email}
+                        </p>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <hr style={{ paddingBottom: "-1rem" }}></hr>
+                  </div>
+                </div>
+              ) : (
+                ""
+              )}
+              <div>
+                {yesterDayCandidate ? (
+                  <div>
+                    <div>
+                      <hr style={{ paddingBottom: "-1rem" }}></hr>
+                    </div>
+                    <div>
+                      <p
+                        style={{
+                          backgroundColor: "white",
+                          marginTop: "-1rem",
+                          textAlign: "center",
+                          marginLeft: "-20px",
+                          marginRight: "-2rem",
+                          color: "red",
+                          paddingBottom: "-6px",
+                          fontStyle: "bold",
+                        }}
+                      >
+                        yesterday Candidate Followup
+                      </p>
+                      <div>
+                        <div>
+                          <hr style={{ paddingBottom: "-1rem" }}></hr>
+                        </div>
+                        {yesterDayCandidate.map((v, k) => (
+                          <p key={k}>
+                            {v ? (
+                              <Link
+                                to={`/x-workz/profile/${v.basicInfo.email}`}
+                                style={{ color: "blue", fontSize: "14px" }}
+                              >
+                                {v.basicInfo.traineeName} &nbsp;
+                              </Link>
+                            ) : null}
+                            {v.basicInfo.email}
+                          </p>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <hr style={{ paddingBottom: "-1rem" }}></hr>
+                    </div>
+                  </div>
+                ) : (
+                  ""
+                )}
+              </div>
+              <div>
+                {afterFourDayCandidate ? (
+                  <div>
+                    <div>
+                      <hr style={{ paddingBottom: "-1rem" }}></hr>
+                    </div>
+                    <p
+                      style={{
+                        backgroundColor: "white",
+                        marginTop: "-1rem",
+                        textAlign: "center",
+                        marginLeft: "-20px",
+                        marginRight: "-2rem",
+                        color: "green",
+                        paddingBottom: "-6px",
+                        fontStyle: "bold",
+                      }}
+                    >
+                      After Four days Candidate Followup
+                    </p>
+                    <div>
+                      <div>
+                        <hr style={{ paddingBottom: "-1rem" }}></hr>
+                      </div>
+                      {afterFourDayCandidate.map((v, k) => (
+                        <p key={k}>
+                          {v ? (
+                            <Link
+                              to={`/x-workz/profile/${v.basicInfo.email}`}
+                              style={{ color: "blue", fontSize: "14px" }}
+                            >
+                              {v.basicInfo.traineeName} &nbsp;
+                            </Link>
+                          ) : null}
+                          {v.basicInfo.email}
+                        </p>
+                      ))}
+                    </div>
+                    <div>
+                      <hr style={{ paddingBottom: "-1rem" }}></hr>
+                    </div>
+                  </div>
+                ) : (
+                  ""
+                )}
+              </div>
             </div>
-                <p
-                  style={{
-                    backgroundColor: "white",
-                    marginTop: "-1rem",
-                    textAlign: "center",
-                    marginLeft: "-20px",
-                    marginRight: "-2rem",
-                    color: "green",
-                    paddingBottom: "-6px",
-                    fontStyle: "bold",
-                  }}
-                ></p>
+            <p
+              style={{
+                backgroundColor: "white",
+                marginTop: "-1rem",
+                textAlign: "center",
+                marginLeft: "-20px",
+                marginRight: "-2rem",
+                color: "green",
+                paddingBottom: "-6px",
+                fontStyle: "bold",
+              }}
+            ></p>
           </Typography>
         </Popover>
       </div>
@@ -126,7 +231,14 @@ export default function Header() {
           onClick={NotificationClick}
           aria-describedby={id}
         >
-          <Badge badgeContent={count} color="warning">
+          <Badge
+            badgeContent={
+              todayDayCandidate.length +
+              yesterDayCandidate.length +
+              afterFourDayCandidate.length
+            }
+            color="warning"
+          >
             <NotificationsActiveRounded />
           </Badge>
         </IconButton>
@@ -162,7 +274,7 @@ export default function Header() {
               />
             </Typography>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            {extractNameFromEmail(sessionStorage.getItem("userId", email))}
+              {extractNameFromEmail(sessionStorage.getItem("userId", email))}
             </Typography>
 
             {notificationDisplay()}

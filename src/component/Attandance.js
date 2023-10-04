@@ -1,13 +1,20 @@
 import { DataGrid } from "@mui/x-data-grid";
 import React, { useEffect, useState } from "react";
 import "./Attandance.css";
-import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import {
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
 import axios from "axios";
 import { Urlconstant } from "../constant/Urlconstant";
 import { json } from "react-router-dom";
 
 const Attandance = () => {
-  const [row, setRow] = useState([]);
+  const [clickedButtonIds, setClickedButtonIds] = useState(new Set());
   const [value, setValue] = useState([]);
   const [searchValue, setSearchValue] = useState("");
 
@@ -22,7 +29,8 @@ const Attandance = () => {
     render();
   }, []);
 
-  const initialPageSize = 20;
+
+  const initialPageSize = 10;
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: initialPageSize,
@@ -44,13 +52,15 @@ const Attandance = () => {
 
   React.useEffect(() => {
     setLoading(true);
-    searchServerRows(paginationModel.page, paginationModel.pageSize).then(
-      (newGridData) => {
-        setGridData(newGridData);
-        setLoading(false);
-      }
-    );
-  }, [paginationModel.page, paginationModel.pageSize]);
+    searchServerRows(
+      paginationModel.page,
+      paginationModel.pageSize,
+      searchValue
+    ).then((newGridData) => {
+      setGridData(newGridData);
+      setLoading(false);
+    });
+  }, [paginationModel.page, paginationModel.pageSize, searchValue]);
 
   function searchServerRows(page, pageSize, select) {
     const startingIndex = page * pageSize;
@@ -66,22 +76,14 @@ const Attandance = () => {
     return new Promise((resolve, reject) => {
       axios(
         Urlconstant.url +
-        `api/byBatch?batch=${select}&startIndex=${startingIndex}&maxRows=20`
+          `api/byBatch?batch=${select}&startIndex=${startingIndex}&maxRows=10`
       )
         .then((json) => {
           console.log("Received data from server:", json.data.size);
           const newGridData = {
-            rows: json.data.dto.map((item) => ({
-              id: item.id,
-              traineeName: item.basicInfo.traineeName,
-              email: item.basicInfo.email,
-              contactNumber: item.basicInfo.contactNumber,
-              course: item.courseInfo.course,
-              branch: item.courseInfo.branch,
-              present: item.present,
-              absent: item.absent,
-              batchTiming: item.courseInfo.batchTiming,
-              isButtonDisabled: item.isButton,
+            rows: json.data.dto.map((row) => ({
+              id: row.id.toString(),
+              ...row,
             })),
             rowCount: json.data.size,
           };
@@ -105,22 +107,15 @@ const Attandance = () => {
       .then((res) => {
         setValue(res.data);
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
   const everydayAttandance = (attandanceData, batch) => {
     axios
       .post(Urlconstant.url + "api/addAttendennce", attandanceData)
       .then((res) => {
-        console.log(
-          "JIiii" +
-          paginationModel.page +
-          "         " +
-          paginationModel.pageSize
-        );
-        console.log(batch);
         refresh(batch);
       })
-      .catch((e) => { });
+      .catch((e) => {});
   };
 
   const handleButtonClickYes = (rowData) => {
@@ -128,18 +123,23 @@ const Attandance = () => {
       id: rowData.id,
       markAs: 1,
       basicInfo: {
-        traineeName: rowData.traineeName,
-        email: rowData.email,
-        contactNumber: rowData.contactNumber,
+        traineeName: rowData.basicInfo.traineeName,
+        email: rowData.basicInfo.email,
+        contactNumber: rowData.basicInfo.contactNumber,
       },
       courseInfo: {
-        course: rowData.course,
-        branch: rowData.branch,
-        batchTiming: rowData.batchTiming,
+        course: rowData.courseInfo.course,
+        branch: rowData.courseInfo.branch,
+        batchTiming: rowData.courseInfo.batchTiming,
       },
     };
+    if (!clickedButtonIds.has(rowData.id)) {
+      const updatedClickedButtonIds = new Set(clickedButtonIds);
+      updatedClickedButtonIds.add(rowData.id);
+      setClickedButtonIds(updatedClickedButtonIds);
+    }
 
-    everydayAttandance(attandanceData, rowData.course);
+    everydayAttandance(attandanceData, rowData.courseInfo.course);
   };
 
   const handleButtonClickNo = (rowData) => {
@@ -147,29 +147,73 @@ const Attandance = () => {
       id: rowData.id,
       markAs: 0,
       basicInfo: {
-        traineeName: rowData.traineeName,
-        email: rowData.email,
-        contactNumber: rowData.contactNumber,
+        traineeName: rowData.basicInfo.traineeName,
+        email: rowData.basicInfo.email,
+        contactNumber: rowData.basicInfo.contactNumber,
       },
       courseInfo: {
-        course: rowData.course,
-        branch: rowData.branch,
-        batchTiming: rowData.batchTiming,
+        course: rowData.courseInfo.course,
+        branch: rowData.courseInfo.branch,
+        batchTiming: rowData.courseInfo.batchTiming,
       },
     };
-    everydayAttandance(attandanceData, rowData.course);
+    if (!clickedButtonIds.has(rowData.id)) {
+      const updatedClickedButtonIds = new Set(clickedButtonIds);
+      updatedClickedButtonIds.add(rowData.id);
+      setClickedButtonIds(updatedClickedButtonIds);
+    }
+    everydayAttandance(attandanceData, rowData.courseInfo.course);
   };
 
   const columns = [
     { field: "id", headerName: "ID", width: 80 },
-    { field: "traineeName", headerName: "Name", width: 120 },
-    { field: "email", headerName: "Email", width: 200 },
-    { field: "contactNumber", headerName: "Contact Number", width: 120 },
-    { field: "course", headerName: "Course", width: 120 },
-    { field: "branch", headerName: "Branch", width: 120 },
-    { field: "batchTiming", headerName: "Batch", width: 120 },
-    { field: "present", headerName: "Present", width: 120 },
-    { field: "absent", headerName: "Absent", width: 120 },
+    {
+      headerName: "Name",
+      width: 120,
+      valueGetter: (params) => params.row.basicInfo.traineeName,
+    },
+    {
+      field: "email",
+      headerName: "Email",
+      width: 200,
+      valueGetter: (params) => params.row.basicInfo.email,
+    },
+    {
+      field: "contactNumber",
+      headerName: "Contact Number",
+      width: 120,
+      valueGetter: (params) => params.row.basicInfo.contactNumber,
+    },
+    {
+      field: "course",
+      headerName: "Course",
+      width: 120,
+      valueGetter: (params) => params.row.courseInfo.course,
+    },
+    {
+      field: "branch",
+      headerName: "Branch",
+      width: 120,
+      valueGetter: (params) => params.row.courseInfo.branch,
+    },
+    {
+      field: "batchTiming",
+      headerName: "Batch",
+      width: 120,
+      valueGetter: (params) => params.row.courseInfo.batchTiming,
+    },
+    {
+      field: "present",
+      headerName: "Present",
+      width: 120,
+      valueGetter: (params) => params.row.present,
+    },
+    {
+      field: "absent",
+      headerName: "Absent",
+      width: 120,
+      valueGetter: (params) => params.row.absent,
+    },
     {
       field: "action",
       headerName: "Action",
@@ -178,13 +222,21 @@ const Attandance = () => {
         <div>
           <Button
             onClick={() => handleButtonClickYes(params.row)}
-            disabled={params.row.isButtonDisabled}
+            disabled={
+              params.row.isButton || clickedButtonIds.has(params.row.id)
+            }
+            style={{ color: params.row.ycolor }}
+            variant="outlined"
           >
             Yes
           </Button>
           <Button
             onClick={() => handleButtonClickNo(params.row)}
-            disabled={params.row.isButtonDisabled}
+            disabled={
+              params.row.isButton || clickedButtonIds.has(params.row.id)
+            }
+            style={{ color: params.row.ncolor }}
+            variant="outlined"
           >
             No
           </Button>
@@ -192,6 +244,7 @@ const Attandance = () => {
       ),
     },
   ];
+
   const handleInputChange = (e) => {
     setSearchValue(e.target.value);
     refresh(e.target.value);
@@ -239,20 +292,19 @@ const Attandance = () => {
           Search
         </Button>
       </div>
-      <div style={{ height: 600, width: "100%" }}>
-        <DataGrid
-          columns={columns}
-          rows={gridData.rows}
-          pagination
-          paginationModel={paginationModel}
-          pageSizeOptions={[5, 10, 15, 20]}
-          rowCount={gridData.rowCount}
-          paginationMode="server"
-          onPaginationModelChange={setPaginationModel}
-          loading={loading}
-          keepNonExistentRowsSelected
-        />
-      </div>
+      <DataGrid
+        columns={columns}
+        rows={gridData.rows}
+        pagination
+        autoHeight
+        paginationModel={paginationModel}
+        pageSizeOptions={[5, 10, 15, 20]}
+        rowCount={gridData.rowCount}
+        paginationMode="server"
+        onPaginationModelChange={setPaginationModel}
+        loading={loading}
+        keepNonExistentRowsSelected
+      />
     </div>
   );
 };

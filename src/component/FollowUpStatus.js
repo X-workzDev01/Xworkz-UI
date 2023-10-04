@@ -32,8 +32,8 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
   const fieldsToCheck = ['attemptStatus', 'joiningDate', 'callDuration', 'callBack', 'callBackTime', 'comments'];
   const [attemptStatus, setAttemptStatus] = useState("");
   const [commentError, setCommentError] = useState(false);
-  const navigate = useNavigate();
 
+  const navigate = useNavigate();
 
   const getCurrentDate = () => {
     const now = new Date();
@@ -159,7 +159,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
           setSnackbarOpen(true);
         });
       axios
-        .post(Urlconstant.url + `registerAttendance`, statusDto)
+        .post(Urlconstant.url + `api/registerAttendance`, statusDto)
         .then(() => { })
         .catch((e) => { });
     }

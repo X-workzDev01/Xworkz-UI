@@ -45,8 +45,8 @@ const Sidebar = ({ children }) => {
       icon: <FaCommentAlt />,
     },
     {
-      path: "attandance",
-      name: "Attandance",
+      path: "attendance",
+      name: "Attendance",
       icon: <FaCommentAlt />,
     },
   ];
