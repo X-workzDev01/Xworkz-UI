@@ -18,15 +18,21 @@ export default function Header() {
   const [yesterDayCandidate, setYesterDayCandidate] = useState([]);
   const [todayDayCandidate, setTodayDayCandidate] = useState([]);
   const [afterFourDayCandidate, setAfterFourDayCandidate] = useState([]);
-
+  const [count, setCount] = useState();
   const [anchorEl, setAnchorEl] = useState(null);
   useEffect(() => {
     if (email) {
+      console.log(email)
       axios(Urlconstant.url + `api/notification?email=${email}`)
         .then((res) => {
           setYesterDayCandidate(res.data.yesterdayCandidates);
           setTodayDayCandidate(res.data.todayCandidates);
           setAfterFourDayCandidate(res.data.afterFourDayCandidates);
+          setCount(
+            res.data.todayCandidates.length +
+              res.data.yesterdayCandidates +
+              res.data.afterFourDayCandidates
+          );
         })
         .catch((e) => {});
     }
@@ -231,14 +237,7 @@ export default function Header() {
           onClick={NotificationClick}
           aria-describedby={id}
         >
-          <Badge
-            badgeContent={
-              todayDayCandidate.length +
-              yesterDayCandidate.length +
-              afterFourDayCandidate.length
-            }
-            color="warning"
-          >
+          <Badge badgeContent={count} color="warning">
             <NotificationsActiveRounded />
           </Badge>
         </IconButton>
