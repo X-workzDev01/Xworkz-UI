@@ -5,6 +5,7 @@ import {
   FaUserAlt,
   FaRegChartBar,
   FaCommentAlt,
+  FaWhatsapp,
 } from "react-icons/fa";
 import "./SideBar.css";
 import { NavLink, useLocation } from "react-router-dom";
@@ -48,6 +49,11 @@ const Sidebar = ({ children }) => {
       path: "attandance",
       name: "Attandance",
       icon: <FaCommentAlt />,
+    },
+    {
+      path: "whatsapp",
+      name: "WhatsApp",
+      icon: <FaWhatsapp />,
     },
   ];
   const click = () => {};

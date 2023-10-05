@@ -11,6 +11,9 @@ import { Route, Routes } from 'react-router-dom';
 import Header from './Header';
 import Attandance from './Attandance';
 import ViewAttendance from './ViewAttendance';
+import WhatsApp from './WhatsApp';
+import WhatsAppLinkSender from './WhatsApp';
+
 
 const Dashboard = ({ isLoggedIn }) => {
   if (!isLoggedIn) {
@@ -32,6 +35,7 @@ const Dashboard = ({ isLoggedIn }) => {
         <Route path="/profile/:email" element={<Profile />} />
         <Route path="/attandance" element={<Attandance />} />
         <Route path="/attenance/:email" element={<ViewAttendance/>}/>
+        <Route path="/whatsapp" element={<WhatsAppLinkSender />} />
 
       </Routes>
 

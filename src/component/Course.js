@@ -14,15 +14,11 @@ import axios from "axios";
 import { Urlconstant } from "../constant/Urlconstant";
 import { useLocation } from "react-router-dom";
 
-export const Course = ({
-  dropdown,
-  formData,
-  setFormData,
-  onNext,
-  onPrevious,
-  batchDetiles,
-}) => {
-  const [selectedValue, setSelectedValue] = useState("");
+
+
+export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious,batchDetiles }) => {
+ const [selectedValue, setSelectedValue] = useState(' ');
+
 
   const location = useLocation();
 
@@ -35,6 +31,7 @@ export const Course = ({
   }, [selectedValue]);
   const fetchData = async () => {
     try {
+
       console.log("course" + selectedValue);
       const response = await axios.get(
         Urlconstant.url + `api/getCourseDetails?courseName=${selectedValue}`,
@@ -69,6 +66,7 @@ export const Course = ({
     console.log(formData);
   };
 
+
   const isDisabled = !formData.course || !formData.offeredAs;
 
   return (
@@ -86,8 +84,9 @@ export const Course = ({
             id="outlined-basic"
             variant="outlined"
             onChange={handleInputChange}
-          >
+            >
             {batchDetiles.map((item, index) => (
+
               <MenuItem value={item} key={index}>
                 {item}
               </MenuItem>
