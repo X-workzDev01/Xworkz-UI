@@ -12,6 +12,9 @@ import Header from './Header';
 import Attandance from './Attandance';
 import Enquiry from './Enquiry';
 import ViewAttendance from './ViewAttendance';
+import WhatsApp from './WhatsApp';
+import WhatsAppLinkSender from './WhatsApp';
+
 
 
 const Dashboard = ({ isLoggedIn }) => {
@@ -35,6 +38,7 @@ const Dashboard = ({ isLoggedIn }) => {
         <Route path="/attendance" element={<Attandance />} />
         <Route path="/enquiry" element={<Enquiry />} />
         <Route path="/attenance/:email" element={<ViewAttendance/>}/>
+        <Route path="/whatsapp" element={<WhatsAppLinkSender />} />
 
 
       </Routes>
