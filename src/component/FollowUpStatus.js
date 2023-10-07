@@ -15,9 +15,9 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Typography,
 } from "@mui/material";
 import { GridCloseIcon } from "@mui/x-data-grid";
-import ReactInputMask from "react-input-mask";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 const fieldStyle = { margin: "20px" };
@@ -32,6 +32,8 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
   const fieldsToCheck = ['attemptStatus', 'joiningDate', 'callDuration', 'callBack', 'callBackTime', 'comments'];
   const [attemptStatus, setAttemptStatus] = useState("");
   const [commentError, setCommentError] = useState(false);
+  const [commentCharacterCount, setCommentCharacterCount] = useState(0);
+
 
   const navigate = useNavigate();
 
@@ -44,7 +46,6 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
   };
 
   useEffect(() => {
-
     axios
       .get(Urlconstant.url + "utils/dropdown", {
         headers: {
@@ -52,9 +53,14 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
         },
       })
       .then((response) => {
-        setDropdownData(response.data);
+        // Filter out "New" and "Enquiry" from the dropdownData.status array
+        const filteredStatus = response.data.status.filter(
+          (item) => item !== "New" && item !== "Enquiry"
+        );
+
+        setDropdownData({ ...response.data, status: filteredStatus });
       })
-      .catch((error) => { });
+      .catch((error) => {});
   }, []);
 
   React.useEffect(() => {
@@ -96,6 +102,17 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
             element.removeAttribute("disabled");
           }
         }
+      }
+      if (isDisablingOption) {
+        setEditedData((prevData) => ({
+          ...prevData,
+          comments: "NA", 
+        }));
+        setCommentCharacterCount(0);
+      }
+      else if (name === "comments") {
+        setCommentCharacterCount(updatedValue.length);
+        console.log(updatedValue.length)
       }
     }
   };
@@ -266,8 +283,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
           inputProps={{
             min: getCurrentDate(),
           }}
-          id="joiningDate"
-          disabled={rowData.attemptStatus !== 'Joined'}
+        
         />
 
         <TextField
@@ -309,19 +325,24 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
           id="callBackTime"
         />
 
-        <TextField
-          label="Comments"
-          name="comments"
-          defaultValue={rowData.comments}
-          onChange={handleInputChange}
-          style={fieldStyle}
-          className="custom-textfield" // Apply the custom CSS class
-          multiline
-          rows={4}
-          id="comments"
-          error={commentError}
-          helperText={commentError ? 'Comment is mandatory.' : ''}
-        />
+<div>
+      <TextField
+        label="Comments"
+        name="comments"
+        defaultValue={rowData.comments}
+        onChange={handleInputChange}
+        style={fieldStyle}
+        className="custom-textfield"
+        multiline
+        rows={4}
+        disabled={["RNR", "Wrong Number", "Busy", "Not Reachable"].includes(
+          attemptStatus
+        )}
+      />
+      <Typography variant="caption" style={{ marginTop: "8px" }} className="mb-2">
+        Character Count: {commentCharacterCount}/30
+      </Typography>
+    </div>
       </DialogContent>
       <DialogActions>
         {loading ? (
