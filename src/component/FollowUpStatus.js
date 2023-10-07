@@ -68,25 +68,25 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     const updatedValue = (value ?? "").trim() === "" ? "NA" : value;
-  
+
     setEditedData((prevData) => ({
       ...prevData,
       [name]: updatedValue,
     }));
-  
+
     if (name === "attemptStatus") {
       setAttemptStatus(updatedValue);
-  
+
       const disablingOptions = ["RNR", "Wrong Number", "Busy", "Not Reachable"];
       const isDisablingOption = disablingOptions.includes(updatedValue);
-  
+
       const fieldsToDisable = {
         joiningDate: isDisablingOption,
         callDuration: isDisablingOption,
         callBack: isDisablingOption,
         callBackTime: isDisablingOption,
       };
-  
+
       for (const field in fieldsToDisable) {
         const element = document.getElementById(field);
         if (element) {
@@ -99,7 +99,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
       }
     }
   };
-  
+
 
   const handleEditClick = () => {
     setIsConfirming(true);
@@ -270,22 +270,16 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
           disabled={rowData.attemptStatus !== 'Joined'}
         />
 
-        <ReactInputMask
-          mask="99:99:99" // Define the mask pattern for hh:mm:ss
-          defaultValue={rowData.callDuration || 'NA'}
+        <TextField
+          label="Call Duration"
+          name="callDuration"
+          placeholder="mm:ss"
+          variant="outlined"
+          id="callDuration"
+          defaultValue={rowData.callDuration || ''}
           onChange={handleInputChange}
-        >
-          {() => (
-            <TextField
-              label="Call Duration"
-              name="callDuration"
-              placeholder="hh:mm:ss" // Update the placeholder here
-              variant="outlined"
-              id="callDuration"
-            />
+        />
 
-          )}
-        </ReactInputMask>
 
         <TextField
           type="date"
