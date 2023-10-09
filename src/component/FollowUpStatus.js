@@ -15,9 +15,9 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Typography,
 } from "@mui/material";
 import { GridCloseIcon } from "@mui/x-data-grid";
-import ReactInputMask from "react-input-mask";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { red } from "@mui/material/colors";
@@ -41,6 +41,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
   ];
   const [attemptStatus, setAttemptStatus] = useState("");
   const [commentError, setCommentError] = useState(false);
+
   const [count, setCount] = useState(0);
 
   const navigate = useNavigate();
@@ -61,7 +62,12 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
         },
       })
       .then((response) => {
-        setDropdownData(response.data);
+        // Filter out "New" and "Enquiry" from the dropdownData.status array
+        const filteredStatus = response.data.status.filter(
+          (item) => item !== "New" && item !== "Enquiry"
+        );
+
+        setDropdownData({ ...response.data, status: filteredStatus });
       })
       .catch((error) => {});
   }, []);
@@ -107,8 +113,20 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
           }
         }
       }
+      if (isDisablingOption) {
+        setEditedData((prevData) => ({
+          ...prevData,
+          comments: "NA", 
+        }));
+        setCommentCharacterCount(0);
+      }
+      else if (name === "comments") {
+        setCommentCharacterCount(updatedValue.length);
+        console.log(updatedValue.length)
+      }
     }
   };
+
 
   const handleEditClick = () => {
     setIsConfirming(true);
@@ -282,25 +300,18 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
           inputProps={{
             min: getCurrentDate(),
           }}
-          id="joiningDate"
-          disabled={rowData.attemptStatus !== "Joined"}
+        
         />
 
-        <ReactInputMask
-          mask="99:99:99" // Define the mask pattern for hh:mm:ss
-          defaultValue={rowData.callDuration || "NA"}
+        <TextField
+          label="Call Duration"
+          name="callDuration"
+          placeholder="mm:ss"
+          variant="outlined"
+          id="callDuration"
+          defaultValue={rowData.callDuration || ''}
           onChange={handleInputChange}
-        >
-          {() => (
-            <TextField
-              label="Call Duration"
-              name="callDuration"
-              placeholder="hh:mm:ss" // Update the placeholder here
-              variant="outlined"
-              id="callDuration"
-            />
-          )}
-        </ReactInputMask>
+        />
 
         <TextField
           type="date"
@@ -333,8 +344,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
           <InputLabel id="demo-simple-select-label">
             {count ? <p style={{ color: 'red',paddingTop:"4.5rem",marginLeft:"18rem"}}> {count}/30</p> : ""}
           </InputLabel>
-
-          <TextField
+  <TextField
             labelId="demo-simple-select-label"
             label="Comments"
             name="comments"
@@ -343,12 +353,16 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
             style={{width:350,height:0.5}}
             className="custom-textfield" // Apply the custom CSS class
             multiline
+               disabled={["RNR", "Wrong Number", "Busy", "Not Reachable"].includes(
+          attemptStatus
+        )}
             rows={4}
             id="comments"
             error={commentError}
             helperText={commentError ? "Comment is mandatory." : ""}
           ></TextField>
         </FormControl>
+
       </DialogContent>
       <DialogActions>
         {loading ? (
