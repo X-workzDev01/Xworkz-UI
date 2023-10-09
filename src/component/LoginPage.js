@@ -19,6 +19,7 @@ const LoginPage = (props) => {
   const [emailError, setEmailError] = useState();
   const [otpError, setOtpError] = useState();
   const [isSending, setIsSending] = useState(false);
+  const [otpSent, setOtpSent] = useState(false);
 const[effect,setEffect]=useState(false);
   const handleEmailChange = (event) => {
     //storing 
@@ -81,7 +82,8 @@ console.log("Running use effect");
       }
     }).then(response => {
       if (response.status === 200) {
-        console.log(response.data)
+        console.log(response.data);
+        setOtpSent(true);
       } else {
         console.log("user not found:", response.status);
       }
@@ -93,7 +95,8 @@ console.log("Running use effect");
       setIsSending(false);
     });;
   }
-  const isDisabled = !email
+  const isDisabled = !email || otpSent ; 
+  const isLoginDisabled = !email || !otpSent;
   return (
     <div>
     <Navbar /> 
@@ -122,7 +125,7 @@ console.log("Running use effect");
           />
 
           <Button type="submit" variant="contained" color='primary'
-           onClick={handleOtp} disabled={isSending} startIcon={<Send />}>     
+           onClick={handleOtp} disabled={isSending || isDisabled} startIcon={<Send />}>     
           {isSending ? (
             <CircularProgress size={24} color="inherit" />
           ) : (
@@ -147,7 +150,7 @@ console.log("Running use effect");
             }}
           />
           {otpError && <Alert severity="error">{otpError}</Alert>}
-          <Button type="submit" variant="contained" color='primary' disabled={enable}>
+          <Button type="submit" variant="contained" color='primary' disabled={enable || isLoginDisabled}>
             Login
           </Button>
         </Form>

@@ -244,7 +244,9 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
               fontSize: "20px",
             }}
           >
-            {dropdownData.status.map((item, index) => (
+            {dropdownData.status
+            .filter(item => item !== 'Enquiry' && item !== 'New')
+            .map((item, index) => (
               <MenuItem value={item} key={index}>
                 {item}
               </MenuItem>
