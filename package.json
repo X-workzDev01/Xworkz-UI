@@ -13,6 +13,7 @@
     "@mui/material": "^5.14.7",
     "@mui/x-data-grid": "^6.10.2",
     "@mui/x-data-grid-generator": "^6.10.2",
+    "@mui/x-date-pickers": "^6.16.1",
     "@react-icons/all-files": "^4.1.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",

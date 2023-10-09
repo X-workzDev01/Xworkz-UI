@@ -22,16 +22,16 @@ export default function Header() {
   const [anchorEl, setAnchorEl] = useState(null);
   useEffect(() => {
     if (email) {
-      console.log(email)
+      console.log(email);
       axios(Urlconstant.url + `api/notification?email=${email}`)
         .then((res) => {
           setYesterDayCandidate(res.data.yesterdayCandidates);
           setTodayDayCandidate(res.data.todayCandidates);
           setAfterFourDayCandidate(res.data.afterFourDayCandidates);
           setCount(
-            res.data.todayCandidates.length +
-              res.data.yesterdayCandidates +
-              res.data.afterFourDayCandidates
+            res.data.yesterdayCandidates.length +
+              res.data.todayCandidates.length +
+              res.data.afterFourDayCandidates.length
           );
         })
         .catch((e) => {});
