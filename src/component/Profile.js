@@ -177,7 +177,7 @@ const Profile = () => {
 
                         <li>
                             <h3>{followUpData.registrationDate}</h3>
-                            <h4>Registration Date</h4>
+                            <h4>Registration Date and Time</h4>
                         </li>
                         <li>
                             <h3>{followUpData.joiningDate}</h3>
