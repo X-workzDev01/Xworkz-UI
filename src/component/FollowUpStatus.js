@@ -20,6 +20,8 @@ import { GridCloseIcon } from "@mui/x-data-grid";
 import ReactInputMask from "react-input-mask";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { red } from "@mui/material/colors";
+import { round } from "lodash";
 const fieldStyle = { margin: "20px" };
 
 const FollowUpStatus = ({ open, handleClose, rowData }) => {
@@ -29,9 +31,17 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
   const [responseMessage, setResponseMessage] = React.useState("");
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [dropdownData, setDropdownData] = React.useState([]);
-  const fieldsToCheck = ['attemptStatus', 'joiningDate', 'callDuration', 'callBack', 'callBackTime', 'comments'];
+  const fieldsToCheck = [
+    "attemptStatus",
+    "joiningDate",
+    "callDuration",
+    "callBack",
+    "callBackTime",
+    "comments",
+  ];
   const [attemptStatus, setAttemptStatus] = useState("");
   const [commentError, setCommentError] = useState(false);
+  const [count, setCount] = useState(0);
 
   const navigate = useNavigate();
 
@@ -44,7 +54,6 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
   };
 
   useEffect(() => {
-
     axios
       .get(Urlconstant.url + "utils/dropdown", {
         headers: {
@@ -54,7 +63,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
       .then((response) => {
         setDropdownData(response.data);
       })
-      .catch((error) => { });
+      .catch((error) => {});
   }, []);
 
   React.useEffect(() => {
@@ -66,27 +75,28 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
   }
 
   const handleInputChange = (event) => {
+    setCount(event.target.value.length);
     const { name, value } = event.target;
     const updatedValue = (value ?? "").trim() === "" ? "NA" : value;
-  
+
     setEditedData((prevData) => ({
       ...prevData,
       [name]: updatedValue,
     }));
-  
+
     if (name === "attemptStatus") {
       setAttemptStatus(updatedValue);
-  
+
       const disablingOptions = ["RNR", "Wrong Number", "Busy", "Not Reachable"];
       const isDisablingOption = disablingOptions.includes(updatedValue);
-  
+
       const fieldsToDisable = {
         joiningDate: isDisablingOption,
         callDuration: isDisablingOption,
         callBack: isDisablingOption,
         callBackTime: isDisablingOption,
       };
-  
+
       for (const field in fieldsToDisable) {
         const element = document.getElementById(field);
         if (element) {
@@ -99,7 +109,6 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
       }
     }
   };
-  
 
   const handleEditClick = () => {
     setIsConfirming(true);
@@ -114,19 +123,26 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
     setSnackbarOpen(false);
     setAttemptStatus("");
     handleClose();
-
   };
   const attemtedUser = sessionStorage.getItem("userId");
 
   const validateAndSaveData = (statusDto) => {
     if (
-      (statusDto.attemptStatus === 'Joined' || statusDto.attemptStatus === 'Joining') &&
-      (!statusDto.joiningDate || !statusDto.comments || statusDto.comments.length < 30)
+      (statusDto.attemptStatus === "Joined" ||
+        statusDto.attemptStatus === "Joining") &&
+      (!statusDto.joiningDate ||
+        !statusDto.comments ||
+        statusDto.comments.length < 30)
     ) {
       setLoading(false);
-      setResponseMessage("Joining Date and Call Comments are mandatory for 'Joined' or 'Joining' status, and Comment must be at least 30 characters.");
+      setResponseMessage(
+        "Joining Date and Call Comments are mandatory for 'Joined' or 'Joining' status, and Comment must be at least 30 characters."
+      );
       setSnackbarOpen(true);
-    } else if (statusDto.attemptStatus !== 'NA' && statusDto.comments === 'NA') {
+    } else if (
+      statusDto.attemptStatus !== "NA" &&
+      statusDto.comments === "NA"
+    ) {
       setCommentError(true);
       setLoading(false);
     } else if (statusDto.comments.length < 30) {
@@ -160,8 +176,8 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
         });
       axios
         .post(Urlconstant.url + `api/registerAttendance`, statusDto)
-        .then(() => { })
-        .catch((e) => { });
+        .then(() => {})
+        .catch((e) => {});
     }
   };
   const handleSaveClick = () => {
@@ -230,13 +246,12 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
         <FormControl>
           <InputLabel id="demo-simple-select-label">Attempt Status</InputLabel>
           <Select
-
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             label="Attempt Status"
             name="attemptStatus"
             onChange={handleInputChange}
-            value={attemptStatus || 'NA'}
+            value={attemptStatus || "NA"}
             variant="outlined"
             sx={{
               marginRight: "20px",
@@ -254,12 +269,11 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
           </Select>
         </FormControl>
 
-
         <TextField
           type="date"
           label="Joining Date"
           name="joiningDate"
-          defaultValue={rowData.joiningDate || 'NA'}
+          defaultValue={rowData.joiningDate || "NA"}
           onChange={handleInputChange}
           style={fieldStyle}
           InputLabelProps={{
@@ -269,12 +283,12 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
             min: getCurrentDate(),
           }}
           id="joiningDate"
-          disabled={rowData.attemptStatus !== 'Joined'}
+          disabled={rowData.attemptStatus !== "Joined"}
         />
 
         <ReactInputMask
           mask="99:99:99" // Define the mask pattern for hh:mm:ss
-          defaultValue={rowData.callDuration || 'NA'}
+          defaultValue={rowData.callDuration || "NA"}
           onChange={handleInputChange}
         >
           {() => (
@@ -285,7 +299,6 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
               variant="outlined"
               id="callDuration"
             />
-
           )}
         </ReactInputMask>
 
@@ -293,7 +306,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
           type="date"
           label="Call Back Date"
           name="callBack"
-          defaultValue={rowData.callBack || 'NA'}
+          defaultValue={rowData.callBack || "NA"}
           onChange={handleInputChange}
           style={fieldStyle}
           InputLabelProps={{
@@ -308,7 +321,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
           type="time"
           label="Call Back Time"
           name="callBackTime"
-          defaultValue={rowData.callBackTime || 'NA'}
+          defaultValue={rowData.callBackTime || "NA"}
           onChange={handleInputChange}
           style={fieldStyle}
           InputLabelProps={{
@@ -316,20 +329,26 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
           }}
           id="callBackTime"
         />
+        <FormControl>
+          <InputLabel id="demo-simple-select-label">
+            {count ? <p style={{ color: 'red',paddingTop:"4.5rem",marginLeft:"18rem"}}> {count}/30</p> : ""}
+          </InputLabel>
 
-        <TextField
-          label="Comments"
-          name="comments"
-          defaultValue={rowData.comments}
-          onChange={handleInputChange}
-          style={fieldStyle}
-          className="custom-textfield" // Apply the custom CSS class
-          multiline
-          rows={4}
-          id="comments"
-          error={commentError}
-          helperText={commentError ? 'Comment is mandatory.' : ''}
-        />
+          <TextField
+            labelId="demo-simple-select-label"
+            label="Comments"
+            name="comments"
+            defaultValue={rowData.comments}
+            onChange={handleInputChange}
+            style={{width:350,height:0.5}}
+            className="custom-textfield" // Apply the custom CSS class
+            multiline
+            rows={4}
+            id="comments"
+            error={commentError}
+            helperText={commentError ? "Comment is mandatory." : ""}
+          ></TextField>
+        </FormControl>
       </DialogContent>
       <DialogActions>
         {loading ? (
