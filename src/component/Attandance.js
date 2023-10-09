@@ -29,7 +29,6 @@ const Attandance = () => {
     render();
   }, []);
 
-
   const initialPageSize = 10;
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
