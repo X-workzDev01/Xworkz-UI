@@ -24,6 +24,7 @@ const LoginPage = (props) => {
   const [otpError, setOtpError] = useState();
   const [isSending, setIsSending] = useState(false);
   const [effect, setEffect] = useState(false);
+  
   const handleEmailChange = (event) => {
     //storing
     setEmail(event.target.value);
