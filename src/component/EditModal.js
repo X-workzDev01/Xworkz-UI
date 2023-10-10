@@ -43,6 +43,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
   const [verifyHandaleEmailerror, setverifyHandleEmailError] =
     React.useState("");
 
+  const [emailValue, setEmailValue] = React.useState("");
   const [formData, setFormData] = React.useState({
     branch: "",
     trainerName: "",
@@ -115,15 +116,17 @@ const EditModal = ({ open, handleClose, rowData }) => {
       .catch((error) => {});
   };
 
+
+  
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    console.log("name:", name);
-    const [section, field] = name.split(".");
-    if (section === "courseInfo" && field === "course") {
+    const [section, field] = name.split('.');
+    if (section === 'courseInfo' && field === 'course') {
       setSelectedValue(value);
       fetchData(value);
     }
     if (name === "email") {
+      setEmailValue(value);
       if (!value) {
         setEmailError("Email is required");
         setverifyHandleEmail("");
@@ -135,7 +138,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
       } else {
         setEmailError("");
       }
-    } else if (name === "contactNumber") {
+    } else if (name === "basicInfo.contactNumber") { // Update the name to target the correct field
       if (!value) {
         setPhoneNumberError("Phone number is required");
       } else if (!/^\d+$/.test(value)) {
@@ -143,7 +146,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
       } else if (value.length !== 10) {
         setPhoneNumberError("Phone number must contain exactly 10 digits");
       } else {
-        setPhoneNumberError("");
+        setPhoneNumberError(""); // Clear the error if phone number is valid
       }
     }
 
@@ -215,7 +218,6 @@ const EditModal = ({ open, handleClose, rowData }) => {
       console.log("Contact number is blank. Cannot make the API call.");
       return;
     }
-
     axios
       .get(
         Urlconstant.url +
@@ -230,7 +232,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
         if (response.status === 201) {
           setNumberCheck(response.data);
         } else {
-          setNumberCheck(null);
+          setNumberCheck("");
         }
       })
       .catch((error) => {
@@ -247,12 +249,15 @@ const EditModal = ({ open, handleClose, rowData }) => {
       setIsConfirming(false);
       return;
     }
-
     const updatedData = {
       ...editedData,
       adminDto: {
         ...editedData.adminDto,
         updatedBy: email,
+      },
+      basicInfo: {
+        ...editedData.basicInfo,
+        email: emailValue,
       },
       courseInfo: {
         ...editedData.courseInfo,
@@ -260,7 +265,6 @@ const EditModal = ({ open, handleClose, rowData }) => {
       },
     };
     setLoading(true);
-
     axios
       .put(
         Urlconstant.url + `api/update?email=${rowData.basicInfo.email}`,
@@ -282,7 +286,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
             handleCloseForm();
           }, 1000);
         }
-        navigate(`/x-workz/profile/${updatedData.basicInfo.email}`);
+        navigate(`/x-workz/profile/${emailValue}`);
       })
       .catch((error) => {
         setLoading(false);
@@ -324,7 +328,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
         >
           <GridCloseIcon />
         </IconButton>
-
+      
         <TextField
           label="Email"
           name="email"
