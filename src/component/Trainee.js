@@ -19,11 +19,9 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
 
-
     if (name === "traineeName") {
       if (!value) {
         setNameError("Name is required");
-
       } else if (value.length < 3) {
         setNameError("Enter a Valid Name");
       } else {
@@ -38,7 +36,6 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
         setEmailError("Invalid email address");
         setverifyHandleEmail("");
         setEmailCheck("");
-
       } else {
         validEmail(value);
         setEmailError("");
@@ -97,7 +94,6 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
 
   const validEmail = (email) => {
     handleEmail(email);
-    verifyEmail(email);
   };
 
   const handleNumberChange = (e) => {
@@ -109,7 +105,7 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
     axios
       .get(
         Urlconstant.url +
-        `api/contactNumberCheck?contactNumber=${formData.contactNumber}`,
+          `api/contactNumberCheck?contactNumber=${formData.contactNumber}`,
         {
           headers: {
             spreadsheetId: Urlconstant.spreadsheetId,
@@ -141,6 +137,11 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
       setEmailError("");
       console.log("validate email");
     }
+  };
+
+  const handleEmailVeryfy = (e) => {
+    verifyEmail(e.target.value);
+    ;
   };
 
   const today = new Date();
@@ -186,6 +187,7 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
               id="outlined-basic"
               variant="outlined"
               value={formData.email || ""}
+              onBlur={handleEmailVeryfy}
               onChange={handleInputChange}
             />
             {verifyHandaleEmail ? (
