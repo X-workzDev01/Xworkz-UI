@@ -20,6 +20,8 @@ import {
 import { GridCloseIcon } from "@mui/x-data-grid";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { red } from "@mui/material/colors";
+import { round } from "lodash";
 const fieldStyle = { margin: "20px" };
 
 const FollowUpStatus = ({ open, handleClose, rowData }) => {
@@ -29,14 +31,18 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
   const [responseMessage, setResponseMessage] = React.useState("");
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [dropdownData, setDropdownData] = React.useState([]);
-  const fieldsToCheck = ['attemptStatus', 'joiningDate', 'callDuration', 'callBack', 'callBackTime', 'comments'];
+  const fieldsToCheck = [
+    "attemptStatus",
+    "joiningDate",
+    "callDuration",
+    "callBack",
+    "callBackTime",
+    "comments",
+  ];
   const [attemptStatus, setAttemptStatus] = useState("");
   const [commentError, setCommentError] = useState(false);
-  const [commentCharacterCount, setCommentCharacterCount] = useState(0);
-
-
+  const [count, setCount] = useState(0);
   const navigate = useNavigate();
-
   const getCurrentDate = () => {
     const now = new Date();
     const year = now.getFullYear();
@@ -72,6 +78,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
   }
 
   const handleInputChange = (event) => {
+    setCount(event.target.value.length);
     const { name, value } = event.target;
     const updatedValue = (value ?? "").trim() === "" ? "NA" : value;
 
@@ -117,7 +124,6 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
     }
   };
 
-
   const handleEditClick = () => {
     setIsConfirming(true);
     setSnackbarOpen(false);
@@ -131,19 +137,26 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
     setSnackbarOpen(false);
     setAttemptStatus("");
     handleClose();
-
   };
   const attemtedUser = sessionStorage.getItem("userId");
 
   const validateAndSaveData = (statusDto) => {
     if (
-      (statusDto.attemptStatus === 'Joined' || statusDto.attemptStatus === 'Joining') &&
-      (!statusDto.joiningDate || !statusDto.comments || statusDto.comments.length < 30)
+      (statusDto.attemptStatus === "Joined" ||
+        statusDto.attemptStatus === "Joining") &&
+      (!statusDto.joiningDate ||
+        !statusDto.comments ||
+        statusDto.comments.length < 30)
     ) {
       setLoading(false);
-      setResponseMessage("Joining Date and Call Comments are mandatory for 'Joined' or 'Joining' status, and Comment must be at least 30 characters.");
+      setResponseMessage(
+        "Joining Date and Call Comments are mandatory for 'Joined' or 'Joining' status, and Comment must be at least 30 characters."
+      );
       setSnackbarOpen(true);
-    } else if (statusDto.attemptStatus !== 'NA' && statusDto.comments === 'NA') {
+    } else if (
+      statusDto.attemptStatus !== "NA" &&
+      statusDto.comments === "NA"
+    ) {
       setCommentError(true);
       setLoading(false);
     } else if (statusDto.comments.length < 30) {
@@ -177,8 +190,8 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
         });
       axios
         .post(Urlconstant.url + `api/registerAttendance`, statusDto)
-        .then(() => { })
-        .catch((e) => { });
+        .then(() => {})
+        .catch((e) => {});
     }
   };
   const handleSaveClick = () => {
@@ -247,13 +260,12 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
         <FormControl>
           <InputLabel id="demo-simple-select-label">Attempt Status</InputLabel>
           <Select
-
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             label="Attempt Status"
             name="attemptStatus"
             onChange={handleInputChange}
-            value={attemptStatus || 'NA'}
+            value={attemptStatus || "NA"}
             variant="outlined"
             sx={{
               marginRight: "20px",
@@ -269,12 +281,11 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
           </Select>
         </FormControl>
 
-
         <TextField
           type="date"
           label="Joining Date"
           name="joiningDate"
-          defaultValue={rowData.joiningDate || 'NA'}
+          defaultValue={rowData.joiningDate || "NA"}
           onChange={handleInputChange}
           style={fieldStyle}
           InputLabelProps={{
@@ -283,7 +294,6 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
           inputProps={{
             min: getCurrentDate(),
           }}
-        
         />
 
         <TextField
@@ -301,7 +311,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
           type="date"
           label="Call Back Date"
           name="callBack"
-          defaultValue={rowData.callBack || 'NA'}
+          defaultValue={rowData.callBack || "NA"}
           onChange={handleInputChange}
           style={fieldStyle}
           InputLabelProps={{
@@ -316,7 +326,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
           type="time"
           label="Call Back Time"
           name="callBackTime"
-          defaultValue={rowData.callBackTime || 'NA'}
+          defaultValue={rowData.callBackTime || "NA"}
           onChange={handleInputChange}
           style={fieldStyle}
           InputLabelProps={{
@@ -324,25 +334,30 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
           }}
           id="callBackTime"
         />
+        <FormControl>
+          <InputLabel id="demo-simple-select-label">
+            {count ? <p style={{ color: 'red',paddingTop:"4.5rem",marginLeft:"18rem"}}> {count}/30</p> : ""}
+          </InputLabel>
 
-<div>
-      <TextField
-        label="Comments"
-        name="comments"
-        defaultValue={rowData.comments}
-        onChange={handleInputChange}
-        style={fieldStyle}
-        className="custom-textfield"
-        multiline
-        rows={4}
-        disabled={["RNR", "Wrong Number", "Busy", "Not Reachable"].includes(
+          <TextField
+            labelId="demo-simple-select-label"
+            label="Comments"
+            name="comments"
+            defaultValue={rowData.comments}
+            onChange={handleInputChange}
+            style={{width:350,height:0.5}}
+            className="custom-textfield" // Apply the custom CSS class
+            multiline
+              disabled={["RNR", "Wrong Number", "Busy", "Not Reachable"].includes(
           attemptStatus
         )}
-      />
-      <Typography variant="caption" style={{ marginTop: "8px" }} className="mb-2">
-        Character Count: {commentCharacterCount}/30
-      </Typography>
-    </div>
+            rows={4}
+            id="comments"
+            error={commentError}
+            helperText={commentError ? "Comment is mandatory." : ""}
+          ></TextField>
+        </FormControl>
+
       </DialogContent>
       <DialogActions>
         {loading ? (
