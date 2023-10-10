@@ -22,6 +22,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { red } from "@mui/material/colors";
 import { round } from "lodash";
+import { isDisabled } from "@testing-library/user-event/dist/utils";
 const fieldStyle = { margin: "20px" };
 
 const FollowUpStatus = ({ open, handleClose, rowData }) => {
@@ -31,6 +32,8 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
   const [responseMessage, setResponseMessage] = React.useState("");
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [dropdownData, setDropdownData] = React.useState([]);
+  const [isDisabled, setIdDisabled] = React.useState(true);
+
   const fieldsToCheck = [
     "attemptStatus",
     "joiningDate",
@@ -93,6 +96,10 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
       const disablingOptions = ["RNR", "Wrong Number", "Busy", "Not Reachable"];
       const isDisablingOption = disablingOptions.includes(updatedValue);
 
+      if (disablingOptions.includes(updatedValue)) {
+        setIdDisabled(false);
+      }
+
       const fieldsToDisable = {
         joiningDate: isDisablingOption,
         callDuration: isDisablingOption,
@@ -113,13 +120,10 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
       if (isDisablingOption) {
         setEditedData((prevData) => ({
           ...prevData,
-          comments: "NA", 
+          comments: "NA",
         }));
-        setCommentCharacterCount(0);
-      }
-      else if (name === "comments") {
-        setCommentCharacterCount(updatedValue.length);
-        console.log(updatedValue.length)
+      } else if (name === "comments") {
+        setIdDisabled(true);
       }
     }
   };
@@ -141,29 +145,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
   const attemtedUser = sessionStorage.getItem("userId");
 
   const validateAndSaveData = (statusDto) => {
-    if (
-      (statusDto.attemptStatus === "Joined" ||
-        statusDto.attemptStatus === "Joining") &&
-      (!statusDto.joiningDate ||
-        !statusDto.comments ||
-        statusDto.comments.length < 30)
-    ) {
-      setLoading(false);
-      setResponseMessage(
-        "Joining Date and Call Comments are mandatory for 'Joined' or 'Joining' status, and Comment must be at least 30 characters."
-      );
-      setSnackbarOpen(true);
-    } else if (
-      statusDto.attemptStatus !== "NA" &&
-      statusDto.comments === "NA"
-    ) {
-      setCommentError(true);
-      setLoading(false);
-    } else if (statusDto.comments.length < 30) {
-      setLoading(false);
-      setResponseMessage("Comment must be at least 30 characters.");
-      setSnackbarOpen(true);
-    } else {
+   
       axios
         .post(Urlconstant.url + `api/updateFollowStatus`, statusDto, {
           headers: {
@@ -192,25 +174,42 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
         .post(Urlconstant.url + `api/registerAttendance`, statusDto)
         .then(() => {})
         .catch((e) => {});
-    }
+    
   };
   const handleSaveClick = () => {
+    const statusDto = {
+      ...editedData,
+      attemptedBy: attemtedUser,
+    };
     if (isConfirming) {
+      console.log("wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww");
+
       setLoading(true);
-      const statusDto = {
-        ...editedData,
-        attemptedBy: attemtedUser,
-      };
 
       fieldsToCheck.forEach((field) => {
+
         if (!statusDto[field]) {
+
           statusDto[field] = "NA";
         }
       });
+    
       validateAndSaveData(statusDto);
+
+
     }
   };
-
+  const handleErrr = (e) => {
+    console.log(e.target.value.length);
+    if (e.target.value.length <= 30) {
+      setLoading(false);
+      setResponseMessage("Comment must be at least 30 characters.");
+      setIdDisabled(true);
+    } else {
+      setResponseMessage("");
+      setIdDisabled(false);
+    }
+  };
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle>
@@ -302,10 +301,9 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
           placeholder="mm:ss"
           variant="outlined"
           id="callDuration"
-          defaultValue={rowData.callDuration || ''}
+          defaultValue={rowData.callDuration || ""}
           onChange={handleInputChange}
         />
-
 
         <TextField
           type="date"
@@ -334,36 +332,59 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
           }}
           id="callBackTime"
         />
+
         <FormControl>
           <InputLabel id="demo-simple-select-label">
-            {count ? <p style={{ color: 'red',paddingTop:"4.5rem",marginLeft:"18rem"}}> {count}/30</p> : ""}
+            {count ? (
+              <p
+                style={{
+                  color: "red",
+                  paddingTop: "4.5rem",
+                  marginLeft: "18rem",
+                }}
+              >
+                {" "}
+                {count}/30
+              </p>
+            ) : (
+              ""
+            )}
           </InputLabel>
 
           <TextField
             labelId="demo-simple-select-label"
             label="Comments"
             name="comments"
+            onBlur={handleErrr}
             defaultValue={rowData.comments}
             onChange={handleInputChange}
-            style={{width:350,height:0.5}}
+            style={{ width: 350, height: 0.5 }}
             className="custom-textfield" // Apply the custom CSS class
             multiline
-              disabled={["RNR", "Wrong Number", "Busy", "Not Reachable"].includes(
-          attemptStatus
-        )}
+            disabled={["RNR", "Wrong Number", "Busy", "Not Reachable"].includes(
+              attemptStatus
+            )}
             rows={4}
             id="comments"
             error={commentError}
             helperText={commentError ? "Comment is mandatory." : ""}
           ></TextField>
+          {responseMessage ? (
+            <p style={{ color: "red", marginTop: "90px" }}>{responseMessage}</p>
+          ) : (
+            ""
+          )}
         </FormControl>
-
       </DialogContent>
       <DialogActions>
         {loading ? (
           <CircularProgress size={20} />
         ) : (
-          <Button onClick={handleEditClick} color="primary">
+          <Button
+            disabled={isDisabled}
+            onClick={handleEditClick}
+            color="primary"
+          >
             Add
           </Button>
         )}
@@ -373,7 +394,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
         open={snackbarOpen}
         autoHideDuration={3000000}
         onClose={handleSnackbarClose}
-        message={responseMessage}
+        // message={responseMessage}
       />
 
       <Dialog open={isConfirming} onClose={handleClose} fullWidth maxWidth="xs">

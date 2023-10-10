@@ -116,12 +116,10 @@ const EditModal = ({ open, handleClose, rowData }) => {
       .catch((error) => {});
   };
 
-
-  
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    const [section, field] = name.split('.');
-    if (section === 'courseInfo' && field === 'course') {
+    const [section, field] = name.split(".");
+    if (section === "courseInfo" && field === "course") {
       setSelectedValue(value);
       fetchData(value);
     }
@@ -138,7 +136,8 @@ const EditModal = ({ open, handleClose, rowData }) => {
       } else {
         setEmailError("");
       }
-    } else if (name === "basicInfo.contactNumber") { // Update the name to target the correct field
+    } else if (name === "basicInfo.contactNumber") {
+      // Update the name to target the correct field
       if (!value) {
         setPhoneNumberError("Phone number is required");
       } else if (!/^\d+$/.test(value)) {
@@ -247,7 +246,6 @@ const EditModal = ({ open, handleClose, rowData }) => {
   const handleSaveClick = () => {
     if (!isConfirming || loading) {
       setIsConfirming(false);
-      return;
     }
     const updatedData = {
       ...editedData,
@@ -286,6 +284,12 @@ const EditModal = ({ open, handleClose, rowData }) => {
             handleCloseForm();
           }, 1000);
         }
+
+        if (emailValue === "" && emailValue != null) {
+          navigate(`/x-workz/profile/${rowData.basicInfo.email}`);
+          return;
+        }
+
         navigate(`/x-workz/profile/${emailValue}`);
       })
       .catch((error) => {
@@ -328,7 +332,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
         >
           <GridCloseIcon />
         </IconButton>
-      
+
         <TextField
           label="Email"
           name="email"
