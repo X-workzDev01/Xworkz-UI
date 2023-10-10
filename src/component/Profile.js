@@ -202,14 +202,14 @@ const Profile = () => {
                         <Button variant="outlined" startIcon={<ModeEditIcon />} onClick={() => handleEditClick(profileData)}>
                             Edit Profile
                         </Button>
-                        <Button
+                        {/* <Button
                             variant="outlined"
                             startIcon={<VisibilityOutlined />}
                             component={Link}
                             to={`/x-workz/attenance/${profileData.basicInfo.email}`}
                         >
                             View Attendance
-                        </Button>
+                        </Button> */}
 
 
                     </div>
