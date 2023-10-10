@@ -1,64 +1,72 @@
-import React from 'react';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import axios from 'axios';
-import Snackbar from '@mui/material/Snackbar';
-import CircularProgress from '@mui/material/CircularProgress';
-import { Urlconstant } from '../constant/Urlconstant';
-import { Select, MenuItem, FormControl, InputLabel, IconButton, Alert } from '@mui/material';
-import { GridCloseIcon } from '@mui/x-data-grid';
+import React from "react";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import axios from "axios";
+import Snackbar from "@mui/material/Snackbar";
+import CircularProgress from "@mui/material/CircularProgress";
+import { Urlconstant } from "../constant/Urlconstant";
+import {
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  IconButton,
+  Alert,
+} from "@mui/material";
+import { GridCloseIcon } from "@mui/x-data-grid";
 
-import './Fields.css';
-import { useNavigate } from 'react-router-dom';
+import "./Fields.css";
+import { useNavigate } from "react-router-dom";
 
-const fieldStyle = { margin: '20px' };
+const fieldStyle = { margin: "20px" };
 
-const EditModal = ({ open, handleClose, rowData}) => {
-
+const EditModal = ({ open, handleClose, rowData }) => {
   const navigate = useNavigate();
   const email = sessionStorage.getItem("userId");
   const [isConfirming, setIsConfirming] = React.useState(false);
-  const [selectedValue, setSelectedValue] = React.useState(' ');
+  const [selectedValue, setSelectedValue] = React.useState(" ");
   const [editedData, setEditedData] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
-  const [responseMessage, setResponseMessage] = React.useState('');
+  const [responseMessage, setResponseMessage] = React.useState("");
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [dropdown, setDropDown] = React.useState([]);
   const [batchDetails, setBatchDetails] = React.useState("");
-  const [emailCheck, setEmailCheck] =React.useState(null);
+  const [emailCheck, setEmailCheck] = React.useState(null);
   const [numberCheck, setNumberCheck] = React.useState(null);
   const [emailError, setEmailError] = React.useState(null);
   const [phoneNumberError, setPhoneNumberError] = React.useState("");
   const [verifyHandaleEmail, setverifyHandleEmail] = React.useState("");
-  const [verifyHandaleEmailerror, setverifyHandleEmailError] = React.useState("");
+  const [verifyHandaleEmailerror, setverifyHandleEmailError] =
+    React.useState("");
 
   const [formData, setFormData] = React.useState({
-    branch: '',
-    trainerName: '',
-    batchType: '',
-    course: '',
-    batchTiming: '',
-    startTime: '',
+    branch: "",
+    trainerName: "",
+    batchType: "",
+    course: "",
+    batchTiming: "",
+    startTime: "",
   });
 
   React.useEffect(() => {
     setEditedData(rowData);
   }, [rowData]);
 
-
-
   React.useEffect(() => {
-    axios.get(Urlconstant.url + 'utils/dropdown', {
-      headers: {
-        'spreadsheetId': Urlconstant.spreadsheetId
-      }
-    }).then(response => {
-      setDropDown(response.data)
-    }).catch(error => { })
+    axios
+      .get(Urlconstant.url + "utils/dropdown", {
+        headers: {
+          spreadsheetId: Urlconstant.spreadsheetId,
+        },
+      })
+      .then((response) => {
+        setDropDown(response.data);
+      })
+      .catch((error) => {});
     axios
       .get(Urlconstant.url + "api/getCourseName?status=Active", {
         headers: {
@@ -72,7 +80,7 @@ const EditModal = ({ open, handleClose, rowData}) => {
           fetchData(selectedValue); // Call fetchData with the selectedValue
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   }, []);
   React.useEffect(() => {
     if (rowData && rowData.courseInfo) {
@@ -107,12 +115,11 @@ const EditModal = ({ open, handleClose, rowData}) => {
       .catch((error) => {});
   };
 
-
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    console.log("name:",name)
-    const [section, field] = name.split('.');
-    if (section === 'courseInfo' && field === 'course') {
+    console.log("name:", name);
+    const [section, field] = name.split(".");
+    if (section === "courseInfo" && field === "course") {
       setSelectedValue(value);
       fetchData(value);
     }
@@ -125,9 +132,7 @@ const EditModal = ({ open, handleClose, rowData}) => {
         setEmailError("Invalid email address");
         setverifyHandleEmail("");
         setEmailCheck("");
-
       } else {
-        validEmail(value);
         setEmailError("");
       }
     } else if (name === "contactNumber") {
@@ -142,16 +147,13 @@ const EditModal = ({ open, handleClose, rowData}) => {
       }
     }
 
-
     setEditedData((prevData) => ({
       ...prevData,
       [section]: {
         ...prevData[section],
         [field]: value,
       },
-
     }));
-
   };
   const handleEmail = (email) => {
     validateEmail(email);
@@ -185,7 +187,7 @@ const EditModal = ({ open, handleClose, rowData}) => {
       setverifyHandleEmail("");
       setEmailCheck("");
     } else {
-      setEmailError("")
+      setEmailError("");
     }
   };
 
@@ -217,7 +219,7 @@ const EditModal = ({ open, handleClose, rowData}) => {
     axios
       .get(
         Urlconstant.url +
-        `api/contactNumberCheck?contactNumber=${formData.contactNumber}`,
+          `api/contactNumberCheck?contactNumber=${formData.contactNumber}`,
         {
           headers: {
             spreadsheetId: Urlconstant.spreadsheetId,
@@ -240,10 +242,8 @@ const EditModal = ({ open, handleClose, rowData}) => {
     setSnackbarOpen(false);
   };
 
-  
-  
   const handleSaveClick = () => {
-    if (!isConfirming||loading) {
+    if (!isConfirming || loading) {
       setIsConfirming(false);
       return;
     }
@@ -262,15 +262,19 @@ const EditModal = ({ open, handleClose, rowData}) => {
     setLoading(true);
 
     axios
-      .put(Urlconstant.url + `api/update?email=${rowData.basicInfo.email}`, updatedData, {
-        headers: {
-          'Content-Type': 'application/json',
-          spreadsheetId: Urlconstant.spreadsheetId,
-        },
-      })
+      .put(
+        Urlconstant.url + `api/update?email=${rowData.basicInfo.email}`,
+        updatedData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            spreadsheetId: Urlconstant.spreadsheetId,
+          },
+        }
+      )
       .then((response) => {
         setLoading(false);
-        setResponseMessage('Data updated successfully!');
+        setResponseMessage("Data updated successfully!");
         setSnackbarOpen(true);
         setIsConfirming(false);
         if (response.status === 200) {
@@ -282,12 +286,10 @@ const EditModal = ({ open, handleClose, rowData}) => {
       })
       .catch((error) => {
         setLoading(false);
-        setResponseMessage('Error updating data. Please try again.');
+        setResponseMessage("Error updating data. Please try again.");
         setSnackbarOpen(true);
-
       });
   };
-
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
@@ -295,8 +297,7 @@ const EditModal = ({ open, handleClose, rowData}) => {
 
   const handleConfirmBoxClose = () => {
     setIsConfirming(false);
-
-  }
+  };
 
   const handleCloseForm = () => {
     setResponseMessage("");
@@ -304,7 +305,10 @@ const EditModal = ({ open, handleClose, rowData}) => {
     handleClose();
   };
 
-  const isDisabled =verifyHandaleEmailerror || numberCheck || emailCheck ;
+  const handleVerifyEmail = (event) => {
+    verifyEmail(event.target.value);
+  };
+  const isDisabled = verifyHandaleEmailerror || numberCheck || emailCheck;
 
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
@@ -316,7 +320,7 @@ const EditModal = ({ open, handleClose, rowData}) => {
           onClick={handleClose}
           edge="start"
           aria-label="close"
-          style={{ position: 'absolute', right: '8px', top: '8px' }}
+          style={{ position: "absolute", right: "8px", top: "8px" }}
         >
           <GridCloseIcon />
         </IconButton>
@@ -326,23 +330,24 @@ const EditModal = ({ open, handleClose, rowData}) => {
           name="email"
           defaultValue={rowData.basicInfo.email}
           onChange={handleInputChange}
+          onBlur={handleVerifyEmail}
           style={fieldStyle}
           // InputProps={{
           //   readOnly: true,
           // }}
         />
         {verifyHandaleEmail ? (
-              <Alert severity="success">{verifyHandaleEmail}</Alert>
-            ) : (
-              " "
-            )}
-            {verifyHandaleEmailerror ? (
-              <Alert severity="error">{verifyHandaleEmailerror}</Alert>
-            ) : (
-              " "
-            )}
-            {emailError ? <Alert severity="error">{emailError} </Alert> : " "}
-            {emailCheck ? <Alert severity="error">{emailCheck}</Alert> : " "}
+          <Alert severity="success">{verifyHandaleEmail}</Alert>
+        ) : (
+          " "
+        )}
+        {verifyHandaleEmailerror ? (
+          <Alert severity="error">{verifyHandaleEmailerror}</Alert>
+        ) : (
+          " "
+        )}
+        {emailError ? <Alert severity="error">{emailError} </Alert> : " "}
+        {emailCheck ? <Alert severity="error">{emailCheck}</Alert> : " "}
         <TextField
           label="Name"
           name="basicInfo.traineeName"
@@ -358,10 +363,8 @@ const EditModal = ({ open, handleClose, rowData}) => {
           style={fieldStyle}
           onBlur={handleNumberChange}
         />
-        {phoneNumberError && (
-              <Alert severity="error">{phoneNumberError}</Alert>
-            )}
-            {numberCheck && <Alert severity="error">{numberCheck}</Alert>}
+        {phoneNumberError && <Alert severity="error">{phoneNumberError}</Alert>}
+        {numberCheck && <Alert severity="error">{numberCheck}</Alert>}
         <FormControl>
           <InputLabel id="demo-simple-select-label">Qualification</InputLabel>
           <Select
@@ -373,15 +376,15 @@ const EditModal = ({ open, handleClose, rowData}) => {
             onChange={handleInputChange}
             style={fieldStyle}
             sx={{
-              marginRight: '20px',
-              width: '300px',
+              marginRight: "20px",
+              width: "300px",
             }}
-
           >
-            {
-              dropdown.qualification.map((item, index) => (
-                <MenuItem value={item} key={index}>{item}</MenuItem>
-              ))}
+            {dropdown.qualification.map((item, index) => (
+              <MenuItem value={item} key={index}>
+                {item}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
         <FormControl>
@@ -395,15 +398,15 @@ const EditModal = ({ open, handleClose, rowData}) => {
             onChange={handleInputChange}
             style={fieldStyle}
             sx={{
-              marginRight: '20px',
-              width: '300px',
+              marginRight: "20px",
+              width: "300px",
             }}
           >
-            {
-              dropdown.stream.map((item, index) => (
-                <MenuItem value={item} key={index}>{item}</MenuItem>
-              ))}
-
+            {dropdown.stream.map((item, index) => (
+              <MenuItem value={item} key={index}>
+                {item}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
         <FormControl>
@@ -417,16 +420,16 @@ const EditModal = ({ open, handleClose, rowData}) => {
             onChange={handleInputChange}
             style={fieldStyle}
             sx={{
-              marginRight: '20px',
-              width: '300px', // Adjust padding for a smaller size
+              marginRight: "20px",
+              width: "300px", // Adjust padding for a smaller size
               // Adjust font size for a smaller size
             }}
           >
-            {
-              dropdown.yearofpass.map((item, index) => (
-                <MenuItem value={item} key={index}>{item}</MenuItem>
-              ))}
-
+            {dropdown.yearofpass.map((item, index) => (
+              <MenuItem value={item} key={index}>
+                {item}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
         <FormControl>
@@ -440,17 +443,16 @@ const EditModal = ({ open, handleClose, rowData}) => {
             onChange={handleInputChange}
             style={fieldStyle}
             sx={{
-              marginRight: '20px',
-              width: '500px', // Adjust padding for a smaller size
+              marginRight: "20px",
+              width: "500px", // Adjust padding for a smaller size
               // Adjust font size for a smaller size
             }}
-
           >
-            {
-              dropdown.college.map((item, index) => (
-                <MenuItem value={item} key={index}>{item}</MenuItem>
-              ))}
-
+            {dropdown.college.map((item, index) => (
+              <MenuItem value={item} key={index}>
+                {item}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
         <FormControl>
@@ -464,51 +466,50 @@ const EditModal = ({ open, handleClose, rowData}) => {
             onChange={handleInputChange}
             style={fieldStyle}
             sx={{
-              marginRight: '20px',
-              width: '300px', // Adjust padding for a smaller size
+              marginRight: "20px",
+              width: "300px", // Adjust padding for a smaller size
               // Adjust font size for a smaller size
             }}
           >
-            {
-              batchDetails.map((item, index) => (
-                <MenuItem value={item} key={index}>{item}</MenuItem>
-              ))}
-
-
+            {batchDetails.map((item, index) => (
+              <MenuItem value={item} key={index}>
+                {item}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
         <TextField
           label="Branch"
           name="courseInfo.branch"
-          value={formData.branch || ''}
+          value={formData.branch || ""}
           onChange={handleInputChange}
           style={fieldStyle}
         />
         <TextField
           label="Batch Type"
           name="courseInfo.batchType"
-          value={formData.batchType || ''}
+          value={formData.batchType || ""}
           onChange={handleInputChange}
           style={fieldStyle}
         />
         <TextField
           label="Trainer Name"
           name="courseInfo.trainerName"
-          value={formData.trainerName || ''}
+          value={formData.trainerName || ""}
           onChange={handleInputChange}
           style={fieldStyle}
         />
         <TextField
           label="Batch Timing"
           name="courseInfo.batchTiming"
-          value={formData.batchTiming || ''}
+          value={formData.batchTiming || ""}
           onChange={handleInputChange}
           style={fieldStyle}
         />
         <TextField
           label="Start Time"
           name="courseInfo.startTime"
-          value={formData.startTime || ''}
+          value={formData.startTime || ""}
           onChange={handleInputChange}
           style={fieldStyle}
         />
@@ -540,7 +541,6 @@ const EditModal = ({ open, handleClose, rowData}) => {
         />
         <TextField
           label="Referal Contact Number"
-
           name="othersDto.referalContactNumber"
           defaultValue={rowData.othersDto.referalContactNumber}
           onChange={handleInputChange}
@@ -548,9 +548,7 @@ const EditModal = ({ open, handleClose, rowData}) => {
         />
 
         <TextField
-
           label="Comments"
-
           name="othersDto.comments"
           defaultValue={rowData.othersDto.comments}
           onChange={handleInputChange}
@@ -569,7 +567,9 @@ const EditModal = ({ open, handleClose, rowData}) => {
         />
 
         <FormControl>
-          <InputLabel id="demo-simple-select-label">preferred Location</InputLabel>
+          <InputLabel id="demo-simple-select-label">
+            preferred Location
+          </InputLabel>
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
@@ -579,19 +579,22 @@ const EditModal = ({ open, handleClose, rowData}) => {
             defaultValue={rowData.othersDto.preferredLocation}
             variant="outlined"
             sx={{
-              marginRight: '20px',
-              width: '200px', // Adjust padding for a smaller size
-              fontSize: '20px', // Adjust font size for a smaller size
+              marginRight: "20px",
+              width: "200px", // Adjust padding for a smaller size
+              fontSize: "20px", // Adjust font size for a smaller size
             }}
           >
             {dropdown.branchname.map((item, index) => (
-              <MenuItem value={item} key={index}>{item}</MenuItem>
+              <MenuItem value={item} key={index}>
+                {item}
+              </MenuItem>
             ))}
-
           </Select>
         </FormControl>
         <FormControl>
-          <InputLabel id="demo-simple-select-label">preferred Class Type</InputLabel>
+          <InputLabel id="demo-simple-select-label">
+            preferred Class Type
+          </InputLabel>
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
@@ -601,33 +604,32 @@ const EditModal = ({ open, handleClose, rowData}) => {
             defaultValue={rowData.othersDto.preferredClassType}
             variant="outlined"
             sx={{
-              marginRight: '20px',
-              width: '200px', // Adjust padding for a smaller size
-              fontSize: '20px', // Adjust font size for a smaller size
+              marginRight: "20px",
+              width: "200px", // Adjust padding for a smaller size
+              fontSize: "20px", // Adjust font size for a smaller size
             }}
           >
             {dropdown.batch.map((item, index) => (
-              <MenuItem value={item} key={index}>{item}</MenuItem>
+              <MenuItem value={item} key={index}>
+                {item}
+              </MenuItem>
             ))}
-
           </Select>
         </FormControl>
-
-
       </DialogContent>
 
       <DialogActions>
-
         {loading ? (
-
-
           <CircularProgress size={20} /> // Show loading spinner
         ) : (
-          <Button onClick={handleEditClick} disabled={isDisabled} color="primary">
+          <Button
+            onClick={handleEditClick}
+            disabled={isDisabled}
+            color="primary"
+          >
             Edit
           </Button>
         )}
-
       </DialogActions>
 
       {/* Snackbar for response message */}
@@ -641,17 +643,14 @@ const EditModal = ({ open, handleClose, rowData}) => {
       {/* Confirmation Dialog */}
       <Dialog open={isConfirming} onClose={handleClose} fullWidth maxWidth="xs">
         <DialogTitle>Confirm Update</DialogTitle>
-        <DialogContent>
-          Are you sure you want to update the data?
-        </DialogContent>
+        <DialogContent>Are you sure you want to update the data?</DialogContent>
         <DialogActions>
-
           <IconButton
             color="inherit"
             onClick={() => setIsConfirming(false)}
             edge="start"
             aria-label="close"
-            style={{ position: 'absolute', right: '8px', top: '8px' }}
+            style={{ position: "absolute", right: "8px", top: "8px" }}
           >
             <GridCloseIcon />
           </IconButton>

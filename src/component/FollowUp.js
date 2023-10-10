@@ -31,8 +31,8 @@ export default function FollowUp() {
     rowCount: 0,
   });
   const [loading, setLoading] = useState(false);
-  const [searchValue, setSearchValue] = useState("New");
-  const [name, setName] = useState("");
+  const [searchValue, setSearchValue] = useState("NEW");
+  const [name, setName] = useState("status");
 
   React.useEffect(() => {
     setLoading(true);
