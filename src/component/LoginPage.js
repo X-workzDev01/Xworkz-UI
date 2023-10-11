@@ -24,7 +24,7 @@ const LoginPage = (props) => {
   const [otpError, setOtpError] = useState();
   const [isSending, setIsSending] = useState(false);
   const [effect, setEffect] = useState(false);
-  
+
   const handleEmailChange = (event) => {
     //storing
     setEmail(event.target.value);
@@ -32,11 +32,8 @@ const LoginPage = (props) => {
 
   useEffect(() => {
     if (effect) {
-      console.log("Running use effect");
     }
   }, [effect]);
-
- 
 
   const handlePasswordChange = (event) => {
     setPassword(event.target.value);
@@ -55,12 +52,13 @@ const LoginPage = (props) => {
         })
         .then((response) => {
           props.get(true);
-          console.log("sucess");
-
-          setOtpError("Wrong Otp entered");
+          console.log(response.data);
+          if (response.data === "OTP Wrong") {
+            setOtpError("Wrong Otp entered");
+          } else {
+            navigate("/x-workz/display", { state: { email } });
+          }
           setEffect(true);
-
-          navigate("/x-workz/display", { state: { email } });
         })
         .catch((error) => {});
     }
@@ -146,6 +144,7 @@ const LoginPage = (props) => {
             {displayMessage && <Alert severity="info">{displayMessage}</Alert>}
             <TextField
               label="OTP"
+              disabled={enable}
               type="password"
               value={password}
               onChange={handlePasswordChange}

@@ -531,7 +531,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
             required
             margin="normal"
             variant="outlined"
-            style={fieldStyle}
+            style={{width:"12rem"}}
           >
             {dropdown.offered.map((item, index) => (
               <MenuItem value={item} key={index}>

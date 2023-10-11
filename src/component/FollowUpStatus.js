@@ -15,14 +15,10 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  Typography,
 } from "@mui/material";
 import { GridCloseIcon } from "@mui/x-data-grid";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { red } from "@mui/material/colors";
-import { round } from "lodash";
-import { isDisabled } from "@testing-library/user-event/dist/utils";
 const fieldStyle = { margin: "20px" };
 
 const FollowUpStatus = ({ open, handleClose, rowData }) => {
@@ -145,36 +141,34 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
   const attemtedUser = sessionStorage.getItem("userId");
 
   const validateAndSaveData = (statusDto) => {
-   
-      axios
-        .post(Urlconstant.url + `api/updateFollowStatus`, statusDto, {
-          headers: {
-            "Content-Type": "application/json",
-            spreadsheetId: Urlconstant.spreadsheetId,
-          },
-        })
-        .then((response) => {
-          setLoading(false);
-          setResponseMessage("Data updated successfully!");
-          setSnackbarOpen(true);
-          setIsConfirming(false);
-          if (response.status === 200) {
-            setTimeout(() => {
-              handleCloseForm();
-            }, 1000);
-          }
-          navigate(`/x-workz/profile/${statusDto.basicInfo.email}`);
-        })
-        .catch((error) => {
-          setLoading(false);
-          setResponseMessage("Error updating data. Please try again.");
-          setSnackbarOpen(true);
-        });
-      axios
-        .post(Urlconstant.url + `api/registerAttendance`, statusDto)
-        .then(() => {})
-        .catch((e) => {});
-    
+    axios
+      .post(Urlconstant.url + `api/updateFollowStatus`, statusDto, {
+        headers: {
+          "Content-Type": "application/json",
+          spreadsheetId: Urlconstant.spreadsheetId,
+        },
+      })
+      .then((response) => {
+        setLoading(false);
+        setResponseMessage("Data updated successfully!");
+        setSnackbarOpen(true);
+        setIsConfirming(false);
+        if (response.status === 200) {
+          setTimeout(() => {
+            handleCloseForm();
+          }, 1000);
+        }
+        navigate(`/x-workz/profile/${statusDto.basicInfo.email}`);
+      })
+      .catch((error) => {
+        setLoading(false);
+        setResponseMessage("Error updating data. Please try again.");
+        setSnackbarOpen(true);
+      });
+    axios
+      .post(Urlconstant.url + `api/registerAttendance`, statusDto)
+      .then(() => {})
+      .catch((e) => {});
   };
   const handleSaveClick = () => {
     const statusDto = {
@@ -182,21 +176,15 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
       attemptedBy: attemtedUser,
     };
     if (isConfirming) {
-      console.log("wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww");
-
       setLoading(true);
 
       fieldsToCheck.forEach((field) => {
-
         if (!statusDto[field]) {
-
           statusDto[field] = "NA";
         }
       });
-    
+      setCount(0);
       validateAndSaveData(statusDto);
-
-
     }
   };
   const handleErrr = (e) => {
@@ -338,7 +326,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
             {count ? (
               <p
                 style={{
-                  color: "red",
+                  color: "green",
                   paddingTop: "4.5rem",
                   marginLeft: "18rem",
                 }}
