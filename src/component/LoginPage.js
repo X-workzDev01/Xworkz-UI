@@ -35,6 +35,7 @@ const LoginPage = (props) => {
     }
   }, [effect]);
 
+
   const handlePasswordChange = (event) => {
     setPassword(event.target.value);
   };
@@ -59,6 +60,7 @@ const LoginPage = (props) => {
             navigate("/x-workz/display", { state: { email } });
           }
           setEffect(true);
+
         })
         .catch((error) => {});
     }
@@ -91,6 +93,7 @@ const LoginPage = (props) => {
         setIsSending(false);
       });
   };
+
   return (
     <div>
       <Navbar />
@@ -170,6 +173,7 @@ const LoginPage = (props) => {
           </Form>
         </Typography>
       </Container>
+
     </div>
   );
 };

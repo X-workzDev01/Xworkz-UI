@@ -19,6 +19,8 @@ import {
 import { GridCloseIcon } from "@mui/x-data-grid";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { red } from "@mui/material/colors";
+import { round } from "lodash";
 const fieldStyle = { margin: "20px" };
 
 const FollowUpStatus = ({ open, handleClose, rowData }) => {
@@ -41,6 +43,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
   const [attemptStatus, setAttemptStatus] = useState("");
   const [commentError, setCommentError] = useState(false);
   const [count, setCount] = useState(0);
+
   const navigate = useNavigate();
   const getCurrentDate = () => {
     const now = new Date();
@@ -169,6 +172,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
       .post(Urlconstant.url + `api/registerAttendance`, statusDto)
       .then(() => {})
       .catch((e) => {});
+
   };
   const handleSaveClick = () => {
     const statusDto = {
@@ -260,7 +264,9 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
               fontSize: "20px",
             }}
           >
-            {dropdownData.status.map((item, index) => (
+            {dropdownData.status
+            .filter(item => item !== 'Enquiry' && item !== 'New')
+            .map((item, index) => (
               <MenuItem value={item} key={index}>
                 {item}
               </MenuItem>
@@ -352,6 +358,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
             disabled={["RNR", "Wrong Number", "Busy", "Not Reachable"].includes(
               attemptStatus
             )}
+
             rows={4}
             id="comments"
             error={commentError}
@@ -363,6 +370,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
             ""
           )}
         </FormControl>
+
       </DialogContent>
       <DialogActions>
         {loading ? (

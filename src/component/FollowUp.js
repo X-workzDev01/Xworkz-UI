@@ -34,6 +34,7 @@ export default function FollowUp() {
   const [searchValue, setSearchValue] = useState("NEW");
   const [name, setName] = useState("status");
 
+
   React.useEffect(() => {
     setLoading(true);
     searchServerRows(paginationModel.page, paginationModel.pageSize, name).then(
