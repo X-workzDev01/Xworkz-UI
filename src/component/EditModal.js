@@ -235,7 +235,6 @@ const EditModal = ({ open, handleClose, rowData }) => {
         }
       })
       .catch((error) => {
-        console.log(error);
       });
   };
   const handleEditClick = () => {

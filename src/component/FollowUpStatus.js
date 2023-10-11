@@ -21,6 +21,14 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { red } from "@mui/material/colors";
 import { round } from "lodash";
+import dayjs from 'dayjs';
+import 'dayjs/locale/de';
+import 'dayjs/locale/en-gb';
+import Stack from '@mui/material/Stack';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 const fieldStyle = { margin: "20px" };
 
 const FollowUpStatus = ({ open, handleClose, rowData }) => {
@@ -68,7 +76,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
 
         setDropdownData({ ...response.data, status: filteredStatus });
       })
-      .catch((error) => {});
+      .catch((error) => { });
   }, []);
 
   React.useEffect(() => {
@@ -91,39 +99,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
 
     if (name === "attemptStatus") {
       setAttemptStatus(updatedValue);
-
-      const disablingOptions = ["RNR", "Wrong Number", "Busy", "Not Reachable"];
-      const isDisablingOption = disablingOptions.includes(updatedValue);
-
-      if (disablingOptions.includes(updatedValue)) {
-        setIdDisabled(false);
-      }
-
-      const fieldsToDisable = {
-        joiningDate: isDisablingOption,
-        callDuration: isDisablingOption,
-        callBack: isDisablingOption,
-        callBackTime: isDisablingOption,
-      };
-
-      for (const field in fieldsToDisable) {
-        const element = document.getElementById(field);
-        if (element) {
-          if (fieldsToDisable[field]) {
-            element.setAttribute("disabled", "true");
-          } else {
-            element.removeAttribute("disabled");
-          }
-        }
-      }
-      if (isDisablingOption) {
-        setEditedData((prevData) => ({
-          ...prevData,
-          comments: "NA",
-        }));
-      } else if (name === "comments") {
-        setIdDisabled(true);
-      }
+      setIdDisabled(true);
     }
   };
 
@@ -170,8 +146,8 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
       });
     axios
       .post(Urlconstant.url + `api/registerAttendance`, statusDto)
-      .then(() => {})
-      .catch((e) => {});
+      .then(() => { })
+      .catch((e) => { });
 
   };
   const handleSaveClick = () => {
@@ -193,7 +169,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
   };
   const handleErrr = (e) => {
     console.log(e.target.value.length);
-    if (e.target.value.length <= 30) {
+    if (e.target.value.length < 30) {
       setLoading(false);
       setResponseMessage("Comment must be at least 30 characters.");
       setIdDisabled(true);
@@ -265,12 +241,12 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
             }}
           >
             {dropdownData.status
-            .filter(item => item !== 'Enquiry' && item !== 'New')
-            .map((item, index) => (
-              <MenuItem value={item} key={index}>
-                {item}
-              </MenuItem>
-            ))}
+              .filter(item => item !== 'Enquiry' && item !== 'New')
+              .map((item, index) => (
+                <MenuItem value={item} key={index}>
+                  {item}
+                </MenuItem>
+              ))}
           </Select>
         </FormControl>
 
@@ -314,18 +290,28 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
           }}
           id="callBack"
         />
-        <TextField
-          type="time"
-          label="Call Back Time"
-          name="callBackTime"
-          defaultValue={rowData.callBackTime || "NA"}
-          onChange={handleInputChange}
-          style={fieldStyle}
-          InputLabelProps={{
-            shrink: true,
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <TimePicker
+          InputProps={{
+            style: {
+              borderColor: 'black', 
+              marginBottom: '16px', 
+            },
           }}
-          id="callBackTime"
-        />
+            label="Call Back Time"
+            name="callBackTime"
+            value={(rowData.callBackTime || "NA")}
+            onChange={(newValue) => {
+              setEditedData((prevData) => ({
+                ...prevData,
+                callBackTime: newValue.format("HH:MM"),
+              }));
+            }}
+            style={fieldStyle}
+            ampm
+            id="callBackTime"
+          />
+        </LocalizationProvider>
 
         <FormControl>
           <InputLabel id="demo-simple-select-label">
@@ -355,7 +341,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
             style={{ width: 350, height: 0.5 }}
             className="custom-textfield" // Apply the custom CSS class
             multiline
-            disabled={["RNR", "Wrong Number", "Busy", "Not Reachable"].includes(
+            disabled={["RNR", "Wrong Number", "Busy", "Not Reachable","Incoming call not available"].includes(
               attemptStatus
             )}
 
@@ -390,7 +376,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
         open={snackbarOpen}
         autoHideDuration={3000000}
         onClose={handleSnackbarClose}
-        // message={responseMessage}
+      // message={responseMessage}
       />
 
       <Dialog open={isConfirming} onClose={handleClose} fullWidth maxWidth="xs">
