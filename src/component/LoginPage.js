@@ -83,7 +83,7 @@ const LoginPage = (props) => {
         }
         setEnable(false);
         setDisplayMessage(
-          "OTP sent to your mail ID it will Expire with 10 Minutes"
+          "OTP has been sent to your mail ID it will Expire within 10 Minutes"
         );
       })
       .catch((error) => {
