@@ -10,6 +10,7 @@ import Profile from "./Profile";
 import { Link } from "react-router-dom";
 import Header from "./Header";
 import { PersonOutline } from "@mui/icons-material";
+import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 
 function loadServerRows(page, pageSize) {
   const startingIndex = page * pageSize;
@@ -118,7 +119,7 @@ function debounce(func, delay) {
 
 
 export default function ControlledSelectionServerPaginationGrid() {
-  const initialPageSize = 25; 
+  const initialPageSize = 25;
   const [paginationModel, setPaginationModel] = React.useState({
     page: 0,
     pageSize: initialPageSize,
@@ -134,6 +135,9 @@ export default function ControlledSelectionServerPaginationGrid() {
   const [autocompleteOptions, setAutocompleteOptions] = React.useState([]);
   const [isModalOpen, setModalOpen] = React.useState(false);
   const [editedRowData, setEditedRowData] = React.useState(null);
+  const [courseName, setCourseName] = React.useState("");
+  const [courseDropdown, setCourseDropdown] = React.useState("");
+
 
   const handleEditClick = (row) => {
     setEditedRowData(row);
@@ -265,6 +269,64 @@ export default function ControlledSelectionServerPaginationGrid() {
     };
   };
 
+  React.useEffect(() => {
+    getActiveCourse();
+  }, []); 
+  
+
+  const getActiveCourse = () => {
+    axios
+      .get(Urlconstant.url + "api/getCourseName?status=Active", {
+        headers: {
+          spreadsheetId: Urlconstant.spreadsheetId,
+        },
+      })
+
+      .then((response) => {
+        setCourseDropdown(response.data);
+      })
+      .catch((error) => { });
+  }
+
+  // const handleCourseChange = (event) => {
+  //   c//onst courseVaue=event.target.value;
+  //   //setCourseName(courseVaue); 
+  //   //getTraineeDetailsByCourse(courseVaue);
+  // }
+    const handleCourseChange = (event) => {
+      const courseValue = event.target.value;
+      setCourseName(courseValue);
+      getTraineeDetailsByCourse(courseValue);
+      
+    };
+  
+  const getTraineeDetailsByCourse = async (courseValue) => {
+    try {
+      console.log("getTraineeDetailsByCourse " + courseValue);
+      const apiUrl = Urlconstant.url + `api/traineeDetails?courseName=${courseValue}`;
+      const requestOptions = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          spreadsheetId: Urlconstant.spreadsheetId,
+        },
+      };
+      const response = await axios.get(apiUrl, requestOptions);
+      console.log(response.data);
+      setGridData({
+        rows: response.data.map((row) => ({
+          id: row.id.toString(),
+          ...row,
+        })),
+        rowCount: response.data.length,
+      });
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setGridData({ rows: [], rowCount: 0 });
+    }
+    
+  };
+  
   // Inside your component:
   React.useEffect(() => {
     refreshPageEveryTime();
@@ -398,9 +460,38 @@ export default function ControlledSelectionServerPaginationGrid() {
             </li>
           )}
         />
+        <FormControl>
+          <InputLabel id="demo-simple-select-label">Select Course</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            label="Course Name"
+            name="courseName"
+            value={courseName}
+            required
+            variant="outlined"
+            sx={{
+              marginRight: "10px",
+              width: "200px",
+              fontSize: "12px",
+            }}
+            onChange={handleCourseChange}
+          >
+            {Array.isArray(courseDropdown) ? (
+              courseDropdown.map((item, k) => (
+                <MenuItem value={item} key={k}>
+                  {item}
+                </MenuItem>
+              ))
+            ) : null}
+          </Select>
+        </FormControl>
+
+
         <Button variant="contained" color="primary" onClick={handleSearchClick}>
           Search
         </Button>
+
       </div>
       <div style={{ height: "650px", width: "100%" }}>
         <DataGrid

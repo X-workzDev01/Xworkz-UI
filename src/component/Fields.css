@@ -26,3 +26,11 @@
   .dark-header-text {
     color: rgb(8, 8, 12); /* You can change this to your preferred dark color */
   }
+
+  .custom-timepicker input {
+    border-color: black;
+  }
+  
+  
+  
+  
