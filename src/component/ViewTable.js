@@ -312,7 +312,6 @@ export default function ControlledSelectionServerPaginationGrid() {
         },
       };
       const response = await axios.get(apiUrl, requestOptions);
-      console.log(response.data);
       setGridData({
         rows: response.data.map((row) => ({
           id: row.id.toString(),

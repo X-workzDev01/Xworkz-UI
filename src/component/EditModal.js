@@ -67,7 +67,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
       .then((response) => {
         setDropDown(response.data);
       })
-      .catch((error) => {});
+      .catch((error) => { });
     axios
       .get(Urlconstant.url + "api/getCourseName?status=Active", {
         headers: {
@@ -81,7 +81,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
           fetchData(selectedValue); // Call fetchData with the selectedValue
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   }, []);
   React.useEffect(() => {
     if (rowData && rowData.courseInfo) {
@@ -113,7 +113,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
           startTime: data.startTime,
         });
       })
-      .catch((error) => {});
+      .catch((error) => { });
   };
 
   const handleInputChange = (event) => {
@@ -220,7 +220,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
     axios
       .get(
         Urlconstant.url +
-          `api/contactNumberCheck?contactNumber=${formData.contactNumber}`,
+        `api/contactNumberCheck?contactNumber=${formData.contactNumber}`,
         {
           headers: {
             spreadsheetId: Urlconstant.spreadsheetId,
@@ -339,9 +339,9 @@ const EditModal = ({ open, handleClose, rowData }) => {
           onChange={handleInputChange}
           onBlur={handleVerifyEmail}
           style={fieldStyle}
-          // InputProps={{
-          //   readOnly: true,
-          // }}
+        // InputProps={{
+        //   readOnly: true,
+        // }}
         />
         {verifyHandaleEmail ? (
           <Alert severity="success">{verifyHandaleEmail}</Alert>
@@ -520,17 +520,17 @@ const EditModal = ({ open, handleClose, rowData }) => {
           onChange={handleInputChange}
           style={fieldStyle}
         />
-        <FormControl>
+        "
+        <FormControl style={fieldStyle}>
           <InputLabel id="demo-simple-select-label">Offered As</InputLabel>
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
-            name="offeredAs"
+            label="Offered As"
+            name="courseInfo.offeredAs"
             defaultValue={rowData.courseInfo.offeredAs || ""}
-            required
-            margin="normal"
             variant="outlined"
-            style={{width:"12rem"}}
+            style={{ width: "12rem" }}
           >
             {dropdown.offered.map((item, index) => (
               <MenuItem value={item} key={index}>
@@ -571,7 +571,20 @@ const EditModal = ({ open, handleClose, rowData }) => {
           defaultValue={rowData.othersDto.xworkzEmail}
           onChange={handleInputChange}
           style={fieldStyle}
+          onBlur={handleVerifyEmail}
         />
+        {verifyHandaleEmail ? (
+          <Alert severity="success">{verifyHandaleEmail}</Alert>
+        ) : (
+          " "
+        )}
+        {verifyHandaleEmailerror ? (
+          <Alert severity="error">{verifyHandaleEmailerror}</Alert>
+        ) : (
+          " "
+        )}
+        {emailError ? <Alert severity="error">{emailError} </Alert> : " "}
+        {emailCheck ? <Alert severity="error">{emailCheck}</Alert> : " "}
 
         <FormControl>
           <InputLabel id="demo-simple-select-label">

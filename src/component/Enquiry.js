@@ -234,7 +234,7 @@ function Enquiry() {
                 });
 
                 if (response.status === 200) {
-                    openSnackbar('Enquiry successfully', 'success');
+                    openSnackbar('Enquiry added successfully', 'success');
                     setFormData({
                         name: '',
                         phoneNumber: '',
