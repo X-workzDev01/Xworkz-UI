@@ -290,28 +290,18 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
           }}
           id="callBack"
         />
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <TimePicker
-          InputProps={{
-            style: {
-              borderColor: 'black', 
-              marginBottom: '16px', 
-            },
+            <TextField
+          type="time"
+          label="Call Back Time"
+          name="callBackTime"
+          defaultValue={rowData.callBackTime || "NA"}
+          onChange={handleInputChange}
+          style={fieldStyle}
+          InputLabelProps={{
+            shrink: true,
           }}
-            label="Call Back Time"
-            name="callBackTime"
-            value={(rowData.callBackTime || "NA")}
-            onChange={(newValue) => {
-              setEditedData((prevData) => ({
-                ...prevData,
-                callBackTime: newValue.format("HH:MM"),
-              }));
-            }}
-            style={fieldStyle}
-            ampm
-            id="callBackTime"
-          />
-        </LocalizationProvider>
+          id="callBackTime"
+        />
 
         <FormControl>
           <InputLabel id="demo-simple-select-label">
