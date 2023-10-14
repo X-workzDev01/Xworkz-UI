@@ -123,7 +123,6 @@ export default function FollowUp() {
   };
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-
     setSearchValue(value);
     setName(name);
   };
