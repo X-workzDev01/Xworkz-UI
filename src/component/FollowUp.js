@@ -17,6 +17,11 @@ import { PersonOutline } from "@mui/icons-material";
 export default function FollowUp() {
   const [isModalOpen, setModalOpen] = React.useState(false);
   const [editedRowData, setEditedRowData] = React.useState(null);
+  const [loading, setLoading] = useState(false);
+  const [searchValue, setSearchValue] = useState("New");
+  const [name, setName] = useState("status");
+  const [courseName, setCourseName] = React.useState("");
+  const [courseDropdown, setCourseDropdown] = React.useState("");
   const [dropdown, setDropDown] = useState({
     status: [],
   });
@@ -30,10 +35,7 @@ export default function FollowUp() {
     rows: [],
     rowCount: 0,
   });
-  const [loading, setLoading] = useState(false);
-  const [searchValue, setSearchValue] = useState("NEW");
-  const [name, setName] = useState("status");
-
+  
 
   React.useEffect(() => {
     setLoading(true);
@@ -47,18 +49,60 @@ export default function FollowUp() {
 
   React.useEffect(() => {
     getDropDown();
+    getActiveCourse();
   }, []);
 
+
+  const getActiveCourse = () => {
+    axios
+      .get(Urlconstant.url + "api/getCourseName?status=Active", {
+        headers: {
+          spreadsheetId: Urlconstant.spreadsheetId,
+        },
+      })
+
+      .then((response) => {
+        setCourseDropdown(response.data);
+      })
+      .catch((error) => { });
+  }
+  const handleCourseChange=(event)=>{
+    console.log("this is handleCourseChange")
+    const courseValue = event.target.value;
+      setCourseName(courseValue);
+      console.log(courseValue);
+      getTraineeDetailsByCourse(courseValue);
+  }
+
+
+  const getTraineeDetailsByCourse = async (courseValue) => {
+    try {
+      console.log("getTraineeDetailsByCourse " + courseValue);
+      const apiUrl = Urlconstant.url + `api/getTraineeDetails?courseName=${courseValue}`;
+      const requestOptions = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          spreadsheetId: Urlconstant.spreadsheetId,
+        },
+      };
+      const response = await axios.get(apiUrl, requestOptions);
+      setGridData({
+        rows: response.data.map((row) => ({
+          id: row.id.toString(),
+          ...row,
+        })),
+        rowCount: response.data.length,
+      });
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setGridData({ rows: [], rowCount: 0 });
+    }
+  };
+  
+      
   function searchServerRows(page, pageSize, name) {
     const startingIndex = page * pageSize;
-    console.log(
-      "Loading server rows with page:",
-      page,
-      "pageSize:",
-      pageSize,
-      "Name",
-      name
-    );
     const spreadsheetId = Urlconstant.spreadsheetId;
     var apiUrl;
     if (name === "status") {
@@ -167,8 +211,35 @@ export default function FollowUp() {
           InputLabelProps={{
             shrink: true,
           }}
+          sx={{ marginRight: "10px" }}
           onChange={dateByfollowupStatus}
         />
+            <FormControl>
+          <InputLabel id="demo-simple-select-label">Select Course</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            label="Course Name"
+            name="courseName"
+            value={courseName}
+            required
+            variant="outlined"
+            sx={{
+              marginRight: "10px",
+              width: "200px",
+              fontSize: "12px",
+            }}
+            onChange={handleCourseChange}
+          >
+            {Array.isArray(courseDropdown) ? (
+              courseDropdown.map((item, k) => (
+                <MenuItem value={item} key={k}>
+                  {item}
+                </MenuItem>
+              ))
+            ) : null}
+          </Select>
+        </FormControl>
       </div>
       <div style={{ height: "650px", width: "100%" }}>
         <DataGrid
