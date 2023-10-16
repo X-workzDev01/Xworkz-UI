@@ -70,7 +70,7 @@ export default function Registration() {
 
   const handleFormSubmit = (e) => {
     setIsLoading(true);
-console.log(formData.basicInfo+" n    "+formData.othersDto);
+    console.log(formData.basicInfo + " n    " + formData.othersDto);
     axios
       .post(Urlconstant.url + "api/register", formData, {
         headers: {
@@ -88,7 +88,7 @@ console.log(formData.basicInfo+" n    "+formData.othersDto);
           adminDto: { createdBy: email },
         });
         setCurrentSection(1);
-        Navigate("/x-workz/register");
+        Navigate(Urlconstant.navigate + "register");
       })
       .catch((error) => {});
   };
@@ -100,9 +100,8 @@ console.log(formData.basicInfo+" n    "+formData.othersDto);
           <Trainee
             formData={formData.basicInfo}
             setFormData={(data) => {
-              setMessages("")
+              setMessages("");
               setFormData({ ...formData, basicInfo: data });
-              
             }}
             onNext={handleNext}
           />
@@ -137,8 +136,6 @@ console.log(formData.basicInfo+" n    "+formData.othersDto);
           <Referral
             formData={formData.othersDto}
             setFormData={(data) => {
-              console.log( data);
-              console.log("=========================");
               setFormData({ ...formData, othersDto: data });
             }}
             onNext={handleFormSubmit}

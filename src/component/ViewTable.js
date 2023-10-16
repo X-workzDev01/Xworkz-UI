@@ -117,7 +117,6 @@ function debounce(func, delay) {
   };
 }
 
-
 export default function ControlledSelectionServerPaginationGrid() {
   const initialPageSize = 25;
   const [paginationModel, setPaginationModel] = React.useState({
@@ -137,7 +136,6 @@ export default function ControlledSelectionServerPaginationGrid() {
   const [editedRowData, setEditedRowData] = React.useState(null);
   const [courseName, setCourseName] = React.useState("");
   const [courseDropdown, setCourseDropdown] = React.useState("");
-
 
   const handleEditClick = (row) => {
     setEditedRowData(row);
@@ -227,7 +225,7 @@ export default function ControlledSelectionServerPaginationGrid() {
 
         if (
           searchValue === "" ||
-          searchValue.length >= 1 && searchValue.length <= 3
+          (searchValue.length >= 1 && searchValue.length <= 3)
         ) {
           console.log("pagination");
           const newGridData = await loadServerRows(
@@ -271,8 +269,7 @@ export default function ControlledSelectionServerPaginationGrid() {
 
   React.useEffect(() => {
     getActiveCourse();
-  }, []); 
-  
+  }, []);
 
   const getActiveCourse = () => {
     axios
@@ -285,25 +282,25 @@ export default function ControlledSelectionServerPaginationGrid() {
       .then((response) => {
         setCourseDropdown(response.data);
       })
-      .catch((error) => { });
-  }
+      .catch((error) => {});
+  };
 
   // const handleCourseChange = (event) => {
   //   c//onst courseVaue=event.target.value;
-  //   //setCourseName(courseVaue); 
+  //   //setCourseName(courseVaue);
   //   //getTraineeDetailsByCourse(courseVaue);
   // }
-    const handleCourseChange = (event) => {
-      const courseValue = event.target.value;
-      setCourseName(courseValue);
-      getTraineeDetailsByCourse(courseValue);
-      
-    };
-  
+  const handleCourseChange = (event) => {
+    const courseValue = event.target.value;
+    setCourseName(courseValue);
+    getTraineeDetailsByCourse(courseValue);
+  };
+
   const getTraineeDetailsByCourse = async (courseValue) => {
     try {
       console.log("getTraineeDetailsByCourse " + courseValue);
-      const apiUrl = Urlconstant.url + `api/traineeDetails?courseName=${courseValue}`;
+      const apiUrl =
+        Urlconstant.url + `api/traineeDetails?courseName=${courseValue}`;
       const requestOptions = {
         method: "GET",
         headers: {
@@ -323,9 +320,8 @@ export default function ControlledSelectionServerPaginationGrid() {
       console.error("Error fetching data:", error);
       setGridData({ rows: [], rowCount: 0 });
     }
-    
   };
-  
+
   // Inside your component:
   React.useEffect(() => {
     refreshPageEveryTime();
@@ -409,7 +405,7 @@ export default function ControlledSelectionServerPaginationGrid() {
             color="secondary"
             startIcon={<PersonOutline />}
             component={Link}
-            to={`/x-workz/profile/${params.row.basicInfo.email}`}
+            to={Urlconstant.navigate + `profile/${params.row.basicInfo.email}`}
           >
             View
           </Button>
@@ -476,21 +472,19 @@ export default function ControlledSelectionServerPaginationGrid() {
             }}
             onChange={handleCourseChange}
           >
-            {Array.isArray(courseDropdown) ? (
-              courseDropdown.map((item, k) => (
-                <MenuItem value={item} key={k}>
-                  {item}
-                </MenuItem>
-              ))
-            ) : null}
+            {Array.isArray(courseDropdown)
+              ? courseDropdown.map((item, k) => (
+                  <MenuItem value={item} key={k}>
+                    {item}
+                  </MenuItem>
+                ))
+              : null}
           </Select>
         </FormControl>
-
 
         <Button variant="contained" color="primary" onClick={handleSearchClick}>
           Search
         </Button>
-
       </div>
       <div style={{ height: "650px", width: "100%" }}>
         <DataGrid

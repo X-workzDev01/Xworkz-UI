@@ -35,7 +35,6 @@ export default function FollowUp() {
     rows: [],
     rowCount: 0,
   });
-  
 
   React.useEffect(() => {
     setLoading(true);
@@ -52,7 +51,6 @@ export default function FollowUp() {
     getActiveCourse();
   }, []);
 
-
   const getActiveCourse = () => {
     axios
       .get(Urlconstant.url + "api/getCourseName?status=Active", {
@@ -64,21 +62,21 @@ export default function FollowUp() {
       .then((response) => {
         setCourseDropdown(response.data);
       })
-      .catch((error) => { });
-  }
-  const handleCourseChange=(event)=>{
-    console.log("this is handleCourseChange")
+      .catch((error) => {});
+  };
+  const handleCourseChange = (event) => {
+    console.log("this is handleCourseChange");
     const courseValue = event.target.value;
-      setCourseName(courseValue);
-      console.log(courseValue);
-      getTraineeDetailsByCourse(courseValue);
-  }
-
+    setCourseName(courseValue);
+    console.log(courseValue);
+    getTraineeDetailsByCourse(courseValue);
+  };
 
   const getTraineeDetailsByCourse = async (courseValue) => {
     try {
       console.log("getTraineeDetailsByCourse " + courseValue);
-      const apiUrl = Urlconstant.url + `api/getTraineeDetails?courseName=${courseValue}`;
+      const apiUrl =
+        Urlconstant.url + `api/getTraineeDetails?courseName=${courseValue}`;
       const requestOptions = {
         method: "GET",
         headers: {
@@ -99,8 +97,7 @@ export default function FollowUp() {
       setGridData({ rows: [], rowCount: 0 });
     }
   };
-  
-      
+
   function searchServerRows(page, pageSize, name) {
     const startingIndex = page * pageSize;
     const spreadsheetId = Urlconstant.spreadsheetId;
@@ -214,7 +211,7 @@ export default function FollowUp() {
           sx={{ marginRight: "10px" }}
           onChange={dateByfollowupStatus}
         />
-            <FormControl>
+        <FormControl>
           <InputLabel id="demo-simple-select-label">Select Course</InputLabel>
           <Select
             labelId="demo-simple-select-label"
@@ -231,13 +228,13 @@ export default function FollowUp() {
             }}
             onChange={handleCourseChange}
           >
-            {Array.isArray(courseDropdown) ? (
-              courseDropdown.map((item, k) => (
-                <MenuItem value={item} key={k}>
-                  {item}
-                </MenuItem>
-              ))
-            ) : null}
+            {Array.isArray(courseDropdown)
+              ? courseDropdown.map((item, k) => (
+                  <MenuItem value={item} key={k}>
+                    {item}
+                  </MenuItem>
+                ))
+              : null}
           </Select>
         </FormControl>
       </div>
@@ -298,7 +295,11 @@ export default function FollowUp() {
                     color="secondary"
                     startIcon={<PersonOutline />}
                     component={Link} // Use Link component for navigation
-                    to={`/x-workz/profile/${params.row.basicInfo.email}`}
+                    to={
+                      Urlconstant.navigate +
+                      `profile/${params.row.basicInfo.email}`
+                    }
+
                     // Pass email as a parameter
                   >
                     View

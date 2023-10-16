@@ -35,7 +35,6 @@ const LoginPage = (props) => {
     }
   }, [effect]);
 
-
   const handlePasswordChange = (event) => {
     setPassword(event.target.value);
   };
@@ -43,7 +42,7 @@ const LoginPage = (props) => {
   const handleFormSubmit = async (event) => {
     event.preventDefault();
     if (!email || !password) {
-      navigate("/x-workz/login");
+      navigate(Urlconstant.navigate + "login");
     } else {
       axios
         .post(Urlconstant.url + `otp?email=${email}&otp=${password}`, {
@@ -57,10 +56,9 @@ const LoginPage = (props) => {
           if (response.data === "OTP Wrong") {
             setOtpError("Wrong Otp entered");
           } else {
-            navigate("/x-workz/display", { state: { email } });
+            navigate(Urlconstant.navigate + "display", { state: { email } });
           }
           setEffect(true);
-
         })
         .catch((error) => {});
     }
@@ -173,7 +171,6 @@ const LoginPage = (props) => {
           </Form>
         </Typography>
       </Container>
-
     </div>
   );
 };

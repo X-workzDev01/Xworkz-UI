@@ -1,13 +1,13 @@
-import React from 'react'
-import { Link, useParams } from 'react-router-dom'
-import { Urlconstant } from '../constant/Urlconstant';
-import { DataGrid } from '@mui/x-data-grid';
-import { Button } from '@mui/material';
-import { PersonOutline} from '@mui/icons-material';
+import React from "react";
+import { Link, useParams } from "react-router-dom";
+import { Urlconstant } from "../constant/Urlconstant";
+import { DataGrid } from "@mui/x-data-grid";
+import { Button } from "@mui/material";
+import { PersonOutline } from "@mui/icons-material";
 
 export default function ViewAttendance() {
   const { email } = useParams();
-  console.log(email)
+  console.log(email);
   const initialPageSize = 25;
   const [paginationModel, setPaginationModel] = React.useState({
     page: 0,
@@ -23,25 +23,29 @@ export default function ViewAttendance() {
 
   React.useEffect(() => {
     setLoading(true);
-    console.log("use effect",email);
-    searchServerRows(paginationModel.page, paginationModel.pageSize,email).then((newGridData) => {
+    console.log("use effect", email);
+    searchServerRows(
+      paginationModel.page,
+      paginationModel.pageSize,
+      email
+    ).then((newGridData) => {
       setGridData(newGridData);
       setLoading(false);
     });
-  }, [paginationModel.page, paginationModel.pageSize,email]);
+  }, [paginationModel.page, paginationModel.pageSize, email]);
 
-
-  function searchServerRows(page, pageSize,email) {
-    
+  function searchServerRows(page, pageSize, email) {
     const startingIndex = page * pageSize;
 
-    const apiUrl = Urlconstant.url + `api/byEmail?email=${email}&startIndex=${startingIndex}&maxRows=25`;
+    const apiUrl =
+      Urlconstant.url +
+      `api/byEmail?email=${email}&startIndex=${startingIndex}&maxRows=25`;
     return new Promise((resolve, reject) => {
       fetch(apiUrl)
         .then((response) => response.json())
         .then((data) => {
-          console.log('Received data from server:', data);
-          
+          console.log("Received data from server:", data);
+
           const newGridData = {
             rows: data.dto.map((row) => ({ id: row.id.toString(), ...row })),
             rowCount: data.size,
@@ -55,51 +59,64 @@ export default function ViewAttendance() {
   }
 
   const columns = [
-    { field: 'id', headerName: 'ID', width: 100 },
+    { field: "id", headerName: "ID", width: 100 },
     {
-      field: 'basicInfo.traineeName',
-      headerName: 'Trainee Name',
+      field: "basicInfo.traineeName",
+      headerName: "Trainee Name",
       valueGetter: (params) => params.row.basicInfo.traineeName,
       width: 100,
     },
-    { field: 'date', headerName: 'Date', width: 150 },
+    { field: "date", headerName: "Date", width: 150 },
 
     {
-      field: 'markAs',
-      headerName: 'Present/Absent',
+      field: "markAs",
+      headerName: "Present/Absent",
       width: 120,
       flex: 1,
-      valueGetter: (params) =>{
+      valueGetter: (params) => {
         const markAs = params.row.markAs;
-      if (typeof markAs === 'number') {
-        return markAs === 1 ? 'Yes' : 'no';
-      } else if (typeof markAs === 'string') {
-        return markAs === '1' ? 'Yes' : 'No';
-      } else {
-        return 'unknown';
-      }
+        if (typeof markAs === "number") {
+          return markAs === 1 ? "Yes" : "no";
+        } else if (typeof markAs === "string") {
+          return markAs === "1" ? "Yes" : "No";
+        } else {
+          return "unknown";
+        }
+      },
     },
-  }
-  ]
-
+  ];
 
   return (
     <div>
       <h1>Attendance</h1>
       <h1>Attendance Details</h1>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItem:  "justify-end" }}>
-      <div style={{ textAlign: 'right' }}>
-        <Button
-          variant="outlined"
-          startIcon={<PersonOutline/>}
-          component={Link}
-          to={`/x-workz/profile/${email}`}
-        >
-          View Profile
-        </Button>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItem: "justify-end",
+        }}
+      >
+        <div style={{ textAlign: "right" }}>
+          <Button
+            variant="outlined"
+            startIcon={<PersonOutline />}
+            component={Link}
+            to={Urlconstant.navigate + `profile/${email}`}
+          >
+            View Profile
+          </Button>
         </div>
-        </div>
-      <div style={{ height: '650px', width: '75%',display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+      </div>
+      <div
+        style={{
+          height: "650px",
+          width: "75%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
         <DataGrid
           columns={columns}
           rows={gridData.rows}
@@ -114,5 +131,5 @@ export default function ViewAttendance() {
         />
       </div>
     </div>
-  )
+  );
 }
