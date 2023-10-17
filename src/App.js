@@ -42,7 +42,7 @@ function App() {
           ) : (
             <React.Fragment>
 
-              <Route path="/x-workz/login" element={<LoginPage />} />
+              <Route path="/x-workz/#login" element={<LoginPage />} />
 
        
             </React.Fragment>
