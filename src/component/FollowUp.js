@@ -13,6 +13,7 @@ import axios from "axios";
 import EditFollowUp from "./EditFollowUp";
 import { Link } from "react-router-dom";
 import { PersonOutline } from "@mui/icons-material";
+import Course from "./Course";
 
 export default function FollowUp() {
   const [isModalOpen, setModalOpen] = React.useState(false);
@@ -35,7 +36,7 @@ export default function FollowUp() {
     rows: [],
     rowCount: 0,
   });
-  
+
 
   React.useEffect(() => {
     setLoading(true);
@@ -66,18 +67,59 @@ export default function FollowUp() {
       })
       .catch((error) => { });
   }
-  const handleCourseChange=(event)=>{
-    console.log("this is handleCourseChange")
+  const handleCourseChange = (event) => {
     const courseValue = event.target.value;
-      setCourseName(courseValue);
-      console.log(courseValue);
+    setCourseName(courseValue);
+
+    if (searchValue && courseValue) {
+      getTraineeDetailsByCourseAndStatus(courseValue, searchValue);
+     }
+     else if (courseValue) {
       getTraineeDetailsByCourse(courseValue);
+    }
   }
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setSearchValue(value);
+    setName(name);
+
+    if (searchValue && courseName) {
+      getTraineeDetailsByCourseAndStatus(courseName, value);
+    } else if (courseName) {
+      getTraineeDetailsByCourse(courseName);
+  }
+}
+
+  const getTraineeDetailsByCourseAndStatus = async (courseName, status) => {
+    try {
+      const apiUrl = Urlconstant.url + `api/getByCourseAndStatus?courseName=${courseName}&&status=${status}`;
+      console.log(apiUrl)
+      console.log(courseName, " ", status)
+      // Assuming the response contains an array of trainee details, update your gridData with the new data.
+      const requestOptions = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          spreadsheetId: Urlconstant.spreadsheetId,
+        },
+      };
+      const response = await axios.get(apiUrl, requestOptions);
+      setGridData({
+        rows: response.data.map((row) => ({
+          id: row.id.toString(),
+          ...row,
+        })),
+        rowCount: response.data.length,
+      });
+    } catch (error) {
+      setGridData({ rows: [], rowCount: 0 });
+    }
+  };
 
 
   const getTraineeDetailsByCourse = async (courseValue) => {
     try {
-      console.log("getTraineeDetailsByCourse " + courseValue);
       const apiUrl = Urlconstant.url + `api/getTraineeDetails?courseName=${courseValue}`;
       const requestOptions = {
         method: "GET",
@@ -99,8 +141,8 @@ export default function FollowUp() {
       setGridData({ rows: [], rowCount: 0 });
     }
   };
-  
-      
+
+
   function searchServerRows(page, pageSize, name) {
     const startingIndex = page * pageSize;
     const spreadsheetId = Urlconstant.spreadsheetId;
@@ -163,14 +205,9 @@ export default function FollowUp() {
       .then((response) => {
         setDropDown(response.data);
       })
-      .catch((error) => {});
+      .catch((error) => { });
   };
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setSearchValue(value);
-    setName(name);
-  };
-
+  
   return (
     <div>
       <h2>VeiwFollowUp</h2>
@@ -204,17 +241,18 @@ export default function FollowUp() {
             ))}
           </Select>
         </FormControl>
+
         <TextField
           type="date"
           name="date"
-          label="Select Date"
+          label="Select call back date"
           InputLabelProps={{
             shrink: true,
           }}
           sx={{ marginRight: "10px" }}
           onChange={dateByfollowupStatus}
         />
-            <FormControl>
+        <FormControl>
           <InputLabel id="demo-simple-select-label">Select Course</InputLabel>
           <Select
             labelId="demo-simple-select-label"
@@ -299,7 +337,7 @@ export default function FollowUp() {
                     startIcon={<PersonOutline />}
                     component={Link} // Use Link component for navigation
                     to={`/x-workz/profile/${params.row.basicInfo.email}`}
-                    // Pass email as a parameter
+                  // Pass email as a parameter
                   >
                     View
                   </Button>

@@ -302,7 +302,7 @@ export default function ControlledSelectionServerPaginationGrid() {
   
   const getTraineeDetailsByCourse = async (courseValue) => {
     try {
-      console.log("getTraineeDetailsByCourse " + courseValue);
+      console.info("getTraineeDetailsByCourse " + courseValue);
       const apiUrl = Urlconstant.url + `api/traineeDetails?courseName=${courseValue}`;
       const requestOptions = {
         method: "GET",
