@@ -23,6 +23,7 @@ export default function FollowUp() {
   const [name, setName] = useState("status");
   const [courseName, setCourseName] = React.useState("");
   const [courseDropdown, setCourseDropdown] = React.useState("");
+  const [status,setStatus] =React.useState("");
   const [dropdown, setDropDown] = useState({
     status: [],
   });
@@ -36,7 +37,6 @@ export default function FollowUp() {
     rows: [],
     rowCount: 0,
   });
-
 
   React.useEffect(() => {
     setLoading(true);
@@ -67,12 +67,14 @@ export default function FollowUp() {
       })
       .catch((error) => { });
   }
+
+  
   const handleCourseChange = (event) => {
     const courseValue = event.target.value;
     setCourseName(courseValue);
 
-    if (searchValue && courseValue) {
-      getTraineeDetailsByCourseAndStatus(courseValue, searchValue);
+    if (status && courseValue) {
+      getTraineeDetailsByCourseAndStatus(courseValue, status);
      }
      else if (courseValue) {
       getTraineeDetailsByCourse(courseValue);
@@ -83,9 +85,10 @@ export default function FollowUp() {
     const { name, value } = e.target;
     setSearchValue(value);
     setName(name);
+    setStatus(value)
 
-    if (searchValue && courseName) {
-      getTraineeDetailsByCourseAndStatus(courseName, value);
+    if (status && courseName) {
+      getTraineeDetailsByCourseAndStatus(courseName, status);
     } else if (courseName) {
       getTraineeDetailsByCourse(courseName);
   }
@@ -94,9 +97,6 @@ export default function FollowUp() {
   const getTraineeDetailsByCourseAndStatus = async (courseName, status) => {
     try {
       const apiUrl = Urlconstant.url + `api/getByCourseAndStatus?courseName=${courseName}&&status=${status}`;
-      console.log(apiUrl)
-      console.log(courseName, " ", status)
-      // Assuming the response contains an array of trainee details, update your gridData with the new data.
       const requestOptions = {
         method: "GET",
         headers: {
@@ -185,15 +185,9 @@ export default function FollowUp() {
     });
   }
 
-  const dateByfollowupStatus = (e) => {
-    const { name, value } = e.target;
-    setSearchValue(value);
-    setName(name);
-  };
+ 
 
-  const handleSaveClick = () => {
-    setModalOpen(false);
-  };
+  
 
   const getDropDown = () => {
     axios
@@ -206,6 +200,15 @@ export default function FollowUp() {
         setDropDown(response.data);
       })
       .catch((error) => { });
+  };
+  const dateByfollowupStatus = (e) => {
+    const { name, value } = e.target;
+    setSearchValue(value);
+    setName(name);
+  };
+
+  const handleSaveClick = () => {
+    setModalOpen(false);
   };
   
   return (
