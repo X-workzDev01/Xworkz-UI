@@ -97,7 +97,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
 
     if (name === "attemptStatus") {
       setAttemptStatus(updatedValue);
-      setIdDisabled(true);
+      setIdDisabled(false);
     }
     // if(name==="comment"){
     //   setCount(event.target.value.length);
@@ -331,7 +331,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
             style={{ width: 350, height: 0.5 }}
             className="custom-textfield" // Apply the custom CSS class
             multiline
-            disabled={["RNR", "Wrong Number", "Busy", "Not Reachable", "Incoming call not available"].includes(
+            disabled={["RNR", "Wrong Number", "Busy", "Not Reachable", "Incoming call not available","Joined other institute"].includes(
               attemptStatus
             )}
 
