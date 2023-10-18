@@ -24,11 +24,6 @@ import { round } from "lodash";
 import dayjs from 'dayjs';
 import 'dayjs/locale/de';
 import 'dayjs/locale/en-gb';
-import Stack from '@mui/material/Stack';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 const fieldStyle = { margin: "20px" };
 
 const FollowUpStatus = ({ open, handleClose, rowData }) => {
@@ -86,9 +81,12 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
   if (!rowData) {
     return null;
   }
+  const handlecount = (event) => {
+    const { name, value } = event.target;
+    setCount(event.target.value.length);
+  }
 
   const handleInputChange = (event) => {
-    setCount(event.target.value.length);
     const { name, value } = event.target;
     const updatedValue = (value ?? "").trim() === "" ? "NA" : value;
 
@@ -101,6 +99,9 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
       setAttemptStatus(updatedValue);
       setIdDisabled(true);
     }
+    // if(name==="comment"){
+    //   setCount(event.target.value.length);
+    // }
   };
 
   const handleEditClick = () => {
@@ -163,12 +164,10 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
           statusDto[field] = "NA";
         }
       });
-      setCount(0);
       validateAndSaveData(statusDto);
     }
   };
   const handleErrr = (e) => {
-    console.log(e.target.value.length);
     if (e.target.value.length < 30) {
       setLoading(false);
       setResponseMessage("Comment must be at least 30 characters.");
@@ -290,7 +289,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
           }}
           id="callBack"
         />
-            <TextField
+        <TextField
           type="time"
           label="Call Back Time"
           name="callBackTime"
@@ -328,10 +327,11 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
             onBlur={handleErrr}
             defaultValue={rowData.comments}
             onChange={handleInputChange}
+            onKeyUp={handlecount}
             style={{ width: 350, height: 0.5 }}
             className="custom-textfield" // Apply the custom CSS class
             multiline
-            disabled={["RNR", "Wrong Number", "Busy", "Not Reachable","Incoming call not available"].includes(
+            disabled={["RNR", "Wrong Number", "Busy", "Not Reachable", "Incoming call not available"].includes(
               attemptStatus
             )}
 
