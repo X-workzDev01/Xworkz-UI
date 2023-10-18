@@ -32,12 +32,12 @@ const Sidebar = ({ children }) => {
     },
     {
       path: "display",
-      name: "Trainee Table",
+      name: "Trainee Details",
       icon: <FaUserAlt />,
     },
     {
       path: "followup",
-      name: "Follow Up Table",
+      name: "Follow Up Details",
       icon: <FaRegChartBar />,
     },
     {
