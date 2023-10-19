@@ -24,6 +24,7 @@ export default function FollowUp() {
   const [courseName, setCourseName] = React.useState("");
   const [courseDropdown, setCourseDropdown] = React.useState("");
   const [status,setStatus] =React.useState("");
+  const statusList=["Interested","RNR","Not Interested","Others"];
   const [dropdown, setDropDown] = useState({
     status: [],
   });
@@ -184,11 +185,6 @@ export default function FollowUp() {
         });
     });
   }
-
- 
-
-  
-
   const getDropDown = () => {
     axios
       .get(Urlconstant.url + "utils/dropdown", {
@@ -281,6 +277,32 @@ export default function FollowUp() {
             ) : null}
           </Select>
         </FormControl>
+        <FormControl>
+          <InputLabel id="demo-simple-select-label">Select Status</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            label="Status Values"
+            onChange={handleInputChange}
+            name="status"
+            value={searchValue}
+            fullWidth
+            required
+            variant="outlined"
+            sx={{
+              marginRight: "10px",
+              width: "200px",
+              fontSize: "12px",
+            }}
+          >
+            {statusList.map((item, index) => (
+              <MenuItem value={item} key={index}>
+                {item}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
       </div>
       <div style={{ height: "650px", width: "100%" }}>
         <DataGrid
