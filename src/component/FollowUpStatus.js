@@ -19,9 +19,6 @@ import {
 import { GridCloseIcon } from "@mui/x-data-grid";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { red } from "@mui/material/colors";
-import { round } from "lodash";
-import dayjs from 'dayjs';
 import 'dayjs/locale/de';
 import 'dayjs/locale/en-gb';
 const fieldStyle = { margin: "20px" };
@@ -97,11 +94,9 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
 
     if (name === "attemptStatus") {
       setAttemptStatus(updatedValue);
-      setIdDisabled(true);
+      
+      setIdDisabled(false);
     }
-    // if(name==="comment"){
-    //   setCount(event.target.value.length);
-    // }
   };
 
   const handleEditClick = () => {
