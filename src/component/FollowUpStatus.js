@@ -19,6 +19,7 @@ import {
 import { GridCloseIcon } from "@mui/x-data-grid";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import { red } from "@mui/material/colors";
 import { round } from "lodash";
 import dayjs from "dayjs";
@@ -86,9 +87,12 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
   if (!rowData) {
     return null;
   }
+  const handlecount = (event) => {
+    const { name, value } = event.target;
+    setCount(event.target.value.length);
+  }
 
   const handleInputChange = (event) => {
-    setCount(event.target.value.length);
     const { name, value } = event.target;
     const updatedValue = (value ?? "").trim() === "" ? "NA" : value;
 
@@ -99,7 +103,8 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
 
     if (name === "attemptStatus") {
       setAttemptStatus(updatedValue);
-      setIdDisabled(true);
+      
+      setIdDisabled(false);
     }
   };
 
@@ -162,12 +167,10 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
           statusDto[field] = "NA";
         }
       });
-      setCount(0);
       validateAndSaveData(statusDto);
     }
   };
   const handleErrr = (e) => {
-    console.log(e.target.value.length);
     if (e.target.value.length < 30) {
       setLoading(false);
       setResponseMessage("Comment must be at least 30 characters.");
@@ -327,9 +330,11 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
             onBlur={handleErrr}
             defaultValue={rowData.comments}
             onChange={handleInputChange}
+            onKeyUp={handlecount}
             style={{ width: 350, height: 0.5 }}
             className="custom-textfield" // Apply the custom CSS class
             multiline
+
             disabled={[
               "RNR",
               "Wrong Number",

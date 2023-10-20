@@ -13,6 +13,7 @@ import axios from "axios";
 import EditFollowUp from "./EditFollowUp";
 import { Link } from "react-router-dom";
 import { PersonOutline } from "@mui/icons-material";
+import Course from "./Course";
 
 export default function FollowUp() {
   const [isModalOpen, setModalOpen] = React.useState(false);
@@ -22,6 +23,8 @@ export default function FollowUp() {
   const [name, setName] = useState("status");
   const [courseName, setCourseName] = React.useState("");
   const [courseDropdown, setCourseDropdown] = React.useState("");
+  const [status,setStatus] =React.useState("");
+  const statusList=["Interested","RNR","Not Interested","Others"];
   const [dropdown, setDropDown] = useState({
     status: [],
   });
@@ -62,21 +65,62 @@ export default function FollowUp() {
       .then((response) => {
         setCourseDropdown(response.data);
       })
-      .catch((error) => {});
-  };
+      .catch((error) => { });
+  }
+
+  
   const handleCourseChange = (event) => {
-    console.log("this is handleCourseChange");
     const courseValue = event.target.value;
     setCourseName(courseValue);
-    console.log(courseValue);
-    getTraineeDetailsByCourse(courseValue);
+
+    if (status && courseValue) {
+      getTraineeDetailsByCourseAndStatus(courseValue, status);
+     }
+     else if (courseValue) {
+      getTraineeDetailsByCourse(courseValue);
+    }
+  }
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setSearchValue(value);
+    setName(name);
+    setStatus(value)
+
+    if (status && courseName) {
+      getTraineeDetailsByCourseAndStatus(courseName, status);
+    } else if (courseName) {
+      getTraineeDetailsByCourse(courseName);
+  }
+}
+
+  const getTraineeDetailsByCourseAndStatus = async (courseName, status) => {
+    try {
+      const apiUrl = Urlconstant.url + `api/getByCourseAndStatus?courseName=${courseName}&&status=${status}`;
+      const requestOptions = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          spreadsheetId: Urlconstant.spreadsheetId,
+        },
+      };
+      const response = await axios.get(apiUrl, requestOptions);
+      setGridData({
+        rows: response.data.map((row) => ({
+          id: row.id.toString(),
+          ...row,
+        })),
+        rowCount: response.data.length,
+      });
+    } catch (error) {
+      setGridData({ rows: [], rowCount: 0 });
+    }
   };
+
 
   const getTraineeDetailsByCourse = async (courseValue) => {
     try {
-      console.log("getTraineeDetailsByCourse " + courseValue);
-      const apiUrl =
-        Urlconstant.url + `api/getTraineeDetails?courseName=${courseValue}`;
+      const apiUrl = Urlconstant.url + `api/getTraineeDetails?courseName=${courseValue}`;
       const requestOptions = {
         method: "GET",
         headers: {
@@ -139,17 +183,6 @@ export default function FollowUp() {
         });
     });
   }
-
-  const dateByfollowupStatus = (e) => {
-    const { name, value } = e.target;
-    setSearchValue(value);
-    setName(name);
-  };
-
-  const handleSaveClick = () => {
-    setModalOpen(false);
-  };
-
   const getDropDown = () => {
     axios
       .get(Urlconstant.url + "utils/dropdown", {
@@ -160,14 +193,18 @@ export default function FollowUp() {
       .then((response) => {
         setDropDown(response.data);
       })
-      .catch((error) => {});
+      .catch((error) => { });
   };
-  const handleInputChange = (e) => {
+  const dateByfollowupStatus = (e) => {
     const { name, value } = e.target;
     setSearchValue(value);
     setName(name);
   };
 
+  const handleSaveClick = () => {
+    setModalOpen(false);
+  };
+  
   return (
     <div>
       <h2>VeiwFollowUp</h2>
@@ -201,10 +238,11 @@ export default function FollowUp() {
             ))}
           </Select>
         </FormControl>
+
         <TextField
           type="date"
           name="date"
-          label="Select Date"
+          label="Select call back date"
           InputLabelProps={{
             shrink: true,
           }}
@@ -237,6 +275,32 @@ export default function FollowUp() {
               : null}
           </Select>
         </FormControl>
+        <FormControl>
+          <InputLabel id="demo-simple-select-label">Select Status</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            label="Status Values"
+            onChange={handleInputChange}
+            name="status"
+            value={searchValue}
+            fullWidth
+            required
+            variant="outlined"
+            sx={{
+              marginRight: "10px",
+              width: "200px",
+              fontSize: "12px",
+            }}
+          >
+            {statusList.map((item, index) => (
+              <MenuItem value={item} key={index}>
+                {item}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
       </div>
       <div style={{ height: "650px", width: "100%" }}>
         <DataGrid
@@ -295,12 +359,11 @@ export default function FollowUp() {
                     color="secondary"
                     startIcon={<PersonOutline />}
                     component={Link} // Use Link component for navigation
+
                     to={
                       Urlconstant.navigate +
                       `profile/${params.row.basicInfo.email}`
                     }
-
-                    // Pass email as a parameter
                   >
                     View
                   </Button>
