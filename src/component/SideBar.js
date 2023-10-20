@@ -11,6 +11,7 @@ import "./SideBar.css";
 import { NavLink, useLocation } from "react-router-dom";
 import { FactCheckTwoTone } from "@mui/icons-material";
 import Attandance from "./Attandance";
+import { Urlconstant } from "../constant/Urlconstant";
 
 const Sidebar = ({ children }) => {
   const [isOpen, setIsOpen] = useState(true);
@@ -21,7 +22,7 @@ const Sidebar = ({ children }) => {
   const [defaultSelected, setDefaultSelected] = useState("display");
 
   useEffect(() => {
-    setDefaultSelected(location.pathname.replace("/x-workz/", ""));
+    setDefaultSelected(location.pathname.replace(Urlconstant.navigate , ""));
   }, [location.pathname]);
 
   const menuItem = [
@@ -45,16 +46,16 @@ const Sidebar = ({ children }) => {
       name: "Enquiry",
       icon: <FaCommentAlt />,
     },
-    // {
-    //   path: "attendance",
-    //   name: "Attendance",
-    //   icon: <FaCommentAlt />,
-    // },
-    // {
-    //   path: "whatsapp",
-    //   name: "WhatsApp",
-    //   icon: <FaWhatsapp />,
-    // },
+    {
+      path: "attendance",
+      name: "Attendance",
+      icon: <FaCommentAlt />,
+    },
+    {
+      path: "whatsapp",
+      name: "WhatsApp",
+      icon: <FaWhatsapp />,
+    },
   ];
   const click = () => {};
   return (

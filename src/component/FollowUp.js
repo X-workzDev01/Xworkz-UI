@@ -54,7 +54,6 @@ export default function FollowUp() {
     getActiveCourse();
   }, []);
 
-
   const getActiveCourse = () => {
     axios
       .get(Urlconstant.url + "api/getCourseName?status=Active", {
@@ -142,7 +141,6 @@ export default function FollowUp() {
       setGridData({ rows: [], rowCount: 0 });
     }
   };
-
 
   function searchServerRows(page, pageSize, name) {
     const startingIndex = page * pageSize;
@@ -268,13 +266,13 @@ export default function FollowUp() {
             }}
             onChange={handleCourseChange}
           >
-            {Array.isArray(courseDropdown) ? (
-              courseDropdown.map((item, k) => (
-                <MenuItem value={item} key={k}>
-                  {item}
-                </MenuItem>
-              ))
-            ) : null}
+            {Array.isArray(courseDropdown)
+              ? courseDropdown.map((item, k) => (
+                  <MenuItem value={item} key={k}>
+                    {item}
+                  </MenuItem>
+                ))
+              : null}
           </Select>
         </FormControl>
         <FormControl>
@@ -361,8 +359,11 @@ export default function FollowUp() {
                     color="secondary"
                     startIcon={<PersonOutline />}
                     component={Link} // Use Link component for navigation
-                    to={`/x-workz/profile/${params.row.basicInfo.email}`}
-                  // Pass email as a parameter
+
+                    to={
+                      Urlconstant.navigate +
+                      `profile/${params.row.basicInfo.email}`
+                    }
                   >
                     View
                   </Button>

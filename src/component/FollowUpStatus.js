@@ -19,8 +19,17 @@ import {
 import { GridCloseIcon } from "@mui/x-data-grid";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import 'dayjs/locale/de';
-import 'dayjs/locale/en-gb';
+
+import { red } from "@mui/material/colors";
+import { round } from "lodash";
+import dayjs from "dayjs";
+import "dayjs/locale/de";
+import "dayjs/locale/en-gb";
+import Stack from "@mui/material/Stack";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 const fieldStyle = { margin: "20px" };
 
 const FollowUpStatus = ({ open, handleClose, rowData }) => {
@@ -68,7 +77,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
 
         setDropdownData({ ...response.data, status: filteredStatus });
       })
-      .catch((error) => { });
+      .catch((error) => {});
   }, []);
 
   React.useEffect(() => {
@@ -133,7 +142,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
             handleCloseForm();
           }, 1000);
         }
-        navigate(`/x-workz/profile/${statusDto.basicInfo.email}`);
+        navigate(Urlconstant.navigate + `profile/${statusDto.basicInfo.email}`);
       })
       .catch((error) => {
         setLoading(false);
@@ -142,9 +151,8 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
       });
     axios
       .post(Urlconstant.url + `api/registerAttendance`, statusDto)
-      .then(() => { })
-      .catch((e) => { });
-
+      .then(() => {})
+      .catch((e) => {});
   };
   const handleSaveClick = () => {
     const statusDto = {
@@ -235,7 +243,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
             }}
           >
             {dropdownData.status
-              .filter(item => item !== 'Enquiry' && item !== 'New')
+              .filter((item) => item !== "Enquiry" && item !== "New")
               .map((item, index) => (
                 <MenuItem value={item} key={index}>
                   {item}
@@ -326,10 +334,14 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
             style={{ width: 350, height: 0.5 }}
             className="custom-textfield" // Apply the custom CSS class
             multiline
-            disabled={["RNR", "Wrong Number", "Busy", "Not Reachable", "Incoming call not available"].includes(
-              attemptStatus
-            )}
 
+            disabled={[
+              "RNR",
+              "Wrong Number",
+              "Busy",
+              "Not Reachable",
+              "Incoming call not available",
+            ].includes(attemptStatus)}
             rows={4}
             id="comments"
             error={commentError}
@@ -341,7 +353,6 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
             ""
           )}
         </FormControl>
-
       </DialogContent>
       <DialogActions>
         {loading ? (
@@ -361,7 +372,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
         open={snackbarOpen}
         autoHideDuration={3000000}
         onClose={handleSnackbarClose}
-      // message={responseMessage}
+        // message={responseMessage}
       />
 
       <Dialog open={isConfirming} onClose={handleClose} fullWidth maxWidth="xs">
