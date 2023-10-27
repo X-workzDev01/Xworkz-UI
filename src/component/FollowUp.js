@@ -275,7 +275,7 @@ export default function FollowUp() {
               : null}
           </Select>
         </FormControl>
-        <FormControl>
+        {/* <FormControl>
           <InputLabel id="demo-simple-select-label">Select Status</InputLabel>
           <Select
             labelId="demo-simple-select-label"
@@ -299,7 +299,7 @@ export default function FollowUp() {
               </MenuItem>
             ))}
           </Select>
-        </FormControl>
+        </FormControl> */}
 
       </div>
       <div style={{ height: "650px", width: "100%" }}>

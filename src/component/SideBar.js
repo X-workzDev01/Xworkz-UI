@@ -46,16 +46,16 @@ const Sidebar = ({ children }) => {
       name: "Enquiry",
       icon: <FaCommentAlt />,
     },
-    {
-      path: "attendance",
-      name: "Attendance",
-      icon: <FaCommentAlt />,
-    },
-    {
-      path: "whatsapp",
-      name: "WhatsApp",
-      icon: <FaWhatsapp />,
-    },
+    // {
+    //   path: "attendance",
+    //   name: "Attendance",
+    //   icon: <FaCommentAlt />,
+    // },
+    // {
+    //   path: "whatsapp",
+    //   name: "WhatsApp",
+    //   icon: <FaWhatsapp />,
+    // },
   ];
   const click = () => {};
   return (
