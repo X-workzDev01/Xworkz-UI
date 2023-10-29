@@ -224,7 +224,7 @@ const Profile = () => {
             >
               Edit Profile
             </Button>
-            <Button
+            {/* <Button
               variant="outlined"
               startIcon={<VisibilityOutlined />}
               component={Link}
@@ -234,7 +234,7 @@ const Profile = () => {
               }
             >
               View Attendance
-            </Button>
+            </Button> */}
           </div>
         </div>
       </div>
