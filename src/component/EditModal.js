@@ -293,8 +293,11 @@ const EditModal = ({ open, handleClose, rowData }) => {
       })
       .catch((error) => {
         setLoading(false);
+        setIsConfirming(false);
+
         setResponseMessage("Error updating data. Please try again.");
         setSnackbarOpen(true);
+
       });
   };
 

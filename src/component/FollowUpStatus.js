@@ -348,7 +348,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
             helperText={commentError ? "Comment is mandatory." : ""}
           ></TextField>
           {responseMessage ? (
-            <p style={{ color: "red", marginTop: "90px" }}>{responseMessage}</p>
+            <p style={{ color: "green", marginTop: "90px" }}>{responseMessage}</p>
           ) : (
             ""
           )}
