@@ -43,7 +43,7 @@ function App() {
           ) : (
             <React.Fragment>
               <Route
-                path={Urlconstant.navigate + "#login"}
+                path={Urlconstant.navigate + "login"}
                 element={<LoginPage />}
               />
             </React.Fragment>

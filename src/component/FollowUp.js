@@ -21,14 +21,17 @@ export default function FollowUp() {
   const [loading, setLoading] = useState(false);
   const [searchValue, setSearchValue] = useState("New");
   const [name, setName] = useState("status");
-  const [courseName, setCourseName] = React.useState("");
+  const [courseName, setCourseName] = React.useState("null");
   const [courseDropdown, setCourseDropdown] = React.useState("");
-  const [status,setStatus] =React.useState("");
-  const statusList=["Interested","RNR","Not Interested","Others"];
+  const [status, setStatus] = React.useState("");
+  const statusList = ["Interested", "RNR", "Not Interested", "Others"];
   const [dropdown, setDropDown] = useState({
     status: [],
   });
 
+  const [filteredData, setFilteredData] = useState([]);
+  const [selectedStatus, setSelectedStatus] = useState("");
+const [date, setDate] = useState("");
   const initialPageSize = 10;
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -47,7 +50,8 @@ export default function FollowUp() {
         setLoading(false);
       }
     );
-  }, [paginationModel.page, paginationModel.pageSize, searchValue, name]);
+    //filterData();
+  }, [paginationModel.page, paginationModel.pageSize, searchValue, date, status, courseName]);
 
   React.useEffect(() => {
     getDropDown();
@@ -68,35 +72,36 @@ export default function FollowUp() {
       .catch((error) => { });
   }
 
-  
-  const handleCourseChange = (event) => {
-    const courseValue = event.target.value;
-    setCourseName(courseValue);
+  const filterData = () => {
+    if (status && courseName) {
+      getTraineeDetailsByCourseAndStatus(courseName, status);
+    }// else if (courseName) {
+    //   getTraineeDetailsByCourse(courseName);
+    // }
+  };
 
-    if (status && courseValue) {
-      getTraineeDetailsByCourseAndStatus(courseValue, status);
-     }
-     else if (courseValue) {
-      getTraineeDetailsByCourse(courseValue);
-    }
-  }
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setSearchValue(value);
     setName(name);
-    setStatus(value)
+    setStatus(value);
 
-    if (status && courseName) {
-      getTraineeDetailsByCourseAndStatus(courseName, status);
-    } else if (courseName) {
-      getTraineeDetailsByCourse(courseName);
-  }
-}
+    // Update filtered data
+   // filterData();
+  };
+
+  const handleCourseChange = (event) => {
+    const courseValue = event.target.value;
+    setCourseName(courseValue);
+
+    
+  };
 
   const getTraineeDetailsByCourseAndStatus = async (courseName, status) => {
+    console.log(courseName, status)
     try {
-      const apiUrl = Urlconstant.url + `api/getByCourseAndStatus?courseName=${courseName}&&status=${status}`;
+      const apiUrl = Urlconstant.url + `api/getByCourseAndStatus?status=${status}&date=${date}&courseName=${courseName}`;
       const requestOptions = {
         method: "GET",
         headers: {
@@ -149,7 +154,8 @@ export default function FollowUp() {
     if (name === "status") {
       apiUrl =
         Urlconstant.url +
-        `api/followUp?startingIndex=${startingIndex}&maxRows=25&status=${searchValue}`;
+        // `api/getFollowupstatusByDate?startIndex=${startingIndex}&endIndex=25&date=${searchValue}`;
+        `api/followUp?startingIndex=${startingIndex}&maxRows=25&status=${searchValue}&date=${date}&courseName=${courseName}`;
 
       var requestOptions = {
         method: "GET",
@@ -162,22 +168,29 @@ export default function FollowUp() {
     if (name === "date") {
       apiUrl =
         Urlconstant.url +
-        `api/getFollowupstatusByDate?startIndex=${startingIndex}&endIndex=25&date=${searchValue}`;
+        `api/getFollowupstatusByDate?startIndex=${startingIndex}&endIndex=25&date=${date}`;
     }
     return new Promise((resolve, reject) => {
       fetch(apiUrl, requestOptions)
         .then((response) => response.json())
         .then((data) => {
           console.log("Received data from server:", data);
-          const newGridData = {
-            rows: data.followUpData.map((row) => ({
-              id: row.id.toString(),
-              ...row,
-            })),
-            rowCount: data.size,
-          };
+          
+           const newGridData = {
+
+              rows: data.followUpData.map((row) => ({
+                id: row.id.toString(),
+                ...row,
+              }
+              )),
+              rowCount: data.size,
+            };
+
+        
+
           resolve(newGridData);
         }, 1000)
+
         .catch((error) => {
           resolve({ rows: [], rowCount: 0 });
         });
@@ -197,14 +210,14 @@ export default function FollowUp() {
   };
   const dateByfollowupStatus = (e) => {
     const { name, value } = e.target;
-    setSearchValue(value);
+    setDate(value);
     setName(name);
   };
 
   const handleSaveClick = () => {
     setModalOpen(false);
   };
-  
+
   return (
     <div>
       <h2>VeiwFollowUp</h2>
@@ -239,16 +252,6 @@ export default function FollowUp() {
           </Select>
         </FormControl>
 
-        <TextField
-          type="date"
-          name="date"
-          label="Select call back date"
-          InputLabelProps={{
-            shrink: true,
-          }}
-          sx={{ marginRight: "10px" }}
-          onChange={dateByfollowupStatus}
-        />
         <FormControl>
           <InputLabel id="demo-simple-select-label">Select Course</InputLabel>
           <Select
@@ -268,13 +271,24 @@ export default function FollowUp() {
           >
             {Array.isArray(courseDropdown)
               ? courseDropdown.map((item, k) => (
-                  <MenuItem value={item} key={k}>
-                    {item}
-                  </MenuItem>
-                ))
+                <MenuItem value={item} key={k}>
+                  {item}
+                </MenuItem>
+              ))
               : null}
           </Select>
         </FormControl>
+        
+        <TextField
+          type="date"
+          name="date"
+          label="Select call back date"
+          InputLabelProps={{
+            shrink: true,
+          }}
+          sx={{ marginRight: "10px" }}
+          onChange={dateByfollowupStatus}
+        />
         {/* <FormControl>
           <InputLabel id="demo-simple-select-label">Select Status</InputLabel>
           <Select
