@@ -155,10 +155,7 @@ const Profile = () => {
     <div>
       <div className="card">
         <div className="infos">
-          <Avatar {...stringAvatar(profileData.basicInfo.traineeName)} />
-          {dataLoadingError && (
-            <Alert severity="error">{dataLoadingError}</Alert>
-          )}
+           <Avatar {...stringAvatar(profileData.basicInfo.traineeName)} /> 
           <div className="name">
             <h1>{profileData.basicInfo.traineeName}</h1>
             <h3>

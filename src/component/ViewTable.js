@@ -33,7 +33,6 @@ function loadServerRows(page, pageSize) {
       .then((data) => {
         resolve({
           rows: data.sheetsData.map((row) => ({
-            id: row.id.toString(),
             ...row,
           })),
           rowCount: data.size,
@@ -328,7 +327,7 @@ export default function ControlledSelectionServerPaginationGrid() {
     refreshPageEveryTime();
   }, [paginationModel.page, paginationModel.pageSize, searchValue]);
   const columns = [
-    { headerName: "ID", field: "id", flex: 1 },
+    // { headerName: "ID", field: "id", flex: 1 },
     {
       field: "traineeName",
       headerName: "Trainee Name",
