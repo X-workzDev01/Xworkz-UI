@@ -522,7 +522,6 @@ const EditModal = ({ open, handleClose, rowData }) => {
           onChange={handleInputChange}
           style={fieldStyle}
         />
-        "
         <FormControl style={fieldStyle}>
           <InputLabel id="demo-simple-select-label">Offered As</InputLabel>
           <Select
