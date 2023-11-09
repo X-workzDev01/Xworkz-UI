@@ -92,9 +92,9 @@ const [date, setDate] = useState("");
   };
 
   const handleCourseChange = (event) => {
-    const courseValue = event.target.value;
-    setCourseName(courseValue);
-
+    const { name, value } = event.target;
+    setName(name);
+    setCourseName(value);
     
   };
 
@@ -151,10 +151,9 @@ const [date, setDate] = useState("");
     const startingIndex = page * pageSize;
     const spreadsheetId = Urlconstant.spreadsheetId;
     var apiUrl;
-    if (name === "status") {
+    if (name === "status"|| name==="CourseName") {
       apiUrl =
         Urlconstant.url +
-        // `api/getFollowupstatusByDate?startIndex=${startingIndex}&endIndex=25&date=${searchValue}`;
         `api/followUp?startingIndex=${startingIndex}&maxRows=25&status=${searchValue}&date=${date}&courseName=${courseName}`;
 
       var requestOptions = {
@@ -258,7 +257,7 @@ const [date, setDate] = useState("");
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             label="Course Name"
-            name="courseName"
+            name="CourseName"
             value={courseName}
             required
             variant="outlined"
