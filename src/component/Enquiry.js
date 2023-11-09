@@ -38,6 +38,7 @@ function Enquiry() {
 
     const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [submitDisabled, setSubmitDisabled] = useState(false);
     const [snackbarSeverity, setSnackbarSeverity] = useState('success'); // You can set the severity as needed
 
     const openSnackbar = (message, severity) => {
@@ -201,7 +202,7 @@ function Enquiry() {
         }
     };
 
-    const isSubmitDisabled = !formData.name || !phoneNumberValid || !emailValid || phoneNumberExists || emailExists || !nameValid;
+    const isSubmitDisabled = !formData.name || !phoneNumberValid || !emailValid || phoneNumberExists || emailExists || !nameValid || submitDisabled;
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -213,6 +214,8 @@ function Enquiry() {
         setErrors(validationErrors);
 
         if (Object.keys(validationErrors).length === 0) {
+
+           setSubmitDisabled(true);
             try {
                 // Create the data structure to be sent in the API
                 const requestData = {
@@ -249,6 +252,9 @@ function Enquiry() {
                 }
             } catch (error) {
                 console.error('Error:', error);
+            }
+            finally {
+                setSubmitDisabled(false);
             }
         }
     };
