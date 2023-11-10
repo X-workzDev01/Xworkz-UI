@@ -31,7 +31,7 @@ export default function FollowUp() {
 
   const [filteredData, setFilteredData] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState("");
-const [date, setDate] = useState("");
+  const [date, setDate] = useState("");
   const initialPageSize = 10;
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -51,7 +51,14 @@ const [date, setDate] = useState("");
       }
     );
     //filterData();
-  }, [paginationModel.page, paginationModel.pageSize, searchValue, date, status, courseName]);
+  }, [
+    paginationModel.page,
+    paginationModel.pageSize,
+    searchValue,
+    date,
+    status,
+    courseName,
+  ]);
 
   React.useEffect(() => {
     getDropDown();
@@ -69,39 +76,38 @@ const [date, setDate] = useState("");
       .then((response) => {
         setCourseDropdown(response.data);
       })
-      .catch((error) => { });
-  }
+      .catch((error) => {});
+  };
 
   const filterData = () => {
     if (status && courseName) {
       getTraineeDetailsByCourseAndStatus(courseName, status);
-    }// else if (courseName) {
+    } // else if (courseName) {
     //   getTraineeDetailsByCourse(courseName);
     // }
   };
-
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setSearchValue(value);
     setName(name);
     setStatus(value);
+    setCourseName("null");
 
-    // Update filtered data
-   // filterData();
   };
 
   const handleCourseChange = (event) => {
     const { name, value } = event.target;
     setName(name);
     setCourseName(value);
-    
   };
 
   const getTraineeDetailsByCourseAndStatus = async (courseName, status) => {
-    console.log(courseName, status)
+    console.log(courseName, status);
     try {
-      const apiUrl = Urlconstant.url + `api/getByCourseAndStatus?status=${status}&date=${date}&courseName=${courseName}`;
+      const apiUrl =
+        Urlconstant.url +
+        `api/getByCourseAndStatus?status=${status}&date=${date}&courseName=${courseName}`;
       const requestOptions = {
         method: "GET",
         headers: {
@@ -122,10 +128,10 @@ const [date, setDate] = useState("");
     }
   };
 
-
   const getTraineeDetailsByCourse = async (courseValue) => {
     try {
-      const apiUrl = Urlconstant.url + `api/getTraineeDetails?courseName=${courseValue}`;
+      const apiUrl =
+        Urlconstant.url + `api/getTraineeDetails?courseName=${courseValue}`;
       const requestOptions = {
         method: "GET",
         headers: {
@@ -151,7 +157,7 @@ const [date, setDate] = useState("");
     const startingIndex = page * pageSize;
     const spreadsheetId = Urlconstant.spreadsheetId;
     var apiUrl;
-    if (name === "status"|| name==="CourseName") {
+    if (name === "status" || name === "CourseName") {
       apiUrl =
         Urlconstant.url +
         `api/followUp?startingIndex=${startingIndex}&maxRows=25&status=${searchValue}&date=${date}&courseName=${courseName}`;
@@ -174,18 +180,14 @@ const [date, setDate] = useState("");
         .then((response) => response.json())
         .then((data) => {
           console.log("Received data from server:", data);
-          
-           const newGridData = {
 
-              rows: data.followUpData.map((row) => ({
-                id: row.id.toString(),
-                ...row,
-              }
-              )),
-              rowCount: data.size,
-            };
-
-        
+          const newGridData = {
+            rows: data.followUpData.map((row) => ({
+              id: row.id.toString(),
+              ...row,
+            })),
+            rowCount: data.size,
+          };
 
           resolve(newGridData);
         }, 1000)
@@ -205,7 +207,7 @@ const [date, setDate] = useState("");
       .then((response) => {
         setDropDown(response.data);
       })
-      .catch((error) => { });
+      .catch((error) => {});
   };
   const dateByfollowupStatus = (e) => {
     const { name, value } = e.target;
@@ -265,20 +267,21 @@ const [date, setDate] = useState("");
               marginRight: "10px",
               width: "200px",
               fontSize: "12px",
-            }}
+            }}    
             onChange={handleCourseChange}
           >
+            {/* <MenuItem value="null">Select</MenuItem> */}
             {Array.isArray(courseDropdown)
               ? courseDropdown.map((item, k) => (
-                <MenuItem value={item} key={k}>
-                  {item}
-                </MenuItem>
-              ))
+                  <MenuItem value={item} key={k}>
+                    {item}
+                  </MenuItem>
+                ))
               : null}
           </Select>
         </FormControl>
-        
-        <TextField
+
+        {/* <TextField
           type="date"
           name="date"
           label="Select call back date"
@@ -287,38 +290,13 @@ const [date, setDate] = useState("");
           }}
           sx={{ marginRight: "10px" }}
           onChange={dateByfollowupStatus}
-        />
-        {/* <FormControl>
-          <InputLabel id="demo-simple-select-label">Select Status</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            label="Status Values"
-            onChange={handleInputChange}
-            name="status"
-            value={searchValue}
-            fullWidth
-            required
-            variant="outlined"
-            sx={{
-              marginRight: "10px",
-              width: "200px",
-              fontSize: "12px",
-            }}
-          >
-            {statusList.map((item, index) => (
-              <MenuItem value={item} key={index}>
-                {item}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl> */}
-
+        /> */}
+        
       </div>
       <div style={{ height: "650px", width: "100%" }}>
         <DataGrid
           columns={[
-            { headerName: "ID", field: "id", flex: 1 },
+            // { headerName: "ID", field: "id", flex: 1 },
             {
               field: "traineeName",
               headerName: "Trainee Name",
@@ -372,7 +350,6 @@ const [date, setDate] = useState("");
                     color="secondary"
                     startIcon={<PersonOutline />}
                     component={Link} // Use Link component for navigation
-
                     to={
                       Urlconstant.navigate +
                       `profile/${params.row.basicInfo.email}`
