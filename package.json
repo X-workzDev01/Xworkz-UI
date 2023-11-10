@@ -1,6 +1,6 @@
 {
   "name": "x-workz-app",
-  "homepage": "x-workz",
+  "homepage": "x-workz-dev",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
