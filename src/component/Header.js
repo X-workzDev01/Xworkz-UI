@@ -193,7 +193,10 @@ export default function Header() {
                         <p key={k}>
                           {v ? (
                             <Link
-                              to={`/x-workz/profile/${v.basicInfo.email}`}
+                              to={
+                                Urlconstant.navigate +
+                                `profile/${v.basicInfo.email}`
+                              }
                               style={{ color: "blue", fontSize: "14px" }}
                             >
                               {v.basicInfo.traineeName} &nbsp;
