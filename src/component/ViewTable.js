@@ -11,15 +11,15 @@ import { Link } from "react-router-dom";
 import Header from "./Header";
 import { PersonOutline } from "@mui/icons-material";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import { useState } from "react";
 
-function loadServerRows(page, pageSize) {
+function loadServerRows(page, pageSize,courseName) {
   const startingIndex = page * pageSize;
   const maxRows = pageSize;
   const spreadsheetId = Urlconstant.spreadsheetId;
-
   const apiUrl =
     Urlconstant.url +
-    `api/readData?startingIndex=${startingIndex}&maxRows=${maxRows}`;
+    `api/readData?startingIndex=${startingIndex}&maxRows=${maxRows}&courseName=${courseName}`;
   const requestOptions = {
     method: "GET",
     headers: {
@@ -133,7 +133,7 @@ export default function ControlledSelectionServerPaginationGrid() {
   const [autocompleteOptions, setAutocompleteOptions] = React.useState([]);
   const [isModalOpen, setModalOpen] = React.useState(false);
   const [editedRowData, setEditedRowData] = React.useState(null);
-  const [courseName, setCourseName] = React.useState("");
+  const [courseName, setCourseName] = React.useState("null");
   const [courseDropdown, setCourseDropdown] = React.useState("");
 
   const handleEditClick = (row) => {
@@ -191,10 +191,10 @@ export default function ControlledSelectionServerPaginationGrid() {
   );
 
   // Define a function to fetch and update data
-  async function fetchData(searchValue, page, pageSize, active) {
+  async function fetchData(searchValue, page, pageSize, active,courseName) {
     try {
       if (searchValue === "") {
-        const newGridData = await loadServerRows(page, pageSize);
+        const newGridData = await loadServerRows(page, pageSize,courseName);
         if (active) {
           setGridData(newGridData);
           setLoading(false);
@@ -229,7 +229,7 @@ export default function ControlledSelectionServerPaginationGrid() {
           console.log("pagination");
           const newGridData = await loadServerRows(
             paginationModel.page,
-            paginationModel.pageSize
+            paginationModel.pageSize,courseName
           );
 
           if (active) {
@@ -292,40 +292,40 @@ export default function ControlledSelectionServerPaginationGrid() {
   const handleCourseChange = (event) => {
     const courseValue = event.target.value;
     setCourseName(courseValue);
-    getTraineeDetailsByCourse(courseValue);
+    // getTraineeDetailsByCourse(courseValue);
   };
 
-  const getTraineeDetailsByCourse = async (courseValue) => {
-    try {
+  // const getTraineeDetailsByCourse = async (courseValue) => {
+  //   try {
 
-      console.log("getTraineeDetailsByCourse " + courseValue);
-      const apiUrl =
-        Urlconstant.url + `api/traineeDetails?courseName=${courseValue}`;
-      const requestOptions = {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          spreadsheetId: Urlconstant.spreadsheetId,
-        },
-      };
-      const response = await axios.get(apiUrl, requestOptions);
-      setGridData({
-        rows: response.data.map((row) => ({
-          id: row.id.toString(),
-          ...row,
-        })),
-        rowCount: response.data.length,
-      });
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      setGridData({ rows: [], rowCount: 0 });
-    }
-  };
+  //     console.log("getTraineeDetailsByCourse " + courseValue);
+  //     const apiUrl =
+  //       Urlconstant.url + `api/traineeDetails?courseName=${courseValue}`;
+  //     const requestOptions = {
+  //       method: "GET",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         spreadsheetId: Urlconstant.spreadsheetId,
+  //       },
+  //     };
+  //     const response = await axios.get(apiUrl, requestOptions);
+  //     setGridData({
+  //       rows: response.data.map((row) => ({
+  //         id: row.id.toString(),
+  //         ...row,
+  //       })),
+  //       rowCount: response.data.length,
+  //     });
+  //   } catch (error) {
+  //     console.error("Error fetching data:", error);
+  //     setGridData({ rows: [], rowCount: 0 });
+  //   }
+  // };
 
   // Inside your component:
   React.useEffect(() => {
     refreshPageEveryTime();
-  }, [paginationModel.page, paginationModel.pageSize, searchValue]);
+  }, [paginationModel.page, paginationModel.pageSize, searchValue,courseName]);
   const columns = [
     // { headerName: "ID", field: "id", flex: 1 },
     {

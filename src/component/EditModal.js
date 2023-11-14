@@ -158,6 +158,12 @@ const EditModal = ({ open, handleClose, rowData }) => {
     }));
   };
   const handleEmail = (email) => {
+    if (rowData.basicInfo.email === email) {
+      setDisable(false);
+      setEmailCheck(null);
+      return;
+    }
+
     axios
       .get(Urlconstant.url + `api/emailCheck?email=${email}`, {
         headers: {
@@ -167,8 +173,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
       .then((response) => {
         if (response.status === 200) {
           setDisable(false);
-
-          setEmailCheck(response.data);
+          setEmailCheck(null);
         } else if (response.status === 201) {
           setDisable(true);
           setEmailCheck(response.data);
@@ -203,7 +208,6 @@ const EditModal = ({ open, handleClose, rowData }) => {
 
   const handleNumberChange = (e) => {
     if (!formData.contactNumber) {
-      console.log("Contact number is blank. Cannot make the API call.");
       return;
     }
     axios
