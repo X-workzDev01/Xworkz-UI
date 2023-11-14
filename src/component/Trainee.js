@@ -56,20 +56,30 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
 
   const verifyEmail = (email) => {
     axios
-      .get(Urlconstant.url + `api/verify-email?email=${email}`)
+      .get(`${Urlconstant.url}api/verify-email?email=${email}`)
       .then((response) => {
-        if (response.data === "accepted_email") {
-          setverifyHandleEmail(response.data);
-          console.log(response.data);
-        }
-        if (response.data === "rejected_email") {
-          setverifyHandleEmailError(response.data);
-          setverifyHandleEmail("");
-          setEmailError("");
-          setEmailCheck("");
+        if (response.status === 200) {
+          if (response.data === "accepted_email") {
+            setverifyHandleEmail(response.data);
+            console.log(response.data);
+          } else if (response.data === "rejected_email") {
+            setverifyHandleEmailError(response.data);
+            setverifyHandleEmail("");
+            setEmailError("");
+            setEmailCheck("");
+          } else {
+            setverifyHandleEmailError("");
+          }
         } else {
-          setverifyHandleEmailError("");
+          if (response.status === 500) {
+            console.log("Internal Server Error:", response.status);
+          } else {
+            console.log("Unexpected Error:", response.status);
+          }
         }
+      })
+      .catch((error) => {
+        console.log("check emailable credentils");
       });
   };
 
@@ -141,7 +151,6 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
 
   const handleEmailVeryfy = (e) => {
     verifyEmail(e.target.value);
-    ;
   };
 
   const today = new Date();
