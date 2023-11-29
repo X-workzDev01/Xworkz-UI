@@ -14,6 +14,7 @@ import EditModal from "./EditModal";
 import FollowUpStatus from "./FollowUpStatus";
 import { Alert } from "@mui/material";
 import { VisibilityOutlined } from "@mui/icons-material";
+import FollowUp from "./FollowUp";
 
 function stringToColor(string) {
   let hash = 0;
@@ -48,7 +49,8 @@ function stringAvatar(name) {
     children: avatarText,
   };
 }
-const Profile = () => {
+const Profile = (courseName, searchValue) => {
+  console.log(courseName, searchValue);
   const { email } = useParams();
   const [profileData, setProfileData] = useState(null);
   const [followUpData, setFollowUpData] = useState(null);
@@ -155,7 +157,7 @@ const Profile = () => {
     <div>
       <div className="card">
         <div className="infos">
-           <Avatar {...stringAvatar(profileData.basicInfo.traineeName)} /> 
+          <Avatar {...stringAvatar(profileData.basicInfo.traineeName)} />
           <div className="name">
             <h1>{profileData.basicInfo.traineeName}</h1>
             <h3>

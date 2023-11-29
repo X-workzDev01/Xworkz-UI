@@ -1,36 +1,36 @@
-import React, { useState } from "react";
-import { Urlconstant } from "../constant/Urlconstant";
+import { PersonOutline } from "@mui/icons-material";
 import {
   Button,
   FormControl,
   InputLabel,
   MenuItem,
   Select,
-  TextField,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import axios from "axios";
-import EditFollowUp from "./EditFollowUp";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { PersonOutline } from "@mui/icons-material";
-import Course from "./Course";
+import { Urlconstant } from "../constant/Urlconstant";
+import EditFollowUp from "./EditFollowUp";
 
 export default function FollowUp() {
   const [isModalOpen, setModalOpen] = React.useState(false);
   const [editedRowData, setEditedRowData] = React.useState(null);
   const [loading, setLoading] = useState(false);
-  const [searchValue, setSearchValue] = useState("New");
+  const [searchValue, setSearchValue] = useState(
+    sessionStorage.getItem("status")
+  );
   const [name, setName] = useState("status");
-  const [courseName, setCourseName] = React.useState("null");
+  const [courseName, setCourseName] = React.useState(
+    sessionStorage.getItem("course")
+  );
   const [courseDropdown, setCourseDropdown] = React.useState("");
   const [status, setStatus] = React.useState("");
   const statusList = ["Interested", "RNR", "Not Interested", "Others"];
   const [dropdown, setDropDown] = useState({
     status: [],
   });
-
-  const [filteredData, setFilteredData] = useState([]);
-  const [selectedStatus, setSelectedStatus] = useState("");
+  const  [statusLists, setStatusLists] = useState(["New", "Not interested", "Interested", "RNR", "Enquiry","Joined"]);
   const [date, setDate] = useState("");
   const initialPageSize = 25;
   const [paginationModel, setPaginationModel] = useState({
@@ -42,7 +42,7 @@ export default function FollowUp() {
     rowCount: 0,
   });
 
-  React.useEffect(() => {
+  React.useMemo(() => {
     setLoading(true);
     searchServerRows(paginationModel.page, paginationModel.pageSize, name).then(
       (newGridData) => {
@@ -50,13 +50,11 @@ export default function FollowUp() {
         setLoading(false);
       }
     );
-    //filterData();
   }, [
     paginationModel.page,
     paginationModel.pageSize,
     searchValue,
     date,
-    status,
     courseName,
   ]);
 
@@ -82,23 +80,21 @@ export default function FollowUp() {
   const filterData = () => {
     if (status && courseName) {
       getTraineeDetailsByCourseAndStatus(courseName, status);
-    } // else if (courseName) {
-    //   getTraineeDetailsByCourse(courseName);
-    // }
+    }
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setSearchValue(value);
+    sessionStorage.setItem("status", value);
     setName(name);
     setStatus(value);
-    setCourseName("null");
-
   };
 
   const handleCourseChange = (event) => {
     const { name, value } = event.target;
     setName(name);
+    sessionStorage.setItem("course", value);
     setCourseName(value);
   };
 
@@ -128,33 +124,10 @@ export default function FollowUp() {
     }
   };
 
-  const getTraineeDetailsByCourse = async (courseValue) => {
-    try {
-      const apiUrl =
-        Urlconstant.url + `api/getTraineeDetails?courseName=${courseValue}`;
-      const requestOptions = {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          spreadsheetId: Urlconstant.spreadsheetId,
-        },
-      };
-      const response = await axios.get(apiUrl, requestOptions);
-      setGridData({
-        rows: response.data.map((row) => ({
-          ...row,
-        })),
-        rowCount: response.data.length,
-      });
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      setGridData({ rows: [], rowCount: 0 });
-    }
-  };
-
   function searchServerRows(page, pageSize, name) {
     const startingIndex = page * pageSize;
     const spreadsheetId = Urlconstant.spreadsheetId;
+
     var apiUrl;
     if (name === "status" || name === "CourseName") {
       apiUrl =
@@ -210,7 +183,6 @@ export default function FollowUp() {
   };
   const dateByfollowupStatus = (e) => {
     const { name, value } = e.target;
-    setDate(value);
     setName(name);
   };
 
@@ -218,10 +190,14 @@ export default function FollowUp() {
     setModalOpen(false);
   };
 
+  const handleClear = () => {
+    setCourseName("null");
+    sessionStorage.setItem("course", "null");
+  };
+
   return (
     <div>
       <h2>VeiwFollowUp</h2>
-      {/* <h2>FollowUp List</h2> */}
       <div
         className="search"
         style={{ marginTop: "50px", display: "flex", alignItems: "center" }}
@@ -241,10 +217,10 @@ export default function FollowUp() {
             sx={{
               marginRight: "10px",
               width: "200px",
-              fontSize: "12px",
+              fontSize: "12px", 
             }}
           >
-            {dropdown.status.map((item, index) => (
+            {statusLists.map((item, index) => (
               <MenuItem value={item} key={index}>
                 {item}
               </MenuItem>
@@ -266,7 +242,7 @@ export default function FollowUp() {
               marginRight: "10px",
               width: "200px",
               fontSize: "12px",
-            }}    
+            }}
             onChange={handleCourseChange}
           >
             {/* <MenuItem value="null">Select</MenuItem> */}
@@ -279,18 +255,11 @@ export default function FollowUp() {
               : null}
           </Select>
         </FormControl>
-
-        {/* <TextField
-          type="date"
-          name="date"
-          label="Select call back date"
-          InputLabelProps={{
-            shrink: true,
-          }}
-          sx={{ marginRight: "10px" }}
-          onChange={dateByfollowupStatus}
-        /> */}
-        
+        <div>
+          <Button variant="contained" onClick={handleClear} size="small">
+            Clear
+          </Button>
+        </div>
       </div>
       <div style={{ height: "650px", width: "100%" }}>
         <DataGrid
@@ -370,6 +339,7 @@ export default function FollowUp() {
           loading={loading}
           keepNonExistentRowsSelected
         />
+
         <EditFollowUp
           open={isModalOpen}
           handleClose={() => setModalOpen(false)}

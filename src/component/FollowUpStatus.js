@@ -234,7 +234,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
             label="Attempt Status"
             name="attemptStatus"
             onChange={handleInputChange}
-            value={attemptStatus || "NA"}
+            defaultValue={attemptStatus}
             variant="outlined"
             sx={{
               marginRight: "20px",
@@ -329,8 +329,8 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
             name="comments"
             onBlur={handleErrr}
             defaultValue={rowData.comments}
-            onChange={handleInputChange}
-            onKeyUp={handlecount}
+            onKeyUp={handleInputChange}
+            onChange={handlecount}
             style={{ width: 350, height: 0.5 }}
             className="custom-textfield" // Apply the custom CSS class
             multiline
