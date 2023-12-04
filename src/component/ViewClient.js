@@ -1,9 +1,9 @@
 import { DataGrid } from '@mui/x-data-grid';
 import React from 'react'
 import { Urlconstant } from '../constant/Urlconstant';
-import { PersonOutline } from '@mui/icons-material';
+import { PersonOutline, Search } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
-import { Button } from '@mui/material';
+import { Button, TextField } from '@mui/material';
 
 
 
@@ -69,9 +69,27 @@ export default function ViewClient() {
         },
         {
             field: "companyEmail",
-            headerName: "Company E-mail",
+            headerName: " E-mail",
             flex: 1,
             valueGetter: (params) => params.row.companyEmail,
+        },
+        {
+            field: "companyWebsite",
+            headerName: " Website",
+            flex: 1,
+            valueGetter: (params) => params.row.companyWebsite,
+        },
+        {
+            field: "companyType",
+            headerName: "Company Type",
+            flex: 1,
+            valueGetter: (params) => params.row.companyType,
+        },
+        {
+            field: "companyAddress",
+            headerName: " Address",
+            flex: 1,
+            valueGetter: (params) => params.row.companyAddress,
         },
         {
             field: "companyLocation",
@@ -84,12 +102,6 @@ export default function ViewClient() {
             headerName: "Status",
             flex: 1,
             valueGetter: (params) => params.row.status,
-        },
-        {
-            field: "companyWebsite",
-            headerName: "Company Website",
-            flex: 1,
-            valueGetter: (params) => params.row.companyWebsite,
         },
 
         {
@@ -104,8 +116,8 @@ export default function ViewClient() {
                         startIcon={<PersonOutline />}
                         component={Link}
                         to={Urlconstant.navigate + `clientprofile/${params.row.id}`}
-                        >
-                        View Profile
+                    >
+                        View
                     </Button>
                 </div>
             )
@@ -115,14 +127,16 @@ export default function ViewClient() {
 
     return (
         <div style={{ height: "650px", width: "100%" }}>
-            <h2>ViewClient</h2>
-            <h2>ViewClient</h2>
-            <DataGrid
-                rows={gridData.rows}
-                columns={column}
-        
-                paginationMode="server"
-            />
+            
+                <h2>ViewClient</h2>
+                <div style={{ height: "650px", width: "100%" }}>
+                <DataGrid
+                    rows={gridData.rows}
+                    columns={column}
+                    pageSizeOptions={[5, 10, 25]}
+                    paginationMode="server"
+                />
+            </div>
         </div>
     )
 }

@@ -19,6 +19,7 @@ export default function ClientDetails() {
     const [open, setOpen] = React.useState(false);
     const [snackbarMessage, setSnackbarMessage] = React.useState("");
     const [companyNameCheck, setCompanyNameCheck] = React.useState("");
+    const [companyEmailCheck,setCompanyEmailCheck] =React.useState("");
 
 
     const handleClose = (reason) => {
@@ -28,14 +29,7 @@ export default function ClientDetails() {
         setOpen(false);
     };
 
-    const [formData, setFormData] = React.useState({
-        companyName: '',
-        companyEmail: '',
-        companyLandLineNumber: '',
-        companyWebsite: '',
-        companyLocation: '',
-        status: '',
-    });
+    const [formData, setFormData] = React.useState('');
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prevData) => ({
@@ -54,7 +48,7 @@ export default function ClientDetails() {
                 adminDto: { createdBy: email }
             };
 
-            axios.post(Urlconstant.url + "api/saveclientinfo", clientData)  
+            axios.post(Urlconstant.url + "api/registerclient", clientData)
             setOpen(true)
             setSnackbarMessage("Client information added successfully")
             setFormData({
@@ -63,10 +57,13 @@ export default function ClientDetails() {
                 companyLandLineNumber: '',
                 companyWebsite: '',
                 companyLocation: '',
+                companyFounder: '',
+                sourceOfConnetion: '',
+                companyType: '',
+                companyAddress: '',
                 status: '',
             });
         } catch (error) {
-            console.log("error saving data")
         } finally {
             setIsSubmitting(false);
         }
@@ -76,14 +73,25 @@ export default function ClientDetails() {
         const companyname = event.target.value;
         axios.get(Urlconstant.url + `/api/companynamecheck?companyName=${companyname}`)
             .then(res => {
-                if(res.data==="Company Already Exists"){
-                setCompanyNameCheck(res.data);
-                }else{
+                if (res.data === "Company Already Exists") {
+                    setCompanyNameCheck(res.data);
+                } else {
                     setCompanyNameCheck("");
                 }
             })
     }
-    const isSubmitValid = !formData.companyName || !formData.companyEmail || !formData.companyLandLineNumber || companyNameCheck
+    const handleCompanyEmail=(event)=>{
+        const companyEmail=event.target.value;
+        axios.get(Urlconstant.url+`/api/checkcompanyemail?companyEmail=${companyEmail}`)
+        .then(res=>{
+            if (res.data === "Company Email Already Exists") {
+                setCompanyEmailCheck(res.data);
+            } else {
+                setCompanyEmailCheck("");
+            }
+        })
+    }
+    const isSubmitValid = !formData.companyName ||companyNameCheck||companyEmailCheck
     return (
         <div>
             <h2>Client Details</h2>
@@ -104,16 +112,16 @@ export default function ClientDetails() {
                     name="companyEmail"
                     value={formData.companyEmail}
                     onChange={handleChange}
-                    required
                     fullWidth
                     margin="normal"
+                    onBlur={handleCompanyEmail}
                 />
+                {companyEmailCheck ? <Alert severity="error">{companyEmailCheck}</Alert> : " "}
                 <TextField
                     label="Client Contact Number"
                     name="companyLandLineNumber"
                     value={formData.companyLandLineNumber}
                     onChange={handleChange}
-                    required
                     fullWidth
                     margin="normal"
                 />
@@ -122,7 +130,6 @@ export default function ClientDetails() {
                     name="companyWebsite"
                     value={formData.companyWebsite}
                     onChange={handleChange}
-                    required
                     fullWidth
                     margin="normal"
                 />
@@ -131,7 +138,38 @@ export default function ClientDetails() {
                     name="companyLocation"
                     value={formData.companyLocation}
                     onChange={handleChange}
-                    required
+                    fullWidth
+                    margin="normal"
+                />
+                <TextField
+                    label="Client Founder"
+                    name="companyFounder"
+                    value={formData.companyFounder}
+                    onChange={handleChange}
+                    fullWidth
+                    margin="normal"
+                />
+                <TextField
+                    label="Client Source Of Connetion"
+                    name="sourceOfConnetion"
+                    value={formData.sourceOfConnetion}
+                    onChange={handleChange}
+                    fullWidth
+                    margin="normal"
+                />
+                <TextField
+                    label="Client Type"
+                    name="companyType"
+                    value={formData.companyType}
+                    onChange={handleChange}
+                    fullWidth
+                    margin="normal"
+                />
+                <TextField
+                    label="Company Address"
+                    name="companyAddress"
+                    value={formData.companyAddress}
+                    onChange={handleChange}
                     fullWidth
                     margin="normal"
                 />
