@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -35,14 +35,14 @@ const EditModal = ({ open, handleClose, rowData }) => {
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [dropdown, setDropDown] = React.useState([]);
   const [batchDetails, setBatchDetails] = React.useState("");
-  const [emailCheck, setEmailCheck] = React.useState(null);
+  const [emailCheck, setEmailCheck] = React.useState("");
   const [numberCheck, setNumberCheck] = React.useState(null);
   const [emailError, setEmailError] = React.useState(null);
   const [phoneNumberError, setPhoneNumberError] = React.useState("");
   const [verifyHandaleEmail, setverifyHandleEmail] = React.useState("");
   const [verifyHandaleEmailerror, setverifyHandleEmailError] =
     React.useState("");
-
+  const [disble, setDisable] = useState(false);
   const [emailValue, setEmailValue] = React.useState("");
   const [formData, setFormData] = React.useState({
     branch: "",
@@ -158,7 +158,12 @@ const EditModal = ({ open, handleClose, rowData }) => {
     }));
   };
   const handleEmail = (email) => {
-    validateEmail(email);
+    if (rowData.basicInfo.email === email) {
+      setDisable(false);
+      setEmailCheck(null);
+      return;
+    }
+
     axios
       .get(Urlconstant.url + `api/emailCheck?email=${email}`, {
         headers: {
@@ -166,7 +171,11 @@ const EditModal = ({ open, handleClose, rowData }) => {
         },
       })
       .then((response) => {
-        if (response.status === 201) {
+        if (response.status === 200) {
+          setDisable(false);
+          setEmailCheck(null);
+        } else if (response.status === 201) {
+          setDisable(true);
           setEmailCheck(response.data);
         } else {
           setEmailCheck(null);
@@ -175,46 +184,30 @@ const EditModal = ({ open, handleClose, rowData }) => {
       .catch({});
   };
 
-  const validEmail = (email) => {
-    handleEmail(email);
-    verifyEmail(email);
-  };
-  const validateEmail = (value) => {
-    if (!value) {
-      setEmailError("Email is required");
-      setEmailCheck("");
-      setverifyHandleEmail("");
-    } else if (!/\S+@\S+\.\S+/.test(value)) {
-      setEmailError("Invalid email address");
-      setverifyHandleEmail("");
-      setEmailCheck("");
-    } else {
-      setEmailError("");
-    }
-  };
-
   const verifyEmail = (email) => {
-    axios
-      .get(Urlconstant.url + `api/verify-email?email=${email}`)
-      .then((response) => {
-        if (response.data === "accepted_email") {
-          setverifyHandleEmail(response.data);
-          console.log(response.data);
-        }
-        if (response.data === "rejected_email") {
-          setverifyHandleEmailError(response.data);
-          setverifyHandleEmail("");
-          setEmailError("");
-          setEmailCheck("");
-        } else {
-          setverifyHandleEmailError("");
-        }
-      });
+    handleEmail(email);
+    if (emailCheck === "Email does not exist") {
+      axios
+        .get(Urlconstant.url + `api/verify-email?email=${email}`)
+        .then((response) => {
+          if (response.data === "accepted_email") {
+            setverifyHandleEmail(response.data);
+            console.log(response.data);
+          }
+          if (response.data === "rejected_email") {
+            setverifyHandleEmailError(response.data);
+            setverifyHandleEmail("");
+            setEmailError("");
+            setEmailCheck("");
+          } else {
+            setverifyHandleEmailError("");
+          }
+        });
+    }
   };
 
   const handleNumberChange = (e) => {
     if (!formData.contactNumber) {
-      console.log("Contact number is blank. Cannot make the API call.");
       return;
     }
     axios
@@ -297,7 +290,6 @@ const EditModal = ({ open, handleClose, rowData }) => {
 
         setResponseMessage("Error updating data. Please try again.");
         setSnackbarOpen(true);
-
       });
   };
 
@@ -314,11 +306,14 @@ const EditModal = ({ open, handleClose, rowData }) => {
     setSnackbarOpen(false);
     handleClose();
   };
-
+  const handlefunctionClose = () => {
+    setEmailCheck("");
+    setDisable(false);
+    handleClose();
+  };
   const handleVerifyEmail = (event) => {
     verifyEmail(event.target.value);
   };
-  const isDisabled = verifyHandaleEmailerror || numberCheck || emailCheck;
 
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
@@ -327,7 +322,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
         {/* Render your form fields here */}
         <IconButton
           color="inherit"
-          onClick={handleClose}
+          onClick={handlefunctionClose}
           edge="start"
           aria-label="close"
           style={{ position: "absolute", right: "8px", top: "8px" }}
@@ -345,8 +340,8 @@ const EditModal = ({ open, handleClose, rowData }) => {
           //   readOnly: true,
           // }}
         />
-        {verifyHandaleEmail ? (
-          <Alert severity="success">{verifyHandaleEmail}</Alert>
+        {verifyHandaleEmailerror ? (
+          <Alert severity="success">{verifyHandaleEmailerror}</Alert>
         ) : (
           " "
         )}
@@ -357,6 +352,13 @@ const EditModal = ({ open, handleClose, rowData }) => {
         )}
         {emailError ? <Alert severity="error">{emailError} </Alert> : " "}
         {emailCheck ? <Alert severity="error">{emailCheck}</Alert> : " "}
+
+        {verifyHandaleEmail ? (
+          <Alert severity="success">{verifyHandaleEmail}</Alert>
+        ) : (
+          " "
+        )}
+
         <TextField
           label="Name"
           name="basicInfo.traineeName"
@@ -572,18 +574,14 @@ const EditModal = ({ open, handleClose, rowData }) => {
           style={fieldStyle}
           onBlur={handleVerifyEmail}
         />
-        {verifyHandaleEmail ? (
-          <Alert severity="success">{verifyHandaleEmail}</Alert>
-        ) : (
-          " "
-        )}
+
         {verifyHandaleEmailerror ? (
           <Alert severity="error">{verifyHandaleEmailerror}</Alert>
         ) : (
           " "
         )}
         {emailError ? <Alert severity="error">{emailError} </Alert> : " "}
-        {emailCheck ? <Alert severity="error">{emailCheck}</Alert> : " "}
+
         <FormControl>
           <InputLabel id="demo-simple-select-label">
             preferred Location
@@ -640,11 +638,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
         {loading ? (
           <CircularProgress size={20} /> // Show loading spinner
         ) : (
-          <Button
-            onClick={handleEditClick}
-            disabled={isDisabled}
-            color="primary"
-          >
+          <Button disabled={disble} onClick={handleEditClick} color="primary">
             Edit
           </Button>
         )}

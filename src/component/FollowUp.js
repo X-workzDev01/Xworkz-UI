@@ -32,7 +32,7 @@ export default function FollowUp() {
   const [filteredData, setFilteredData] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState("");
   const [date, setDate] = useState("");
-  const initialPageSize = 10;
+  const initialPageSize = 25;
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: initialPageSize,
@@ -142,7 +142,6 @@ export default function FollowUp() {
       const response = await axios.get(apiUrl, requestOptions);
       setGridData({
         rows: response.data.map((row) => ({
-          id: row.id.toString(),
           ...row,
         })),
         rowCount: response.data.length,
@@ -296,7 +295,7 @@ export default function FollowUp() {
       <div style={{ height: "650px", width: "100%" }}>
         <DataGrid
           columns={[
-            // { headerName: "ID", field: "id", flex: 1 },
+            //  { headerName: "ID", field: "id", flex: 1 },
             {
               field: "traineeName",
               headerName: "Trainee Name",
