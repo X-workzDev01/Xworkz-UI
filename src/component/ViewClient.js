@@ -22,26 +22,21 @@ export default function ViewClient() {
     React.useEffect(() => {
         searchServerRows(paginationModel.page, paginationModel.pageSize).then(
             (newGridData) => {
+             //   console.log("Fetched data from server:", newGridData);
                 setGridData(newGridData);
             }
         );
-        //filterData();
-    }, [
-        paginationModel.page,
-        paginationModel.pageSize
-    ]);
+    }, [paginationModel.page, paginationModel.pageSize]);
+
     function searchServerRows(page, pageSize) {
-        const startingIndex = page * pageSize;
-        var apiUrl;
-        apiUrl =
+       const startingIndex = page * pageSize;
+        var apiUrl =
             Urlconstant.url +
-            `api/readclientinfomation?startingIndex=${startingIndex}&maxRows=25`;
+            `api/readclientinfomation?startingIndex=${startingIndex}&maxRows=${25}`;
         return new Promise((resolve) => {
             fetch(apiUrl)
                 .then((response) => response.json())
                 .then((data) => {
-                    console.log("Received data from server:", data);
-
                     const newGridData = {
                         rows: data.clientData.map((row) => ({
                             id: row.id.toString(),
@@ -49,18 +44,18 @@ export default function ViewClient() {
                         })),
                         rowCount: data.size,
                     };
-
+                
                     resolve(newGridData);
-                }, 1000)
-
+                })
                 .catch((error) => {
                     resolve({ rows: [], rowCount: 0 });
                 });
         });
     }
+    
 
     const column = [
-        { headerName: 'ID', field: 'id' },
+      //  { headerName: 'ID', field: 'id' },
         {
             field: "companyName",
             headerName: "Company Name",
@@ -135,6 +130,8 @@ export default function ViewClient() {
                     columns={column}
                     pageSizeOptions={[5, 10, 25]}
                     paginationMode="server"
+                    rowCount={gridData.rowCount}
+
                 />
             </div>
         </div>
