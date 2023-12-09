@@ -15,6 +15,8 @@ import FollowUpStatus from "./FollowUpStatus";
 import { Alert } from "@mui/material";
 import { VisibilityOutlined } from "@mui/icons-material";
 import FollowUp from "./FollowUp";
+import Header from "./Header";
+
 
 function stringToColor(string) {
   let hash = 0;
@@ -155,6 +157,7 @@ const Profile = (courseName, searchValue) => {
 
   return (
     <div>
+      <Header />
       <div className="card">
         <div className="infos">
           <Avatar {...stringAvatar(profileData.basicInfo.traineeName)} />

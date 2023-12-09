@@ -12,6 +12,9 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Urlconstant } from "../constant/Urlconstant";
 import EditFollowUp from "./EditFollowUp";
+import { PersonOutline } from "@mui/icons-material";
+import Course from "./Course";
+import Header from "./Header";
 
 export default function FollowUp() {
   const [isModalOpen, setModalOpen] = React.useState(false);
@@ -89,6 +92,8 @@ export default function FollowUp() {
     sessionStorage.setItem("status", value);
     setName(name);
     setStatus(value);
+
+    setCourseName("null");
   };
 
   const handleCourseChange = (event) => {
@@ -197,6 +202,7 @@ export default function FollowUp() {
 
   return (
     <div>
+      <Header />
       <h2>VeiwFollowUp</h2>
       <div
         className="search"
@@ -260,6 +266,7 @@ export default function FollowUp() {
             Clear
           </Button>
         </div>
+
       </div>
       <div style={{ height: "650px", width: "100%" }}>
         <DataGrid
