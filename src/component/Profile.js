@@ -12,8 +12,7 @@ import FollowStatusGrid from "./FollowStatusGrid";
 import Avatar from "@mui/material/Avatar";
 import EditModal from "./EditModal";
 import FollowUpStatus from "./FollowUpStatus";
-import { Alert } from "@mui/material";
-import { VisibilityOutlined } from "@mui/icons-material";
+import Header from "./Header";
 
 function stringToColor(string) {
   let hash = 0;
@@ -153,9 +152,10 @@ const Profile = () => {
 
   return (
     <div>
+      <Header />
       <div className="card">
         <div className="infos">
-           <Avatar {...stringAvatar(profileData.basicInfo.traineeName)} /> 
+          <Avatar {...stringAvatar(profileData.basicInfo.traineeName)} />
           <div className="name">
             <h1>{profileData.basicInfo.traineeName}</h1>
             <h3>

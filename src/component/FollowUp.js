@@ -14,6 +14,7 @@ import EditFollowUp from "./EditFollowUp";
 import { Link } from "react-router-dom";
 import { PersonOutline } from "@mui/icons-material";
 import Course from "./Course";
+import Header from "./Header";
 
 export default function FollowUp() {
   const [isModalOpen, setModalOpen] = React.useState(false);
@@ -93,7 +94,6 @@ export default function FollowUp() {
     setName(name);
     setStatus(value);
     setCourseName("null");
-
   };
 
   const handleCourseChange = (event) => {
@@ -220,6 +220,7 @@ export default function FollowUp() {
 
   return (
     <div>
+      <Header />
       <h2>VeiwFollowUp</h2>
       {/* <h2>FollowUp List</h2> */}
       <div
@@ -266,7 +267,7 @@ export default function FollowUp() {
               marginRight: "10px",
               width: "200px",
               fontSize: "12px",
-            }}    
+            }}
             onChange={handleCourseChange}
           >
             {/* <MenuItem value="null">Select</MenuItem> */}
@@ -290,7 +291,6 @@ export default function FollowUp() {
           sx={{ marginRight: "10px" }}
           onChange={dateByfollowupStatus}
         /> */}
-        
       </div>
       <div style={{ height: "650px", width: "100%" }}>
         <DataGrid
