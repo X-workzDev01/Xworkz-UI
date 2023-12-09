@@ -1,4 +1,7 @@
 import { AccountCircle, NotificationsActiveRounded } from "@mui/icons-material";
+import { RxCountdownTimer } from "react-icons/rx";
+import { IoPower } from "react-icons/io5";
+
 import {
   AppBar,
   Avatar,
@@ -12,8 +15,42 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Urlconstant } from "../constant/Urlconstant";
+import FollowUp from "./FollowUp";
 
-export default function Header() {
+function stringToColor(string) {
+  let hash = 0;
+  let i;
+  for (i = 0; i < string.length; i += 1) {
+    hash = string.charCodeAt(i) + ((hash << 5) - hash);
+  }
+
+  let color = "#";
+
+  for (i = 0; i < 3; i += 1) {
+    const value = (hash >> (i * 8)) & 0xff;
+    color += `00${value.toString(16)}`.slice(-2);
+  }
+  return color;
+}
+
+function stringAvatar(name) {
+  let avatarText = "";
+
+  if (name.includes(" ")) {
+    const [firstName, lastName] = name.split(" ");
+    avatarText = `${firstName[0]}${lastName[0]}`;
+  } else {
+    avatarText = name[0];
+  }
+
+  return {
+    sx: {
+      bgcolor: stringToColor(name),
+    },
+    children: avatarText,
+  };
+}
+function Header() {
   const email = sessionStorage.getItem("userId");
   const [yesterDayCandidate, setYesterDayCandidate] = useState([]);
   const [todayDayCandidate, setTodayDayCandidate] = useState([]);
@@ -37,6 +74,7 @@ export default function Header() {
         .catch((e) => {});
     }
   }, [email]);
+ 
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -47,6 +85,7 @@ export default function Header() {
   const id = open ? "simple-popper" : undefined;
 
   const popup = () => {
+
     return (
       <div>
         <Popover
@@ -66,111 +105,16 @@ export default function Header() {
           <Typography sx={{ p: 2 }}>
             <div
               style={{
-                maxHeight: "450px",
+                width: "23rem",
+                maxHeight: "470px",
                 overflowY: "auto",
+                overflowX: "auto",
                 marginRight: "-1rem",
               }}
             >
-              {todayDayCandidate ? (
+              {todayDayCandidate && todayDayCandidate.length > 0 ? (
                 <div>
                   <div>
-                    <p
-                      style={{
-                        backgroundColor: "white",
-                        marginTop: "0.5rem",
-                        textAlign: "center",
-                        marginLeft: "-20px",
-                        marginRight: "-2rem",
-                        color: "green",
-                        paddingBottom: "-6px",
-                        fontStyle: "bold",
-                      }}
-                    >
-                      Today followUp candidates
-                    </p>
-                    <div>
-                      <div>
-                        <hr style={{ paddingBottom: "-1rem" }}></hr>
-                      </div>
-                      {todayDayCandidate.map((v, k) => (
-                        <p key={k}>
-                          {v ? (
-                            <Link
-                              to={
-                                Urlconstant.navigate +
-                                `profile/${v.basicInfo.email}`
-                              }
-                              style={{ color: "blue", fontSize: "14px" }}
-                            >
-                              {v.basicInfo.traineeName} &nbsp;
-                            </Link>
-                          ) : null}
-                          {v.basicInfo.email}
-                        </p>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <hr style={{ paddingBottom: "-1rem" }}></hr>
-                  </div>
-                </div>
-              ) : (
-                ""
-              )}
-              <div>
-                {yesterDayCandidate ? (
-                  <div>
-                    <div>
-                      <hr style={{ paddingBottom: "-1rem" }}></hr>
-                    </div>
-                    <div>
-                      <p
-                        style={{
-                          backgroundColor: "white",
-                          marginTop: "-1rem",
-                          textAlign: "center",
-                          marginLeft: "-20px",
-                          marginRight: "-2rem",
-                          color: "red",
-                          paddingBottom: "-6px",
-                          fontStyle: "bold",
-                        }}
-                      >
-                        yesterday Candidate Followup
-                      </p>
-                      <div>
-                        <div>
-                          <hr style={{ paddingBottom: "-1rem" }}></hr>
-                        </div>
-                        {yesterDayCandidate.map((v, k) => (
-                          <p key={k}>
-                            {v ? (
-                              <Link
-                                to={`/x-workz/profile/${v.basicInfo.email}`}
-                                style={{ color: "blue", fontSize: "14px" }}
-                              >
-                                {v.basicInfo.traineeName} &nbsp;
-                              </Link>
-                            ) : null}
-                            {v.basicInfo.email}
-                          </p>
-                        ))}
-                      </div>
-                    </div>
-                    <div>
-                      <hr style={{ paddingBottom: "-1rem" }}></hr>
-                    </div>
-                  </div>
-                ) : (
-                  ""
-                )}
-              </div>
-              <div>
-                {afterFourDayCandidate ? (
-                  <div>
-                    <div>
-                      <hr style={{ paddingBottom: "-1rem" }}></hr>
-                    </div>
                     <p
                       style={{
                         backgroundColor: "white",
@@ -182,29 +126,342 @@ export default function Header() {
                         paddingBottom: "-6px",
                         fontStyle: "bold",
                       }}
-                    >
-                      After Four days Candidate Followup
-                    </p>
+                    ></p>
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          marginTop: "3px",
+                          justifyContent: "flex-start",
+                        }}
+                      >
+                        <RxCountdownTimer />
+                      </div>
+
+                      <span
+                        style={{
+                          display: "flex",
+                          marginLeft: "5rem",
+                          paddingTop: "2px",
+                        }}
+                      >
+                        Today
+                      </span>
+                      <span
+                        style={{
+                          display: "flex",
+                          marginLeft: "0.5rem",
+                          paddingTop: "2px",
+                        }}
+                      >
+                        {`${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}`}
+                      </span>
+                    </div>
                     <div>
                       <div>
                         <hr style={{ paddingBottom: "-1rem" }}></hr>
                       </div>
-                      {afterFourDayCandidate.map((v, k) => (
-                        <p key={k}>
-                          {v ? (
-                            <Link
-                              to={
-                                Urlconstant.navigate +
-                                `profile/${v.basicInfo.email}`
-                              }
-                              style={{ color: "blue", fontSize: "14px" }}
+                      <div>
+                        {todayDayCandidate.map((v, k) => (
+                          <div style={{ paddingBottom: "0.7rem" }} key={k}>
+                            {v ? (
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "flex-start",
+                                }}
+                              >
+                                <Link
+                                  to={
+                                    Urlconstant.navigate +
+                                    `profile/${v.basicInfo.email}`
+                                  }
+                                  style={{ color: "blue", fontSize: "14px" }}
+                                >
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      justifyContent: "flex-start",
+                                      textTransform: "capitalize",
+                                    }}
+                                  >
+                                    <Avatar
+                                      style={{ width: "2rem", height: "2rem" }}
+                                      {...stringAvatar(v.basicInfo.traineeName)}
+                                    />
+
+                                    <span
+                                      style={{
+                                        display: "flex",
+                                        alignItems: "flex-start",
+                                        marginLeft: "20px",
+                                        paddingTop: "5px",
+                                        textTransform: "capitalize",
+                                      }}
+                                    >
+                                      {v.basicInfo.traineeName} &nbsp;
+                                    </span>
+                                  </div>
+                                </Link>
+                                <span
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "flex-start",
+                                    paddingTop: "5.3px",
+                                  }}
+                                >
+                                  {" "}
+                                  {v.basicInfo.email}
+                                </span>
+                              </div>
+                            ) : null}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <hr style={{ paddingBottom: "-1rem" }}></hr>
+                  </div>
+                </div>
+              ) : (
+                ""
+              )}
+              <div>
+                {yesterDayCandidate && yesterDayCandidate.length > 0 ? (
+                  <div>
+                    <div></div>
+                    <div>
+                      <p
+                        style={{
+                          backgroundColor: "white",
+                          marginTop: "-1rem",
+                          textAlign: "center",
+                          marginLeft: "-20px",
+                          marginRight: "-2rem",
+                          paddingBottom: "-6px",
+                          fontStyle: "bold",
+                        }}
+                      ></p>
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <div
+                          style={{
+                            display: "flex",
+                            marginTop: "3px",
+                            justifyContent: "flex-start",
+                          }}
+                        >
+                          <RxCountdownTimer />
+                        </div>
+
+                        <span
+                          style={{
+                            display: "flex",
+                            marginLeft: "5rem",
+                            paddingTop: "2px",
+                          }}
+                        >
+                          Yesterday
+                        </span>
+                        <span
+                          style={{
+                            display: "flex",
+                            marginLeft: "0.5rem",
+                            paddingTop: "2px",
+                          }}
+                        >
+                          {`${
+                            new Date().getDate() - 1
+                          }/${new Date().getMonth()}/${new Date().getFullYear()}`}
+                        </span>
+                      </div>
+                      <div>
+                        <div>
+                          <hr style={{ paddingBottom: "-1rem" }}></hr>
+                        </div>
+                        <div>
+                          {yesterDayCandidate.map((v, k) => (
+                            <div style={{ paddingBottom: "0.7rem" }} key={k}>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "flex-start",
+                                }}
+                              >
+                                {v ? (
+                                  <Link
+                                    to={`/x-workz/profile/${v.basicInfo.email}`}
+                                    style={{ color: "blue", fontSize: "14px" }}
+                                  >
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        justifyContent: "flex-start",
+                                        textTransform: "capitalize",
+                                      }}
+                                    >
+                                      <Avatar
+                                        style={{
+                                          width: "2rem",
+                                          height: "2rem",
+                                        }}
+                                        {...stringAvatar(
+                                          v.basicInfo.traineeName
+                                        )}
+                                      />
+                                      <span
+                                        style={{
+                                          display: "flex",
+                                          alignItems: "flex-start",
+                                          marginLeft: "18px",
+                                          paddingTop: "7px",
+                                          textTransform: "capitalize",
+                                        }}
+                                      >
+                                        {v.basicInfo.traineeName} &nbsp;
+                                      </span>
+                                    </div>
+                                  </Link>
+                                ) : null}
+                                <span
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "flex-start",
+                                    paddingTop: "5.3px",
+                                  }}
+                                >
+                                  {v.basicInfo.email}
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <hr style={{ paddingBottom: "-1rem" }}></hr>
+                    </div>
+                  </div>
+                ) : (
+                  ""
+                )}
+              </div>
+              <div>
+                {afterFourDayCandidate && afterFourDayCandidate.length > 0 ? (
+                  <div>
+                    <div
+                      style={{
+                        backgroundColor: "white",
+                        marginTop: "-1rem",
+                        textAlign: "center",
+                        marginLeft: "-20px",
+                        marginRight: "-2rem",
+                        color: "green",
+                        paddingBottom: "-6px",
+                        fontStyle: "bold",
+                      }}
+                    ></div>
+                    <div
+                      style={{
+                        display: "flex",
+                        paddingTop: "0.7rem",
+                        alignItems: "center",
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          marginTop: "4px",
+                          justifyContent: "flex-start",
+                        }}
+                      >
+                        <RxCountdownTimer />
+                      </div>
+
+                      <span
+                        style={{
+                          display: "flex",
+                          marginLeft: "5rem",
+                          paddingTop: "2px",
+                        }}
+                      >
+                        After 4 day
+                      </span>
+                      <span
+                        style={{
+                          display: "flex",
+                          marginLeft: "0.5rem",
+                          paddingTop: "2px",
+                        }}
+                      >
+                        {`${
+                          new Date().getDate() + 4
+                        }/${new Date().getMonth()}/${new Date().getFullYear()}`}
+                      </span>
+                    </div>
+                    <div>
+                      <div>
+                        <hr style={{ paddingBottom: "-1rem" }}></hr>
+                      </div>
+                      <div>
+                        {afterFourDayCandidate.map((v, k) => (
+                          <div style={{ paddingBottom: "0.7rem" }} key={k}>
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: "flex-start",
+                              }}
                             >
-                              {v.basicInfo.traineeName} &nbsp;
-                            </Link>
-                          ) : null}
-                          {v.basicInfo.email}
-                        </p>
-                      ))}
+                              {v ? (
+                                <Link
+                                  to={
+                                    Urlconstant.navigate +
+                                    `profile/${v.basicInfo.email}`
+                                  }
+                                  style={{ color: "blue", fontSize: "14px" }}
+                                >
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      justifyContent: "flex-start",
+                                      textTransform: "capitalize",
+                                    }}
+                                  >
+                                    <Avatar
+                                      style={{
+                                        width: "2rem",
+                                        height: "2rem",
+                                      }}
+                                      {...stringAvatar(v.basicInfo.traineeName)}
+                                    />
+                                    <span
+                                      style={{
+                                        display: "flex",
+                                        alignItems: "flex-start",
+                                        marginLeft: "18px",
+                                        paddingTop: "7px",
+                                        textTransform: "capitalize",
+                                      }}
+                                    >
+                                      {v.basicInfo.traineeName} &nbsp;
+                                    </span>
+                                  </div>{" "}
+                                </Link>
+                              ) : null}
+                              <span
+                                style={{
+                                  display: "flex",
+                                  alignItems: "flex-start",
+                                  paddingTop: "5.3px",
+                                }}
+                              >
+                                {" "}
+                                {v.basicInfo.email}
+                              </span>{" "}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                     <div>
                       <hr style={{ paddingBottom: "-1rem" }}></hr>
@@ -271,25 +528,50 @@ export default function Header() {
                 ></img>
               </a>
             </IconButton>
-
             <Link to="/x-workz/view">Home</Link>
             <Typography variant="h6" component="div" sx={{ flexGrow: 6 }}>
               <AccountCircle
                 sx={{ color: "action.active", marginRight: "8px" }}
               />
             </Typography>
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              {extractNameFromEmail(sessionStorage.getItem("userId", email))}
-            </Typography>
-
-            {notificationDisplay()}
-            {popup()}
-            <Avatar>X</Avatar>
-            <br></br>
-            <Link to="/x-workz/login">Logout</Link>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <Typography
+                variant="h6"
+                component="div"
+                style={{
+                  textTransform: "capitalize",
+                  flexGrow: 1,
+                  marginRight: "1rem",
+                }}
+              >
+                {extractNameFromEmail(sessionStorage.getItem("userId", email))}
+              </Typography>
+              <div style={{ marginRight: "1rem" }}>{notificationDisplay()}</div>
+              {popup()}
+              <Avatar
+                style={{
+                  marginRight: "1rem",
+                  textTransform: "capitalize",
+                }}
+                {...stringAvatar(
+                  extractNameFromEmail(sessionStorage.getItem("userId", email))
+                )}
+              />
+              <br></br>
+              <Link to="/x-workz/login" style={{ marginRight: "1rem" }}>
+                <IoPower />
+              </Link>
+            </div>
           </Toolbar>
         </AppBar>
       </div>
     </>
   );
 }
+export default Header;

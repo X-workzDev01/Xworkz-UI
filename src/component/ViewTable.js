@@ -284,45 +284,13 @@ export default function ControlledSelectionServerPaginationGrid() {
       .catch((error) => {});
   };
 
-  // const handleCourseChange = (event) => {
-  //   c//onst courseVaue=event.target.value;
-  //   //setCourseName(courseVaue);
-  //   //getTraineeDetailsByCourse(courseVaue);
-  // }
+
   const handleCourseChange = (event) => {
     const courseValue = event.target.value;
     setCourseName(courseValue);
-    // getTraineeDetailsByCourse(courseValue);
   };
 
-  // const getTraineeDetailsByCourse = async (courseValue) => {
-  //   try {
-
-  //     console.log("getTraineeDetailsByCourse " + courseValue);
-  //     const apiUrl =
-  //       Urlconstant.url + `api/traineeDetails?courseName=${courseValue}`;
-  //     const requestOptions = {
-  //       method: "GET",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         spreadsheetId: Urlconstant.spreadsheetId,
-  //       },
-  //     };
-  //     const response = await axios.get(apiUrl, requestOptions);
-  //     setGridData({
-  //       rows: response.data.map((row) => ({
-  //         id: row.id.toString(),
-  //         ...row,
-  //       })),
-  //       rowCount: response.data.length,
-  //     });
-  //   } catch (error) {
-  //     console.error("Error fetching data:", error);
-  //     setGridData({ rows: [], rowCount: 0 });
-  //   }
-  // };
-
-  // Inside your component:
+  
   React.useEffect(() => {
     refreshPageEveryTime();
   }, [paginationModel.page, paginationModel.pageSize, searchValue,courseName]);
