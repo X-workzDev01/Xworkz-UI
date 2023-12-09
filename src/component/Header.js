@@ -59,7 +59,6 @@ function Header() {
   const [anchorEl, setAnchorEl] = useState(null);
   useEffect(() => {
     if (email) {
-      console.log(email);
       axios(Urlconstant.url + `api/notification?email=${email}`)
         .then((res) => {
           setYesterDayCandidate(res.data.yesterdayCandidates);

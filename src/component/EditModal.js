@@ -518,7 +518,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
           style={fieldStyle}
         />
         <TextField
-          label="Start Time"
+          label="Start Date"
           name="courseInfo.startTime"
           value={formData.startTime || ""}
           onChange={handleInputChange}
@@ -531,7 +531,8 @@ const EditModal = ({ open, handleClose, rowData }) => {
             id="demo-simple-select"
             label="Offered As"
             name="courseInfo.offeredAs"
-            defaultValue={rowData.courseInfo.offeredAs || ""}
+            onChange={handleInputChange}
+            defaultValue={rowData.courseInfo.offeredAs}
             variant="outlined"
             style={{ width: "12rem" }}
           >

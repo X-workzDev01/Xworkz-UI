@@ -56,6 +56,7 @@ const LoginPage = (props) => {
           if (response.data === "OTP Wrong") {
             setOtpError("Wrong Otp entered");
           } else {
+        
             navigate(Urlconstant.navigate + "display", { state: { email } });
           }
           setEffect(true);
@@ -75,6 +76,8 @@ const LoginPage = (props) => {
       })
       .then((response) => {
         if (response.status === 200) {
+          sessionStorage.setItem("status", "New");
+          sessionStorage.setItem("course", "null");
           console.log(response.data);
         } else {
           console.log("user not found:", response.status);
