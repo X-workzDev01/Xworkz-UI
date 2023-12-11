@@ -3,16 +3,9 @@ import axios from 'axios';
 import React from 'react'
 import { Form } from 'react-bootstrap';
 import { Urlconstant } from '../constant/Urlconstant';
-import ContactPhoneIcon from '@mui/icons-material/ContactPhone';
+import { formStyle } from '../constant/FormStyle';
 
 export default function ClientDetails() {
-
-    const formStyle = {
-        maxWidth: '400px',
-        margin: '0 auto',
-        padding: '10px',
-        marginTop: '70px',
-    };
     const statusList = ['Active', 'Inactive'].slice().sort();
     const email = sessionStorage.getItem('userId');
     const [isSubmitting, setIsSubmitting] = React.useState(false);
@@ -20,7 +13,9 @@ export default function ClientDetails() {
     const [snackbarMessage, setSnackbarMessage] = React.useState("");
     const [companyNameCheck, setCompanyNameCheck] = React.useState("");
     const [companyEmailCheck,setCompanyEmailCheck] =React.useState("");
-
+    const [emailCheck,setEmailCheck]=React.useState("");
+    const [phoneNumberCheck,setPhoneNumberChech] =React.useState("");
+    const [formData, setFormData] = React.useState('');
 
     const handleClose = (reason) => {
         if (reason === 'clickaway') {
@@ -29,7 +24,7 @@ export default function ClientDetails() {
         setOpen(false);
     };
 
-    const [formData, setFormData] = React.useState('');
+    
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prevData) => ({
@@ -47,6 +42,7 @@ export default function ClientDetails() {
                 ...formData,
                 adminDto: { createdBy: email }
             };
+            
 
             axios.post(Urlconstant.url + "api/registerclient", clientData)
             setOpen(true)
@@ -205,6 +201,7 @@ export default function ClientDetails() {
                 message={snackbarMessage}
                 autoHideDuration={3000}
             />
+           
         </div>
     )
 }

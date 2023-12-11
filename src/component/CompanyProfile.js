@@ -5,7 +5,6 @@ import { Urlconstant } from '../constant/Urlconstant';
 import { Avatar, Button } from '@mui/material';
 import { AddCircleOutline, EmailRounded, ModeEditOutline, PhoneAndroidOutlined } from '@mui/icons-material';
 import AddHr from './AddHr';
-import HrFollowUp from './HrFollowUp';
 
 function stringToColor(string) {
   let hash = 0;
@@ -46,7 +45,6 @@ const CompanyProfile = () => {
   const [companyName, setCompanyName] = React.useState("");
   const [isAddHrModalOpen, setAddHrModalOpen] = React.useState(false);
   const [isHrFollowupModalOpen, setHrFollowupModalOpen] = React.useState(false);
-  const [isModalOpen, setModalOpen] = React.useState(false);
 
   const fetchData = (id, isAddHrModalOpen) => {
     axios.get(Urlconstant.url + `api/getdetailsbyid?companyId=${id}`)
@@ -58,24 +56,26 @@ const CompanyProfile = () => {
   }
   React.useEffect(() => {
     fetchData(id, isAddHrModalOpen);
-
   }, [id, isAddHrModalOpen,isHrFollowupModalOpen]);
 
   const handleAddClientHr = (companyDetails) => {
-    console.log(companyDetails)
     setAddHrModalOpen(true);
   };
 
   const handleSaveClick = () => {
-    console.log("Hellom")
     setAddHrModalOpen(false);
   };
 
 
-  
+  const handleHrfollowupClick = (companyDetails) => {
+    setHrFollowupModalOpen(true);
+  };
+
+  const handleSaveHRFollowClick = () => {
+    setHrFollowupModalOpen(false);
+  };
 
   const handleEditCompanyDetails = () => {
-    alert("EditCompanyDetails")
   }
   return (
     <div>CompanyProfile
@@ -122,7 +122,7 @@ const CompanyProfile = () => {
               variant="outlined"
               startIcon={<ModeEditOutline />}
               onClick={() => {
-                handleEditCompanyDetails(companyDetails);
+                handleAddClientHr(companyDetails);
               }}
             >
               Edit Profile
@@ -130,6 +130,9 @@ const CompanyProfile = () => {
             <Button
               variant="outlined"
               startIcon={<AddCircleOutline />}
+              onClick={() => {
+                handleHrfollowupClick(companyDetails);
+              }}
             >
               Add Follow up
             </Button>
@@ -142,7 +145,6 @@ const CompanyProfile = () => {
         rowData={companyDetails}
         handleSaveClick={handleSaveClick}
       />
-
     </div>
   )
 }
