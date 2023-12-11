@@ -3,8 +3,9 @@ import { GridCloseIcon } from '@mui/x-data-grid';
 import axios from 'axios';
 import React, { useState } from 'react';
 import { Urlconstant } from '../constant/Urlconstant';
+import { fieldStyle, style } from '../constant/FormStyle';
 
-const fieldStyle = { margin: "20px" };
+
 const AddHr = ({ open, handleClose, rowData }) => {
 
 
@@ -72,7 +73,7 @@ const AddHr = ({ open, handleClose, rowData }) => {
                     onClick={handleClose}
                     edge="start"
                     aria-label="close"
-                    style={{ position: "absolute", right: "8px", top: "8px" }}
+                    style={style}
                 >
                     <GridCloseIcon />
                 </IconButton>
@@ -139,7 +140,7 @@ const AddHr = ({ open, handleClose, rowData }) => {
                         onClick={() => setIsConfirming(false)}
                         edge="start"
                         aria-label="close"
-                        style={{ position: "absolute", right: "8px", top: "8px" }}
+                        style={style}
                     >
                         <GridCloseIcon />
                     </IconButton>
