@@ -8,6 +8,7 @@ import { validateContactNumber, validateEmail } from '../constant/ValidationCons
 
 export default function ClientDetails() {
     const statusList = ['Active', 'Inactive'].slice().sort();
+    const clientType = [ 'IT Consultency','Service Based', 'Product Based', 'Others'];
     const email = sessionStorage.getItem('userId');
     const [isSubmitting, setIsSubmitting] = React.useState(false);
     const [open, setOpen] = React.useState(false);
@@ -54,7 +55,7 @@ export default function ClientDetails() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-//        setIsSubmitting(false);
+        //        setIsSubmitting(false);
         try {
             const clientData = {
                 ...formData,
@@ -76,7 +77,7 @@ export default function ClientDetails() {
                 companyType: '',
                 companyAddress: '',
                 status: '',
-             
+
             });
         } catch (error) {
         } finally {
@@ -121,7 +122,7 @@ export default function ClientDetails() {
                     fullWidth
                     margin="normal"
                 />
-            
+
                 {companyNameCheck ? <Alert severity="error">{companyNameCheck}</Alert> : " "}
                 <TextField
                     label="Client Email"
@@ -182,7 +183,14 @@ export default function ClientDetails() {
                     onChange={handleChange}
                     fullWidth
                     margin="normal"
-                />
+                    select
+                >
+                    {clientType.map((option) => (
+                        <MenuItem key={option} value={option}>
+                            {option}
+                        </MenuItem>
+                    ))}
+                </TextField>
                 <TextField
                     label="Company Address"
                     name="companyAddress"
