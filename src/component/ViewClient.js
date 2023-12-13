@@ -5,6 +5,38 @@ import { PersonOutline, Search } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import { Button, TextField } from '@mui/material';
 
+function loadServerRows(page, pageSize, courseName) {
+    const startingIndex = page * pageSize;
+    const maxRows = pageSize;
+    const spreadsheetId = Urlconstant.spreadsheetId;
+    const apiUrl =
+        Urlconstant.url +
+        `api/readData?startingIndex=${startingIndex}&maxRows=${maxRows}}`;
+    const requestOptions = {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            spreadsheetId: spreadsheetId,
+        },
+    };
+    return new Promise((resolve) => {
+        fetch(apiUrl, requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+                resolve({
+                    rows: data.sheetsData.map((row) => ({
+                        ...row,
+                    })),
+                    rowCount: data.size,
+                });
+            })
+            .catch((error) => {
+                console.error("Error fetching data:", error);
+                resolve({ rows: [], rowCount: 0 });
+            });
+    });
+}
+
 
 
 export default function ViewClient() {
@@ -22,14 +54,14 @@ export default function ViewClient() {
     React.useEffect(() => {
         searchServerRows(paginationModel.page, paginationModel.pageSize).then(
             (newGridData) => {
-             //   console.log("Fetched data from server:", newGridData);
+                //   console.log("Fetched data from server:", newGridData);
                 setGridData(newGridData);
             }
         );
     }, [paginationModel.page, paginationModel.pageSize]);
 
     function searchServerRows(page, pageSize) {
-       const startingIndex = page * pageSize;
+        const startingIndex = page * pageSize;
         var apiUrl =
             Urlconstant.url +
             `api/readclientinfomation?startingIndex=${startingIndex}&maxRows=${25}`;
@@ -44,7 +76,7 @@ export default function ViewClient() {
                         })),
                         rowCount: data.size,
                     };
-                
+
                     resolve(newGridData);
                 })
                 .catch((error) => {
@@ -52,10 +84,10 @@ export default function ViewClient() {
                 });
         });
     }
-    
+
 
     const column = [
-      //  { headerName: 'ID', field: 'id' },
+        //  { headerName: 'ID', field: 'id' },
         {
             field: "companyName",
             headerName: "Company Name",
@@ -122,15 +154,27 @@ export default function ViewClient() {
 
     return (
         <div style={{ height: "650px", width: "100%" }}>
-            
-                <h2>ViewClient</h2>
-                <div style={{ height: "650px", width: "100%" }}>
+            <div
+                className="search"
+                style={{ display: "flex", alignItems: "center", marginTop: "100px" }}
+            >
+                <TextField
+                    Search
+                    name="searchValue"
+                />
+            </div>
+            <h1></h1>
+            <div style={{ height: "650px", width: "100%" }}>
                 <DataGrid
                     rows={gridData.rows}
                     columns={column}
                     pageSizeOptions={[5, 10, 25]}
                     paginationMode="server"
                     rowCount={gridData.rowCount}
+                    pagination
+                    paginationModel={paginationModel}
+                    onPaginationModelChange={setPaginationModel}
+                    keepNonExistentRowsSelected
 
                 />
             </div>
