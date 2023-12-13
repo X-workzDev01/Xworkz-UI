@@ -58,12 +58,12 @@ const Sidebar = ({ children }) => {
     },
     {
       path: "client",
-      name: "Register Company",
+      name: "Client Register",
       icon: <FaTh />,
     },
     {
       path: "displayclient",
-      name: "Company details",
+      name: "Client Details",
       icon: <FaUserAlt />,
     },
 
