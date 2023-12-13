@@ -1,4 +1,4 @@
-import { Alert, Button, MenuItem, Snackbar, TextField } from '@mui/material';
+import { Alert, Button, Grid, MenuItem, Snackbar, TextField } from '@mui/material';
 import axios from 'axios';
 import React from 'react'
 import { Form } from 'react-bootstrap';
@@ -121,6 +121,7 @@ export default function ClientDetails() {
                     fullWidth
                     margin="normal"
                 />
+            
                 {companyNameCheck ? <Alert severity="error">{companyNameCheck}</Alert> : " "}
                 <TextField
                     label="Client Email"

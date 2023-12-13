@@ -1,9 +1,10 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Snackbar, TextField } from '@mui/material';
+import { Alert, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Snackbar, TextField } from '@mui/material';
 import { GridCloseIcon } from '@mui/x-data-grid';
 import axios from 'axios';
 import React, { useState } from 'react';
 import { Urlconstant } from '../constant/Urlconstant';
 import { fieldStyle, style } from '../constant/FormStyle';
+import { validateContactNumber, validateEmail } from '../constant/ValidationConstant';
 
 
 const AddHr = ({ open, handleClose, rowData }) => {
@@ -16,6 +17,8 @@ const AddHr = ({ open, handleClose, rowData }) => {
     const [isDisabled, setIdDisabled] = React.useState(true);
     const [formData, setFormData] = React.useState('');
     const attemptedEmail = sessionStorage.getItem("userId");
+    const [emailCheck, setEmailCheck] = React.useState("");
+    const [phoneNumber, setPhoneNumberCheck] = React.useState("");
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
@@ -23,10 +26,23 @@ const AddHr = ({ open, handleClose, rowData }) => {
             ...prevData,
             [name]: value,
         }));
+        if (name === 'hrEmail') {
+            if (validateEmail(value)) {
+                setEmailCheck("");
+            } else {
+                setEmailCheck("invalid email")
+            }
+        }
+        if (name === 'hrContactNumber'){
+             if(validateContactNumber(value)){
+                setPhoneNumberCheck("");
+             }else{
+                setPhoneNumberCheck("Invalid Contact Number")
+             }
+        }
     }
 
     const handleHrAddClick = () => {
-        console.log("add click")
         setIsConfirming(true);
         setSnackbarOpen(false);
     };
@@ -36,8 +52,6 @@ const AddHr = ({ open, handleClose, rowData }) => {
     };
 
     const handleSaveClick = (event) => {
-        console.log("can save data")
-        console.log(rowData)
         event.preventDefault();
         //setIsSubmitting(false);
         try {
@@ -46,12 +60,12 @@ const AddHr = ({ open, handleClose, rowData }) => {
                 companyId: rowData.id,
                 adminDto: { createdBy: attemptedEmail }
             };
-            
+
             axios.post(Urlconstant.url + "api/registerclienthr", hrData)
             //setOpen(true)
             //setSnackbarMessage("Client information added successfully")
             setFormData({
-                //companyId="",
+
                 hrScopName: '',
                 hrEmail: '',
                 hrContactNumber: '',
@@ -93,6 +107,7 @@ const AddHr = ({ open, handleClose, rowData }) => {
                     style={fieldStyle}
                     value={formData.hrEmail}
                 />
+                {emailCheck ? <Alert severity="error">{emailCheck}</Alert> : " "}
                 <TextField
                     label="Hr ContactNumber"
                     name="hrContactNumber"

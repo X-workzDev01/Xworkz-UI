@@ -122,7 +122,7 @@ const CompanyProfile = () => {
               variant="outlined"
               startIcon={<ModeEditOutline />}
               onClick={() => {
-                handleAddClientHr(companyDetails);
+                handleEditCompanyDetails(companyDetails);
               }}
             >
               Edit Profile
