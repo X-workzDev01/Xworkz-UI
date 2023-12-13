@@ -1,19 +1,18 @@
-import * as React from "react";
-import { DataGrid } from "@mui/x-data-grid";
-import { Urlconstant } from "../constant/Urlconstant";
-import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
-import Autocomplete from "@mui/material/Autocomplete";
-import axios from "axios";
-import EditModal from "./EditModal";
-import Profile from "./Profile";
-import { Link } from "react-router-dom";
-import Header from "./Header";
 import { PersonOutline } from "@mui/icons-material";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import Autocomplete from "@mui/material/Autocomplete";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import { DataGrid } from "@mui/x-data-grid";
+import axios from "axios";
+import * as React from "react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import { Urlconstant } from "../constant/Urlconstant";
+import EditModal from "./EditModal";
+import Header from "./Header";
 
-function loadServerRows(page, pageSize,courseName) {
+function loadServerRows(page, pageSize, courseName) {
   const startingIndex = page * pageSize;
   const maxRows = pageSize;
   const spreadsheetId = Urlconstant.spreadsheetId;
@@ -57,8 +56,9 @@ function loadClientRows(page, pageSize, allData) {
   });
 }
 
-function searchServerRows(searchValue) {
-  const apiUrl = Urlconstant.url + `api/filterData?searchValue=${searchValue}`;
+function searchServerRows(searchValue, courseName) {
+  const apiUrl =
+    Urlconstant.url + `api/filterData/${courseName}?searchValue=${searchValue}`;
   const requestOptions = {
     method: "GET",
     headers: {
@@ -82,10 +82,11 @@ function searchServerRows(searchValue) {
       });
   });
 }
-async function fetchFilteredData(searchValue) {
+async function fetchFilteredData(searchValue, courseName) {
   try {
     const apiUrl =
-      Urlconstant.url + `api/register/suggestion?value=${searchValue}`;
+      Urlconstant.url +
+      `api/register/suggestion/${courseName}?value=${searchValue}`;
     const requestOptions = {
       method: "GET",
       headers: {
@@ -95,8 +96,6 @@ async function fetchFilteredData(searchValue) {
     };
 
     const response = await axios.get(apiUrl, requestOptions);
-    console.log(response);
-
     return response.data;
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -133,32 +132,21 @@ export default function ControlledSelectionServerPaginationGrid() {
   const [autocompleteOptions, setAutocompleteOptions] = React.useState([]);
   const [isModalOpen, setModalOpen] = React.useState(false);
   const [editedRowData, setEditedRowData] = React.useState(null);
-  const [courseName, setCourseName] = React.useState("null");
+  const [courseName, setCourseName] = React.useState(
+    sessionStorage.getItem("courseValue")
+  );
   const [courseDropdown, setCourseDropdown] = React.useState("");
-
-  const handleEditClick = (row) => {
-    setEditedRowData(row);
-    setModalOpen(true);
-  };
 
   const handleSaveClick = () => {
     setModalOpen(false);
   };
 
   const handleSearchClick = () => {
-    searchServerRows(searchValue).then((newGridData) => {
+    searchServerRows(searchValue, courseName).then((newGridData) => {
       setGridData(newGridData);
       setPaginationModel({ page: 0, pageSize: initialPageSize });
       setSearchInputValue("");
     });
-  };
-
-  const handleViewProfile = (rowData) => {
-    <Profile rowData={rowData} />;
-  };
-
-  const handleAutocompleteChange = (event, newValue) => {
-    setSearchValue(newValue || "");
   };
 
   const debouncedFetchSuggestions = React.useMemo(
@@ -167,6 +155,7 @@ export default function ControlledSelectionServerPaginationGrid() {
         (searchValue) =>
           fetchFilteredData(
             searchValue,
+            courseName,
             paginationModel.page,
             paginationModel.pageSize,
             setPaginationModel
@@ -190,46 +179,20 @@ export default function ControlledSelectionServerPaginationGrid() {
     []
   );
 
-  // Define a function to fetch and update data
-  async function fetchData(searchValue, page, pageSize, active,courseName) {
-    try {
-      if (searchValue === "") {
-        const newGridData = await loadServerRows(page, pageSize,courseName);
-        if (active) {
-          setGridData(newGridData);
-          setLoading(false);
-          setAutocompleteOptions([]);
-          console.log("suggestion set to null");
-        }
-      } else {
-        setLoading(false);
-        debouncedFetchSuggestions(searchValue);
-      }
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      if (active) {
-        setGridData({ rows: [], rowCount: 0 });
-        setLoading(false);
-      }
-    }
-  }
-
   const refreshPageEveryTime = () => {
     let active = true;
     setLoading(true);
 
     const fetchDataAndUpdateState = async () => {
       try {
-        console.log("hareesha");
-
         if (
           searchValue === "" ||
           (searchValue.length >= 1 && searchValue.length <= 3)
         ) {
-          console.log("pagination");
           const newGridData = await loadServerRows(
             paginationModel.page,
-            paginationModel.pageSize,courseName
+            paginationModel.pageSize,
+            courseName
           );
 
           if (active) {
@@ -240,6 +203,7 @@ export default function ControlledSelectionServerPaginationGrid() {
         } else {
           const suggestions = await fetchFilteredData(
             searchValue,
+            courseName,
             paginationModel.page,
             paginationModel.pageSize,
             setPaginationModel
@@ -284,18 +248,16 @@ export default function ControlledSelectionServerPaginationGrid() {
       .catch((error) => {});
   };
 
-
   const handleCourseChange = (event) => {
     const courseValue = event.target.value;
+    sessionStorage.setItem("courseValue", courseValue);
     setCourseName(courseValue);
   };
 
-  
   React.useEffect(() => {
     refreshPageEveryTime();
-  }, [paginationModel.page, paginationModel.pageSize, searchValue,courseName]);
+  }, [paginationModel.page, paginationModel.pageSize, searchValue, courseName]);
   const columns = [
-    // { headerName: "ID", field: "id", flex: 1 },
     {
       field: "traineeName",
       headerName: "Trainee Name",
@@ -320,30 +282,30 @@ export default function ControlledSelectionServerPaginationGrid() {
       flex: 1,
       valueGetter: (params) => params.row.othersDto.registrationDate,
     },
-    {
-      field: "qualification",
-      headerName: "Qualification",
-      flex: 1,
-      valueGetter: (params) => params.row.educationInfo.qualification,
-    },
-    {
-      field: "stream",
-      headerName: "Stream",
-      flex: 1,
-      valueGetter: (params) => params.row.educationInfo.stream,
-    },
-    {
-      field: "yearOfPassout",
-      headerName: "Year of Passout",
-      flex: 1,
-      valueGetter: (params) => params.row.educationInfo.yearOfPassout,
-    },
-    {
-      field: "collegeName",
-      headerName: "College Name",
-      flex: 1,
-      valueGetter: (params) => params.row.educationInfo.collegeName,
-    },
+    // {
+    //   field: "qualification",
+    //   headerName: "Qualification",
+    //   flex: 1,
+    //   valueGetter: (params) => params.row.educationInfo.qualification,
+    // },
+    // {
+    //   field: "stream",
+    //   headerName: "Stream",
+    //   flex: 1,
+    //   valueGetter: (params) => params.row.educationInfo.stream,
+    // },
+    // {
+    //   field: "yearOfPassout",
+    //   headerName: "Year of Passout",
+    //   flex: 1,
+    //   valueGetter: (params) => params.row.educationInfo.yearOfPassout,
+    //  },
+    // {
+    //   field: "collegeName",
+    //   headerName: "College Name",
+    //   flex: 1,
+    //   valueGetter: (params) => params.row.educationInfo.collegeName,
+    // },
     {
       field: "course",
       headerName: "Course",
@@ -381,6 +343,12 @@ export default function ControlledSelectionServerPaginationGrid() {
       ),
     },
   ];
+
+  const handleClear = () => {
+    sessionStorage.setItem("courseValue", "null");
+    setCourseName("null");
+  };
+
   return (
     <div>
       <Header />
@@ -397,6 +365,7 @@ export default function ControlledSelectionServerPaginationGrid() {
           getOptionLabel={(option) => option.basicInfo.traineeName}
           style={{ width: "22rem", padding: "10px 20px" }}
           onChange={(event, newValue) => {
+            sessionStorage.setItem("name", newValue.basicInfo.traineeName);
             setSearchValue(newValue.basicInfo.email);
           }}
           renderInput={(params) => (
@@ -449,10 +418,20 @@ export default function ControlledSelectionServerPaginationGrid() {
               : null}
           </Select>
         </FormControl>
-
-        <Button variant="contained" color="primary" onClick={handleSearchClick}>
-          Search
-        </Button>
+        <div>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSearchClick}
+          >
+            Search
+          </Button>
+        </div>
+        <div style={{ paddingLeft: "10px" }}>
+          <Button variant="contained" color="primary" onClick={handleClear}>
+            Clear
+          </Button>
+        </div>
       </div>
       <div style={{ height: "650px", width: "100%" }}>
         <DataGrid

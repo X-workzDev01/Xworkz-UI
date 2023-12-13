@@ -10,4 +10,5 @@ export const Urlconstant = {
 
   navigate: "/x-workz-dev/",
   // navigate:  '/x-workz/',
+
 };
