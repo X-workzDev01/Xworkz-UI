@@ -4,6 +4,7 @@ import React from 'react'
 import { Form } from 'react-bootstrap';
 import { Urlconstant } from '../constant/Urlconstant';
 import { formStyle } from '../constant/FormStyle';
+import { validateContactNumber, validateEmail } from '../constant/ValidationConstant';
 
 export default function ClientDetails() {
     const statusList = ['Active', 'Inactive'].slice().sort();
@@ -12,10 +13,11 @@ export default function ClientDetails() {
     const [open, setOpen] = React.useState(false);
     const [snackbarMessage, setSnackbarMessage] = React.useState("");
     const [companyNameCheck, setCompanyNameCheck] = React.useState("");
-    const [companyEmailCheck,setCompanyEmailCheck] =React.useState("");
-    const [emailCheck,setEmailCheck]=React.useState("");
-    const [phoneNumberCheck,setPhoneNumberChech] =React.useState("");
+    const [companyEmailCheck, setCompanyEmailCheck] = React.useState("");
+    const [emailCheck, setEmailCheck] = React.useState("");
+    const [phoneNumberCheck, setPhoneNumberCheck] = React.useState("");
     const [formData, setFormData] = React.useState('');
+
 
     const handleClose = (reason) => {
         if (reason === 'clickaway') {
@@ -24,25 +26,41 @@ export default function ClientDetails() {
         setOpen(false);
     };
 
-    
+
     const handleChange = (e) => {
+
         const { name, value } = e.target;
         setFormData((prevData) => ({
             ...prevData,
             [name]: value,
         }));
-    };
+        // Validate email and phone number as the user types
+        if (name === 'companyEmail') {
+            if (validateEmail(value)) {
+                setEmailCheck("");
+            } else {
+                setEmailCheck("Enter the correct Email");
+            }
+        }
+        if (name === 'companyLandLineNumber') {
+            if (validateContactNumber(value)) {
+                setPhoneNumberCheck("");
+            } else {
+                setPhoneNumberCheck("Phone number is incorrect");
+            }
 
+        }
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        setIsSubmitting(false);
+//        setIsSubmitting(false);
         try {
             const clientData = {
                 ...formData,
                 adminDto: { createdBy: email }
             };
-            
+
 
             axios.post(Urlconstant.url + "api/registerclient", clientData)
             setOpen(true)
@@ -58,6 +76,7 @@ export default function ClientDetails() {
                 companyType: '',
                 companyAddress: '',
                 status: '',
+             
             });
         } catch (error) {
         } finally {
@@ -76,18 +95,18 @@ export default function ClientDetails() {
                 }
             })
     }
-    const handleCompanyEmail=(event)=>{
-        const companyEmail=event.target.value;
-        axios.get(Urlconstant.url+`/api/checkcompanyemail?companyEmail=${companyEmail}`)
-        .then(res=>{
-            if (res.data === "Company Email Already Exists") {
-                setCompanyEmailCheck(res.data);
-            } else {
-                setCompanyEmailCheck("");
-            }
-        })
+    const handleCompanyEmail = (event) => {
+        const companyEmail = event.target.value;
+        axios.get(Urlconstant.url + `/api/checkcompanyemail?companyEmail=${companyEmail}`)
+            .then(res => {
+                if (res.data === "Company Email Already Exists") {
+                    setCompanyEmailCheck(res.data);
+                } else {
+                    setCompanyEmailCheck("");
+                }
+            })
     }
-    const isSubmitValid = !formData.companyName ||companyNameCheck||companyEmailCheck
+    const isSubmitValid = !formData.companyName || companyNameCheck || companyEmailCheck || emailCheck || phoneNumberCheck
     return (
         <div>
             <h2>Client Details</h2>
@@ -113,6 +132,7 @@ export default function ClientDetails() {
                     onBlur={handleCompanyEmail}
                 />
                 {companyEmailCheck ? <Alert severity="error">{companyEmailCheck}</Alert> : " "}
+                {emailCheck ? <Alert severity="error">{emailCheck}</Alert> : " "}
                 <TextField
                     label="Client Contact Number"
                     name="companyLandLineNumber"
@@ -121,6 +141,7 @@ export default function ClientDetails() {
                     fullWidth
                     margin="normal"
                 />
+                {phoneNumberCheck ? <Alert severity="error">{phoneNumberCheck}</Alert> : " "}
                 <TextField
                     label="Client Website"
                     name="companyWebsite"
@@ -201,7 +222,7 @@ export default function ClientDetails() {
                 message={snackbarMessage}
                 autoHideDuration={3000}
             />
-           
+
         </div>
     )
 }
