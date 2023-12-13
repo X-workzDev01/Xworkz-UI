@@ -281,7 +281,7 @@ export default function FollowUp() {
           </Select>
         </FormControl>
 
-        {/* <TextField
+        { <TextField
           type="date"
           name="date"
           label="Select call back date"
@@ -290,7 +290,7 @@ export default function FollowUp() {
           }}
           sx={{ marginRight: "10px" }}
           onChange={dateByfollowupStatus}
-        /> */}
+        /> }
       </div>
       <div style={{ height: "650px", width: "100%" }}>
         <DataGrid
