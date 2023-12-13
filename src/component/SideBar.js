@@ -58,7 +58,7 @@ const Sidebar = ({ children }) => {
     },
     {
       path: "client",
-      name: "Company",
+      name: "Register Company",
       icon: <FaTh />,
     },
     {
