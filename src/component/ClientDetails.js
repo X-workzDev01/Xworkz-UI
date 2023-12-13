@@ -8,7 +8,7 @@ import { validateContactNumber, validateEmail } from '../constant/ValidationCons
 
 export default function ClientDetails() {
     const statusList = ['Active', 'Inactive'].slice().sort();
-    const clientType = [ 'IT Consultency','Service Based', 'Product Based', 'Others'].slice().sort();
+    const clientType = [ 'IT Consultency','Service Based', 'Product Based', 'Others'];
     const email = sessionStorage.getItem('userId');
     const [isSubmitting, setIsSubmitting] = React.useState(false);
     const [open, setOpen] = React.useState(false);
