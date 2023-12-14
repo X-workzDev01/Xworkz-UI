@@ -113,9 +113,9 @@ export default function ClientDetails() {
     const isSubmitValid = !formData.companyName || companyNameCheck || companyEmailCheck || emailCheck || phoneNumberCheck
     return (
         <div>
-            <h2>Client Details</h2>
+            <h2>Register Client</h2>
             <Typography variant="h5" gutterBottom>
-                Client Details
+               Register Client
             </Typography>
             <Form onSubmit={handleSubmit}>
                 <Grid container spacing={3}>
