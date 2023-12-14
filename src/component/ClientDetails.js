@@ -1,4 +1,4 @@
-import { Alert, Button, Grid, MenuItem, Snackbar, TextField } from '@mui/material';
+import { Alert, Button, Grid, MenuItem, Snackbar, TextField, Typography } from '@mui/material';
 import axios from 'axios';
 import React from 'react'
 import { Form } from 'react-bootstrap';
@@ -8,7 +8,7 @@ import { validateContactNumber, validateEmail } from '../constant/ValidationCons
 
 export default function ClientDetails() {
     const statusList = ['Active', 'Inactive'].slice().sort();
-    const clientType = [ 'IT Consultency','Service Based', 'Product Based', 'Others'];
+    const clientType = ['IT Consultency', 'Service Based', 'Product Based', 'Others'];
     const email = sessionStorage.getItem('userId');
     const [isSubmitting, setIsSubmitting] = React.useState(false);
     const [open, setOpen] = React.useState(false);
@@ -40,7 +40,9 @@ export default function ClientDetails() {
             if (validateEmail(value)) {
                 setEmailCheck("");
             } else {
+                setCompanyNameCheck("");
                 setEmailCheck("Enter the correct Email");
+
             }
         }
         if (name === 'companyLandLineNumber') {
@@ -90,6 +92,7 @@ export default function ClientDetails() {
         axios.get(Urlconstant.url + `/api/companynamecheck?companyName=${companyname}`)
             .then(res => {
                 if (res.data === "Company Already Exists") {
+                    setEmailCheck("");
                     setCompanyNameCheck(res.data);
                 } else {
                     setCompanyNameCheck("");
@@ -110,111 +113,140 @@ export default function ClientDetails() {
     const isSubmitValid = !formData.companyName || companyNameCheck || companyEmailCheck || emailCheck || phoneNumberCheck
     return (
         <div>
-            <h2>Client Details</h2>
-            <Form onSubmit={handleSubmit} style={formStyle}>
-                <TextField
-                    label="Client Name"
-                    name="companyName"
-                    value={formData.companyName}
-                    onChange={handleChange}
-                    onBlur={handleCompanyName}
-                    required
-                    fullWidth
-                    margin="normal"
-                />
+            <h2>Register Client</h2>
+            <Typography variant="h5" gutterBottom>
+               Register Client
+            </Typography>
+            <Form onSubmit={handleSubmit}>
+                <Grid container spacing={3}>
+                    <Grid item xs={12} sm={4}>
+                        <TextField
+                            label="Client Name"
+                            name="companyName"
+                            value={formData.companyName}
+                            onChange={handleChange}
+                            onBlur={handleCompanyName}
+                            required
+                            fullWidth
+                            margin="normal"
+                        />
+                        {companyNameCheck ? <Alert severity="error">{companyNameCheck}</Alert> : " "}
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <TextField
+                            label="Client Email"
+                            name="companyEmail"
+                            value={formData.companyEmail}
+                            onChange={handleChange}
+                            fullWidth
+                            margin="normal"
+                            onBlur={handleCompanyEmail}
+                        />
+                        {companyEmailCheck ? <Alert severity="error">{companyEmailCheck}</Alert> : " "}
+                        {emailCheck ? <Alert severity="error">{emailCheck}</Alert> : " "}
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <TextField
+                            label="Client Contact Number"
+                            name="companyLandLineNumber"
+                            value={formData.companyLandLineNumber}
+                            onChange={handleChange}
+                            fullWidth
+                            margin="normal"
+                        />
+                        {phoneNumberCheck ? <Alert severity="error">{phoneNumberCheck}</Alert> : " "}
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
 
-                {companyNameCheck ? <Alert severity="error">{companyNameCheck}</Alert> : " "}
-                <TextField
-                    label="Client Email"
-                    name="companyEmail"
-                    value={formData.companyEmail}
-                    onChange={handleChange}
-                    fullWidth
-                    margin="normal"
-                    onBlur={handleCompanyEmail}
-                />
-                {companyEmailCheck ? <Alert severity="error">{companyEmailCheck}</Alert> : " "}
-                {emailCheck ? <Alert severity="error">{emailCheck}</Alert> : " "}
-                <TextField
-                    label="Client Contact Number"
-                    name="companyLandLineNumber"
-                    value={formData.companyLandLineNumber}
-                    onChange={handleChange}
-                    fullWidth
-                    margin="normal"
-                />
-                {phoneNumberCheck ? <Alert severity="error">{phoneNumberCheck}</Alert> : " "}
-                <TextField
-                    label="Client Website"
-                    name="companyWebsite"
-                    value={formData.companyWebsite}
-                    onChange={handleChange}
-                    fullWidth
-                    margin="normal"
-                />
-                <TextField
-                    label="Client Location"
-                    name="companyLocation"
-                    value={formData.companyLocation}
-                    onChange={handleChange}
-                    fullWidth
-                    margin="normal"
-                />
-                <TextField
-                    label="Client Founder"
-                    name="companyFounder"
-                    value={formData.companyFounder}
-                    onChange={handleChange}
-                    fullWidth
-                    margin="normal"
-                />
-                <TextField
-                    label="Client Source Of Connetion"
-                    name="sourceOfConnetion"
-                    value={formData.sourceOfConnetion}
-                    onChange={handleChange}
-                    fullWidth
-                    margin="normal"
-                />
-                <TextField
-                    label="Client Type"
-                    name="companyType"
-                    value={formData.companyType}
-                    onChange={handleChange}
-                    fullWidth
-                    margin="normal"
-                    select
-                >
-                    {clientType.map((option) => (
-                        <MenuItem key={option} value={option}>
-                            {option}
-                        </MenuItem>
-                    ))}
-                </TextField>
-                <TextField
-                    label="Company Address"
-                    name="companyAddress"
-                    value={formData.companyAddress}
-                    onChange={handleChange}
-                    fullWidth
-                    margin="normal"
-                />
-                <TextField
-                    label="Client Status"
-                    name="status"
-                    value={formData.status}
-                    onChange={handleChange}
-                    required
-                    fullWidth
-                    margin="normal"
-                    select
-                >
-                    {statusList.map((option) => (
-                        <MenuItem key={option} value={option}>
-                            {option}
-                        </MenuItem>
-                    ))}
-                </TextField>
+                        <TextField
+                            label="Client Website"
+                            name="companyWebsite"
+                            value={formData.companyWebsite}
+                            onChange={handleChange}
+                            fullWidth
+                            margin="normal"
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <TextField
+                            label="Client Location"
+                            name="companyLocation"
+                            value={formData.companyLocation}
+                            onChange={handleChange}
+                            fullWidth
+                            margin="normal"
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <TextField
+                            label="Client Founder"
+                            name="companyFounder"
+                            value={formData.companyFounder}
+                            onChange={handleChange}
+                            fullWidth
+                            margin="normal"
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <TextField
+                            label="Client Source Of Connetion"
+                            name="sourceOfConnetion"
+                            value={formData.sourceOfConnetion}
+                            onChange={handleChange}
+                            fullWidth
+                            margin="normal"
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <TextField
+                            label="Client Type"
+                            name="companyType"
+                            value={formData.companyType}
+                            onChange={handleChange}
+                            fullWidth
+                            margin="normal"
+                            select
+                        >
+                            {clientType.map((option) => (
+                                <MenuItem key={option} value={option}>
+                                    {option}
+                                </MenuItem>
+                            ))}
+                        </TextField>
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <TextField
+                            label="Client Status"
+                            name="status"
+                            value={formData.status}
+                            onChange={handleChange}
+                            required
+                            fullWidth
+                            margin="normal"
+                            select
+                        >
+                            {statusList.map((option) => (
+                                <MenuItem key={option} value={option}>
+                                    {option}
+                                </MenuItem>
+                            ))}
+                        </TextField>
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <TextField
+                            id="standard-multiline-static"
+                            rows={4}
+                            label="Company Address"
+                            name="companyAddress"
+                            value={formData.companyAddress}
+                            onChange={handleChange}
+                            fullWidth
+                            margin="normal"
+                            multiline
+                        />
+                    </Grid>
+                </Grid>
+
                 <Button
                     type="submit"
                     variant="contained"
@@ -231,7 +263,6 @@ export default function ClientDetails() {
                 message={snackbarMessage}
                 autoHideDuration={3000}
             />
-
         </div>
     )
 }
