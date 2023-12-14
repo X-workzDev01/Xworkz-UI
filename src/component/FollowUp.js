@@ -5,6 +5,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  TextField,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import axios from "axios";
@@ -12,7 +13,6 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Urlconstant } from "../constant/Urlconstant";
 import EditFollowUp from "./EditFollowUp";
-import { PersonOutline } from "@mui/icons-material";
 import Course from "./Course";
 import Header from "./Header";
 
@@ -47,7 +47,7 @@ export default function FollowUp() {
 
   React.useMemo(() => {
     setLoading(true);
-    searchServerRows(paginationModel.page, paginationModel.pageSize, name).then(
+    searchServerRows(paginationModel.page, paginationModel.pageSize, name,date).then(
       (newGridData) => {
         setGridData(newGridData);
         setLoading(false);
@@ -129,7 +129,7 @@ export default function FollowUp() {
     }
   };
 
-  function searchServerRows(page, pageSize, name) {
+  function searchServerRows(page, pageSize, name,date) {
     const startingIndex = page * pageSize;
     const spreadsheetId = Urlconstant.spreadsheetId;
 
@@ -189,6 +189,7 @@ export default function FollowUp() {
   const dateByfollowupStatus = (e) => {
     const { name, value } = e.target;
     setName(name);
+    setDate(value);
   };
 
   const handleSaveClick = () => {
@@ -261,12 +262,6 @@ export default function FollowUp() {
               : null}
           </Select>
         </FormControl>
-        <div>
-          <Button variant="contained" onClick={handleClear} size="small">
-            Clear
-          </Button>
-        </div>
-
         { <TextField
           type="date"
           name="date"
@@ -278,6 +273,13 @@ export default function FollowUp() {
           onChange={dateByfollowupStatus}
         /> }
 
+        <div>
+          <Button variant="contained" onClick={handleClear} size="small">
+            Clear
+          </Button>
+        </div>
+
+       
       </div>
       <div style={{ height: "650px", width: "100%" }}>
         <DataGrid
