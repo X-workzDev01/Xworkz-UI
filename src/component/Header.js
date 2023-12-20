@@ -73,7 +73,7 @@ function Header() {
         .catch((e) => {});
     }
   }, [email]);
- 
+
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -84,7 +84,6 @@ function Header() {
   const id = open ? "simple-popper" : undefined;
 
   const popup = () => {
-
     return (
       <div>
         <Popover
@@ -289,7 +288,10 @@ function Header() {
                               >
                                 {v ? (
                                   <Link
-                                    to={`/x-workz/profile/${v.basicInfo.email}`}
+                                    to={
+                                      Urlconstant.navigate +
+                                      `profile/${v.basicInfo.email}`
+                                    }
                                     style={{ color: "blue", fontSize: "14px" }}
                                   >
                                     <div
@@ -563,7 +565,10 @@ function Header() {
                 )}
               />
               <br></br>
-              <Link to={Urlconstant.navigate+"login"} style={{ marginRight: "1rem" }}>
+              <Link
+                to={Urlconstant.navigate + "login"}
+                style={{ marginRight: "1rem" }}
+              >
                 <IoPower />
               </Link>
             </div>

@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect, useCallback } from "react";
+import axios from "axios";
 import {
   Button,
   MenuItem,
@@ -9,29 +9,32 @@ import {
   Typography,
   InputLabel,
   CircularProgress,
-} from '@mui/material';
-import { Form } from 'react-bootstrap';
-import {Send } from '@mui/icons-material';
-import { Urlconstant } from '../constant/Urlconstant';
+} from "@mui/material";
+import { Form } from "react-bootstrap";
+import { Send } from "@mui/icons-material";
+import { Urlconstant } from "../constant/Urlconstant";
+import Header from "./Header";
 
 const WhatsAppLinkSender = ({ formData: initialFormData }) => {
   const [batchDetails, setBatchDetails] = useState([]);
-  const [selectedValue, setSelectedValue] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
-  const[error,setError]=useState('');
+  const [selectedValue, setSelectedValue] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [error, setError] = useState("");
   const [isSending, setIsSending] = useState(false);
-  const [formData, setFormData] = useState(initialFormData || { course: '', whatsAppLink: '' });
+  const [formData, setFormData] = useState(
+    initialFormData || { course: "", whatsAppLink: "" }
+  );
 
   const setFormDataWithDefault = (data) => {
     setFormData({
-      course: data.courseName || '',
-      whatsAppLink: data.whatsAppLink || '',
+      course: data.courseName || "",
+      whatsAppLink: data.whatsAppLink || "",
     });
   };
 
   const fetchData = useCallback(async (courseName) => {
     try {
-        console.log(courseName);
+      console.log(courseName);
       const response = await axios.get(
         Urlconstant.url + `api/getCourseDetails?courseName=${courseName}`,
         { headers: { spreadsheetId: Urlconstant.spreadsheetId } }
@@ -39,7 +42,7 @@ const WhatsAppLinkSender = ({ formData: initialFormData }) => {
       const data = response.data;
       setFormDataWithDefault(data);
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error("Error fetching data:", error);
     }
   }, []);
 
@@ -49,7 +52,7 @@ const WhatsAppLinkSender = ({ formData: initialFormData }) => {
 
   const getDropDown = () => {
     axios
-      .get(Urlconstant.url + 'api/getCourseName?status=Active', {
+      .get(Urlconstant.url + "api/getCourseName?status=Active", {
         headers: {
           spreadsheetId: Urlconstant.spreadsheetId,
         },
@@ -58,7 +61,7 @@ const WhatsAppLinkSender = ({ formData: initialFormData }) => {
         setBatchDetails(res.data);
       })
       .catch((error) => {
-        console.error('Error fetching dropdown data:', error);
+        console.error("Error fetching dropdown data:", error);
       });
   };
 
@@ -80,34 +83,32 @@ const WhatsAppLinkSender = ({ formData: initialFormData }) => {
           },
         }
       );
-        if(response.data === 'true'){
-            console.log('Data from submit URL:', response.data);
-            setSuccessMessage('WhatsApp link sent successfully');
-        }else{
-            setError('WhatsApp Link already send');
-        }
-      
+      if (response.data === "true") {
+        console.log("Data from submit URL:", response.data);
+        setSuccessMessage("WhatsApp link sent successfully");
+      } else {
+        setError("WhatsApp Link already send");
+      }
     } catch (error) {
-       
-      console.error('Error submitting data:', error);
-    }finally {
-        setIsSending(false);
+      console.error("Error submitting data:", error);
+    } finally {
+      setIsSending(false);
     }
   };
 
-//   const isDisabled = !formData.course;
+  //   const isDisabled = !formData.course;
 
   return (
     <Container maxWidth="sm">
-    <h2>WhatsAppLinkSender</h2>
-    <div key={successMessage} style={{ color: "Green" }}>
+      <Header />
+      <h2>WhatsAppLinkSender</h2>
+      <div key={successMessage} style={{ color: "Green" }}>
         <h4> {successMessage}</h4>
       </div>
       <div key={error} style={{ color: "Red" }}>
         <h4> {error}</h4>
       </div>
-      <Typography component="div" style={{ height: '50vh' }}>
-
+      <Typography component="div" style={{ height: "50vh" }}>
         <InputLabel id="demo-simple-select-label">Course</InputLabel>
         <Form>
           <Select
@@ -139,17 +140,16 @@ const WhatsAppLinkSender = ({ formData: initialFormData }) => {
             variant="outlined"
           ></TextField>
         </Form>
-        <Button variant="contained"  onClick={submit}
-        disabled={isSending} startIcon={<Send />}>     
-        {isSending ? (
-          <CircularProgress size={24} color="inherit" />
-        ) : (
-          'Send'
-        )}
+        <Button
+          variant="contained"
+          onClick={submit}
+          disabled={isSending}
+          startIcon={<Send />}
+        >
+          {isSending ? <CircularProgress size={24} color="inherit" /> : "Send"}
         </Button>
       </Typography>
     </Container>
-
   );
 };
 
