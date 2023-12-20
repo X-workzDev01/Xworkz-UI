@@ -12,6 +12,7 @@ import {
 import axios from "axios";
 import { Urlconstant } from "../constant/Urlconstant";
 import { json } from "react-router-dom";
+import Header from "./Header";
 
 const Attandance = () => {
   const [clickedButtonIds, setClickedButtonIds] = useState(new Set());
@@ -251,6 +252,7 @@ const Attandance = () => {
 
   return (
     <div className="attandance">
+      <Header />
       <div
         className="search"
         style={{ marginTop: "50px", display: "flex", alignItems: "center" }}

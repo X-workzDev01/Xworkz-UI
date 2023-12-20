@@ -1,3 +1,4 @@
+
 import { Alert, Button, Grid, MenuItem, Snackbar, TextField, Typography } from '@mui/material';
 import axios from 'axios';
 import React from 'react'
@@ -19,16 +20,66 @@ export default function ClientDetails() {
     const [phoneNumberCheck, setPhoneNumberCheck] = React.useState("");
     const [formData, setFormData] = React.useState('');
 
+  const handleClose = (reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
 
-    const handleClose = (reason) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-        setOpen(false);
-    };
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+    // Validate email and phone number as the user types
+    if (name === "companyEmail") {
+      if (validateEmail(value)) {
+        setEmailCheck("");
+      } else {
+        setEmailCheck("Enter the correct Email");
+      }
+    }
+    if (name === "companyLandLineNumber") {
+      if (validateContactNumber(value)) {
+        setPhoneNumberCheck("");
+      } else {
+        setPhoneNumberCheck("Phone number is incorrect");
+      }
+    }
+  };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    //        setIsSubmitting(false);
+    try {
+      const clientData = {
+        ...formData,
+        adminDto: { createdBy: email },
+      };
 
-    const handleChange = (e) => {
+      axios.post(Urlconstant.url + "api/registerclient", clientData);
+      setOpen(true);
+      setSnackbarMessage("Client information added successfully");
+      setFormData({
+        companyName: "",
+        companyEmail: "",
+        companyLandLineNumber: "",
+        companyWebsite: "",
+        companyLocation: "",
+        companyFounder: "",
+        sourceOfConnetion: "",
+        companyType: "",
+        companyAddress: "",
+        status: "",
+      });
+    } catch (error) {
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
 
         const { name, value } = e.target;
         setFormData((prevData) => ({
@@ -45,14 +96,21 @@ export default function ClientDetails() {
 
             }
         }
-        if (name === 'companyLandLineNumber') {
-            if (validateContactNumber(value)) {
-                setPhoneNumberCheck("");
-            } else {
-                setPhoneNumberCheck("Phone number is incorrect");
-            }
-
+      });
+  };
+  const handleCompanyEmail = (event) => {
+    const companyEmail = event.target.value;
+    axios
+      .get(
+        Urlconstant.url + `/api/checkcompanyemail?companyEmail=${companyEmail}`
+      )
+      .then((res) => {
+        if (res.data === "Company Email Already Exists") {
+          setCompanyEmailCheck(res.data);
+        } else {
+          setCompanyEmailCheck("");
         }
+
     };
 
     const handleSubmit = (e) => {

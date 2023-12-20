@@ -1,10 +1,16 @@
-import axios from 'axios';
-import React from 'react'
-import { useParams } from 'react-router-dom';
-import { Urlconstant } from '../constant/Urlconstant';
-import { Avatar, Button } from '@mui/material';
-import { AddCircleOutline, EmailRounded, ModeEditOutline, PhoneAndroidOutlined } from '@mui/icons-material';
-import AddHr from './AddHr';
+import axios from "axios";
+import React from "react";
+import { useParams } from "react-router-dom";
+import { Urlconstant } from "../constant/Urlconstant";
+import { Avatar, Button } from "@mui/material";
+import {
+  AddCircleOutline,
+  EmailRounded,
+  ModeEditOutline,
+  PhoneAndroidOutlined,
+} from "@mui/icons-material";
+import AddHr from "./AddHr";
+import Header from "./Header";
 
 function stringToColor(string) {
   let hash = 0;
@@ -47,16 +53,16 @@ const CompanyProfile = () => {
   const [isHrFollowupModalOpen, setHrFollowupModalOpen] = React.useState(false);
 
   const fetchData = (id, isAddHrModalOpen) => {
-    axios.get(Urlconstant.url + `api/getdetailsbyid?companyId=${id}`)
-      .then(response => {
+    axios
+      .get(Urlconstant.url + `api/getdetailsbyid?companyId=${id}`)
+      .then((response) => {
         setCompanyDetails(response.data);
         setCompanyName(response.data.companyName);
-
-      })
-  }
+      });
+  };
   React.useEffect(() => {
     fetchData(id, isAddHrModalOpen);
-  }, [id, isAddHrModalOpen,isHrFollowupModalOpen]);
+  }, [id, isAddHrModalOpen, isHrFollowupModalOpen]);
 
   const handleAddClientHr = (companyDetails) => {
     setAddHrModalOpen(true);
@@ -66,7 +72,6 @@ const CompanyProfile = () => {
     setAddHrModalOpen(false);
   };
 
-
   const handleHrfollowupClick = (companyDetails) => {
     setHrFollowupModalOpen(true);
   };
@@ -75,11 +80,11 @@ const CompanyProfile = () => {
     setHrFollowupModalOpen(false);
   };
 
-  const handleEditCompanyDetails = () => {
-  }
+  const handleEditCompanyDetails = () => {};
   return (
-    <div>CompanyProfile
-
+    <div>
+      CompanyProfile
+      <Header />
       <div className="card">
         <div className="infos">
           <Avatar {...stringAvatar(companyName)} />
@@ -146,7 +151,6 @@ const CompanyProfile = () => {
         handleSaveClick={handleSaveClick}
       />
     </div>
-  )
-}
+  );
+};
 export default CompanyProfile;
-
