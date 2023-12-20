@@ -7,6 +7,7 @@ import { AddCircleOutline, EmailRounded, ModeEditOutline, PhoneAndroidOutlined }
 import AddHr from './AddHr';
 import HRDetails from './HrDetails';
 import EditCompanyDetails from './EditCompanyDetails';
+import HrFollowUp from './HrFollowUp';
 
 function stringToColor(string) {
   let hash = 0;
@@ -48,7 +49,7 @@ const CompanyProfile = () => {
   const [isAddHrModalOpen, setAddHrModalOpen] = React.useState(false);
   const [isHrFollowupModalOpen, setHrFollowupModalOpen] = React.useState(false);
   const [isGetHRDetailsModalOpen, setGetHRDetailsModalOpen] = React.useState(false);
-  const [isEditCompanyDetailsModalOpen,setEditCompanyDetailsModalOpen] =React.useState(false);
+  const [isEditCompanyDetailsModalOpen, setEditCompanyDetailsModalOpen] = React.useState(false);
 
 
   const fetchData = (id) => {
@@ -71,7 +72,7 @@ const CompanyProfile = () => {
   };
 
   const handlegetHRDetails = (id) => {
-   // console.log("handlegetHRDetails",companyDetails)
+    // console.log("handlegetHRDetails",companyDetails)
     setGetHRDetailsModalOpen(true);
   };
 
@@ -80,11 +81,11 @@ const CompanyProfile = () => {
   };
 
 
-  const handleEditCompanyDetails =()=>{
+  const handleEditCompanyDetails = () => {
     setEditCompanyDetailsModalOpen(true);
   }
 
-  const handleCompanyDetailsClick=()=>{
+  const handleCompanyDetailsClick = () => {
     setEditCompanyDetailsModalOpen(false);
   }
 
@@ -137,15 +138,6 @@ const CompanyProfile = () => {
             >
               Edit Profile
             </Button>
-            {/* <Button
-              variant="outlined"
-              startIcon={<AddCircleOutline />}
-              onClick={() => {
-                handleHrfollowupClick(companyDetails);
-              }}
-            >
-              Add Follow up
-            </Button> */}
             <Button
               variant="outlined"
               startIcon={<AddCircleOutline />}
@@ -155,6 +147,15 @@ const CompanyProfile = () => {
             >
               Get HR Details
             </Button>
+            {/* <Button
+              variant="outlined"
+              startIcon={<AddCircleOutline />}
+              onClick={()=>{
+                handleHRFollowUp()
+              }}
+            >
+              Add Follow up
+            </Button> */}
           </div>
         </div>
       </div>
@@ -168,15 +169,18 @@ const CompanyProfile = () => {
         open={isGetHRDetailsModalOpen}
         handleClose={() => setGetHRDetailsModalOpen(false)}
         id={id}
-         handleSaveClick={handleHR}
-       hr={handlegetHRDetails}
+        handleSaveClick={handleHR}
+        hr={handlegetHRDetails}
       />
       <EditCompanyDetails
-       open={isEditCompanyDetailsModalOpen}
-       handleClose={() => setEditCompanyDetailsModalOpen(false)}
-       rowData={companyDetails}
-       handleSaveClick={handleCompanyDetailsClick}
-       />
+        open={isEditCompanyDetailsModalOpen}
+        handleClose={() => setEditCompanyDetailsModalOpen(false)}
+        rowData={companyDetails}
+        handleSaveClick={handleCompanyDetailsClick}
+      />
+      <HrFollowUp
+
+      />
     </div>
   )
 }

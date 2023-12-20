@@ -8,39 +8,49 @@ import { validateContactNumber, validateEmail } from '../constant/ValidationCons
 
 
 const EditCompanyDetails = ({ open, handleClose, rowData }) => {
-console.log(rowData);
     const [isConfirming, setIsConfirming] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
     const [responseMessage, setResponseMessage] = React.useState("");
     const [snackbarOpen, setSnackbarOpen] = React.useState(false);
-    //const [isDisabled, setDisabled] = React.useState(true);
     const [formData, setFormData] = React.useState('');
     const attemptedEmail = sessionStorage.getItem("userId");
     const [emailCheck, setEmailCheck] = React.useState("");
-    const [phoneNumber, setPhoneNumberCheck] = React.useState("");
+    const [phoneNumberCheck, setPhoneNumberCheck] = React.useState("");
     const [checkEmailExist, setCheckEmailExist] = React.useState("");
     const [checkPhoneNumberExist, setCheckPhoneNumberExist] = React.useState("");
+    const [editedData, setEditedData] = React.useState([]);
+    const [companyNameCheck, setCompanyNameCheck] = React.useState("");
+
+    React.useEffect(() => {
+        setEditedData(rowData);
+    }, [rowData]);
+
 
     const handleChange = (event) => {
         const { name, value } = event.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
-        if (name === 'hrEmail') {
+        // setFormData((prevData) => ({
+        //     ...prevData,
+        //     [name]: value,
+        // }));
+        if (name === 'companyEmail') {
             if (validateEmail(value)) {
                 setEmailCheck("");
             } else {
-                setEmailCheck("invalid email")
+                setEmailCheck("Enter the correct Email");
             }
         }
-        if (name === 'hrContactNumber') {
+        if (name === 'companyLandLineNumber') {
             if (validateContactNumber(value)) {
                 setPhoneNumberCheck("");
             } else {
-                setPhoneNumberCheck("Invalid Contact Number")
+                setPhoneNumberCheck("Phone number is incorrect");
             }
+
         }
+        setEditedData((prevData) => ({
+            ...prevData,
+            [name]: value,
+        }));
     }
 
     const handleHrAddClick = () => {
@@ -57,23 +67,42 @@ console.log(rowData);
         handleClose();
     };
 
+
+    const handleCompanyName = (event) => {
+        const companyname = event.target.value;
+        axios.get(Urlconstant.url + `/api/companynamecheck?companyName=${companyname}`)
+            .then(res => {
+                if (res.data === "Company Already Exists") {
+                    setCompanyNameCheck(res.data);
+                } else {
+                    setCompanyNameCheck("");
+                }
+            })
+    }
+    const handleCompanyEmail = (event) => {
+        const companyEmail = event.target.value;
+        axios.get(Urlconstant.url + `/api/checkcompanyemail?companyEmail=${companyEmail}`)
+            .then(res => {
+                if (res.data === "Company Email Already Exists") {
+                    setCheckEmailExist(res.data);
+                } else {
+                    setCheckEmailExist("");
+                }
+            })
+    }
+
     const handleSaveClick = (event) => {
         event.preventDefault();
         //setIsSubmitting(false);
         try {
-            const hrData = {
-                ...formData,
-                companyId: rowData.id,
-                adminDto: { createdBy: attemptedEmail }
+            const updatedData = {
+                ...editedData,
+                adminDto: {
+                    ...editedData.adminDto,
+                    updatedBy: attemptedEmail,
+                },
             };
-
-            for (const field in hrData) {
-                if (!hrData[field]) {
-                    hrData[field] = "NA";
-                }
-            }
-
-            axios.post(Urlconstant.url + "api/registerclienthr", hrData).then((response) => {
+            axios.put(Urlconstant.url + `api/clientupdate?companyId=${rowData.id}`, updatedData).then((response) => {
                 setResponseMessage(response.data)
                 if (response.status === 200) {
                     setTimeout(() => {
@@ -83,33 +112,12 @@ console.log(rowData);
             })
             setResponseMessage("Client information added successfully")
 
-            setFormData({
-                hrScopName: '',
-                hrEmail: '',
-                hrContactNumber: '',
-                designation: '',
-                status: '',
-            });
-
         } catch (error) {
         } finally {
-            //setIsSubmitting(false);
+   //         setIsSubmitting(false);
         }
-
     }
-
-    const handleEmailCheck = (event) => {
-        let email = event.target.value;
-        axios.get(Urlconstant.url + `api/hremailcheck?hrEmail=${email}`).then((response) => {
-            if (response.data === 'Email already exists.') {
-                setEmailCheck("");
-                setCheckEmailExist(response.data);
-            } else {
-                setCheckEmailExist("");
-            }
-        });
-    }
-    const isDisabled = emailCheck || phoneNumber
+   
     return (
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
             <DialogTitle>
@@ -132,12 +140,12 @@ console.log(rowData);
                             name="companyName"
                             defaultValue={rowData.companyName}
                             onChange={handleChange}
-                            //onBlur={handleCompanyName}
+                            onBlur={handleCompanyName}
                             required
                             fullWidth
                             margin="normal"
                         />
-                        {/* {companyNameCheck ? <Alert severity="error">{companyNameCheck}</Alert> : " "} */}
+                        {companyNameCheck ? <Alert severity="error">{companyNameCheck}</Alert> : " "}
                     </Grid>
                     <Grid item xs={12} sm={4}>
                         <TextField
@@ -147,10 +155,11 @@ console.log(rowData);
                             onChange={handleChange}
                             fullWidth
                             margin="normal"
-                            //onBlur={handleCompanyEmail}
+                            onBlur={handleCompanyEmail}
                         />
-                        {/* {companyEmailCheck ? <Alert severity="error">{companyEmailCheck}</Alert> : " "}
-                        {emailCheck ? <Alert severity="error">{emailCheck}</Alert> : " "} */}
+                        {emailCheck ? <Alert severity="error">{emailCheck}</Alert> : " "}
+                        {checkEmailExist ? <Alert severity="error">{checkEmailExist}</Alert> : " "}
+
                     </Grid>
                     <Grid item xs={12} sm={4}>
                         <TextField
@@ -161,7 +170,7 @@ console.log(rowData);
                             fullWidth
                             margin="normal"
                         />
-                        {/* {phoneNumberCheck ? <Alert severity="error">{phoneNumberCheck}</Alert> : " "} */}
+                        {phoneNumberCheck ? <Alert severity="error">{phoneNumberCheck}</Alert> : " "}
                     </Grid>
                     <Grid item xs={12} sm={4}>
 
@@ -244,7 +253,7 @@ console.log(rowData);
             </DialogContent>
             <DialogActions>
                 <Button
-                    disabled={isDisabled}
+                   //  disabled={isDisable}
                     onClick={handleHrAddClick}
                     color="primary"
                 >
@@ -260,7 +269,7 @@ console.log(rowData);
 
             <Dialog open={isConfirming} onClose={handleClose} fullWidth maxWidth="xs">
                 <DialogTitle>Confirm Edit</DialogTitle>
-                <DialogContent>Are you sure to Edit the Company Details?</DialogContent>
+                <DialogContent>Are you sure want to Edit the Company Details?</DialogContent>
                 <DialogActions>
                     <IconButton
                         color="inherit"

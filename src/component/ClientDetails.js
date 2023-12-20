@@ -62,8 +62,6 @@ export default function ClientDetails() {
                 ...formData,
                 adminDto: { createdBy: email }
             };
-
-
             axios.post(Urlconstant.url + "api/registerclient", clientData)
             setOpen(true)
             setSnackbarMessage("Client information added successfully")
