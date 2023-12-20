@@ -7,9 +7,8 @@ import { fieldStyle, style } from '../constant/FormStyle';
 import { validateContactNumber, validateEmail } from '../constant/ValidationConstant';
 
 
-const AddHr = ({ open, handleClose, rowData }) => {
-
-
+const EditCompanyDetails = ({ open, handleClose, rowData }) => {
+console.log(rowData);
     const [isConfirming, setIsConfirming] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
     const [responseMessage, setResponseMessage] = React.useState("");
@@ -22,7 +21,7 @@ const AddHr = ({ open, handleClose, rowData }) => {
     const [checkEmailExist, setCheckEmailExist] = React.useState("");
     const [checkPhoneNumberExist, setCheckPhoneNumberExist] = React.useState("");
 
-    const handleInputChange = (event) => {
+    const handleChange = (event) => {
         const { name, value } = event.target;
         setFormData((prevData) => ({
             ...prevData,
@@ -56,7 +55,7 @@ const AddHr = ({ open, handleClose, rowData }) => {
         setResponseMessage("");
         setSnackbarOpen(false);
         handleClose();
-      };
+    };
 
     const handleSaveClick = (event) => {
         event.preventDefault();
@@ -78,9 +77,9 @@ const AddHr = ({ open, handleClose, rowData }) => {
                 setResponseMessage(response.data)
                 if (response.status === 200) {
                     setTimeout(() => {
-                      handleCloseForm();
+                        handleCloseForm();
                     }, 1000);
-                  }
+                }
             })
             setResponseMessage("Client information added successfully")
 
@@ -91,7 +90,7 @@ const AddHr = ({ open, handleClose, rowData }) => {
                 designation: '',
                 status: '',
             });
-            
+
         } catch (error) {
         } finally {
             //setIsSubmitting(false);
@@ -129,52 +128,116 @@ const AddHr = ({ open, handleClose, rowData }) => {
                 <Grid container spacing={3}>
                     <Grid item xs={12} sm={4}>
                         <TextField
-                            label="Hr name"
-                            name="hrScopName"
-                            onChange={handleInputChange}
-                            style={fieldStyle}
-                            value={formData.hrScopName}
+                            label="Client Name"
+                            name="companyName"
+                            defaultValue={rowData.companyName}
+                            onChange={handleChange}
+                            //onBlur={handleCompanyName}
+                            required
+                            fullWidth
+                            margin="normal"
                         />
+                        {/* {companyNameCheck ? <Alert severity="error">{companyNameCheck}</Alert> : " "} */}
                     </Grid>
                     <Grid item xs={12} sm={4}>
                         <TextField
-                            label="Hr Email Id"
-                            name="hrEmail"
-                            onChange={handleInputChange}
-                            style={fieldStyle}
-                            value={formData.hrEmail}
-                            onBlur={handleEmailCheck}
+                            label="Client Email"
+                            name="companyEmail"
+                            defaultValue={rowData.companyEmail}
+                            onChange={handleChange}
+                            fullWidth
+                            margin="normal"
+                            //onBlur={handleCompanyEmail}
                         />
-                        {emailCheck ? <Alert severity="error">{emailCheck}</Alert> : " "}
-                        {checkEmailExist ? <Alert severity="error">{checkEmailExist}</Alert> : " "}
+                        {/* {companyEmailCheck ? <Alert severity="error">{companyEmailCheck}</Alert> : " "}
+                        {emailCheck ? <Alert severity="error">{emailCheck}</Alert> : " "} */}
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <TextField
+                            label="Client Contact Number"
+                            name="companyLandLineNumber"
+                            defaultValue={rowData.companyLandLineNumber}
+                            onChange={handleChange}
+                            fullWidth
+                            margin="normal"
+                        />
+                        {/* {phoneNumberCheck ? <Alert severity="error">{phoneNumberCheck}</Alert> : " "} */}
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
 
-                    </Grid>
-                    <Grid item xs={12} sm={4}>
                         <TextField
-                            label="Hr ContactNumber"
-                            name="hrContactNumber"
-                            onChange={handleInputChange}
-                            style={fieldStyle}
-                            value={formData.hrContactNumber}
-                        />
-                        {phoneNumber ? <Alert severity="error">{phoneNumber}</Alert> : " "}
-                    </Grid>
-                    <Grid item xs={12} sm={4}>
-                        <TextField
-                            label="Hr Designation"
-                            name="designation"
-                            onChange={handleInputChange}
-                            style={fieldStyle}
-                            value={formData.designation}
+                            label="Client Website"
+                            name="companyWebsite"
+                            defaultValue={rowData.companyWebsite}
+                            onChange={handleChange}
+                            fullWidth
+                            margin="normal"
                         />
                     </Grid>
                     <Grid item xs={12} sm={4}>
                         <TextField
-                            label="Hr Status"
+                            label="Client Location"
+                            name="companyLocation"
+                            defaultValue={rowData.companyLocation}
+                            onChange={handleChange}
+                            fullWidth
+                            margin="normal"
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <TextField
+                            label="Client Founder"
+                            name="companyFounder"
+                            defaultValue={rowData.companyFounder}
+                            onChange={handleChange}
+                            fullWidth
+                            margin="normal"
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <TextField
+                            label="Client Source Of Connetion"
+                            name="sourceOfConnetion"
+                            defaultValue={rowData.sourceOfConnetion}
+                            onChange={handleChange}
+                            fullWidth
+                            margin="normal"
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <TextField
+                            label="Client Type"
+                            name="companyType"
+                            defaultValue={rowData.companyType}
+                            onChange={handleChange}
+                            fullWidth
+                            margin="normal"
+                        >
+                        </TextField>
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <TextField
+                            label="Client Status"
                             name="status"
-                            onChange={handleInputChange}
-                            style={fieldStyle}
-                            value={formData.status}
+                            defaultValue={rowData.status}
+                            onChange={handleChange}
+                            required
+                            fullWidth
+                            margin="normal"
+                        >
+                        </TextField>
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <TextField
+                            id="standard-multiline-static"
+                            rows={4}
+                            label="Company Address"
+                            name="companyAddress"
+                            defaultValue={rowData.companyAddress}
+                            onChange={handleChange}
+                            fullWidth
+                            margin="normal"
+                            multiline
                         />
                     </Grid>
                 </Grid>
@@ -185,7 +248,7 @@ const AddHr = ({ open, handleClose, rowData }) => {
                     onClick={handleHrAddClick}
                     color="primary"
                 >
-                    Add
+                    Edit
                 </Button>
             </DialogActions>
             <Snackbar
@@ -196,8 +259,8 @@ const AddHr = ({ open, handleClose, rowData }) => {
             />
 
             <Dialog open={isConfirming} onClose={handleClose} fullWidth maxWidth="xs">
-                <DialogTitle>Confirm Save</DialogTitle>
-                <DialogContent>Adding New HR Details</DialogContent>
+                <DialogTitle>Confirm Edit</DialogTitle>
+                <DialogContent>Are you sure to Edit the Company Details?</DialogContent>
                 <DialogActions>
                     <IconButton
                         color="inherit"
@@ -216,4 +279,5 @@ const AddHr = ({ open, handleClose, rowData }) => {
         </Dialog>
     );
 };
-export default AddHr;
+export default EditCompanyDetails;
+

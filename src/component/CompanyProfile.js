@@ -5,6 +5,8 @@ import { Urlconstant } from '../constant/Urlconstant';
 import { Avatar, Button } from '@mui/material';
 import { AddCircleOutline, EmailRounded, ModeEditOutline, PhoneAndroidOutlined } from '@mui/icons-material';
 import AddHr from './AddHr';
+import HRDetails from './HrDetails';
+import EditCompanyDetails from './EditCompanyDetails';
 
 function stringToColor(string) {
   let hash = 0;
@@ -45,20 +47,22 @@ const CompanyProfile = () => {
   const [companyName, setCompanyName] = React.useState("");
   const [isAddHrModalOpen, setAddHrModalOpen] = React.useState(false);
   const [isHrFollowupModalOpen, setHrFollowupModalOpen] = React.useState(false);
+  const [isGetHRDetailsModalOpen, setGetHRDetailsModalOpen] = React.useState(false);
+  const [isEditCompanyDetailsModalOpen,setEditCompanyDetailsModalOpen] =React.useState(false);
 
-  const fetchData = (id, isAddHrModalOpen) => {
+
+  const fetchData = (id) => {
     axios.get(Urlconstant.url + `api/getdetailsbyid?companyId=${id}`)
       .then(response => {
         setCompanyDetails(response.data);
         setCompanyName(response.data.companyName);
-
       })
   }
   React.useEffect(() => {
     fetchData(id, isAddHrModalOpen);
-  }, [id, isAddHrModalOpen,isHrFollowupModalOpen]);
+  }, [id, isAddHrModalOpen, isHrFollowupModalOpen, isGetHRDetailsModalOpen]);
 
-  const handleAddClientHr = (companyDetails) => {
+  const handleAddClientHr = () => {
     setAddHrModalOpen(true);
   };
 
@@ -66,20 +70,26 @@ const CompanyProfile = () => {
     setAddHrModalOpen(false);
   };
 
-
-  const handleHrfollowupClick = (companyDetails) => {
-    setHrFollowupModalOpen(true);
+  const handlegetHRDetails = (id) => {
+   // console.log("handlegetHRDetails",companyDetails)
+    setGetHRDetailsModalOpen(true);
   };
 
-  const handleSaveHRFollowClick = () => {
-    setHrFollowupModalOpen(false);
+  const handleHR = (id) => {
+    setGetHRDetailsModalOpen(false);
   };
 
-  const handleEditCompanyDetails = () => {
+
+  const handleEditCompanyDetails =()=>{
+    setEditCompanyDetailsModalOpen(true);
   }
+
+  const handleCompanyDetailsClick=()=>{
+    setEditCompanyDetailsModalOpen(false);
+  }
+
   return (
     <div>CompanyProfile
-
       <div className="card">
         <div className="infos">
           <Avatar {...stringAvatar(companyName)} />
@@ -127,7 +137,7 @@ const CompanyProfile = () => {
             >
               Edit Profile
             </Button>
-            <Button
+            {/* <Button
               variant="outlined"
               startIcon={<AddCircleOutline />}
               onClick={() => {
@@ -135,6 +145,15 @@ const CompanyProfile = () => {
               }}
             >
               Add Follow up
+            </Button> */}
+            <Button
+              variant="outlined"
+              startIcon={<AddCircleOutline />}
+              onClick={() => {
+                handlegetHRDetails(companyDetails);
+              }}
+            >
+              Get HR Details
             </Button>
           </div>
         </div>
@@ -145,6 +164,19 @@ const CompanyProfile = () => {
         rowData={companyDetails}
         handleSaveClick={handleSaveClick}
       />
+      <HRDetails
+        open={isGetHRDetailsModalOpen}
+        handleClose={() => setGetHRDetailsModalOpen(false)}
+        id={id}
+         handleSaveClick={handleHR}
+       hr={handlegetHRDetails}
+      />
+      <EditCompanyDetails
+       open={isEditCompanyDetailsModalOpen}
+       handleClose={() => setEditCompanyDetailsModalOpen(false)}
+       rowData={companyDetails}
+       handleSaveClick={handleCompanyDetailsClick}
+       />
     </div>
   )
 }

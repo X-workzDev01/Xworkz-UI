@@ -3,7 +3,6 @@ import axios from 'axios';
 import React from 'react'
 import { Form } from 'react-bootstrap';
 import { Urlconstant } from '../constant/Urlconstant';
-import { formStyle } from '../constant/FormStyle';
 import { validateContactNumber, validateEmail } from '../constant/ValidationConstant';
 
 export default function ClientDetails() {
@@ -18,7 +17,7 @@ export default function ClientDetails() {
     const [emailCheck, setEmailCheck] = React.useState("");
     const [phoneNumberCheck, setPhoneNumberCheck] = React.useState("");
     const [formData, setFormData] = React.useState('');
-
+    const [catchErrors,setCatchErrors] = React.useState("");
 
     const handleClose = (reason) => {
         if (reason === 'clickaway') {
@@ -82,6 +81,7 @@ export default function ClientDetails() {
 
             });
         } catch (error) {
+            setCatchErrors("Wait for some time")
         } finally {
             setIsSubmitting(false);
         }
@@ -114,8 +114,10 @@ export default function ClientDetails() {
     return (
         <div>
             <h2>Register Client</h2>
+           
             <Typography variant="h5" gutterBottom>
-               Register Client
+               Register Company
+               {/* {setCatchErrors ? <Alert severity="error">{setCatchErrors}</Alert> : " "} */}
             </Typography>
             <Form onSubmit={handleSubmit}>
                 <Grid container spacing={3}>
