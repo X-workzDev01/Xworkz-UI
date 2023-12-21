@@ -4,7 +4,9 @@ import React from 'react'
 import { Urlconstant } from '../constant/Urlconstant';
 import { PersonOutline, Search } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
-import { Button, TextField } from '@mui/material';
+import { Autocomplete, Button, TextField } from '@mui/material';
+import axios from 'axios';
+import { buttonPadding, gridStyle } from '../constant/FormStyle';
 
 export default function ViewClient() {
     const initialPageSize = 25;
@@ -16,6 +18,8 @@ export default function ViewClient() {
         rows: [],
         rowCount: 0,
     });
+
+    const [autoSearchValue, setAutoSearchValue] = React.useState("");
 
     React.useEffect(() => {
         searchServerRows(paginationModel.page, paginationModel.pageSize).then(
@@ -51,6 +55,26 @@ export default function ViewClient() {
         });
     }
 
+
+    const handleSearchValue = (event) => {
+        const searchValue = event.target.value;
+        if (searchValue.length >= 3) {
+            getSuggestionValues(searchValue);
+        }
+    }
+
+    const getSuggestionValues = (searchValue) => {
+        axios.get(Urlconstant.url + `api/client/suggestions?companyName=${searchValue}`)
+            .then((response) => (
+                //setAutoSearchValue(response.data)
+                console.log(response.data)
+            ));
+    }
+
+    const handleSearchInput=()=>{
+
+        console.log("Onclick action")
+    }
 
     const column = [
         //  { headerName: 'ID', field: 'id' },
@@ -124,18 +148,28 @@ export default function ViewClient() {
 
 
     return (
-        <div style={{ height: "650px", width: "100%" }}>
+        <div style={gridStyle}>
             <div
                 className="search"
                 style={{ display: "flex", alignItems: "center", marginTop: "100px" }}
             >
-                {/* <TextField
+                <TextField
                     Search
                     name="searchValue"
-                /> */}
+                    onChange={handleSearchValue}
+                />
+                <Button style={buttonPadding}
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    onClick={handleSearchInput}
+                >
+                    Search
+                </Button>
+                {autoSearchValue.clientName}
             </div>
             <h1></h1>
-            <div style={{ height: "650px", width: "100%" }}>
+            <div style={gridStyle}>
                 <DataGrid
                     rows={gridData.rows}
                     columns={column}
