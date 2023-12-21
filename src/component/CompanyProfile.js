@@ -1,4 +1,3 @@
-
 import axios from 'axios';
 import React from 'react'
 import { useParams } from 'react-router-dom';
@@ -9,7 +8,6 @@ import AddHr from './AddHr';
 import HRDetails from './HrDetails';
 import EditCompanyDetails from './EditCompanyDetails';
 import HrFollowUp from './HrFollowUp';
-
 
 function stringToColor(string) {
   let hash = 0;
@@ -54,7 +52,6 @@ const CompanyProfile = () => {
   const [isEditCompanyDetailsModalOpen, setEditCompanyDetailsModalOpen] = React.useState(false);
 
 
-
   const fetchData = (id) => {
     axios.get(Urlconstant.url + `api/getdetailsbyid?companyId=${id}`)
       .then(response => {
@@ -66,7 +63,6 @@ const CompanyProfile = () => {
     fetchData(id, isAddHrModalOpen);
   }, [id, isAddHrModalOpen, isHrFollowupModalOpen, isGetHRDetailsModalOpen]);
 
-
   const handleAddClientHr = () => {
     setAddHrModalOpen(true);
   };
@@ -75,16 +71,14 @@ const CompanyProfile = () => {
     setAddHrModalOpen(false);
   };
 
-
   const handlegetHRDetails = (id) => {
     // console.log("handlegetHRDetails",companyDetails)
     setGetHRDetailsModalOpen(true);
-
+  };
 
   const handleHR = (id) => {
     setGetHRDetailsModalOpen(false);
   };
-
 
 
   const handleEditCompanyDetails = () => {
@@ -188,6 +182,7 @@ const CompanyProfile = () => {
 
       />
     </div>
-  );
-};
+  )
+}
 export default CompanyProfile;
+
