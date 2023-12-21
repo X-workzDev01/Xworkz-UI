@@ -97,6 +97,8 @@ export default function ClientDetails() {
                 }
             })
     }
+
+    
     const handleCompanyEmail = (event) => {
         const companyEmail = event.target.value;
         axios.get(Urlconstant.url + `/api/checkcompanyemail?companyEmail=${companyEmail}`)
