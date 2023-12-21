@@ -72,7 +72,7 @@ export default function ViewClient() {
 
     const handleSearchInput=()=>{
 
-        console.log("Onclick action")
+     //   console.log("Onclick action")
     }
 
     const column = [
