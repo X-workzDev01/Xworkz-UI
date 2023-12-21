@@ -33,7 +33,16 @@ export default function FollowUp() {
   const [dropdown, setDropDown] = useState({
     status: [],
   });
-  const  [statusLists, setStatusLists] = useState(["New", "Not interested", "Interested", "RNR", "Enquiry","Joined"]);
+  const [statusLists, setStatusLists] = useState([
+    "New",
+    "Not interested",
+    "Interested",
+    "RNR",
+    "Enquiry",
+    "Joined",
+    "Past followup",
+    "Never followUp",
+  ]);
   const [date, setDate] = useState("");
   const initialPageSize = 25;
   const [paginationModel, setPaginationModel] = useState({
@@ -47,12 +56,15 @@ export default function FollowUp() {
 
   React.useMemo(() => {
     setLoading(true);
-    searchServerRows(paginationModel.page, paginationModel.pageSize, name,date).then(
-      (newGridData) => {
-        setGridData(newGridData);
-        setLoading(false);
-      }
-    );
+    searchServerRows(
+      paginationModel.page,
+      paginationModel.pageSize,
+      name,
+      date
+    ).then((newGridData) => {
+      setGridData(newGridData);
+      setLoading(false);
+    });
   }, [
     paginationModel.page,
     paginationModel.pageSize,
@@ -77,7 +89,7 @@ export default function FollowUp() {
       .then((response) => {
         setCourseDropdown(response.data);
       })
-      .catch((error) => {});
+      .catch(() => {});
   };
 
   const filterData = () => {
@@ -129,7 +141,7 @@ export default function FollowUp() {
     }
   };
 
-  function searchServerRows(page, pageSize, name,date) {
+  function searchServerRows(page, pageSize, name, date) {
     const startingIndex = page * pageSize;
     const spreadsheetId = Urlconstant.spreadsheetId;
 
@@ -198,9 +210,8 @@ export default function FollowUp() {
 
   const handleClear = () => {
     setCourseName("null");
-    sessionStorage.setItem("course", "null");
+    sessionStorage.setItem("course", "null");  
   };
-
   return (
     <div>
       <Header />
@@ -224,7 +235,7 @@ export default function FollowUp() {
             sx={{
               marginRight: "10px",
               width: "200px",
-              fontSize: "12px", 
+              fontSize: "12px",
             }}
           >
             {statusLists.map((item, index) => (
@@ -262,24 +273,25 @@ export default function FollowUp() {
               : null}
           </Select>
         </FormControl>
-        { <TextField
-          type="date"
-          name="date"
-          label="Select call back date"
-          InputLabelProps={{
-            shrink: true,
-          }}
-          sx={{ marginRight: "10px" }}
-          onChange={dateByfollowupStatus}
-        /> }
+        {
+          <TextField
+            type="date"
+            name="date"
+            value={date || ""}
+            label="Select call back date"
+            InputLabelProps={{
+              shrink: true,
+            }}
+            sx={{ marginRight: "10px" }}
+            onChange={dateByfollowupStatus}
+          />
+        }
 
         <div>
           <Button variant="contained" onClick={handleClear} size="small">
             Clear
           </Button>
         </div>
-
-       
       </div>
       <div style={{ height: "650px", width: "100%" }}>
         <DataGrid
