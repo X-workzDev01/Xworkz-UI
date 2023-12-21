@@ -48,7 +48,7 @@ export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious,bat
         batchType: data.batchType,
         course: data.courseName,
         batchTiming: data.timing,
-        startTime: data.startTime,
+        startDate: data.startDate,
       });
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -145,14 +145,14 @@ export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious,bat
             variant="outlined"
           ></TextField>
           <InputLabel id="demo-simple-select-label">
-            StartTime Timing
+            Start date
           </InputLabel>
 
           <TextField
             name="startTime"
             aria-readonly
             onBlur={setSelect}
-            value={formData.startTime}
+            value={formData.startDate}
             required
             fullWidth
             margin="normal"
