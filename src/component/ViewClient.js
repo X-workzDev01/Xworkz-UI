@@ -73,7 +73,7 @@ export default function ViewClient() {
 
     const handleSearchInput=()=>{
 
-        console.log("Onclick action")
+     //   console.log("Onclick action")
     }
 
     const column = [
@@ -121,30 +121,25 @@ export default function ViewClient() {
             valueGetter: (params) => params.row.status,
         },
 
-  function searchServerRows(page, pageSize) {
-    const startingIndex = page * pageSize;
-    var apiUrl =
-      Urlconstant.url +
-      `api/readclientinfomation?startingIndex=${startingIndex}&maxRows=${25}`;
-    return new Promise((resolve) => {
-      fetch(apiUrl)
-        .then((response) => response.json())
-        .then((data) => {
-          const newGridData = {
-            rows: data.clientData.map((row) => ({
-              id: row.id.toString(),
-              ...row,
-            })),
-            rowCount: data.size,
-          };
-
-          resolve(newGridData);
-        })
-        .catch((error) => {
-          resolve({ rows: [], rowCount: 0 });
-        });
-    });
-  }
+        {
+            field: "actions",
+            headerName: "Actions",
+            width: 120,
+            renderCell: (params) => (
+                <div>
+                    <Button
+                        variant="outlined"
+                        color="secondary"
+                        startIcon={<PersonOutline />}
+                        component={Link}
+                        to={Urlconstant.navigate + `clientprofile/${params.row.id}`}
+                    >
+                        View
+                    </Button>
+                </div>
+            )
+        },
+    ];
 
 
     return (
@@ -181,39 +176,8 @@ export default function ViewClient() {
                     onPaginationModelChange={setPaginationModel}
                     keepNonExistentRowsSelected
 
-    {
-      field: "actions",
-      headerName: "Actions",
-      width: 120,
-      renderCell: (params) => (
-        <div>
-          <Button
-            variant="outlined"
-            color="secondary"
-            startIcon={<PersonOutline />}
-            component={Link}
-            to={Urlconstant.navigate + `clientprofile/${params.row.id}`}
-          >
-            View
-          </Button>
+                />
+            </div>
         </div>
-      ),
-    },
-  ];
-
-  return (
-    <div style={{ height: "650px", width: "100%" }}>
-      <Header />
-      <h2>ViewClient</h2>
-      <div style={{ height: "650px", width: "100%" }}>
-        <DataGrid
-          rows={gridData.rows}
-          columns={column}
-          pageSizeOptions={[5, 10, 25]}
-          paginationMode="server"
-          rowCount={gridData.rowCount}
-        />
-      </div>
-    </div>
-  );
+    )
 }
