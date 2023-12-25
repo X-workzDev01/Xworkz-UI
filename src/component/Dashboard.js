@@ -17,6 +17,7 @@ import WhatsAppLinkSender from './WhatsApp';
 import ClientDetails from './ClientDetails';
 import ViewClient from './ViewClient';
 import CompanyProfile from './CompanyProfile';
+import Absentees from './Absentees';
 
 
 
@@ -38,8 +39,9 @@ const Dashboard = ({ isLoggedIn }) => {
         <Route path="/display" element={<ViewTable />} />
         <Route path="/followup" element={<FollowUp />} />
         <Route path="/profile/:email" element={<Profile />} />
-        <Route path="/attendance" element={<Attandance />} />
+        <Route path="/absentees" element={<Absentees />} />
         <Route path="/enquiry" element={<Enquiry />} />
+
         <Route path="/attenance/:email" element={<ViewAttendance/>}/>
         <Route path="/whatsapp" element={<WhatsAppLinkSender />} />
         <Route path="/client" element={<ClientDetails/>}/>

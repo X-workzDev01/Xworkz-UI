@@ -6,6 +6,7 @@ import {
   FaRegChartBar,
   FaCommentAlt,
   FaWhatsapp,
+  FaList,
 } from "react-icons/fa";
 import "./SideBar.css";
 import { NavLink, useLocation } from "react-router-dom";
@@ -47,9 +48,9 @@ const Sidebar = ({ children }) => {
       icon: <FaCommentAlt />,
     },
     {
-      path: "attendance",
-      name: "Attendance",
-      icon: <FaCommentAlt />,
+      path: "absentees",
+      name: "Add Absentees",
+      icon: <FaList />,
     },
     {
       path: "whatsapp",
