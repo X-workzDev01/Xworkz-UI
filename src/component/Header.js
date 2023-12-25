@@ -529,7 +529,7 @@ function Header() {
                 ></img>
               </a>
             </IconButton>
-            <Link to="/x-workz/view">Home</Link>
+            <Link to={Urlconstant.navigate+"display"}>Home</Link>
             <Typography variant="h6" component="div" sx={{ flexGrow: 6 }}>
               <AccountCircle
                 sx={{ color: "action.active", marginRight: "8px" }}

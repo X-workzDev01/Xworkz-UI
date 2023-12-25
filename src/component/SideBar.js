@@ -10,8 +10,6 @@ import {
 } from "react-icons/fa";
 import "./SideBar.css";
 import { NavLink, useLocation } from "react-router-dom";
-import { FactCheckTwoTone } from "@mui/icons-material";
-import Attandance from "./Attandance";
 import { Urlconstant } from "../constant/Urlconstant";
 
 const Sidebar = ({ children }) => {

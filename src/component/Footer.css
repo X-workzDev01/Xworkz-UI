@@ -1,8 +1,10 @@
 
 .footer-section {
+  position: relative;
+  position: fixed;
   background: #0e0d0d;
   position: relative;
-  margin-top: 11rem;
+  margin-top:-0.3rem;
 }
 
 .footer-pattern img {
@@ -16,6 +18,7 @@
 .footer-logo {
   margin-bottom: 30px;
   margin-top: 30px;
+  
 }
 .footer-logo img {
     float: inherit;
@@ -75,9 +78,9 @@
   padding: 25px 0;
 }
 .copyright-text p {
-  margin: 0;
-  font-size: 14px;
-  color: #878787;
+  color: whitesmoke;
+ display: flex;
+ justify-content: center;
 }
 .copyright-text p a{
   color: #ff5e14;
@@ -85,4 +88,15 @@
 footer { 
   margin-top: 100px; 
 }
+.footer-icon{
+  display: flex;  
+  align-items: flex-start;
+  justify-content: center;
+  margin-bottom: -2rem;
+  padding-top: 0.9rem;
+}
+.footer-icon a{
+  padding-left: 0.7rem;
+}
+
 
