@@ -49,10 +49,12 @@ function App() {
             </React.Fragment>
           )}
         </Routes>
-      </div>
 
+      </div>
       <Footer />
+
     </>
+
   );
 }
 
