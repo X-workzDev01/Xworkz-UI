@@ -150,7 +150,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
         setSnackbarOpen(true);
       });
     axios
-      .post(Urlconstant.url + `api/registerAttendance`, statusDto)
+      .post(Urlconstant.url + `api/attendance/register`, statusDto)
       .then(() => {})
       .catch((e) => {});
   };
