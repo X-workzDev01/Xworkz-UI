@@ -45,26 +45,26 @@ const Sidebar = ({ children }) => {
       name: "Enquiry",
       icon: <FaCommentAlt />,
     },
-    {
-      path: "absentees",
-      name: "Add Absentees",
-      icon: <FaList />,
-    },
-    {
-      path: "whatsapp",
-      name: "WhatsApp",
-      icon: <FaWhatsapp />,
-    },
-    {
-      path: "client",
-      name: "Client Register",
-      icon: <FaTh />,
-    },
-    {
-      path: "displayclient",
-      name: "Client Details",
-      icon: <FaUserAlt />,
-    },
+    // {
+    //   path: "absentees",
+    //   name: "Add Absentees",
+    //   icon: <FaList />,
+    // },
+    // {
+    //   path: "whatsapp",
+    //   name: "WhatsApp",
+    //   icon: <FaWhatsapp />,
+    // },
+    // {
+    //   path: "client",
+    //   name: "Client Register",
+    //   icon: <FaTh />,
+    // },
+    // {
+    //   path: "displayclient",
+    //   name: "Client Details",
+    //   icon: <FaUserAlt />,
+    // },
 
   ];
   const click = () => {};

@@ -14,7 +14,7 @@
 .sidebar{
     background: #101010;
     color: #fff;
-    height: 100vh;
+    height: 125vh;
     width: 200px;
     transition: all 0.5s;
     top: 50px; /* Adjust top position to create space for the top section */
