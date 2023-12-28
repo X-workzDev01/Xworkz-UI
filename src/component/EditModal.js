@@ -110,7 +110,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
           batchType: data.batchType,
           course: data.courseName,
           batchTiming: data.timing,
-          startTime: data.startTime,
+          startDate: data.startDate,
         });
       })
       .catch((error) => {});
@@ -520,7 +520,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
         <TextField
           label="Start Date"
           name="courseInfo.startTime"
-          value={formData.startTime || ""}
+          value={formData.startDate || ""}
           onChange={handleInputChange}
           style={fieldStyle}
         />
