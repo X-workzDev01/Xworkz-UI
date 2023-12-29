@@ -52,8 +52,7 @@ const HRDetails = ({ open, handleClose, id }) => {
     }, [paginationModel.page, paginationModel.pageSize]);
 
     function searchServerRows(page, pageSize,id) {
-   //  let companyId=rowData.id;
-     console.log(id)
+
         const startingIndex = page * pageSize;
         var apiUrl =
             Urlconstant.url +
@@ -121,7 +120,7 @@ const HRDetails = ({ open, handleClose, id }) => {
                         color="secondary"
                         startIcon={<PersonOutline />}
                         component={Link}
-                        to={Urlconstant.navigate + `clientprofile/${params.row.id}`}
+                        to={Urlconstant.navigate + `company/hr/${params.row.id}`}
                     >
                         View
                     </Button>

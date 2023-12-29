@@ -136,7 +136,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
                 <Grid container spacing={3}>
                     <Grid item xs={12} sm={4}>
                         <TextField
-                            label="Client Name"
+                            label="Company Name"
                             name="companyName"
                             defaultValue={rowData.companyName}
                             onChange={handleChange}
@@ -149,7 +149,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
                     </Grid>
                     <Grid item xs={12} sm={4}>
                         <TextField
-                            label="Client Email"
+                            label="Company Email"
                             name="companyEmail"
                             defaultValue={rowData.companyEmail}
                             onChange={handleChange}
@@ -163,7 +163,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
                     </Grid>
                     <Grid item xs={12} sm={4}>
                         <TextField
-                            label="Client Contact Number"
+                            label="Company Contact Number"
                             name="companyLandLineNumber"
                             defaultValue={rowData.companyLandLineNumber}
                             onChange={handleChange}
@@ -175,7 +175,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
                     <Grid item xs={12} sm={4}>
 
                         <TextField
-                            label="Client Website"
+                            label="Company Website"
                             name="companyWebsite"
                             defaultValue={rowData.companyWebsite}
                             onChange={handleChange}
@@ -185,7 +185,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
                     </Grid>
                     <Grid item xs={12} sm={4}>
                         <TextField
-                            label="Client Location"
+                            label="Company Location"
                             name="companyLocation"
                             defaultValue={rowData.companyLocation}
                             onChange={handleChange}
@@ -195,7 +195,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
                     </Grid>
                     <Grid item xs={12} sm={4}>
                         <TextField
-                            label="Client Founder"
+                            label="Company Founder"
                             name="companyFounder"
                             defaultValue={rowData.companyFounder}
                             onChange={handleChange}
@@ -205,7 +205,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
                     </Grid>
                     <Grid item xs={12} sm={4}>
                         <TextField
-                            label="Client Source Of Connetion"
+                            label="Company Source Of Connetion"
                             name="sourceOfConnetion"
                             defaultValue={rowData.sourceOfConnetion}
                             onChange={handleChange}
@@ -215,7 +215,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
                     </Grid>
                     <Grid item xs={12} sm={4}>
                         <TextField
-                            label="Client Type"
+                            label="Company Type"
                             name="companyType"
                             defaultValue={rowData.companyType}
                             onChange={handleChange}
@@ -226,7 +226,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
                     </Grid>
                     <Grid item xs={12} sm={4}>
                         <TextField
-                            label="Client Status"
+                            label="Company Status"
                             name="status"
                             defaultValue={rowData.status}
                             onChange={handleChange}

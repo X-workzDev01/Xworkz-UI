@@ -1,11 +1,100 @@
 import { DataGrid } from '@mui/x-data-grid';
 import React from 'react'
 import { Urlconstant } from '../constant/Urlconstant';
-import { PersonOutline, Search } from '@mui/icons-material';
+import { PersonOutline } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import { Autocomplete, Button, TextField } from '@mui/material';
 import axios from 'axios';
 import { buttonPadding, gridStyle } from '../constant/FormStyle';
+
+
+function loadServerRows(page, pageSize) {
+    const startingIndex = page * pageSize;
+    const maxRows = pageSize;
+    const apiUrl =
+        Urlconstant.url +
+        `api/readclientinfomation?startingIndex=${startingIndex}&maxRows=${maxRows}`;
+    const requestOptions = {
+        method: "GET",
+    };
+    return new Promise((resolve) => {
+        fetch(apiUrl, requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+                resolve({
+                    rows: data.clientData.map((row) => ({
+                        ...row,
+                    })),
+                    rowCount: data.size,
+                });
+            })
+            .catch((error) => {
+                resolve({ rows: [], rowCount: 0 });
+            });
+    });
+}
+
+
+// function searchServerRows(searchValue) {
+//     const apiUrl =
+//         Urlconstant.url + `api/getdetailsbycompanyname?companyName=${searchValue}`;
+//     const requestOptions = {
+//         method: "GET",
+//     };
+
+//     return new Promise((resolve) => {
+//         fetch(apiUrl, requestOptions)
+//             .then((response) => response.json())
+//             .then((data) => {
+//                 console.log(data)
+//                 resolve({
+//                     rows: data.map((row) => ({
+//                         ...row,
+//                     })),
+//                     rowCount: data.size,
+//                 });
+//             })
+//             .catch((error) => {
+//                 resolve({ rows: [], rowCount: 0 });
+//             });
+//     });
+// }
+function searchServerRows(searchValue) {
+    const apiUrl =
+      Urlconstant.url + `api/getdetailsbycompanyname?companyName=${searchValue}`;
+    const requestOptions = {
+      method: "GET",
+    };
+  
+    return new Promise((resolve) => {
+      fetch(apiUrl, requestOptions)
+        .then((response) => response.json())
+        .then((data) => {
+          resolve({
+            rows: data.map((row) => ({ id: row.id.toString(), ...row })),
+            rowCount: data.size,
+          });
+        })
+        .catch((error) => {
+          resolve({ rows: [], rowCount: 0 });
+        });
+    });
+  }
+async function fetchFilteredData(searchValue) {
+    try {
+        const apiUrl =
+            Urlconstant.url +
+            `api/client/suggestions?companyName=${searchValue}`;
+        const requestOptions = {
+            method: "GET",
+        };
+        const response = await axios.get(apiUrl, requestOptions);
+        return response.data;
+    } catch (error) {
+        return [];
+    }
+}
+
 
 export default function ViewClient() {
     const initialPageSize = 25;
@@ -18,62 +107,58 @@ export default function ViewClient() {
         rowCount: 0,
     });
 
-    const [autoSearchValue, setAutoSearchValue] = React.useState("");
+    const [loading, setLoading] = React.useState(false);
+    const [searchValue, setSearchValue] = React.useState("");
+    const [autocompleteOptions, setAutocompleteOptions] = React.useState([]);
+    const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
 
-    React.useEffect(() => {
-        searchServerRows(paginationModel.page, paginationModel.pageSize).then(
-            (newGridData) => {
-                //   console.log("Fetched data from server:", newGridData);
-                setGridData(newGridData);
+
+    const refreshPageEveryTime = () => {
+        let active = true;
+        setLoading(true);
+
+        const fetchDataAndUpdateState = async () => {
+            try {
+                if (searchValue === "" || (searchValue.length >= 1 && searchValue.length <= 3)) {
+                    const newGridData = await loadServerRows(paginationModel.page, paginationModel.pageSize);
+
+                    if (active) {
+                        setGridData(newGridData);
+                        setAutocompleteOptions([]);
+                        setLoading(false);
+                    }
+                } else {
+                    const suggestions = await fetchFilteredData(searchValue);
+                    if (active) {
+                        setAutocompleteOptions(suggestions);
+                        setLoading(false);
+                    }
+                }
+            } catch (error) {
+                if (active) {
+                    setGridData({ rows: [], rowCount: 0 });
+                    setAutocompleteOptions([]);
+                    setLoading(false);
+                }
             }
-        );
-    }, [paginationModel.page, paginationModel.pageSize]);
+            
+        };
 
-    function searchServerRows(page, pageSize) {
-        const startingIndex = page * pageSize;
-        var apiUrl =
-            Urlconstant.url +
-            `api/readclientinfomation?startingIndex=${startingIndex}&maxRows=${25}`;
-        return new Promise((resolve) => {
-            fetch(apiUrl)
-                .then((response) => response.json())
-                .then((data) => {
-                    const newGridData = {
-                        rows: data.clientData.map((row) => ({
-                            id: row.id.toString(),
-                            ...row,
-                        })),
-                        rowCount: data.size,
-                    };
+        fetchDataAndUpdateState();
+        return () => {
+            active = false;
+        };
+    };
+    React.useEffect(() => {
+        refreshPageEveryTime();
+    }, [paginationModel.page, paginationModel.pageSize, searchValue]);
 
-                    resolve(newGridData);
-                })
-                .catch((error) => {
-                    resolve({ rows: [], rowCount: 0 });
-                });
+    const handleSearchInput = () => {
+        searchServerRows(searchValue).then((newGridData) => {
+            setGridData(newGridData);
+            setPaginationModel({ page: 0, pageSize: initialPageSize });
         });
-    }
-
-
-    const handleSearchValue = (event) => {
-        const searchValue = event.target.value;
-        if (searchValue.length >= 3) {
-            getSuggestionValues(searchValue);
-        }
-    }
-
-    const getSuggestionValues = (searchValue) => {
-        axios.get(Urlconstant.url + `api/client/suggestions?companyName=${searchValue}`)
-            .then((response) => (
-                //setAutoSearchValue(response.data)
-                console.log(response.data)
-            ));
-    }
-
-    const handleSearchInput=()=>{
-
-     //   console.log("Onclick action")
-    }
+    };
 
     const column = [
         //  { headerName: 'ID', field: 'id' },
@@ -131,7 +216,7 @@ export default function ViewClient() {
                         color="secondary"
                         startIcon={<PersonOutline />}
                         component={Link}
-                        to={Urlconstant.navigate + `clientprofile/${params.row.id}`}
+                        to={Urlconstant.navigate + `company/${params.row.id}`}
                     >
                         View
                     </Button>
@@ -140,17 +225,42 @@ export default function ViewClient() {
         },
     ];
 
-
     return (
         <div style={gridStyle}>
             <div
                 className="search"
-                style={{ display: "flex", alignItems: "center", marginTop: "100px" }}
-            >
-                <TextField
-                    Search
-                    name="searchValue"
-                    onChange={handleSearchValue}
+                style={{ display: "flex", alignItems: "center", marginTop: "100px" }}>
+                <Autocomplete
+                    freeSolo
+                    autoSelect
+                    disableClearable
+
+                    style={{ width: 300 }}
+                    options={autocompleteOptions}
+                    getOptionLabel={(option) => option.companyName}
+                    onChange={(a) => {
+                        setSearchValue(a.target.value)
+                    }
+                    }
+                    renderInput={(params) => <TextField {...params}
+                        value={searchValue}
+                        onChange={(event) => {
+                            const searchInput = event.target.value;
+                            console.log(searchInput)
+                            if (searchInput.length >= 3) {
+                                setSearchValue(searchInput);
+                                setPaginationModel({ page: 0, pageSize: initialPageSize });
+                            }
+                            if (searchInput >= 1 && searchInput < 3) {
+                                setPaginationModel({ page: 0, pageSize: initialPageSize });
+                            }
+                        }}
+                        label="Search" />}
+                    renderOption={(props, option) => (
+                        <li {...props}>
+                            {option.companyName} - {option.companyEmail}
+                        </li>
+                    )}
                 />
                 <Button style={buttonPadding}
                     type="submit"
@@ -160,21 +270,25 @@ export default function ViewClient() {
                 >
                     Search
                 </Button>
-                {autoSearchValue.clientName}
             </div>
             <h1></h1>
             <div style={gridStyle}>
                 <DataGrid
-                    rows={gridData.rows}
+                    style={{ width: "100%" }}
                     columns={column}
-                    pageSizeOptions={[5, 10, 25]}
-                    paginationMode="server"
-                    rowCount={gridData.rowCount}
+                    rows={gridData.rows}
                     pagination
                     paginationModel={paginationModel}
+                    pageSizeOptions={[5, 10, 15]}
+                    rowCount={gridData.rowCount}
+                    paginationMode={searchValue === "" ? "server" : "client"}
                     onPaginationModelChange={setPaginationModel}
+                    onRowSelectionModelChange={(newRowSelectionModel) => {
+                        setRowSelectionModel(newRowSelectionModel);
+                    }}
+                    rowSelectionModel={rowSelectionModel}
+                    loading={loading}
                     keepNonExistentRowsSelected
-
                 />
             </div>
         </div>
