@@ -225,7 +225,6 @@ export default function ViewClient() {
         },
     ];
 
-
     return (
         <div style={gridStyle}>
             <div
