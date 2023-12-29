@@ -35,30 +35,51 @@ function loadServerRows(page, pageSize) {
 }
 
 
-function searchServerRows(searchValue) {
-    console.log(searchValue)
-    const apiUrl =
-        Urlconstant.url + `api/client/suggestions?companyName=${searchValue}`;
-    const requestOptions = {
-        method: "GET",
-    };
+// function searchServerRows(searchValue) {
+//     const apiUrl =
+//         Urlconstant.url + `api/getdetailsbycompanyname?companyName=${searchValue}`;
+//     const requestOptions = {
+//         method: "GET",
+//     };
 
+//     return new Promise((resolve) => {
+//         fetch(apiUrl, requestOptions)
+//             .then((response) => response.json())
+//             .then((data) => {
+//                 console.log(data)
+//                 resolve({
+//                     rows: data.map((row) => ({
+//                         ...row,
+//                     })),
+//                     rowCount: data.size,
+//                 });
+//             })
+//             .catch((error) => {
+//                 resolve({ rows: [], rowCount: 0 });
+//             });
+//     });
+// }
+function searchServerRows(searchValue) {
+    const apiUrl =
+      Urlconstant.url + `api/getdetailsbycompanyname?companyName=${searchValue}`;
+    const requestOptions = {
+      method: "GET",
+    };
+  
     return new Promise((resolve) => {
-        fetch(apiUrl, requestOptions)
-            .then((response) => response.json())
-            .then((data) => {
-                resolve({
-                    rows: data.map((row) => ({
-                        ...row,
-                    })),
-                    rowCount: data.size,
-                });
-            })
-            .catch((error) => {
-                resolve({ rows: [], rowCount: 0 });
-            });
+      fetch(apiUrl, requestOptions)
+        .then((response) => response.json())
+        .then((data) => {
+          resolve({
+            rows: data.map((row) => ({ id: row.id.toString(), ...row })),
+            rowCount: data.size,
+          });
+        })
+        .catch((error) => {
+          resolve({ rows: [], rowCount: 0 });
+        });
     });
-}
+  }
 async function fetchFilteredData(searchValue) {
     try {
         const apiUrl =
