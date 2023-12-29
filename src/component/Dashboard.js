@@ -18,6 +18,7 @@ import ClientDetails from './ClientDetails';
 import ViewClient from './ViewClient';
 import CompanyProfile from './CompanyProfile';
 import Absentees from './Absentees';
+import ViewHrProfile from './ViewHrProfile';
 
 
 
@@ -44,12 +45,11 @@ const Dashboard = ({ isLoggedIn }) => {
 
         <Route path="/attenance/:email" element={<ViewAttendance/>}/>
         <Route path="/whatsapp" element={<WhatsAppLinkSender />} />
-        <Route path="/client" element={<ClientDetails/>}/>
-        <Route path="/displayclient" element={<ViewClient/>}/>
-        <Route path="/clientprofile/:id" element={<CompanyProfile/>}/>
-      </Routes>
-
-      
+        <Route path="/company" element={<ClientDetails/>}/>
+        <Route path="/company/list" element={<ViewClient/>}/>
+        <Route path="/company/:id" element={<CompanyProfile/>}/>
+        <Route path="/company/hr/:id" element={<ViewHrProfile/>}/>
+      </Routes>      
     </div>
 
     </div>
