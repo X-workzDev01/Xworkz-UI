@@ -1,10 +1,11 @@
 import { Alert, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, Snackbar, TextField } from '@mui/material';
 import { GridCloseIcon } from '@mui/x-data-grid';
 import axios from 'axios';
-import React, { useState } from 'react';
+import React from 'react';
 import { Urlconstant } from '../constant/Urlconstant';
-import { fieldStyle, style } from '../constant/FormStyle';
+import { style } from '../constant/FormStyle';
 import { validateContactNumber, validateEmail } from '../constant/ValidationConstant';
+
 
 
 const EditCompanyDetails = ({ open, handleClose, rowData }) => {
@@ -12,7 +13,6 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
     const [loading, setLoading] = React.useState(false);
     const [responseMessage, setResponseMessage] = React.useState("");
     const [snackbarOpen, setSnackbarOpen] = React.useState(false);
-    const [formData, setFormData] = React.useState('');
     const attemptedEmail = sessionStorage.getItem("userId");
     const [emailCheck, setEmailCheck] = React.useState("");
     const [phoneNumberCheck, setPhoneNumberCheck] = React.useState("");
@@ -20,7 +20,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
     const [checkPhoneNumberExist, setCheckPhoneNumberExist] = React.useState("");
     const [editedData, setEditedData] = React.useState([]);
     const [companyNameCheck, setCompanyNameCheck] = React.useState("");
-
+   
     React.useEffect(() => {
         setEditedData(rowData);
     }, [rowData]);
@@ -28,10 +28,6 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
 
     const handleChange = (event) => {
         const { name, value } = event.target;
-        // setFormData((prevData) => ({
-        //     ...prevData,
-        //     [name]: value,
-        // }));
         if (name === 'companyEmail') {
             if (validateEmail(value)) {
                 setEmailCheck("");
@@ -92,9 +88,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
     }
 
     const handleSaveClick = (event) => {
-        event.preventDefault();
-        //setIsSubmitting(false);
-        try {
+       // event.preventDefault();
             const updatedData = {
                 ...editedData,
                 adminDto: {
@@ -104,24 +98,22 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
             };
             axios.put(Urlconstant.url + `api/clientupdate?companyId=${rowData.id}`, updatedData).then((response) => {
                 setResponseMessage(response.data)
-                if (response.status === 200) {
+                if (response.status === 200) {  
+                    setLoading(false);
+                    setSnackbarOpen(true);
+                    setResponseMessage("Client information Updated successfully")
                     setTimeout(() => {
-                        handleCloseForm();
+                        handleCloseForm();                
                     }, 1000);
                 }
-            })
-            setResponseMessage("Client information added successfully")
-
-        } catch (error) {
-        } finally {
-   //         setIsSubmitting(false);
-        }
-    }
+                })
+            }
+        
    
     return (
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
             <DialogTitle>
-                Add New HR
+                Edit Company Details
                 <IconButton
                     color="inherit"
                     onClick={handleClose}
