@@ -127,12 +127,12 @@ const ViewHrProfile = () => {
                     rowData={HrDetails}
                     handleSaveClick={handleHRDetailsClick}
                 />
-                {/* <HrFollowUp
-                 open={setHrFollowUpModalOpen}
+                <HrFollowUp
+                 open={isHrFollowUpModalOpen}
                  handleClose={() => setHrFollowUpModalOpen(false)}
                  rowData={HrDetails}
                  handleSaveClick={handleHRFollowUpClick}
-                /> */}
+                />
             </div>
             {HrFollowUpStatus ? <HRFollowUpStatusGrid rows={HrFollowUpStatus} /> : null}
         </div>
