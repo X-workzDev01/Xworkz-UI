@@ -35,30 +35,7 @@ function loadServerRows(page, pageSize) {
 }
 
 
-// function searchServerRows(searchValue) {
-//     const apiUrl =
-//         Urlconstant.url + `api/getdetailsbycompanyname?companyName=${searchValue}`;
-//     const requestOptions = {
-//         method: "GET",
-//     };
 
-//     return new Promise((resolve) => {
-//         fetch(apiUrl, requestOptions)
-//             .then((response) => response.json())
-//             .then((data) => {
-//                 console.log(data)
-//                 resolve({
-//                     rows: data.map((row) => ({
-//                         ...row,
-//                     })),
-//                     rowCount: data.size,
-//                 });
-//             })
-//             .catch((error) => {
-//                 resolve({ rows: [], rowCount: 0 });
-//             });
-//     });
-// }
 function searchServerRows(searchValue) {
     const apiUrl =
       Urlconstant.url + `api/getdetailsbycompanyname?companyName=${searchValue}`;
@@ -246,7 +223,6 @@ export default function ViewClient() {
                         value={searchValue}
                         onChange={(event) => {
                             const searchInput = event.target.value;
-                            console.log(searchInput)
                             if (searchInput.length >= 3) {
                                 setSearchValue(searchInput);
                                 setPaginationModel({ page: 0, pageSize: initialPageSize });

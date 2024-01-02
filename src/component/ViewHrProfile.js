@@ -2,9 +2,11 @@ import axios from "axios";
 import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Urlconstant } from "../constant/Urlconstant";
-import { Avatar } from "@mui/material";
-import { EmailOutlined, PhoneAndroid, WorkOutlineOutlined } from "@mui/icons-material";
+import { Avatar, Button } from "@mui/material";
+import { AddCircleOutline, EmailOutlined, ModeEditOutline, ModeEditOutlined, PhoneAndroid, WorkOutlineOutlined } from "@mui/icons-material";
 import HRFollowUpStatusGrid from "./HRFollowUpStatusGrid";
+import EditHRDetails from "./EditHRDetails";
+import HrFollowUp from "./HrFollowUp";
 
 function stringToColor(string) {
     let hash = 0;
@@ -43,25 +45,42 @@ const ViewHrProfile = () => {
     const { id } = useParams();
     const [HrScopName, setHrScopName] = React.useState("");
     const [HrDetails, setHrDetails] = React.useState("");
-    const [HrFollowUpStatus,setHrFollowUpStatus]= React.useState("")
+    const [HrFollowUpStatus, setHrFollowUpStatus] = React.useState("")
+    const [isEditHRDetailsModalOpen, setEditHRDetailsModalOpen] = React.useState(false);
+    const [isHrFollowUpModalOpen,setHrFollowUpModalOpen] =React.useState("");
 
 
-    const fetchHrDetails=(id)=>{
+    const fetchHrDetails = (id) => {
         axios.get(Urlconstant.url + `api/getdetailsbyhrid?hrId=${id}`).then((response) => {
             setHrScopName(response.data.hrScopName);
             setHrDetails(response.data);
         })
     }
-    const fetchHRFollowUp=(id)=>{
-        axios.get(Urlconstant.url+`api/gethrfollowupdetails?hrId=${id}`).then((response)=>{
+    const fetchHRFollowUp = (id) => {
+        axios.get(Urlconstant.url + `api/gethrfollowupdetails?hrId=${id}`).then((response) => {
             setHrFollowUpStatus(response.data);
         })
     }
     useEffect(() => {
         fetchHrDetails(id);
         fetchHRFollowUp(id);
-    },[id]);
+    }, [id,isEditHRDetailsModalOpen,isHrFollowUpModalOpen]);
 
+
+    const handleEditHRDetails = () => {
+        setEditHRDetailsModalOpen(true);
+    }
+
+    const handleHRDetailsClick = () => {
+        setEditHRDetailsModalOpen(false);
+    }
+    const handleHRFollowUp = () => {
+        setHrFollowUpModalOpen(true);
+    }
+
+    const handleHRFollowUpClick = () => {
+        setHrFollowUpModalOpen(false);
+    }
 
     return (
 
@@ -83,7 +102,37 @@ const ViewHrProfile = () => {
                         <WorkOutlineOutlined sx={{ color: "#1277B2" }} />{" "}
                         {HrDetails.designation}
                     </h3>
+                    <Button
+                        variant="outlined"
+                        startIcon={<ModeEditOutlined />}
+                        onClick={() => {
+                            handleEditHRDetails(HrDetails)
+                        }}
+                    >
+                        Edit Details
+                    </Button>
+                    <Button
+                        variant="outlined"
+                        startIcon={<AddCircleOutline/>}
+                        onClick={() => {
+                            handleHRFollowUp(HrDetails)
+                        }}
+                    >
+                    Follow Up
+                    </Button>
                 </div>
+                <EditHRDetails
+                    open={isEditHRDetailsModalOpen}
+                    handleClose={() => setEditHRDetailsModalOpen(false)}
+                    rowData={HrDetails}
+                    handleSaveClick={handleHRDetailsClick}
+                />
+                {/* <HrFollowUp
+                 open={setHrFollowUpModalOpen}
+                 handleClose={() => setHrFollowUpModalOpen(false)}
+                 rowData={HrDetails}
+                 handleSaveClick={handleHRFollowUpClick}
+                /> */}
             </div>
             {HrFollowUpStatus ? <HRFollowUpStatusGrid rows={HrFollowUpStatus} /> : null}
         </div>
