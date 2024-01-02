@@ -19,29 +19,6 @@ const HRDetails = ({ open, handleClose, id }) => {
         rows: [],
         rowCount: 0,
     });
-    const [isConfirming, setIsConfirming] = React.useState(false);
-    const [loading, setLoading] = React.useState(false);
-    const [responseMessage, setResponseMessage] = React.useState("");
-    const [snackbarOpen, setSnackbarOpen] = React.useState(false);
-    //const [isDisabled, setDisabled] = React.useState(true);
-    const [formData, setFormData] = React.useState('');
-    const attemptedEmail = sessionStorage.getItem("userId");
-    //const [rowdata, setRowData] = React.useState({ ...rowData });
-
-    const handleHrAddClick = () => {
-        setIsConfirming(true);
-        setSnackbarOpen(false);
-    };
-    const handleSnackbarClose = () => {
-        setSnackbarOpen(false);
-        handleClose();
-    };
-    const handleCloseForm = () => {
-        setResponseMessage("");
-        setSnackbarOpen(false);
-        handleClose();
-    };
-
     
     React.useEffect(() => {
         searchServerRows(paginationModel.page, paginationModel.pageSize,id).then(

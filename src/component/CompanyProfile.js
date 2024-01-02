@@ -60,7 +60,7 @@ const CompanyProfile = () => {
       })
   }
   React.useEffect(() => {
-    fetchData(id, isAddHrModalOpen);
+    fetchData(id);
   }, [id, isAddHrModalOpen, isHrFollowupModalOpen,isEditCompanyDetailsModalOpen,isGetHRDetailsModalOpen]);
 
   const handleAddClientHr = () => {

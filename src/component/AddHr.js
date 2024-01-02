@@ -75,14 +75,15 @@ const AddHr = ({ open, handleClose, rowData }) => {
             }
 
             axios.post(Urlconstant.url + "api/registerclienthr", hrData).then((response) => {
-                setResponseMessage(response.data)
                 if (response.status === 200) {
+                    setSnackbarOpen(true)
+                    setResponseMessage(response.data)
                     setTimeout(() => {
                       handleCloseForm();
                     }, 1000);
                   }
             })
-            setResponseMessage("Client information added successfully")
+           
 
             setFormData({
                 hrScopName: '',
@@ -193,7 +194,7 @@ const AddHr = ({ open, handleClose, rowData }) => {
                 autoHideDuration={3000}
                 onClose={handleSnackbarClose}
                 message={responseMessage}
-            />
+            /> 
 
             <Dialog open={isConfirming} onClose={handleClose} fullWidth maxWidth="xs">
                 <DialogTitle>Confirm Save</DialogTitle>

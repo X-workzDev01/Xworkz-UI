@@ -56,7 +56,7 @@ const EditHRDetails = ({ open, handleClose, rowData }) => {
             if (response.status === 200) {
                 setLoading(false);
                 setSnackbarOpen(true);
-                setResponseMessage("Client information Updated successfully")
+                setResponseMessage(response.data)
                 setTimeout(() => {
                     handleCloseForm();
                 }, 1000);
@@ -144,9 +144,9 @@ const EditHRDetails = ({ open, handleClose, rowData }) => {
                 autoHideDuration={3000}
                 onClose={handleSnackbarClose}
                 message={responseMessage}
-            /> *
+            /> 
 
-            * <Dialog open={isConfirming} onClose={handleClose} fullWidth maxWidth="xs">
+             <Dialog open={isConfirming} onClose={handleClose} fullWidth maxWidth="xs">
                 <DialogTitle>Confirm Save</DialogTitle>
                 <DialogContent>Are you sure Want to Update the HR Details</DialogContent>
                 <DialogActions>
