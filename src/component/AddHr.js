@@ -1,7 +1,7 @@
-import { Alert, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, Snackbar, TextField } from '@mui/material';
+import { Alert, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, MenuItem, Snackbar, TextField } from '@mui/material';
 import { GridCloseIcon } from '@mui/x-data-grid';
 import axios from 'axios';
-import React, { useState } from 'react';
+import React from 'react';
 import { Urlconstant } from '../constant/Urlconstant';
 import { fieldStyle, style } from '../constant/FormStyle';
 import { validateContactNumber, validateEmail } from '../constant/ValidationConstant';
@@ -9,18 +9,16 @@ import { validateContactNumber, validateEmail } from '../constant/ValidationCons
 
 const AddHr = ({ open, handleClose, rowData }) => {
 
-
+    // const statusList = ['Active', 'InActive'].slice().sort();
     const [isConfirming, setIsConfirming] = React.useState(false);
-    const [loading, setLoading] = React.useState(false);
     const [responseMessage, setResponseMessage] = React.useState("");
     const [snackbarOpen, setSnackbarOpen] = React.useState(false);
-    //const [isDisabled, setDisabled] = React.useState(true);
     const [formData, setFormData] = React.useState('');
     const attemptedEmail = sessionStorage.getItem("userId");
     const [emailCheck, setEmailCheck] = React.useState("");
     const [phoneNumber, setPhoneNumberCheck] = React.useState("");
     const [checkEmailExist, setCheckEmailExist] = React.useState("");
-    const [checkPhoneNumberExist, setCheckPhoneNumberExist] = React.useState("");
+    const [verifyEmail, setVerifyEmail] = React.useState("");
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
@@ -32,7 +30,8 @@ const AddHr = ({ open, handleClose, rowData }) => {
             if (validateEmail(value)) {
                 setEmailCheck("");
             } else {
-                setEmailCheck("invalid email")
+                setEmailCheck("invalid email");
+                setCheckEmailExist("");
             }
         }
         if (name === 'hrContactNumber') {
@@ -56,7 +55,7 @@ const AddHr = ({ open, handleClose, rowData }) => {
         setResponseMessage("");
         setSnackbarOpen(false);
         handleClose();
-      };
+    };
 
     const handleSaveClick = (event) => {
         event.preventDefault();
@@ -79,34 +78,58 @@ const AddHr = ({ open, handleClose, rowData }) => {
                     setSnackbarOpen(true)
                     setResponseMessage(response.data)
                     setTimeout(() => {
-                      handleCloseForm();
+                        handleCloseForm();
                     }, 1000);
-                  }
+                    setFormData({
+                        hrScopName: '',
+                        hrEmail: '',
+                        hrContactNumber: '',
+                        designation: '',
+                        status: '',
+                    });
+                    setIsConfirming(true)
+                }
             })
-           
 
-            setFormData({
-                hrScopName: '',
-                hrEmail: '',
-                hrContactNumber: '',
-                designation: '',
-                status: '',
-            });
-            
-        } catch (error) {
-        } finally {
-            //setIsSubmitting(false);
-        }
-
+        } catch (error) { }
     }
+
+    const validatingEmail = (email) => {
+        axios
+            .get(`${Urlconstant.url}api/verify-email?email=${email}`)
+            .then((response) => {
+                if (response.status === 200) {
+                    if (response.data === "accepted_email") {
+                        setVerifyEmail(response.data);
+                        console.log(response.data);
+                    } else if (response.data === "rejected_email") {
+                        setVerifyEmail(response.data);
+
+                    } else {
+                        setVerifyEmail("");
+                    }
+                } else {
+                    if (response.status === 500) {
+                        console.log("Internal Server Error:", response.status);
+                    } else {
+                        console.log("Unexpected Error:", response.status);
+                    }
+                }
+            })
+            .catch((error) => {
+                console.log("check emailable credentils");
+            });
+    };
 
     const handleEmailCheck = (event) => {
         let email = event.target.value;
         axios.get(Urlconstant.url + `api/hremailcheck?hrEmail=${email}`).then((response) => {
             if (response.data === 'Email already exists.') {
-                setEmailCheck("");
+                setEmailCheck("")
                 setCheckEmailExist(response.data);
             } else {
+
+                validatingEmail(email);
                 setCheckEmailExist("");
             }
         });
@@ -170,12 +193,32 @@ const AddHr = ({ open, handleClose, rowData }) => {
                         />
                     </Grid>
                     <Grid item xs={12} sm={4}>
-                        <TextField
+                        {/* <TextField
                             label="Hr Status"
                             name="status"
                             onChange={handleInputChange}
                             style={fieldStyle}
                             value={formData.status}
+                            fullWidth
+                            margin="normal"
+                            select
+                            >
+                            {statusList.map((option) => (
+                                <MenuItem key={option} value={option}>
+                                    {option}
+                                </MenuItem>
+                            ))}
+                        </TextField> */}
+                        <TextField
+                            label="Comments"
+                            name="status"
+                            onChange={handleInputChange}
+                            style={fieldStyle}
+                            value={formData.status}
+                            fullWidth
+                            margin="normal"
+                            multiline
+                            rows={4}
                         />
                     </Grid>
                 </Grid>
@@ -192,10 +235,11 @@ const AddHr = ({ open, handleClose, rowData }) => {
             <Snackbar
                 open={snackbarOpen}
                 autoHideDuration={3000}
-                onClose={handleSnackbarClose}
-                message={responseMessage}
-            /> 
-
+                onClose={handleSnackbarClose}>
+                <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+                    {responseMessage}
+                </Alert>
+            </Snackbar>
             <Dialog open={isConfirming} onClose={handleClose} fullWidth maxWidth="xs">
                 <DialogTitle>Confirm Save</DialogTitle>
                 <DialogContent>Adding New HR Details</DialogContent>

@@ -41,8 +41,21 @@ const HrFollowUp = ({ open, handleClose, rowData }) => {
 
     const handleSaveClick = (event) => {
         event.preventDefault();
-        console.log(formData)
+        const hrFollowUpData = {
+            ...formData,
+            hrId: rowData.id,
+            attemptBy: attemtedUser
+        };
 
+        axios.post(Urlconstant.url+`api/hrfollowup`,hrFollowUpData).then((response) => {
+            if (response.status === 200) {
+                setSnackbarOpen(true)
+                setResponseMessage(response.data)
+                setTimeout(() => {
+                  handleCloseForm();
+                }, 1000);
+              }
+        })
     }
 
     return (
@@ -104,6 +117,10 @@ const HrFollowUp = ({ open, handleClose, rowData }) => {
                             onChange={handleInputChange}
                             style={fieldStyle}
                             value={formData.callBackDate}
+                            id="callBackDate"
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
                         />
                     </Grid>
                     <Grid item xs={12} sm={4}>
@@ -117,11 +134,15 @@ const HrFollowUp = ({ open, handleClose, rowData }) => {
                     </Grid>
                     <Grid item xs={12} sm={4}>
                         <TextField
+                            labelId="demo-simple-select-label"
                             label="comments"
                             name="comments"
                             onChange={handleInputChange}
-                            style={fieldStyle}
                             value={formData.comments}
+                            multiline
+                            rows={4}
+                            style={fieldStyle}
+                            id="comments"
                         />
                     </Grid>
                 </Grid>

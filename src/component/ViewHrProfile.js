@@ -64,7 +64,7 @@ const ViewHrProfile = () => {
     useEffect(() => {
         fetchHrDetails(id);
         fetchHRFollowUp(id);
-    }, [id,isEditHRDetailsModalOpen,isHrFollowUpModalOpen]);
+    }, [isEditHRDetailsModalOpen,isHrFollowUpModalOpen]);
 
 
     const handleEditHRDetails = () => {

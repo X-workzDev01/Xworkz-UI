@@ -26,7 +26,7 @@ const HRDetails = ({ open, handleClose, id }) => {
                 setGridData(newGridData);
             }
         );
-    }, [paginationModel.page, paginationModel.pageSize]);
+    }, [open]);
 
     function searchServerRows(page, pageSize,id) {
 
