@@ -1,4 +1,4 @@
-import { Alert, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, MenuItem, Snackbar, TextField } from '@mui/material';
+import { Alert, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Grid, IconButton, InputLabel, MenuItem, Snackbar, TextField } from '@mui/material';
 import { GridCloseIcon } from '@mui/x-data-grid';
 import axios from 'axios';
 import React from 'react';
@@ -10,6 +10,7 @@ import { validateContactNumber, validateEmail } from '../constant/ValidationCons
 const AddHr = ({ open, handleClose, rowData }) => {
 
     // const statusList = ['Active', 'InActive'].slice().sort();
+    const [loading, setLoading] = React.useState(false);
     const [isConfirming, setIsConfirming] = React.useState(false);
     const [responseMessage, setResponseMessage] = React.useState("");
     const [snackbarOpen, setSnackbarOpen] = React.useState(false);
@@ -19,13 +20,20 @@ const AddHr = ({ open, handleClose, rowData }) => {
     const [phoneNumber, setPhoneNumberCheck] = React.useState("");
     const [checkEmailExist, setCheckEmailExist] = React.useState("");
     const [verifyEmail, setVerifyEmail] = React.useState("");
+    const [validateName, setValidateName] = React.useState("");
+    const [validateDesignation, setValidateDesignation] = React.useState("");
 
+    const [charCount, setCharCount] = React.useState("");
     const handleInputChange = (event) => {
         const { name, value } = event.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
+
+        if (name === 'hrScopName') {
+            if (value && value.length <= 2) {
+                setValidateName("Enter the valid name");
+            } else {
+                setValidateName("");
+            }
+        }
         if (name === 'hrEmail') {
             if (validateEmail(value)) {
                 setEmailCheck("");
@@ -41,6 +49,21 @@ const AddHr = ({ open, handleClose, rowData }) => {
                 setPhoneNumberCheck("Invalid Contact Number")
             }
         }
+        if (name === 'designation') {
+            if (value && value.length <= 2) {
+                setValidateDesignation("Enter the correct designation");
+            } else {
+                setValidateDesignation("");
+            }
+        }
+        if (name === 'status') {
+            setCharCount(value.length);
+        }
+
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]: value,
+        }));
     }
 
     const handleHrAddClick = () => {
@@ -60,38 +83,45 @@ const AddHr = ({ open, handleClose, rowData }) => {
     const handleSaveClick = (event) => {
         event.preventDefault();
         //setIsSubmitting(false);
-        try {
-            const hrData = {
-                ...formData,
-                companyId: rowData.id,
-                adminDto: { createdBy: attemptedEmail }
-            };
+        if (isConfirming) {
+            setLoading(true);
+            try {
+                const hrData = {
+                    ...formData,
+                    companyId: rowData.id,
+                    adminDto: { createdBy: attemptedEmail }
+                };
 
-            for (const field in hrData) {
-                if (!hrData[field]) {
-                    hrData[field] = "NA";
+                for (const field in hrData) {
+                    if (!hrData[field]) {
+                        hrData[field] = "NA";
+                    }
                 }
+
+                axios.post(Urlconstant.url + "api/registerclienthr", hrData).then((response) => {
+                    if (response.status === 200) {
+                        setSnackbarOpen(true)
+                        setLoading(false)
+                        setResponseMessage(response.data)
+                        setIsConfirming(false);
+                        setTimeout(() => {
+                            handleCloseForm();
+                        }, 1000);
+                        setFormData({
+                            hrScopName: '',
+                            hrEmail: '',
+                            hrContactNumber: '',
+                            designation: '',
+                            status: '',
+                        });
+                    }
+                })
+            } catch (error) {
+                setLoading(false)
+                setResponseMessage("HR information not saved")
+                setSnackbarOpen(true);
             }
-
-            axios.post(Urlconstant.url + "api/registerclienthr", hrData).then((response) => {
-                if (response.status === 200) {
-                    setSnackbarOpen(true)
-                    setResponseMessage(response.data)
-                    setTimeout(() => {
-                        handleCloseForm();
-                    }, 1000);
-                    setFormData({
-                        hrScopName: '',
-                        hrEmail: '',
-                        hrContactNumber: '',
-                        designation: '',
-                        status: '',
-                    });
-                    setIsConfirming(true)
-                }
-            })
-
-        } catch (error) { }
+        }
     }
 
     const validatingEmail = (email) => {
@@ -101,7 +131,6 @@ const AddHr = ({ open, handleClose, rowData }) => {
                 if (response.status === 200) {
                     if (response.data === "accepted_email") {
                         setVerifyEmail(response.data);
-                        console.log(response.data);
                     } else if (response.data === "rejected_email") {
                         setVerifyEmail(response.data);
 
@@ -134,7 +163,8 @@ const AddHr = ({ open, handleClose, rowData }) => {
             }
         });
     }
-    const isDisabled = emailCheck || phoneNumber
+
+    const isDisabled = checkEmailExist || emailCheck || !formData.hrScopName || !formData.hrContactNumber || !formData.designation
     return (
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
             <DialogTitle>
@@ -153,12 +183,13 @@ const AddHr = ({ open, handleClose, rowData }) => {
                 <Grid container spacing={3}>
                     <Grid item xs={12} sm={4}>
                         <TextField
-                            label="Hr name"
+                            label="Hr Scop Name"
                             name="hrScopName"
                             onChange={handleInputChange}
                             style={fieldStyle}
                             value={formData.hrScopName}
                         />
+                        {validateName ? <Alert severity="error">{validateName}</Alert> : " "}
                     </Grid>
                     <Grid item xs={12} sm={4}>
                         <TextField
@@ -171,7 +202,7 @@ const AddHr = ({ open, handleClose, rowData }) => {
                         />
                         {emailCheck ? <Alert severity="error">{emailCheck}</Alert> : " "}
                         {checkEmailExist ? <Alert severity="error">{checkEmailExist}</Alert> : " "}
-
+                        {verifyEmail ? <Alert severity="error">{verifyEmail}</Alert> : " "}
                     </Grid>
                     <Grid item xs={12} sm={4}>
                         <TextField
@@ -191,6 +222,7 @@ const AddHr = ({ open, handleClose, rowData }) => {
                             style={fieldStyle}
                             value={formData.designation}
                         />
+                        {validateDesignation ? <Alert severity="error">{validateDesignation}</Alert> : " "}
                     </Grid>
                     <Grid item xs={12} sm={4}>
                         {/* <TextField
@@ -212,6 +244,7 @@ const AddHr = ({ open, handleClose, rowData }) => {
                         <TextField
                             label="Comments"
                             name="status"
+                            helperText={`${charCount}`}
                             onChange={handleInputChange}
                             style={fieldStyle}
                             value={formData.status}
@@ -224,13 +257,17 @@ const AddHr = ({ open, handleClose, rowData }) => {
                 </Grid>
             </DialogContent>
             <DialogActions>
-                <Button
-                    disabled={isDisabled}
-                    onClick={handleHrAddClick}
-                    color="primary"
-                >
-                    Add
-                </Button>
+                {loading ? (
+                    <CircularProgress size={20} />
+                ) : (
+                    <Button
+                        disabled={isDisabled}
+                        onClick={handleHrAddClick}
+                        color="primary"
+                    >
+                        Add
+                    </Button>
+                )}
             </DialogActions>
             <Snackbar
                 open={snackbarOpen}

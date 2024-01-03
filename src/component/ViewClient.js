@@ -193,7 +193,7 @@ export default function ViewClient() {
                         color="secondary"
                         startIcon={<PersonOutline />}
                         component={Link}
-                        to={Urlconstant.navigate + `company/${params.row.id}`}
+                        to={Urlconstant.navigate + `companylist/${params.row.id}`}
                     >
                         View
                     </Button>
