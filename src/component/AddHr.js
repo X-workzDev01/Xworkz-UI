@@ -19,6 +19,7 @@ const AddHr = ({ open, handleClose, rowData }) => {
     const [emailCheck, setEmailCheck] = React.useState("");
     const [phoneNumber, setPhoneNumberCheck] = React.useState("");
     const [checkEmailExist, setCheckEmailExist] = React.useState("");
+    const [checkPhoneNumberExist, setCheckPhoneNumberExist] = React.useState("");
     const [verifyEmail, setVerifyEmail] = React.useState("");
     const [validateName, setValidateName] = React.useState("");
     const [validateDesignation, setValidateDesignation] = React.useState("");
@@ -46,11 +47,12 @@ const AddHr = ({ open, handleClose, rowData }) => {
             if (validateContactNumber(value)) {
                 setPhoneNumberCheck("");
             } else {
-                setPhoneNumberCheck("Invalid Contact Number")
+                setPhoneNumberCheck("Invalid Contact Number");
+                setCheckPhoneNumberExist("");
             }
         }
         if (name === 'designation') {
-            if (value && value.length <= 2) {
+            if (value && value.length <= 1) {
                 setValidateDesignation("Enter the correct designation");
             } else {
                 setValidateDesignation("");
@@ -58,6 +60,8 @@ const AddHr = ({ open, handleClose, rowData }) => {
         }
         if (name === 'status') {
             setCharCount(value.length);
+        }else{
+            setCharCount("")
         }
 
         setFormData((prevData) => ({
@@ -80,8 +84,7 @@ const AddHr = ({ open, handleClose, rowData }) => {
         handleClose();
     };
 
-    const handleSaveClick = (event) => {
-        event.preventDefault();
+    const handleSaveClick = () => {
         //setIsSubmitting(false);
         if (isConfirming) {
             setLoading(true);
@@ -163,8 +166,20 @@ const AddHr = ({ open, handleClose, rowData }) => {
             }
         });
     }
+    const handleNumberCheck = (event) => {
+        let contactNumber = event.target.value;
+        axios.get(Urlconstant.url + `api/hrcontactnumbercheck?contactNumber=${contactNumber}`).then((response) => {
+            if (response.data === "Contact Number Already exist.") {
+                setCheckPhoneNumberExist(response.data);
+            } else {
+                setCheckPhoneNumberExist("");
+                setPhoneNumberCheck("");
+                
+            }
+        });
+    }
 
-    const isDisabled = checkEmailExist || emailCheck || !formData.hrScopName || !formData.hrContactNumber || !formData.designation
+    const isDisabled = checkPhoneNumberExist || checkEmailExist || emailCheck || !formData.hrScopName || !formData.hrContactNumber || !formData.designation
     return (
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
             <DialogTitle>
@@ -211,8 +226,11 @@ const AddHr = ({ open, handleClose, rowData }) => {
                             onChange={handleInputChange}
                             style={fieldStyle}
                             value={formData.hrContactNumber}
+                            onBlur={handleNumberCheck}
                         />
                         {phoneNumber ? <Alert severity="error">{phoneNumber}</Alert> : " "}
+                        {checkPhoneNumberExist ? <Alert severity="error">{checkPhoneNumberExist}</Alert> : " "}
+
                     </Grid>
                     <Grid item xs={12} sm={4}>
                         <TextField

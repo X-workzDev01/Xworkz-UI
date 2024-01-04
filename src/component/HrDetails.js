@@ -82,7 +82,7 @@ const HRDetails = ({ open, handleClose, id }) => {
         },
         {
             field: "status",
-            headerName: " Status",
+            headerName: "Comments",
             flex: 1,
             valueGetter: (params) => params.row.status,
         },
