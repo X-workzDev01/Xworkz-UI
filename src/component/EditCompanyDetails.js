@@ -22,6 +22,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
     const [companyNameCheck, setCompanyNameCheck] = React.useState("");
     const [isDisabled, setIsDisabled] = React.useState(true);
     const [nameCheck, setNameCheck] = React.useState("");
+    const [verifyEmail, setVerifyEmail] = React.useState("");
 
     React.useEffect(() => {
         setEditedData(rowData);
@@ -110,11 +111,39 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
                         setCheckEmailExist(res.data);
                     } else {
                         setCheckEmailExist("");
+                        validatingEmail(companyEmail);
                         setIsDisabled(false)
                     }
                 })
         }
     }
+
+    const validatingEmail = (email) => {
+        axios
+            .get(`${Urlconstant.url}api/verify-email?email=${email}`)
+            .then((response) => {
+                if (response.status === 200) {
+                    if (response.data === "accepted_email") {
+                        setVerifyEmail(response.data);
+                    } else if (response.data === "rejected_email") {
+                        setIsDisabled(true)
+                        setVerifyEmail(response.data);
+                    } else {
+                        setVerifyEmail("");
+                    }
+                } else {
+                    if (response.status === 500) {
+                        console.log("Internal Server Error:", response.status);
+                    } else {
+                        console.log("Unexpected Error:", response.status);
+                    }
+                }
+            })
+            .catch((error) => {
+                console.log("check emailable credentils");
+            });
+    };
+
     const handleEmail = (event) => {
         const email = event.target.value;
         if (email === rowData.companyEmail) {
