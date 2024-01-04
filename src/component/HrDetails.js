@@ -26,7 +26,7 @@ const HRDetails = ({ open, handleClose, id }) => {
                 setGridData(newGridData);
             }
         );
-    }, [paginationModel.page, paginationModel.pageSize]);
+    }, [open]);
 
     function searchServerRows(page, pageSize,id) {
 
@@ -82,7 +82,7 @@ const HRDetails = ({ open, handleClose, id }) => {
         },
         {
             field: "status",
-            headerName: " Status",
+            headerName: "Comments",
             flex: 1,
             valueGetter: (params) => params.row.status,
         },

@@ -1,4 +1,4 @@
-import { Alert, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, Snackbar, TextField } from '@mui/material';
+import { Alert, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, Snackbar, TextField } from '@mui/material';
 import { GridCloseIcon } from '@mui/x-data-grid';
 import axios from 'axios';
 import React from 'react';
@@ -20,25 +20,45 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
     const [checkPhoneNumberExist, setCheckPhoneNumberExist] = React.useState("");
     const [editedData, setEditedData] = React.useState([]);
     const [companyNameCheck, setCompanyNameCheck] = React.useState("");
-   
+    const [isDisabled, setIsDisabled] = React.useState(true);
+    const [nameCheck, setNameCheck] = React.useState("");
+    const [verifyEmail, setVerifyEmail] = React.useState("");
+
     React.useEffect(() => {
         setEditedData(rowData);
+        setIsDisabled(true)
+        setNameCheck("")
+        setCompanyNameCheck("")
+        setCheckEmailExist("")
+        setEmailCheck("")
+        setPhoneNumberCheck("")
     }, [rowData]);
 
 
     const handleChange = (event) => {
         const { name, value } = event.target;
+        if (name === 'companyName') {
+            if (value === " " || value.length === 0 && value.length <= 2) {
+                setNameCheck("Enter the Correct Company Name");
+                setCompanyNameCheck("");
+            } else {
+                setNameCheck("")
+            }
+        }
         if (name === 'companyEmail') {
             if (validateEmail(value)) {
                 setEmailCheck("");
             } else {
+                setIsDisabled(true)
                 setEmailCheck("Enter the correct Email");
             }
         }
         if (name === 'companyLandLineNumber') {
             if (validateContactNumber(value)) {
                 setPhoneNumberCheck("");
+                setIsDisabled(false)
             } else {
+                setIsDisabled(true)
                 setPhoneNumberCheck("Phone number is incorrect");
             }
 
@@ -52,6 +72,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
     const handleHrAddClick = () => {
         setIsConfirming(true);
         setSnackbarOpen(false);
+
     };
     const handleSnackbarClose = () => {
         setSnackbarOpen(false);
@@ -64,52 +85,115 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
     };
 
 
-    const handleCompanyName = (event) => {
-        const companyname = event.target.value;
-        axios.get(Urlconstant.url + `/api/companynamecheck?companyName=${companyname}`)
+    const handleCompanyNameCheck = (companyName) => {
+       if(companyName==="NA"){
+        setCompanyNameCheck("");
+       }else{
+        axios.get(Urlconstant.url + `/api/companynamecheck?companyName=${companyName}`)
             .then(res => {
                 if (res.data === "Company Already Exists") {
+                    setIsDisabled(false)
                     setCompanyNameCheck(res.data);
                 } else {
+                    setIsDisabled(false)
                     setCompanyNameCheck("");
                 }
             })
+        }
     }
-    const handleCompanyEmail = (event) => {
-        const companyEmail = event.target.value;
-        axios.get(Urlconstant.url + `/api/checkcompanyemail?companyEmail=${companyEmail}`)
-            .then(res => {
-                if (res.data === "Company Email Already Exists") {
-                    setCheckEmailExist(res.data);
-                } else {
-                    setCheckEmailExist("");
-                }
-            })
+    const handleCompanyEmail = (companyEmail) => {
+        if (companyEmail === 'NA') {
+            setCheckEmailExist("");
+        } else {
+            axios.get(Urlconstant.url + `/api/checkcompanyemail?companyEmail=${companyEmail}`)
+                .then(res => {
+                    if (res.data === "Company Email Already Exists") {
+                        setCheckEmailExist(res.data);
+                    } else {
+                        setCheckEmailExist("");
+                        validatingEmail(companyEmail);
+                        setIsDisabled(false)
+                    }
+                })
+        }
     }
 
-    const handleSaveClick = (event) => {
-       // event.preventDefault();
-            const updatedData = {
-                ...editedData,
-                adminDto: {
-                    ...editedData.adminDto,
-                    updatedBy: attemptedEmail,
-                },
-            };
-            axios.put(Urlconstant.url + `api/clientupdate?companyId=${rowData.id}`, updatedData).then((response) => {
-                setResponseMessage(response.data)
-                if (response.status === 200) {  
-                    setLoading(false);
-                    setSnackbarOpen(true);
-                    setResponseMessage("Client information Updated successfully")
-                    setTimeout(() => {
-                        handleCloseForm();                
-                    }, 1000);
+    const validatingEmail = (email) => {
+        axios
+            .get(`${Urlconstant.url}api/verify-email?email=${email}`)
+            .then((response) => {
+                if (response.status === 200) {
+                    if (response.data === "accepted_email") {
+                        setVerifyEmail(response.data);
+                    } else if (response.data === "rejected_email") {
+                        setIsDisabled(true)
+                        setVerifyEmail(response.data);
+                    } else {
+                        setVerifyEmail("");
+                    }
+                } else {
+                    if (response.status === 500) {
+                        console.log("Internal Server Error:", response.status);
+                    } else {
+                        console.log("Unexpected Error:", response.status);
+                    }
                 }
-                })
+            })
+            .catch((error) => {
+                console.log("check emailable credentils");
+            });
+    };
+
+    const handleEmail = (event) => {
+        const email = event.target.value;
+        if (email === rowData.companyEmail) {
+            setIsDisabled(false);
+        } else {
+            handleCompanyEmail(email);
+        }
+    }
+
+    const handleCompanyName = (event) => {
+        const companyName = event.target.value;
+        if (companyName === rowData.companyName) {
+            setIsDisabled(false);
+        } else {
+            if (!nameCheck) {
+                handleCompanyNameCheck(companyName)
             }
-        
-   
+        }
+    }
+
+    const handleSaveClick = () => {
+        if (setIsConfirming) {
+            setLoading(true)
+            try {
+                const updatedData = {
+                    ...editedData,
+                    adminDto: {
+                        ...editedData.adminDto,
+                        updatedBy: attemptedEmail,
+                    },
+                };
+                axios.put(Urlconstant.url + `api/clientupdate?companyId=${rowData.id}`, updatedData).then((response) => {
+                    if (response.status === 200) {
+                        setSnackbarOpen(true)
+                        setLoading(false)
+                        setResponseMessage(response.data)
+                        setIsConfirming(false);
+                        setTimeout(() => {
+                            handleCloseForm();
+                        }, 1000);
+                    }
+                })
+            } catch (response) {
+                setResponseMessage("Company profile not updated");
+                setLoading(false);
+                setSnackbarOpen(true);
+            }
+        }
+    }
+
     return (
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
             <DialogTitle>
@@ -137,6 +221,8 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
                             fullWidth
                             margin="normal"
                         />
+
+                        {nameCheck ? <Alert severity="error">{nameCheck}</Alert> : " "}
                         {companyNameCheck ? <Alert severity="error">{companyNameCheck}</Alert> : " "}
                     </Grid>
                     <Grid item xs={12} sm={4}>
@@ -147,7 +233,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
                             onChange={handleChange}
                             fullWidth
                             margin="normal"
-                            onBlur={handleCompanyEmail}
+                            onBlur={handleEmail}
                         />
                         {emailCheck ? <Alert severity="error">{emailCheck}</Alert> : " "}
                         {checkEmailExist ? <Alert severity="error">{checkEmailExist}</Alert> : " "}
@@ -244,21 +330,26 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
                 </Grid>
             </DialogContent>
             <DialogActions>
-                <Button
-                   //  disabled={isDisable}
-                    onClick={handleHrAddClick}
-                    color="primary"
-                >
-                    Edit
-                </Button>
+                {loading ? (
+                    <CircularProgress size={20} />
+                ) : (
+                    <Button
+                        disabled={isDisabled}
+                        onClick={handleHrAddClick}
+                        color="primary"
+                    >
+                        Edit
+                    </Button>
+                )}
             </DialogActions>
             <Snackbar
                 open={snackbarOpen}
                 autoHideDuration={3000}
-                onClose={handleSnackbarClose}
-                message={responseMessage}
-            />
-
+                onClose={handleSnackbarClose}>
+                <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+                    {responseMessage}
+                </Alert>
+            </Snackbar>
             <Dialog open={isConfirming} onClose={handleClose} fullWidth maxWidth="xs">
                 <DialogTitle>Confirm Edit</DialogTitle>
                 <DialogContent>Are you sure want to Edit the Company Details?</DialogContent>
