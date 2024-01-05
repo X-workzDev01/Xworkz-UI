@@ -154,6 +154,22 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
       .then(() => {})
       .catch((e) => {});
   };
+  const statusDto={
+    ...editedData,
+    attemptedBy:attemtedUser,
+  };
+  const dto={
+    name: statusDto.basicInfo.traineeName,
+    status:statusDto.attemptStatus,
+    adminDto:{
+      createdBy:statusDto.adminDto.createdBy,
+      createdOn:statusDto.adminDto.createdOn,
+      updatedBy:statusDto.adminDto.updatedBy,
+      updatedOn:statusDto.adminDto.updatedOn,
+    },
+  };
+
+
   const handleSaveClick = () => {
     const statusDto = {
       ...editedData,

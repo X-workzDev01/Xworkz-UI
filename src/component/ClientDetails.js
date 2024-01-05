@@ -18,6 +18,8 @@ export default function ClientDetails() {
     const [emailCheck, setEmailCheck] = React.useState("");
     const [phoneNumberCheck, setPhoneNumberCheck] = React.useState("");
     const [formData, setFormData] = React.useState('');
+    const [checkPhoneNumberExist, setCheckPhoneNumberExist] = React.useState("");
+    const [checkCompanyWebsite, setCheckCompanyWebsite] = React.useState("");
     const [catchErrors, setCatchErrors] = React.useState("");
 
     const handleClose = (reason) => {
@@ -111,7 +113,41 @@ export default function ClientDetails() {
                 }
             })
     }
-    const isSubmitValid = !formData.companyName || companyNameCheck || companyEmailCheck || emailCheck || phoneNumberCheck
+
+    const handleCompanyContactNumber = (event) => {
+        const companyContactNumber = event.target.value;
+        axios.get(Urlconstant.url + `/api/checkContactNumber?contactNumber=${companyContactNumber}`)
+            .then(res => {
+                if (res.data === "Company ContactNumber Already Exists") {
+                    setCheckPhoneNumberExist(res.data);
+                } else {
+                    setCheckPhoneNumberExist("");
+                }
+            })
+            .catch(error => {
+                    if (error.response.status === 500) {
+                        setCheckPhoneNumberExist('Contact number not found.');
+                    } else {
+                        setCheckPhoneNumberExist('An error occurred. Please try again.');
+                    }
+            });
+        }
+
+    const handleCompanyWebsite = (event) => {
+        const companyWebsite = event.target.value;
+        axios.get(Urlconstant.url + `/api/checkCompanyWebsite?companyWebsite=${companyWebsite}`)
+            .then(res => {
+                if (res.data === "CompanyWebsite Already Exists") {
+                    setCheckCompanyWebsite(res.data);
+                } else {
+                    setCheckCompanyWebsite("");
+                }
+            })
+    }
+
+
+
+    const isSubmitValid = !formData.companyName || companyNameCheck || companyEmailCheck || emailCheck || phoneNumberCheck || checkPhoneNumberExist || checkCompanyWebsite
     return (
         <div>
             <h2>Register Client</h2>
@@ -156,8 +192,10 @@ export default function ClientDetails() {
                             onChange={handleChange}
                             fullWidth
                             margin="normal"
+                            onBlur={handleCompanyContactNumber}
                         />
                         {phoneNumberCheck ? <Alert severity="error">{phoneNumberCheck}</Alert> : " "}
+                        {checkPhoneNumberExist ? <Alert severity="error">{checkPhoneNumberExist}</Alert> : " "}
                     </Grid>
                     <Grid item xs={12} sm={4}>
 
@@ -168,7 +206,9 @@ export default function ClientDetails() {
                             onChange={handleChange}
                             fullWidth
                             margin="normal"
+                            onBlur={handleCompanyWebsite}
                         />
+                        {checkCompanyWebsite ? <Alert severity="error">{checkCompanyWebsite}</Alert> : " "}
                     </Grid>
                     <Grid item xs={12} sm={4}>
                         <TextField

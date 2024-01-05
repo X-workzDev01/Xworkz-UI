@@ -17,10 +17,9 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
     const [emailCheck, setEmailCheck] = React.useState("");
     const [phoneNumberCheck, setPhoneNumberCheck] = React.useState("");
     const [checkEmailExist, setCheckEmailExist] = React.useState("");
-    const [checkPhoneNumberExist, setCheckPhoneNumberExist] = React.useState("");
     const [editedData, setEditedData] = React.useState([]);
     const [companyNameCheck, setCompanyNameCheck] = React.useState("");
-   
+
     React.useEffect(() => {
         setEditedData(rowData);
     }, [rowData]);
@@ -88,28 +87,28 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
     }
 
     const handleSaveClick = (event) => {
-       // event.preventDefault();
-            const updatedData = {
-                ...editedData,
-                adminDto: {
-                    ...editedData.adminDto,
-                    updatedBy: attemptedEmail,
-                },
-            };
-            axios.put(Urlconstant.url + `api/clientupdate?companyId=${rowData.id}`, updatedData).then((response) => {
-                setResponseMessage(response.data)
-                if (response.status === 200) {  
-                    setLoading(false);
-                    setSnackbarOpen(true);
-                    setResponseMessage("Client information Updated successfully")
-                    setTimeout(() => {
-                        handleCloseForm();                
-                    }, 1000);
-                }
-                })
+        // event.preventDefault();
+        const updatedData = {
+            ...editedData,
+            adminDto: {
+                ...editedData.adminDto,
+                updatedBy: attemptedEmail,
+            },
+        };
+        axios.put(Urlconstant.url + `api/clientupdate?companyId=${rowData.id}`, updatedData).then((response) => {
+            setResponseMessage(response.data)
+            if (response.status === 200) {
+                setLoading(false);
+                setSnackbarOpen(true);
+                setResponseMessage("Client information Updated successfully")
+                setTimeout(() => {
+                    handleCloseForm();
+                }, 1000);
             }
-        
-   
+        })
+    }
+
+
     return (
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
             <DialogTitle>
@@ -161,8 +160,11 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
                             onChange={handleChange}
                             fullWidth
                             margin="normal"
+
                         />
                         {phoneNumberCheck ? <Alert severity="error">{phoneNumberCheck}</Alert> : " "}
+
+
                     </Grid>
                     <Grid item xs={12} sm={4}>
 
@@ -173,7 +175,9 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
                             onChange={handleChange}
                             fullWidth
                             margin="normal"
+
                         />
+
                     </Grid>
                     <Grid item xs={12} sm={4}>
                         <TextField
@@ -245,7 +249,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
             </DialogContent>
             <DialogActions>
                 <Button
-                   //  disabled={isDisable}
+                    //  disabled={isDisable}
                     onClick={handleHrAddClick}
                     color="primary"
                 >
