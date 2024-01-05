@@ -9,6 +9,7 @@ export default function ClientDetails() {
     const statusList = ['Active', 'InActive'].slice().sort();
     const clientType = ['IT Consultency', 'Service Based', 'Product Based', 'Others'];
     const sourceOfConnection = ['Linkdin', 'Social Media', 'Job Portal', 'Old Student Reference', 'Reference', 'Other Reference'];
+    const sourceOfLocation=['Bangalore','Mumbai','Chandigarh','Hyderabad','Kochi','Pune','Thiruvanthapuram','Chennai','Kolakata','Ahmedabad','Delhi'];
     const email = sessionStorage.getItem('userId');
     const [isSubmitting, setIsSubmitting] = React.useState(false);
     const [open, setOpen] = React.useState(false);
@@ -18,6 +19,8 @@ export default function ClientDetails() {
     const [emailCheck, setEmailCheck] = React.useState("");
     const [phoneNumberCheck, setPhoneNumberCheck] = React.useState("");
     const [formData, setFormData] = React.useState('');
+    const [checkPhoneNumberExist, setCheckPhoneNumberExist] = React.useState("");
+    const [checkCompanyWebsite, setCheckCompanyWebsite] = React.useState("");
     const [catchErrors, setCatchErrors] = React.useState("");
 
     const handleClose = (reason) => {
@@ -111,7 +114,41 @@ export default function ClientDetails() {
                 }
             })
     }
-    const isSubmitValid = !formData.companyName || companyNameCheck || companyEmailCheck || emailCheck || phoneNumberCheck
+
+    const handleCompanyContactNumber = (event) => {
+        const companyContactNumber = event.target.value;
+        axios.get(Urlconstant.url + `/api/checkContactNumber?contactNumber=${companyContactNumber}`)
+            .then(res => {
+                if (res.data === "Company ContactNumber Already Exists") {
+                    setCheckPhoneNumberExist(res.data);
+                } else {
+                    setCheckPhoneNumberExist("");
+                }
+            })
+            .catch(error => {
+                    if (error.response.status === 500) {
+                        setCheckPhoneNumberExist('Contact number not found.');
+                    } else {
+                        setCheckPhoneNumberExist('An error occurred. Please try again.');
+                    }
+            });
+        }
+
+    const handleCompanyWebsite = (event) => {
+        const companyWebsite = event.target.value;
+        axios.get(Urlconstant.url + `/api/checkCompanyWebsite?companyWebsite=${companyWebsite}`)
+            .then(res => {
+                if (res.data === "CompanyWebsite Already Exists") {
+                    setCheckCompanyWebsite(res.data);
+                } else {
+                    setCheckCompanyWebsite("");
+                }
+            })
+    }
+
+
+
+    const isSubmitValid = !formData.companyName || companyNameCheck || companyEmailCheck || emailCheck || phoneNumberCheck || checkPhoneNumberExist || checkCompanyWebsite
     return (
         <div>
             <h2>Register Client</h2>
@@ -156,8 +193,10 @@ export default function ClientDetails() {
                             onChange={handleChange}
                             fullWidth
                             margin="normal"
+                            onBlur={handleCompanyContactNumber}
                         />
                         {phoneNumberCheck ? <Alert severity="error">{phoneNumberCheck}</Alert> : " "}
+                        {checkPhoneNumberExist ? <Alert severity="error">{checkPhoneNumberExist}</Alert> : " "}
                     </Grid>
                     <Grid item xs={12} sm={4}>
 
@@ -168,7 +207,9 @@ export default function ClientDetails() {
                             onChange={handleChange}
                             fullWidth
                             margin="normal"
+                            onBlur={handleCompanyWebsite}
                         />
+                        {checkCompanyWebsite ? <Alert severity="error">{checkCompanyWebsite}</Alert> : " "}
                     </Grid>
                     <Grid item xs={12} sm={4}>
                         <TextField
@@ -178,7 +219,14 @@ export default function ClientDetails() {
                             onChange={handleChange}
                             fullWidth
                             margin="normal"
-                        />
+                            select
+                        >
+                        {sourceOfLocation.map((option) => (
+                                <MenuItem key={option} value={option}>
+                                    {option}
+                                    </MenuItem>
+                            ))}
+                    </TextField>
                     </Grid>
                     <Grid item xs={12} sm={4}>
                         <TextField
