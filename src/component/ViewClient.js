@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { Autocomplete, Button, TextField } from '@mui/material';
 import axios from 'axios';
 import { buttonPadding, gridStyle } from '../constant/FormStyle';
+import HRFollowUpStatusGrid from './HRFollowUpStatusGrid';
 
 
 function loadServerRows(page, pageSize) {
@@ -88,7 +89,7 @@ export default function ViewClient() {
     const [searchValue, setSearchValue] = React.useState("");
     const [autocompleteOptions, setAutocompleteOptions] = React.useState([]);
     const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
-
+    const [HrFollowUpStatus, setHrFollowUpStatus] = React.useState("")
 
     const refreshPageEveryTime = () => {
         let active = true;
@@ -193,7 +194,7 @@ export default function ViewClient() {
                         color="secondary"
                         startIcon={<PersonOutline />}
                         component={Link}
-                        to={Urlconstant.navigate + `company/${params.row.id}`}
+                        to={Urlconstant.navigate + `companylist/${params.row.id}`}
                     >
                         View
                     </Button>
@@ -267,6 +268,7 @@ export default function ViewClient() {
                     keepNonExistentRowsSelected
                 />
             </div>
+            {HrFollowUpStatus ? <HRFollowUpStatusGrid rows={HrFollowUpStatus} /> : null}
         </div>
     )
 }
