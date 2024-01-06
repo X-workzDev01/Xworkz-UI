@@ -16,6 +16,7 @@ import { Alert } from "@mui/material";
 import { VisibilityOutlined } from "@mui/icons-material";
 import FollowUp from "./FollowUp";
 import Header from "./Header";
+import AttendanceModal from "./AttendanceModal";
 
 
 function stringToColor(string) {
@@ -70,6 +71,15 @@ const Profile = (courseName, searchValue) => {
   const [editedFollowUpStatusRowData, setEditedFollowUpStatusRowData] =
     React.useState(null);
   const [showAttendence, setShowAttendence] = useState(false);
+
+  const [isAttendanceModalOpen, setAttendanceModalOpen] = useState(false);
+  const [attendanceId, setAttendanceId] = useState(null);
+  const [batch, setbatch] = useState(null);
+
+  const handleAttendanceModalOpen = (rowData) => {
+    setAttendanceModalOpen(true);
+  };
+
 
   React.useEffect(() => {
     fetchData(
@@ -150,10 +160,10 @@ const Profile = (courseName, searchValue) => {
     setFollowUpStatusModalOpen(false);
   };
 
-  const handleAttendence = (row) => {
-    console.log(row);
-    setShowAttendence(true);
-  };
+
+
+
+
 
   return (
     <div>
@@ -226,6 +236,13 @@ const Profile = (courseName, searchValue) => {
             >
               Edit Profile
             </Button>
+            <Button
+              variant="outlined"
+              startIcon={<ModeEditIcon />}
+              onClick={() => handleAttendanceModalOpen(profileData)} // Pass profileData or appropriate rowData
+            >
+              View Attendance
+            </Button>
             {/* <Button
               variant="outlined"
               startIcon={<VisibilityOutlined />}
@@ -257,6 +274,16 @@ const Profile = (courseName, searchValue) => {
         handleSaveClick={handleFollowUpStatusSave}
         FollowUp={handleFollowUp}
       />
+      <AttendanceModal
+        open={isAttendanceModalOpen}
+        handleClose={() => setAttendanceModalOpen(false)}
+        id={profileData.id}
+        batch = {profileData.courseInfo.course}
+        
+        
+      />
+    
+
       {statusData ? <FollowStatusGrid rows={statusData} /> : null}
     </div>
   );
