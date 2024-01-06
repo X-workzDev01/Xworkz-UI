@@ -24,7 +24,6 @@ const EditHRDetails = ({ open, handleClose, rowData }) => {
 
     React.useEffect(() => {
         setEditedData(rowData);
-        setIsDisabled(true)
         setValidateDesignation("")
         setEmailCheck("")
         setPhoneNumberCheck("")

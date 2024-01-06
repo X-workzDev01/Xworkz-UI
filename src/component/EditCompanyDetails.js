@@ -26,7 +26,6 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
 
     React.useEffect(() => {
         setEditedData(rowData);
-        setIsDisabled(true)
         setNameCheck("")
         setCompanyNameCheck("")
         setCheckEmailExist("")
