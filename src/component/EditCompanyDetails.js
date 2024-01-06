@@ -17,16 +17,15 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
     const [emailCheck, setEmailCheck] = React.useState("");
     const [phoneNumberCheck, setPhoneNumberCheck] = React.useState("");
     const [checkEmailExist, setCheckEmailExist] = React.useState("");
-    const [checkPhoneNumberExist, setCheckPhoneNumberExist] = React.useState("");
     const [editedData, setEditedData] = React.useState([]);
     const [companyNameCheck, setCompanyNameCheck] = React.useState("");
     const [isDisabled, setIsDisabled] = React.useState(true);
     const [nameCheck, setNameCheck] = React.useState("");
     const [verifyEmail, setVerifyEmail] = React.useState("");
 
+
     React.useEffect(() => {
         setEditedData(rowData);
-        setIsDisabled(true)
         setNameCheck("")
         setCompanyNameCheck("")
         setCheckEmailExist("")
@@ -153,6 +152,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
         }
     }
 
+
     const handleCompanyName = (event) => {
         const companyName = event.target.value;
         if (companyName === rowData.companyName) {
@@ -193,7 +193,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
             }
         }
     }
-
+    
     return (
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
             <DialogTitle>
@@ -247,8 +247,11 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
                             onChange={handleChange}
                             fullWidth
                             margin="normal"
+
                         />
                         {phoneNumberCheck ? <Alert severity="error">{phoneNumberCheck}</Alert> : " "}
+
+
                     </Grid>
                     <Grid item xs={12} sm={4}>
 
@@ -259,7 +262,9 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
                             onChange={handleChange}
                             fullWidth
                             margin="normal"
+
                         />
+
                     </Grid>
                     <Grid item xs={12} sm={4}>
                         <TextField
@@ -330,6 +335,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
                 </Grid>
             </DialogContent>
             <DialogActions>
+
                 {loading ? (
                     <CircularProgress size={20} />
                 ) : (
@@ -341,6 +347,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
                         Edit
                     </Button>
                 )}
+
             </DialogActions>
             <Snackbar
                 open={snackbarOpen}
