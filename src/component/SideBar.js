@@ -8,6 +8,8 @@ import {
   FaWhatsapp,
   FaList,
 } from "react-icons/fa";
+import { MdAccountBalanceWallet } from "react-icons/md";
+
 import "./SideBar.css";
 import { NavLink, useLocation } from "react-router-dom";
 import { Urlconstant } from "../constant/Urlconstant";
@@ -64,6 +66,11 @@ const Sidebar = ({ children }) => {
       path: "displayclient",
       name: "Client Details",
       icon: <FaUserAlt />,
+    },
+    {
+      path: "feesDetailes",
+      name: "Fees Detailes",
+      icon: <MdAccountBalanceWallet />,
     },
 
   ];

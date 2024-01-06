@@ -18,6 +18,7 @@ import ClientDetails from './ClientDetails';
 import ViewClient from './ViewClient';
 import CompanyProfile from './CompanyProfile';
 import Absentees from './Absentees';
+import { FeesDetailes } from './FeesDetailes';
 
 
 
@@ -47,6 +48,8 @@ const Dashboard = ({ isLoggedIn }) => {
         <Route path="/client" element={<ClientDetails/>}/>
         <Route path="/displayclient" element={<ViewClient/>}/>
         <Route path="/clientprofile/:id" element={<CompanyProfile/>}/>
+        <Route path="/feesDetailes" element={<FeesDetailes/>}/>
+
       </Routes>
 
       

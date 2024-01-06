@@ -110,7 +110,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
           batchType: data.batchType,
           course: data.courseName,
           batchTiming: data.timing,
-          startTime: data.startTime,
+          startDate: data.startDate,
         });
       })
       .catch((error) => {});
@@ -192,7 +192,6 @@ const EditModal = ({ open, handleClose, rowData }) => {
         .then((response) => {
           if (response.data === "accepted_email") {
             setverifyHandleEmail(response.data);
-            console.log(response.data);
           }
           if (response.data === "rejected_email") {
             setverifyHandleEmailError(response.data);
@@ -520,7 +519,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
         <TextField
           label="Start Date"
           name="courseInfo.startTime"
-          value={formData.startTime || ""}
+          value={formData.startDate || ""}
           onChange={handleInputChange}
           style={fieldStyle}
         />
