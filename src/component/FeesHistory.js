@@ -46,13 +46,13 @@ export const FeesHistory = ({ isOpen, handleClose, row }) => {
     },
     {
       field: "Transection Id",
-      headerName: "Contact Number",
+      headerName: "Transection id",
       width: 120,
       valueGetter: (param) => param.row.transectionId,
     },
     {
       field: "paidAmount",
-      headerName: "Course",
+      headerName: "Paid Amount",
       width: 120,
       valueGetter: (param) => param.row.paidAmount,
     },

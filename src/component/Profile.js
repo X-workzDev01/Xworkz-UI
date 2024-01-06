@@ -86,7 +86,7 @@ const Profile = (courseName, searchValue) => {
       setStatusData,
       setDataLoadingError
     );
-  }, [email, isFollowUpStatusModalOpen, isModalOpen]);
+  }, [email, isFollowUpStatusModalOpen, isModalOpen, openFeesHistory]);
   const getFeesDetiles = () => {
     const response = axios.get(
       Urlconstant.url + `api/getFeesDetilesByEmail/${email}`
@@ -284,15 +284,23 @@ const Profile = (courseName, searchValue) => {
             ) : (
               ""
             )}
-            {feesHistory && feesHistory.length > 0 ? (
-              <Button
-                style={{ marginRight: "0.5rem" }}
-                variant="outlined"
-                startIcon={<MdWorkHistory />}
-                onClick={handleFeesHistory}
-              >
-                Fees History
-              </Button>
+            {followUpData.currentStatus ? (
+              followUpData.currentStatus === "Joined" ? (
+                feesHistory && feesHistory.length > 0 ? (
+                  <Button
+                    style={{ marginRight: "0.5rem" }}
+                    variant="outlined"
+                    startIcon={<MdWorkHistory />}
+                    onClick={handleFeesHistory}
+                  >
+                    Fees History
+                  </Button>
+                ) : (
+                  ""
+                )
+              ) : (
+                ""
+              )
             ) : (
               ""
             )}
@@ -317,11 +325,19 @@ const Profile = (courseName, searchValue) => {
         FollowUp={handleFollowUp}
       />
 
-      <FeesHistory
-        isOpen={openFeesHistory}
-        handleClose={() => setOpenFeesHistory(false)}
-        row={feesHistory}
-      />
+      {followUpData.currentStatus ? (
+        followUpData.currentStatus == "Joined" && feesHistory ? (
+          <FeesHistory
+            isOpen={openFeesHistory}
+            handleClose={() => setOpenFeesHistory(false)}
+            row={feesHistory}
+          />
+        ) : (
+          ""
+        )
+      ) : (
+        ""
+      )}
 
       {followUpData.currentStatus ? (
         followUpData.currentStatus == "Joined" && feesData ? (
