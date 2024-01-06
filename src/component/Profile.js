@@ -13,11 +13,15 @@ import EditModal from "./EditModal";
 import FollowStatusGrid from "./FollowStatusGrid";
 import FollowUpStatus from "./FollowUpStatus";
 import Header from "./Header";
+
+import AttendanceModal from "./AttendanceModal";
+
 import "./Profile.css";
 import { PayFee } from "./PayFee";
 import { Modal } from "react-bootstrap";
 import { FeesHistory } from "./FeesHistory";
 import { MdWorkHistory } from "react-icons/md";
+
 
 function stringToColor(string) {
   let hash = 0;
@@ -75,6 +79,15 @@ const Profile = (courseName, searchValue) => {
   const [editedFollowUpStatusRowData, setEditedFollowUpStatusRowData] =
     React.useState(null);
   const [showAttendence, setShowAttendence] = useState(false);
+
+  const [isAttendanceModalOpen, setAttendanceModalOpen] = useState(false);
+  const [attendanceId, setAttendanceId] = useState(null);
+  const [batch, setbatch] = useState(null);
+
+  const handleAttendanceModalOpen = (rowData) => {
+    setAttendanceModalOpen(true);
+  };
+
 
   React.useEffect(() => {
     fetchData(
@@ -164,6 +177,7 @@ const Profile = (courseName, searchValue) => {
     setFollowUpStatusModalOpen(false);
   };
 
+
   const handleAttendence = (row) => {
     console.log(row);
     setShowAttendence(true);
@@ -176,6 +190,7 @@ const Profile = (courseName, searchValue) => {
     getFeesDetiles();
     setOpenFeesHistory(true);
   };
+
 
   return (
     <div>
@@ -249,6 +264,13 @@ const Profile = (courseName, searchValue) => {
               onClick={() => handleEditClick(profileData)}
             >
               Edit Profile
+            </Button>
+            <Button
+              variant="outlined"
+              startIcon={<ModeEditIcon />}
+              onClick={() => handleAttendanceModalOpen(profileData)} // Pass profileData or appropriate rowData
+            >
+              View Attendance
             </Button>
             {/* <Button
               variant="outlined"
@@ -338,6 +360,17 @@ const Profile = (courseName, searchValue) => {
       ) : (
         ""
       )}
+      <AttendanceModal
+        open={isAttendanceModalOpen}
+        handleClose={() => setAttendanceModalOpen(false)}
+        id={profileData.id}
+        batch = {profileData.courseInfo.course}
+        
+        
+      />
+
+
+
 
       {followUpData.currentStatus ? (
         followUpData.currentStatus == "Joined" && feesData ? (
@@ -354,6 +387,7 @@ const Profile = (courseName, searchValue) => {
       ) : (
         ""
       )}
+
 
       {statusData ? <FollowStatusGrid rows={statusData} /> : null}
     </div>
