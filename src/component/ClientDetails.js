@@ -6,8 +6,10 @@ import { Urlconstant } from '../constant/Urlconstant';
 import { validateContactNumber, validateEmail } from '../constant/ValidationConstant';
 
 export default function ClientDetails() {
-    const statusList = ['Active', 'Inactive'].slice().sort();
+    const statusList = ['Active', 'InActive'].slice().sort();
     const clientType = ['IT Consultency', 'Service Based', 'Product Based', 'Others'];
+    const sourceOfConnection = ['Linkdin', 'Social Media', 'Job Portal', 'Old Student Reference', 'Reference', 'Other Reference'];
+    const sourceOfLocation=['Bangalore','Mumbai','Chandigarh','Hyderabad','Kochi','Pune','Thiruvanthapuram','Chennai','Kolakata','Ahmedabad','Delhi'];
     const email = sessionStorage.getItem('userId');
     const [isSubmitting, setIsSubmitting] = React.useState(false);
     const [open, setOpen] = React.useState(false);
@@ -17,7 +19,9 @@ export default function ClientDetails() {
     const [emailCheck, setEmailCheck] = React.useState("");
     const [phoneNumberCheck, setPhoneNumberCheck] = React.useState("");
     const [formData, setFormData] = React.useState('');
-    const [catchErrors,setCatchErrors] = React.useState("");
+    const [checkPhoneNumberExist, setCheckPhoneNumberExist] = React.useState("");
+    const [checkCompanyWebsite, setCheckCompanyWebsite] = React.useState("");
+    const [catchErrors, setCatchErrors] = React.useState("");
 
     const handleClose = (reason) => {
         if (reason === 'clickaway') {
@@ -98,7 +102,7 @@ export default function ClientDetails() {
             })
     }
 
-    
+
     const handleCompanyEmail = (event) => {
         const companyEmail = event.target.value;
         axios.get(Urlconstant.url + `/api/checkcompanyemail?companyEmail=${companyEmail}`)
@@ -110,20 +114,54 @@ export default function ClientDetails() {
                 }
             })
     }
-    const isSubmitValid = !formData.companyName || companyNameCheck || companyEmailCheck || emailCheck || phoneNumberCheck
+
+    const handleCompanyContactNumber = (event) => {
+        const companyContactNumber = event.target.value;
+        axios.get(Urlconstant.url + `/api/checkContactNumber?contactNumber=${companyContactNumber}`)
+            .then(res => {
+                if (res.data === "Company ContactNumber Already Exists") {
+                    setCheckPhoneNumberExist(res.data);
+                } else {
+                    setCheckPhoneNumberExist("");
+                }
+            })
+            .catch(error => {
+                    if (error.response.status === 500) {
+                        setCheckPhoneNumberExist('Contact number not found.');
+                    } else {
+                        setCheckPhoneNumberExist('An error occurred. Please try again.');
+                    }
+            });
+        }
+
+    const handleCompanyWebsite = (event) => {
+        const companyWebsite = event.target.value;
+        axios.get(Urlconstant.url + `/api/checkCompanyWebsite?companyWebsite=${companyWebsite}`)
+            .then(res => {
+                if (res.data === "CompanyWebsite Already Exists") {
+                    setCheckCompanyWebsite(res.data);
+                } else {
+                    setCheckCompanyWebsite("");
+                }
+            })
+    }
+
+
+
+    const isSubmitValid = !formData.companyName || companyNameCheck || companyEmailCheck || emailCheck || phoneNumberCheck || checkPhoneNumberExist || checkCompanyWebsite
     return (
         <div>
             <h2>Register Client</h2>
-           
+
             <Typography variant="h5" gutterBottom>
-               Register Company
-               {/* {setCatchErrors ? <Alert severity="error">{setCatchErrors}</Alert> : " "} */}
+                Register Company
+                {/* {setCatchErrors ? <Alert severity="error">{setCatchErrors}</Alert> : " "} */}
             </Typography>
             <Form onSubmit={handleSubmit}>
                 <Grid container spacing={3}>
                     <Grid item xs={12} sm={4}>
                         <TextField
-                            label="Client Name"
+                            label="Company Name"
                             name="companyName"
                             value={formData.companyName}
                             onChange={handleChange}
@@ -136,7 +174,7 @@ export default function ClientDetails() {
                     </Grid>
                     <Grid item xs={12} sm={4}>
                         <TextField
-                            label="Client Email"
+                            label="Company Email"
                             name="companyEmail"
                             value={formData.companyEmail}
                             onChange={handleChange}
@@ -149,39 +187,50 @@ export default function ClientDetails() {
                     </Grid>
                     <Grid item xs={12} sm={4}>
                         <TextField
-                            label="Client Contact Number"
+                            label="Company Contact Number"
                             name="companyLandLineNumber"
                             value={formData.companyLandLineNumber}
                             onChange={handleChange}
                             fullWidth
                             margin="normal"
+                            onBlur={handleCompanyContactNumber}
                         />
                         {phoneNumberCheck ? <Alert severity="error">{phoneNumberCheck}</Alert> : " "}
+                        {checkPhoneNumberExist ? <Alert severity="error">{checkPhoneNumberExist}</Alert> : " "}
                     </Grid>
                     <Grid item xs={12} sm={4}>
 
                         <TextField
-                            label="Client Website"
+                            label="Company Website"
                             name="companyWebsite"
                             value={formData.companyWebsite}
                             onChange={handleChange}
                             fullWidth
                             margin="normal"
+                            onBlur={handleCompanyWebsite}
                         />
+                        {checkCompanyWebsite ? <Alert severity="error">{checkCompanyWebsite}</Alert> : " "}
                     </Grid>
                     <Grid item xs={12} sm={4}>
                         <TextField
-                            label="Client Location"
+                            label="Company Location"
                             name="companyLocation"
                             value={formData.companyLocation}
                             onChange={handleChange}
                             fullWidth
                             margin="normal"
-                        />
+                            select
+                        >
+                        {sourceOfLocation.map((option) => (
+                                <MenuItem key={option} value={option}>
+                                    {option}
+                                    </MenuItem>
+                            ))}
+                    </TextField>
                     </Grid>
                     <Grid item xs={12} sm={4}>
                         <TextField
-                            label="Client Founder"
+                            label="Company Founder"
                             name="companyFounder"
                             value={formData.companyFounder}
                             onChange={handleChange}
@@ -191,17 +240,25 @@ export default function ClientDetails() {
                     </Grid>
                     <Grid item xs={12} sm={4}>
                         <TextField
-                            label="Client Source Of Connetion"
+                            label="Source Of Connetion"
                             name="sourceOfConnetion"
                             value={formData.sourceOfConnetion}
                             onChange={handleChange}
                             fullWidth
                             margin="normal"
-                        />
+                            select
+
+                        >
+                            {sourceOfConnection.map((option) => (
+                                <MenuItem key={option} value={option}>
+                                    {option}
+                                </MenuItem>
+                            ))}
+                        </TextField>
                     </Grid>
                     <Grid item xs={12} sm={4}>
                         <TextField
-                            label="Client Type"
+                            label="Company Type"
                             name="companyType"
                             value={formData.companyType}
                             onChange={handleChange}
@@ -218,7 +275,7 @@ export default function ClientDetails() {
                     </Grid>
                     <Grid item xs={12} sm={4}>
                         <TextField
-                            label="Client Status"
+                            label="Company Status"
                             name="status"
                             value={formData.status}
                             onChange={handleChange}

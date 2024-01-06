@@ -1,20 +1,18 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Snackbar, TextField } from '@mui/material';
+import { Alert, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, Snackbar, TextField } from '@mui/material';
 import { GridCloseIcon } from '@mui/x-data-grid';
 import axios from 'axios';
 import React, { useState } from 'react';
 import { Urlconstant } from '../constant/Urlconstant';
+import { fieldStyle, style } from '../constant/FormStyle';
 
-const fieldStyle = { margin: "20px" };
 const HrFollowUp = ({ open, handleClose, rowData }) => {
-
-
-    const [isConfirming, setIsConfirming] = React.useState(false);
-    const [loading, setLoading] = React.useState(false);
     const [responseMessage, setResponseMessage] = React.useState("");
     const [snackbarOpen, setSnackbarOpen] = React.useState(false);
-    const [isDisabled, setIdDisabled] = React.useState(true);
+    const [isConfirming, setIsConfirming] = React.useState(false);
+    const [loading, setLoading] = React.useState(false);
     const [formData, setFormData] = React.useState('');
-    const attemptedEmail = sessionStorage.getItem("userId");
+    const attemtedUser = sessionStorage.getItem("userId");
+
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
@@ -24,8 +22,7 @@ const HrFollowUp = ({ open, handleClose, rowData }) => {
         }));
     }
 
-    const handleHrfollowupClick = () => {
-        console.log("add click")
+    const handleHrAddClick = () => {
         setIsConfirming(true);
         setSnackbarOpen(false);
     };
@@ -33,122 +30,171 @@ const HrFollowUp = ({ open, handleClose, rowData }) => {
         setSnackbarOpen(false);
         handleClose();
     };
+    const handleCloseForm = () => {
+        setResponseMessage("");
+        setSnackbarOpen(false);
+        handleClose();
+    };
 
-    const handleSaveClick = (event) => {
-        console.log("can save data")
-        console.log(rowData)
-        event.preventDefault();
-        //setIsSubmitting(false);
-        try {
-            const hrData = {
-                ...formData,
-                companyId: rowData.id,
-                adminDto: { createdBy: attemptedEmail }
-            };
-            
-            axios.post(Urlconstant.url + "api/registerclienthr", hrData)
-            //setOpen(true)
-            //setSnackbarMessage("Client information added successfully")
-            setFormData({
-                //companyId="",
-                hrScopName: '',
-                hrEmail: '',
-                hrContactNumber: '',
-                designation: '',
-                status: '',
-            });
-        } catch (error) {
-        } finally {
-            //setIsSubmitting(false);
+    const handleSaveClick = () => {
+        if (setIsConfirming) {
+            setLoading(true)
+            try {
+                const hrFollowUpData = {
+                    ...formData,
+                    hrId: rowData.id,
+                    attemptBy: attemtedUser
+                };
+
+                axios.post(Urlconstant.url + `api/hrfollowup`, hrFollowUpData).then((response) => {
+                    if (response.status === 200) {
+                        setSnackbarOpen(true)
+                        setLoading(false)
+                        setResponseMessage(response.data)
+                        setIsConfirming(false);
+                        setTimeout(() => {
+                            handleCloseForm();
+                        }, 1000);
+                    }
+                })
+            } catch (response) {
+                setResponseMessage("Not added to follow up");
+                setLoading(false);
+                setSnackbarOpen(true);
+            }
         }
-
     }
-    return (
-        <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
-            <DialogTitle>
-                HR Follow Up
-                <IconButton
-                    color="inherit"
-                    onClick={handleClose}
-                    edge="start"
-                    aria-label="close"
-                    style={{ position: "absolute", right: "8px", top: "8px" }}
-                >
-                    <GridCloseIcon />
-                </IconButton>
-            </DialogTitle>
-            <DialogContent>
-                <TextField
-                    label="Hr name"
-                    name="hrScopName"
-                    onChange={handleInputChange}
-                    style={fieldStyle}
-                    value={formData.hrScopName}
-                />
-                <TextField
-                    label="Hr Email Id"
-                    name="hrEmail"
-                    onChange={handleInputChange}
-                    style={fieldStyle}
-                    value={formData.hrEmail}
-                />
-                <TextField
-                    label="Hr ContactNumber"
-                    name="hrContactNumber"
-                    onChange={handleInputChange}
-                    style={fieldStyle}
-                    value={formData.hrContactNumber}
-                />
-                <TextField
-                    label="Hr Designation"
-                    name="designation"
-                    onChange={handleInputChange}
-                    style={fieldStyle}
-                    value={formData.designation}
-                />
-                <TextField
-                    label="Hr Status"
-                    name="status"
-                    onChange={handleInputChange}
-                    style={fieldStyle}
-                    value={formData.status}
-                />
-            </DialogContent>
-            <DialogActions>
-                <Button
-                    //      disabled={isDisabled}
-                    onClick={handleHrfollowupClick}
-                    color="primary"
-                >
-                    Add
-                </Button>
-            </DialogActions>
-            <Snackbar
-                open={snackbarOpen}
-                autoHideDuration={3000000}
-                onClose={handleSnackbarClose}
-            // message={responseMessage}
-            />
-
-            <Dialog open={isConfirming} onClose={handleClose} fullWidth maxWidth="xs">
-                <DialogTitle>Confirm Save</DialogTitle>
-                <DialogContent>HR Follow Up</DialogContent>
-                <DialogActions>
+        return (
+            <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
+                <DialogTitle>
+                   Follow Up
                     <IconButton
                         color="inherit"
-                        onClick={() => setIsConfirming(false)}
+                        onClick={handleClose}
                         edge="start"
                         aria-label="close"
-                        style={{ position: "absolute", right: "8px", top: "8px" }}
+                        style={style}
                     >
                         <GridCloseIcon />
                     </IconButton>
-                    <Button onClick={handleSaveClick} color="primary">
-                        Confirm
+                </DialogTitle>
+                <DialogContent>
+                    <Grid container spacing={3}>
+                        <Grid item xs={12} sm={4}>
+                            <TextField
+                                label="attemptBy"
+                                name="attemptBy"
+                                onChange={handleInputChange}
+                                style={fieldStyle}
+                                value={formData.attemptBy}
+                                defaultValue={attemtedUser}
+                                InputProps={{
+                                    readOnly: true,
+                                }}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={4}>
+                            <TextField
+                                label="Attempt Status"
+                                name="attemptStatus"
+                                onChange={handleInputChange}
+                                style={fieldStyle}
+                                value={formData.attemptStatus}
+
+                            />
+
+
+                        </Grid>
+                        <Grid item xs={12} sm={4}>
+                            <TextField
+                                label="Call Duration"
+                                name="callDuration"
+                                onChange={handleInputChange}
+                                style={fieldStyle}
+                                value={formData.callDuration}
+                            />
+
+                        </Grid>
+                        <Grid item xs={12} sm={4}>
+                            <TextField
+                                type="date"
+                                label="Call Back Date"
+                                name="callBackDate"
+                                onChange={handleInputChange}
+                                style={fieldStyle}
+                                value={formData.callBackDate}
+                                id="callBackDate"
+                                InputLabelProps={{
+                                    shrink: true,
+                                }}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={4}>
+                            <TextField
+                                label="call Back Time"
+                                name="callBackTime"
+                                onChange={handleInputChange}
+                                style={fieldStyle}
+                                value={formData.callBackTime}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={4}>
+                            <TextField
+                                labelId="demo-simple-select-label"
+                                label="comments"
+                                name="comments"
+                                onChange={handleInputChange}
+                                value={formData.comments}
+                                multiline
+                                rows={4}
+                                style={fieldStyle}
+                                id="comments"
+                            />
+                        </Grid>
+                    </Grid>
+                </DialogContent>
+                <DialogActions>
+                    {loading ? (
+                    <CircularProgress size={20} />
+                ) : (
+                    <Button
+                      //  disabled={isDisabled}
+                        onClick={handleHrAddClick}
+                        color="primary"
+                    >
+                        Add
                     </Button>
+                )}
                 </DialogActions>
+                <Snackbar
+                    open={snackbarOpen}
+                    autoHideDuration={3000}
+                    onClose={handleSnackbarClose}
+                    >
+                <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+                    {responseMessage}
+                </Alert>
+            </Snackbar>
+
+                <Dialog open={isConfirming} onClose={handleClose} fullWidth maxWidth="xs">
+                    <DialogTitle>Confirm Save</DialogTitle>
+                    <DialogContent>Adding Follow Up</DialogContent>
+                    <DialogActions>
+                        <IconButton
+                            color="inherit"
+                            onClick={() => setIsConfirming(false)}
+                            edge="start"
+                            aria-label="close"
+                            style={style}
+                        >
+                            <GridCloseIcon />
+                        </IconButton>
+                        <Button onClick={handleSaveClick} color="primary">
+                            Confirm
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </Dialog>
-        </Dialog>
-    );
-};
-export default HrFollowUp;
+        );
+    };
+    export default HrFollowUp;

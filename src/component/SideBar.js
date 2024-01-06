@@ -58,13 +58,13 @@ const Sidebar = ({ children }) => {
       icon: <FaWhatsapp />,
     },
     {
-      path: "client",
-      name: "Client Register",
+      path: "company",
+      name: "Company Register",
       icon: <FaTh />,
     },
     {
-      path: "displayclient",
-      name: "Client Details",
+      path: "companylist",
+      name: "Company Details",
       icon: <FaUserAlt />,
     },
     {
