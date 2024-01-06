@@ -1,14 +1,3 @@
-import React, { useEffect } from "react";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
-import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
-import axios from "axios";
-import Snackbar from "@mui/material/Snackbar";
-import CircularProgress from "@mui/material/CircularProgress";
-import { Urlconstant } from "../constant/Urlconstant";
 import {
   FormControl,
   IconButton,
@@ -16,20 +5,22 @@ import {
   MenuItem,
   Select,
 } from "@mui/material";
+import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import Snackbar from "@mui/material/Snackbar";
+import TextField from "@mui/material/TextField";
 import { GridCloseIcon } from "@mui/x-data-grid";
-import { useState } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Urlconstant } from "../constant/Urlconstant";
 
-import { red } from "@mui/material/colors";
-import { round } from "lodash";
-import dayjs from "dayjs";
 import "dayjs/locale/de";
 import "dayjs/locale/en-gb";
-import Stack from "@mui/material/Stack";
-import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { TimePicker } from "@mui/x-date-pickers/TimePicker";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 const fieldStyle = { margin: "20px" };
 
 const FollowUpStatus = ({ open, handleClose, rowData }) => {
@@ -40,6 +31,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [dropdownData, setDropdownData] = React.useState([]);
   const [isDisabled, setIdDisabled] = React.useState(true);
+  const [feesData, setFeesData] = useState({});
 
   const fieldsToCheck = [
     "attemptStatus",
@@ -90,7 +82,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
   const handlecount = (event) => {
     const { name, value } = event.target;
     setCount(event.target.value.length);
-  }
+  };
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -124,7 +116,8 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
   };
   const attemtedUser = sessionStorage.getItem("userId");
 
-  const validateAndSaveData = (statusDto, attendanceDto) => {
+
+  const validateAndSaveData = (statusDto, attendanceDto,dto) => {
     axios
       .post(Urlconstant.url + `api/updateFollowStatus`, statusDto, {
         headers: {
@@ -149,10 +142,10 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
         setResponseMessage("Error updating data. Please try again.");
         setSnackbarOpen(true);
       });
-    axios
-      .post(Urlconstant.url + `api/attendance/register`, attendanceDto)
+    axios.post(Urlconstant.url + `api/attendance/register`, attendanceDto)
       .then(() => { })
       .catch((e) => { });
+    axios.post(Urlconstant.url + `api/saveFees`, dto);
   };
 
 
@@ -162,6 +155,19 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
       ...editedData,
       attemptedBy: attemtedUser,
     };
+
+    const dto = {
+      email: statusDto.basicInfo.email,
+      name: statusDto.basicInfo.traineeName, 
+      status: statusDto.attemptStatus,
+      adminDto: {
+        createdBy: statusDto.adminDto.createdBy,
+        createdOn: statusDto.adminDto.createdOn,
+        updatedBy: statusDto.adminDto.updatedBy,
+        updatedOn: statusDto.adminDto.updatedOn,
+      },
+    };
+
     const attendanceDto = {
       attemptStatus: attemptStatus,
       basicInfo: { traineeName: statusDto.basicInfo.traineeName },
@@ -177,7 +183,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
           statusDto[field] = "NA";
         }
       });
-      validateAndSaveData(statusDto, attendanceDto);
+      validateAndSaveData(statusDto, attendanceDto,dto);
     }
   };
   const handleErrr = (e) => {
@@ -344,7 +350,6 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
             style={{ width: 350, height: 0.5 }}
             className="custom-textfield" // Apply the custom CSS class
             multiline
-
             disabled={[
               "RNR",
               "Wrong Number",
@@ -358,7 +363,9 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
             helperText={commentError ? "Comment is mandatory." : ""}
           ></TextField>
           {responseMessage ? (
-            <p style={{ color: "green", marginTop: "90px" }}>{responseMessage}</p>
+            <p style={{ color: "green", marginTop: "90px" }}>
+              {responseMessage}
+            </p>
           ) : (
             ""
           )}

@@ -519,6 +519,13 @@ function Header() {
       <div>
         <AppBar sx={{ background: "#070606" }} spacing={10}>
           <Toolbar>
+          <div  style={{
+                display: "flex",
+                justifyItems:"flex-start",
+                width:"100rem",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}>
             <IconButton edge="start" color="inherit" aria-label="logo">
               <a href="https://www.x-workz.in/Logo.png">
                 <img
@@ -535,11 +542,13 @@ function Header() {
                 sx={{ color: "action.active", marginRight: "8px" }}
               />
             </Typography>
+            </div>
             <div
               style={{
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
+                justifyItems:"flex-end"
               }}
             >
               <Typography

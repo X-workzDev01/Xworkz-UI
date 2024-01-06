@@ -8,7 +8,7 @@ export const Urlconstant = {
   // spreadsheetId: '1HI3nKYRbXNl2cu9rKwqKp3tznOZ7ziOupokU_daFZ8E',
 
 
-  navigate: "/x-workz-dev/",
-  // navigate:  '/x-workz/',
+  // navigate: "/x-workz-dev/",
+  navigate:  '/x-workz/',
 
 };
