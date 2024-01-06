@@ -1,47 +1,42 @@
-import { Alert, Button, Grid, MenuItem, Snackbar, TextField, Typography } from '@mui/material';
+import { Alert, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, Snackbar, TextField } from '@mui/material';
+import { GridCloseIcon } from '@mui/x-data-grid';
 import axios from 'axios';
-import React from 'react'
-import { Form } from 'react-bootstrap';
+import React, { useState } from 'react';
 import { Urlconstant } from '../constant/Urlconstant';
+import { fieldStyle, style } from '../constant/FormStyle';
 import { validateContactNumber, validateEmail } from '../constant/ValidationConstant';
 
-export default function ClientDetails() {
-    const statusList = ['Active', 'Inactive'].slice().sort();
-    const clientType = ['IT Consultency', 'Service Based', 'Product Based', 'Others'];
-    const email = sessionStorage.getItem('userId');
-    const [isSubmitting, setIsSubmitting] = React.useState(false);
-    const [open, setOpen] = React.useState(false);
-    const [snackbarMessage, setSnackbarMessage] = React.useState("");
-    const [companyNameCheck, setCompanyNameCheck] = React.useState("");
-    const [companyEmailCheck, setCompanyEmailCheck] = React.useState("");
+
+const EditCompanyDetails = ({ open, handleClose, rowData }) => {
+    const [isConfirming, setIsConfirming] = React.useState(false);
+    const [loading, setLoading] = React.useState(false);
+    const [responseMessage, setResponseMessage] = React.useState("");
+    const [snackbarOpen, setSnackbarOpen] = React.useState(false);
+    const [formData, setFormData] = React.useState('');
+    const attemptedEmail = sessionStorage.getItem("userId");
     const [emailCheck, setEmailCheck] = React.useState("");
     const [phoneNumberCheck, setPhoneNumberCheck] = React.useState("");
-    const [formData, setFormData] = React.useState('');
-    const [catchErrors,setCatchErrors] = React.useState("");
+    const [checkEmailExist, setCheckEmailExist] = React.useState("");
+    const [checkPhoneNumberExist, setCheckPhoneNumberExist] = React.useState("");
+    const [editedData, setEditedData] = React.useState([]);
+    const [companyNameCheck, setCompanyNameCheck] = React.useState("");
 
-    const handleClose = (reason) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-        setOpen(false);
-    };
+    React.useEffect(() => {
+        setEditedData(rowData);
+    }, [rowData]);
 
 
-    const handleChange = (e) => {
-
-        const { name, value } = e.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
-        // Validate email and phone number as the user types
+    const handleChange = (event) => {
+        const { name, value } = event.target;
+        // setFormData((prevData) => ({
+        //     ...prevData,
+        //     [name]: value,
+        // }));
         if (name === 'companyEmail') {
             if (validateEmail(value)) {
                 setEmailCheck("");
             } else {
-                setCompanyNameCheck("");
                 setEmailCheck("Enter the correct Email");
-
             }
         }
         if (name === 'companyLandLineNumber') {
@@ -52,80 +47,98 @@ export default function ClientDetails() {
             }
 
         }
+        setEditedData((prevData) => ({
+            ...prevData,
+            [name]: value,
+        }));
+    }
+
+    const handleHrAddClick = () => {
+        setIsConfirming(true);
+        setSnackbarOpen(false);
+    };
+    const handleSnackbarClose = () => {
+        setSnackbarOpen(false);
+        handleClose();
+    };
+    const handleCloseForm = () => {
+        setResponseMessage("");
+        setSnackbarOpen(false);
+        handleClose();
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        //        setIsSubmitting(false);
-        try {
-            const clientData = {
-                ...formData,
-                adminDto: { createdBy: email }
-            };
-            axios.post(Urlconstant.url + "api/registerclient", clientData)
-            setOpen(true)
-            setSnackbarMessage("Client information added successfully")
-            setFormData({
-                companyName: '',
-                companyEmail: '',
-                companyLandLineNumber: '',
-                companyWebsite: '',
-                companyLocation: '',
-                companyFounder: '',
-                sourceOfConnetion: '',
-                companyType: '',
-                companyAddress: '',
-                status: '',
-
-            });
-        } catch (error) {
-            setCatchErrors("Wait for some time")
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
 
     const handleCompanyName = (event) => {
         const companyname = event.target.value;
         axios.get(Urlconstant.url + `/api/companynamecheck?companyName=${companyname}`)
             .then(res => {
                 if (res.data === "Company Already Exists") {
-                    setEmailCheck("");
                     setCompanyNameCheck(res.data);
                 } else {
                     setCompanyNameCheck("");
                 }
             })
     }
-
-    
     const handleCompanyEmail = (event) => {
         const companyEmail = event.target.value;
         axios.get(Urlconstant.url + `/api/checkcompanyemail?companyEmail=${companyEmail}`)
             .then(res => {
                 if (res.data === "Company Email Already Exists") {
-                    setCompanyEmailCheck(res.data);
+                    setCheckEmailExist(res.data);
                 } else {
-                    setCompanyEmailCheck("");
+                    setCheckEmailExist("");
                 }
             })
     }
-    const isSubmitValid = !formData.companyName || companyNameCheck || companyEmailCheck || emailCheck || phoneNumberCheck
+
+    const handleSaveClick = (event) => {
+        event.preventDefault();
+        //setIsSubmitting(false);
+        try {
+            const updatedData = {
+                ...editedData,
+                adminDto: {
+                    ...editedData.adminDto,
+                    updatedBy: attemptedEmail,
+                },
+            };
+            axios.put(Urlconstant.url + `api/clientupdate?companyId=${rowData.id}`, updatedData).then((response) => {
+                setResponseMessage(response.data)
+                if (response.status === 200) {
+                    setTimeout(() => {
+                        handleCloseForm();
+                    }, 1000);
+                }
+            })
+            setResponseMessage("Client information added successfully")
+
+        } catch (error) {
+        } finally {
+   //         setIsSubmitting(false);
+        }
+    }
+   
     return (
-        <div>
-            <h2>Register Client</h2>
-           
-            <Typography variant="h5" gutterBottom>
-               Register Company
-               {/* {setCatchErrors ? <Alert severity="error">{setCatchErrors}</Alert> : " "} */}
-            </Typography>
-            <Form onSubmit={handleSubmit}>
+        <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
+            <DialogTitle>
+                Add New HR
+                <IconButton
+                    color="inherit"
+                    onClick={handleClose}
+                    edge="start"
+                    aria-label="close"
+                    style={style}
+                >
+                    <GridCloseIcon />
+                </IconButton>
+            </DialogTitle>
+            <DialogContent>
                 <Grid container spacing={3}>
                     <Grid item xs={12} sm={4}>
                         <TextField
                             label="Client Name"
                             name="companyName"
-                            value={formData.companyName}
+                            defaultValue={rowData.companyName}
                             onChange={handleChange}
                             onBlur={handleCompanyName}
                             required
@@ -138,20 +151,21 @@ export default function ClientDetails() {
                         <TextField
                             label="Client Email"
                             name="companyEmail"
-                            value={formData.companyEmail}
+                            defaultValue={rowData.companyEmail}
                             onChange={handleChange}
                             fullWidth
                             margin="normal"
                             onBlur={handleCompanyEmail}
                         />
-                        {companyEmailCheck ? <Alert severity="error">{companyEmailCheck}</Alert> : " "}
                         {emailCheck ? <Alert severity="error">{emailCheck}</Alert> : " "}
+                        {checkEmailExist ? <Alert severity="error">{checkEmailExist}</Alert> : " "}
+
                     </Grid>
                     <Grid item xs={12} sm={4}>
                         <TextField
                             label="Client Contact Number"
                             name="companyLandLineNumber"
-                            value={formData.companyLandLineNumber}
+                            defaultValue={rowData.companyLandLineNumber}
                             onChange={handleChange}
                             fullWidth
                             margin="normal"
@@ -163,7 +177,7 @@ export default function ClientDetails() {
                         <TextField
                             label="Client Website"
                             name="companyWebsite"
-                            value={formData.companyWebsite}
+                            defaultValue={rowData.companyWebsite}
                             onChange={handleChange}
                             fullWidth
                             margin="normal"
@@ -173,7 +187,7 @@ export default function ClientDetails() {
                         <TextField
                             label="Client Location"
                             name="companyLocation"
-                            value={formData.companyLocation}
+                            defaultValue={rowData.companyLocation}
                             onChange={handleChange}
                             fullWidth
                             margin="normal"
@@ -183,7 +197,7 @@ export default function ClientDetails() {
                         <TextField
                             label="Client Founder"
                             name="companyFounder"
-                            value={formData.companyFounder}
+                            defaultValue={rowData.companyFounder}
                             onChange={handleChange}
                             fullWidth
                             margin="normal"
@@ -193,7 +207,7 @@ export default function ClientDetails() {
                         <TextField
                             label="Client Source Of Connetion"
                             name="sourceOfConnetion"
-                            value={formData.sourceOfConnetion}
+                            defaultValue={rowData.sourceOfConnetion}
                             onChange={handleChange}
                             fullWidth
                             margin="normal"
@@ -203,35 +217,23 @@ export default function ClientDetails() {
                         <TextField
                             label="Client Type"
                             name="companyType"
-                            value={formData.companyType}
+                            defaultValue={rowData.companyType}
                             onChange={handleChange}
                             fullWidth
                             margin="normal"
-                            select
                         >
-                            {clientType.map((option) => (
-                                <MenuItem key={option} value={option}>
-                                    {option}
-                                </MenuItem>
-                            ))}
                         </TextField>
                     </Grid>
                     <Grid item xs={12} sm={4}>
                         <TextField
                             label="Client Status"
                             name="status"
-                            value={formData.status}
+                            defaultValue={rowData.status}
                             onChange={handleChange}
                             required
                             fullWidth
                             margin="normal"
-                            select
                         >
-                            {statusList.map((option) => (
-                                <MenuItem key={option} value={option}>
-                                    {option}
-                                </MenuItem>
-                            ))}
                         </TextField>
                     </Grid>
                     <Grid item xs={12} sm={4}>
@@ -240,7 +242,7 @@ export default function ClientDetails() {
                             rows={4}
                             label="Company Address"
                             name="companyAddress"
-                            value={formData.companyAddress}
+                            defaultValue={rowData.companyAddress}
                             onChange={handleChange}
                             fullWidth
                             margin="normal"
@@ -248,23 +250,43 @@ export default function ClientDetails() {
                         />
                     </Grid>
                 </Grid>
-
+            </DialogContent>
+            <DialogActions>
                 <Button
-                    type="submit"
-                    variant="contained"
+                   //  disabled={isDisable}
+                    onClick={handleHrAddClick}
                     color="primary"
-                    disabled={isSubmitValid}
                 >
-                    Register
+                    Edit
                 </Button>
-            </Form>
-
+            </DialogActions>
             <Snackbar
-                open={open}
-                onClose={handleClose}
-                message={snackbarMessage}
+                open={snackbarOpen}
                 autoHideDuration={3000}
+                onClose={handleSnackbarClose}
+                message={responseMessage}
             />
-        </div>
-    )
-}
+
+            <Dialog open={isConfirming} onClose={handleClose} fullWidth maxWidth="xs">
+                <DialogTitle>Confirm Edit</DialogTitle>
+                <DialogContent>Are you sure want to Edit the Company Details?</DialogContent>
+                <DialogActions>
+                    <IconButton
+                        color="inherit"
+                        onClick={() => setIsConfirming(false)}
+                        edge="start"
+                        aria-label="close"
+                        style={style}
+                    >
+                        <GridCloseIcon />
+                    </IconButton>
+                    <Button onClick={handleSaveClick} color="primary">
+                        Confirm
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </Dialog>
+    );
+};
+export default EditCompanyDetails;
+

@@ -6,11 +6,12 @@ import {
   FaRegChartBar,
   FaCommentAlt,
   FaWhatsapp,
+  FaList,
 } from "react-icons/fa";
+import { MdAccountBalanceWallet } from "react-icons/md";
+
 import "./SideBar.css";
 import { NavLink, useLocation } from "react-router-dom";
-import { FactCheckTwoTone } from "@mui/icons-material";
-import Attandance from "./Attandance";
 import { Urlconstant } from "../constant/Urlconstant";
 
 const Sidebar = ({ children }) => {
@@ -47,9 +48,9 @@ const Sidebar = ({ children }) => {
       icon: <FaCommentAlt />,
     },
     {
-      path: "attendance",
-      name: "Attendance",
-      icon: <FaCommentAlt />,
+      path: "absentees",
+      name: "Add Absentees",
+      icon: <FaList />,
     },
     {
       path: "whatsapp",
@@ -65,6 +66,11 @@ const Sidebar = ({ children }) => {
       path: "displayclient",
       name: "Client Details",
       icon: <FaUserAlt />,
+    },
+    {
+      path: "feesDetailes",
+      name: "Fees Detailes",
+      icon: <MdAccountBalanceWallet />,
     },
 
   ];
