@@ -1,4 +1,4 @@
-import { Alert, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, Snackbar, TextField } from '@mui/material';
+import { Alert, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, MenuItem, Snackbar, TextField } from '@mui/material';
 import { GridCloseIcon } from '@mui/x-data-grid';
 import axios from 'axios';
 import React, { useState } from 'react';
@@ -6,6 +6,7 @@ import { Urlconstant } from '../constant/Urlconstant';
 import { fieldStyle, style } from '../constant/FormStyle';
 
 const HrFollowUp = ({ open, handleClose, rowData }) => {
+    const callingStatus = ['RNR', 'Busy', 'Not Reachable', 'Call Drop', 'Call you later'].slice().sort();
     const [responseMessage, setResponseMessage] = React.useState("");
     const [snackbarOpen, setSnackbarOpen] = React.useState(false);
     const [isConfirming, setIsConfirming] = React.useState(false);
@@ -64,137 +65,145 @@ const HrFollowUp = ({ open, handleClose, rowData }) => {
             }
         }
     }
-        return (
-            <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
-                <DialogTitle>
-                   Follow Up
-                    <IconButton
-                        color="inherit"
-                        onClick={handleClose}
-                        edge="start"
-                        aria-label="close"
-                        style={style}
-                    >
-                        <GridCloseIcon />
-                    </IconButton>
-                </DialogTitle>
-                <DialogContent>
-                    <Grid container spacing={3}>
-                        <Grid item xs={12} sm={4}>
-                            <TextField
-                                label="attemptBy"
-                                name="attemptBy"
-                                onChange={handleInputChange}
-                                style={fieldStyle}
-                                value={formData.attemptBy}
-                                defaultValue={attemtedUser}
-                                InputProps={{
-                                    readOnly: true,
-                                }}
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={4}>
-                            <TextField
-                                label="Attempt Status"
-                                name="attemptStatus"
-                                onChange={handleInputChange}
-                                style={fieldStyle}
-                                value={formData.attemptStatus}
-
-                            />
-
-
-                        </Grid>
-                        <Grid item xs={12} sm={4}>
-                            <TextField
-                                label="Call Duration"
-                                name="callDuration"
-                                onChange={handleInputChange}
-                                style={fieldStyle}
-                                value={formData.callDuration}
-                            />
-
-                        </Grid>
-                        <Grid item xs={12} sm={4}>
-                            <TextField
-                                type="date"
-                                label="Call Back Date"
-                                name="callBackDate"
-                                onChange={handleInputChange}
-                                style={fieldStyle}
-                                value={formData.callBackDate}
-                                id="callBackDate"
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={4}>
-                            <TextField
-                                label="call Back Time"
-                                name="callBackTime"
-                                onChange={handleInputChange}
-                                style={fieldStyle}
-                                value={formData.callBackTime}
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={4}>
-                            <TextField
-                                labelId="demo-simple-select-label"
-                                label="comments"
-                                name="comments"
-                                onChange={handleInputChange}
-                                value={formData.comments}
-                                multiline
-                                rows={4}
-                                style={fieldStyle}
-                                id="comments"
-                            />
-                        </Grid>
+    const isDisabled = !formData.attemptStatus; 
+    return (
+        <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
+            <DialogTitle>
+                Follow Up
+                <IconButton
+                    color="inherit"
+                    onClick={handleClose}
+                    edge="start"
+                    aria-label="close"
+                    style={style}
+                >
+                    <GridCloseIcon />
+                </IconButton>
+            </DialogTitle>
+            <DialogContent>
+                <Grid container spacing={3}>
+                    <Grid item xs={12} sm={4}>
+                        <TextField
+                            label="attemptBy"
+                            name="attemptBy"
+                            onChange={handleInputChange}
+                            style={fieldStyle}
+                            value={formData.attemptBy}
+                            defaultValue={attemtedUser}
+                            InputProps={{
+                                readOnly: true,
+                            }}
+                        />
                     </Grid>
-                </DialogContent>
-                <DialogActions>
-                    {loading ? (
+                    <Grid item xs={12} sm={4}>
+                        <TextField
+                            label="Attempt Status"
+                            name="attemptStatus"
+                            onChange={handleInputChange}
+                            style={fieldStyle}
+                            value={formData.attemptStatus}
+                            fullWidth
+                            select
+                            margin="normal"
+                        >
+                            {callingStatus.map((item) => (
+                                <MenuItem key={item} value={item}>
+                                    {item}
+                                </MenuItem>
+                            ))}
+                        </TextField>
+                    </Grid>
+
+                    <Grid item xs={12} sm={4}>
+                        <TextField
+                            label="Call Duration"
+                            name="callDuration"
+                            onChange={handleInputChange}
+                            style={fieldStyle}
+                            value={formData.callDuration}
+                        />
+
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <TextField
+                            type="date"
+                            label="Call Back Date"
+                            name="callBackDate"
+                            onChange={handleInputChange}
+                            style={fieldStyle}
+                            value={formData.callBackDate}
+                            id="callBackDate"
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <TextField
+                            label="call Back Time"
+                            name="callBackTime"
+                            onChange={handleInputChange}
+                            style={fieldStyle}
+                            value={formData.callBackTime}
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <TextField
+                            labelId="demo-simple-select-label"
+                            label="comments"
+                            name="comments"
+                            onChange={handleInputChange}
+                            value={formData.comments}
+                            multiline
+                            rows={4}
+                            style={fieldStyle}
+                            id="comments"
+                        />
+                    </Grid>
+                </Grid>
+            </DialogContent>
+            <DialogActions>
+                {loading ? (
                     <CircularProgress size={20} />
                 ) : (
                     <Button
-                      //  disabled={isDisabled}
+                         disabled={isDisabled}
                         onClick={handleHrAddClick}
                         color="primary"
                     >
                         Add
                     </Button>
                 )}
-                </DialogActions>
-                <Snackbar
-                    open={snackbarOpen}
-                    autoHideDuration={3000}
-                    onClose={handleSnackbarClose}
-                    >
+            </DialogActions>
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={3000}
+                onClose={handleSnackbarClose}
+            >
                 <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
                     {responseMessage}
                 </Alert>
             </Snackbar>
 
-                <Dialog open={isConfirming} onClose={handleClose} fullWidth maxWidth="xs">
-                    <DialogTitle>Confirm Save</DialogTitle>
-                    <DialogContent>Adding Follow Up</DialogContent>
-                    <DialogActions>
-                        <IconButton
-                            color="inherit"
-                            onClick={() => setIsConfirming(false)}
-                            edge="start"
-                            aria-label="close"
-                            style={style}
-                        >
-                            <GridCloseIcon />
-                        </IconButton>
-                        <Button onClick={handleSaveClick} color="primary">
-                            Confirm
-                        </Button>
-                    </DialogActions>
-                </Dialog>
+            <Dialog open={isConfirming} onClose={handleClose} fullWidth maxWidth="xs">
+                <DialogTitle>Confirm Save</DialogTitle>
+                <DialogContent>Adding Follow Up</DialogContent>
+                <DialogActions>
+                    <IconButton
+                        color="inherit"
+                        onClick={() => setIsConfirming(false)}
+                        edge="start"
+                        aria-label="close"
+                        style={style}
+                    >
+                        <GridCloseIcon />
+                    </IconButton>
+                    <Button onClick={handleSaveClick} color="primary">
+                        Confirm
+                    </Button>
+                </DialogActions>
             </Dialog>
-        );
-    };
-    export default HrFollowUp;
+        </Dialog>
+    );
+};
+export default HrFollowUp;

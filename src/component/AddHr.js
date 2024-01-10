@@ -1,4 +1,4 @@
-import { Alert, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Grid, IconButton, InputLabel, MenuItem, Snackbar, TextField } from '@mui/material';
+import { Alert, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Grid, IconButton, InputLabel, MenuItem, Snackbar, TextField, Typography } from '@mui/material';
 import { GridCloseIcon } from '@mui/x-data-grid';
 import axios from 'axios';
 import React from 'react';
@@ -10,6 +10,7 @@ import { validateContactNumber, validateEmail } from '../constant/ValidationCons
 const AddHr = ({ open, handleClose, rowData }) => {
 
     // const statusList = ['Active', 'InActive'].slice().sort();
+    const hrDisgnation = ['HR', 'HR Manager', 'HR Assistant', 'Recruiter', 'HR Analyst', 'Talent Acquisition', 'Other']
     const [loading, setLoading] = React.useState(false);
     const [isConfirming, setIsConfirming] = React.useState(false);
     const [responseMessage, setResponseMessage] = React.useState("");
@@ -60,7 +61,7 @@ const AddHr = ({ open, handleClose, rowData }) => {
         }
         if (name === 'status') {
             setCharCount(value.length);
-        }else{
+        } else {
             setCharCount("")
         }
 
@@ -174,7 +175,7 @@ const AddHr = ({ open, handleClose, rowData }) => {
             } else {
                 setCheckPhoneNumberExist("");
                 setPhoneNumberCheck("");
-                
+
             }
         });
     }
@@ -239,30 +240,22 @@ const AddHr = ({ open, handleClose, rowData }) => {
                             onChange={handleInputChange}
                             style={fieldStyle}
                             value={formData.designation}
-                        />
-                        {validateDesignation ? <Alert severity="error">{validateDesignation}</Alert> : " "}
-                    </Grid>
-                    <Grid item xs={12} sm={4}>
-                        {/* <TextField
-                            label="Hr Status"
-                            name="status"
-                            onChange={handleInputChange}
-                            style={fieldStyle}
-                            value={formData.status}
+                            select
                             fullWidth
                             margin="normal"
-                            select
-                            >
-                            {statusList.map((option) => (
-                                <MenuItem key={option} value={option}>
-                                    {option}
-                                </MenuItem>
-                            ))}
-                        </TextField> */}
+                        >
+                        {hrDisgnation.map((option) => (
+                            <MenuItem key={option} value={option}>
+                                {option}
+                            </MenuItem>
+                        ))}
+                        </TextField>
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
                         <TextField
                             label="Comments"
                             name="status"
-                            helperText={`${charCount}`}
+                           helperText={`${charCount}`}
                             onChange={handleInputChange}
                             style={fieldStyle}
                             value={formData.status}

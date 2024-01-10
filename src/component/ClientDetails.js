@@ -45,13 +45,13 @@ export default function ClientDetails() {
             } else {
                 setCompanyNameCheck("");
                 setEmailCheck("Enter the correct Email");
-
             }
         }
         if (name === 'companyLandLineNumber') {
             if (validateContactNumber(value)) {
                 setPhoneNumberCheck("");
             } else {
+                setCheckPhoneNumberExist("")
                 setPhoneNumberCheck("Phone number is incorrect");
             }
 
@@ -121,6 +121,7 @@ export default function ClientDetails() {
             .then(res => {
                 if (res.data === "Company ContactNumber Already Exists") {
                     setCheckPhoneNumberExist(res.data);
+                    setPhoneNumberCheck("")
                 } else {
                     setCheckPhoneNumberExist("");
                 }
