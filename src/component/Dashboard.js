@@ -20,7 +20,7 @@ import CompanyProfile from './CompanyProfile';
 import Absentees from './Absentees';
 import { FeesDetailes } from './FeesDetailes';
 import ViewHrProfile from './ViewHrProfile';
-
+import DownLoadToExcel from './DownLoadToExcel';
 
 
 const Dashboard = ({ isLoggedIn }) => {
@@ -50,6 +50,8 @@ const Dashboard = ({ isLoggedIn }) => {
         <Route path="/companylist" element={<ViewClient/>}/>
         <Route path="/companylist/:id" element={<CompanyProfile/>}/>
         <Route path="/company/hr/:id" element={<ViewHrProfile/>}/>
+        <Route path="/download" element={<DownLoadToExcel/>}/>
+
       </Routes>      
     </div>
 

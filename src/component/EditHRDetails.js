@@ -1,4 +1,4 @@
-import { Alert, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, Snackbar, TextField } from "@mui/material"
+import { Alert, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, MenuItem, Snackbar, TextField } from "@mui/material"
 import { GridCloseIcon } from "@mui/x-data-grid";
 import { fieldStyle, style } from "../constant/FormStyle";
 import React from "react";
@@ -20,7 +20,7 @@ const EditHRDetails = ({ open, handleClose, rowData }) => {
     const [verifyEmail, setVerifyEmail] = React.useState("");
     const [validateName, setValidateName] = React.useState("");
     const [validateDesignation, setValidateDesignation] = React.useState("");
-    const [isDisabled, setIsDisabled] = React.useState(true);
+    const hrDisgnation = ['HR', 'HR Manager', 'HR Assistant', 'Recruiter', 'HR Analyst', 'Talent Acquisition', 'Other']
 
     React.useEffect(() => {
         setEditedData(rowData);
@@ -54,7 +54,6 @@ const EditHRDetails = ({ open, handleClose, rowData }) => {
         const { name, value } = event.target;
         if (name === 'hrScopName') {
             if (value === " " || value.length === 0 && value.length <= 2) {
-                setIsDisabled(true)
                 setValidateName("Enter the valid name");
             } else {
                 setValidateName("");
@@ -64,7 +63,6 @@ const EditHRDetails = ({ open, handleClose, rowData }) => {
             if (validateEmail(value)) {
                 setEmailCheck("");
             } else {
-                setIsDisabled(true)
                 setEmailCheck("invalid email");
                 setCheckEmailExist("");
             }
@@ -72,16 +70,13 @@ const EditHRDetails = ({ open, handleClose, rowData }) => {
         if (name === 'hrContactNumber') {
             if (validateContactNumber(value)) {
                 setPhoneNumberCheck("");
-                setIsDisabled(false)
             } else {
-                setIsDisabled(true)
                 setPhoneNumberCheck("Invalid Contact Number");
                 setCheckPhoneNumberExist("");
             }
         }
         if (name === 'designation') {
             if (value && value.length <= 1) {
-                setIsDisabled(true)
                 setValidateDesignation("Enter the correct designation");
             } else {
                 setValidateDesignation("");
@@ -131,7 +126,6 @@ const EditHRDetails = ({ open, handleClose, rowData }) => {
                     if (response.data === "accepted_email") {
                         setVerifyEmail(response.data);
                     } else if (response.data === "rejected_email") {
-                        setIsDisabled(true)
                         setVerifyEmail(response.data);
                     } else {
                         setVerifyEmail("");
@@ -157,11 +151,9 @@ const EditHRDetails = ({ open, handleClose, rowData }) => {
                 if (response.data === 'Email already exists.') {
                     setEmailCheck("")
                     setCheckEmailExist(response.data);
-                    setIsDisabled(true)
                 } else {
                     validatingEmail(email);
                     setCheckEmailExist("");
-                    setIsDisabled(false)
                 }
             });
         }
@@ -173,11 +165,9 @@ const EditHRDetails = ({ open, handleClose, rowData }) => {
             axios.get(Urlconstant.url + `api/hrcontactnumbercheck?contactNumber=${contactNumber}`).then((response) => {
                 if (response.data === "Contact Number Already exist.") {
                     setCheckPhoneNumberExist(response.data);
-                    setIsDisabled(true)
                 } else {
                     setCheckPhoneNumberExist("");
                     setPhoneNumberCheck("");
-                    setIsDisabled(false)
                 }
             });
         }
@@ -185,141 +175,151 @@ const EditHRDetails = ({ open, handleClose, rowData }) => {
 
     const handleEmail = (event) => {
         let email = event.target.value;
-        if (email == rowData.hrEmail) {
-            setIsDisabled(false)
-        } else {
+        if (email != rowData.hrEmail) {
             handleEmailCheck(email)
         }
     }
     const handleContactNumber = (event) => {
         let contactNumber = event.target.value;
-        if (contactNumber == rowData.hrContactNumber) {
-            return;
-        } else {
+        if (contactNumber != rowData.hrContactNumber) {
             if (contactNumber.length === 10) {
                 handleNumberCheck(contactNumber);
             }
         }
     }
 
-
-return (
-    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
-        <DialogTitle>
-            Edit HR Details
-            <IconButton
-                color="inherit"
-                onClick={handleClose}
-                edge="start"
-                aria-label="close"
-                style={style}
-            >
-                <GridCloseIcon />
-            </IconButton>
-        </DialogTitle>
-        <DialogContent>
-            <Grid container spacing={3}>
-                <Grid item xs={12} sm={4}>
-                    <TextField
-                        label="Hr name"
-                        name="hrScopName"
-                        style={fieldStyle}
-                        defaultValue={rowData.hrScopName}
-                        onChange={handleInput}
-                    />
-                    {validateName ? <Alert severity="error">{validateName}</Alert> : " "}
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                    <TextField
-                        label="Hr Email Id"
-                        name="hrEmail"
-                        style={fieldStyle}
-                        defaultValue={rowData.hrEmail}
-                        onChange={handleInput}
-                        onBlur={handleEmail}
-                    />
-                    {emailCheck ? <Alert severity="error">{emailCheck}</Alert> : " "}
-                    {checkEmailExist ? <Alert severity="error">{checkEmailExist}</Alert> : " "}
-                    {verifyEmail ? <Alert severity="error">{verifyEmail}</Alert> : " "}
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                    <TextField
-                        label="Hr ContactNumber"
-                        name="hrContactNumber"
-                        style={fieldStyle}
-                        defaultValue={rowData.hrContactNumber}
-                        onChange={handleInput}
-                        onBlur={handleContactNumber}
-                    />
-                    {phoneNumber ? <Alert severity="error">{phoneNumber}</Alert> : " "}
-                    {checkPhoneNumberExist ? <Alert severity="error">{checkPhoneNumberExist}</Alert> : " "}
-
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                    <TextField
-                        label="Hr Designation"
-                        name="designation"
-                        style={fieldStyle}
-                        defaultValue={rowData.designation}
-                        onChange={handleInput}
-                    />
-                    {validateDesignation ? <Alert severity="error">{validateDesignation}</Alert> : " "}
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                    <TextField
-                        label="Comments"
-                        name="status"
-                        style={fieldStyle}
-                        defaultValue={rowData.status}
-                        onChange={handleInput}
-                        fullWidth
-                        margin="normal"
-                        multiline
-                        rows={4}
-                    />
-                </Grid>
-            </Grid>
-        </DialogContent>
-        <DialogActions>
-            {loading ? (
-                <CircularProgress size={20} />
-            ) : (
-                <Button
-                    disabled={isDisabled}
-                    onClick={handleEditClick}
-                    color="primary"
-                >
-                    Edit
-                </Button>
-            )}
-        </DialogActions>
-        <Snackbar
-            open={snackbarOpen}
-            autoHideDuration={3000}
-            onClose={handleSnackbarClose}>
-            <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-                {responseMessage}
-            </Alert>
-        </Snackbar>
-        <Dialog open={isConfirming} onClose={handleClose} fullWidth maxWidth="xs">
-            <DialogTitle>Confirm Save</DialogTitle>
-            <DialogContent>Are you sure Want to Update the HR Details</DialogContent>
-            <DialogActions>
+    const isDisabled = emailCheck
+        || phoneNumber
+        || checkEmailExist
+        || checkPhoneNumberExist
+        || verifyEmail
+        || validateName
+        || validateDesignation;
+    return (
+        <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
+            <DialogTitle>
+                Edit HR Details
                 <IconButton
                     color="inherit"
-                    onClick={() => setIsConfirming(false)}
+                    onClick={handleClose}
                     edge="start"
                     aria-label="close"
                     style={style}
                 >
                     <GridCloseIcon />
                 </IconButton>
-                <Button onClick={handleSaveClick} color="primary">
-                    Confirm
-                </Button>
+            </DialogTitle>
+            <DialogContent>
+                <Grid container spacing={3}>
+                    <Grid item xs={12} sm={4}>
+                        <TextField
+                            label="Hr name"
+                            name="hrScopName"
+                            style={fieldStyle}
+                            defaultValue={rowData.hrScopName}
+                            onChange={handleInput}
+                        />
+                        {validateName ? <Alert severity="error">{validateName}</Alert> : " "}
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <TextField
+                            label="Hr Email Id"
+                            name="hrEmail"
+                            style={fieldStyle}
+                            defaultValue={rowData.hrEmail}
+                            onChange={handleInput}
+                            onBlur={handleEmail}
+                        />
+                        {emailCheck ? <Alert severity="error">{emailCheck}</Alert> : " "}
+                        {checkEmailExist ? <Alert severity="error">{checkEmailExist}</Alert> : " "}
+                        {verifyEmail ? <Alert severity="error">{verifyEmail}</Alert> : " "}
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <TextField
+                            label="Hr ContactNumber"
+                            name="hrContactNumber"
+                            style={fieldStyle}
+                            defaultValue={rowData.hrContactNumber}
+                            onChange={handleInput}
+                            onBlur={handleContactNumber}
+                        />
+                        {phoneNumber ? <Alert severity="error">{phoneNumber}</Alert> : " "}
+                        {checkPhoneNumberExist ? <Alert severity="error">{checkPhoneNumberExist}</Alert> : " "}
+
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                    <TextField
+                            label="Hr Designation"
+                            name="designation"
+                            onChange={handleInput}
+                            style={fieldStyle}
+                            defaultValue={rowData.designation}
+                            select
+                            fullWidth
+                            margin="normal"
+                        >
+                        {hrDisgnation.map((option) => (
+                            <MenuItem key={option} value={option}>
+                                {option}
+                            </MenuItem>
+                        ))}
+                        </TextField>
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <TextField
+                            label="Comments"
+                            name="status"
+                            style={fieldStyle}
+                            defaultValue={rowData.status}
+                            onChange={handleInput}
+                            fullWidth
+                            margin="normal"
+                            multiline
+                            rows={4}
+                        />
+                    </Grid>
+                </Grid>
+            </DialogContent>
+            <DialogActions>
+                {loading ? (
+                    <CircularProgress size={20} />
+                ) : (
+                    <Button
+                        disabled={isDisabled}
+                        onClick={handleEditClick}
+                        color="primary"
+                    >
+                        Edit
+                    </Button>
+                )}
             </DialogActions>
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={3000}
+                onClose={handleSnackbarClose}>
+                <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+                    {responseMessage}
+                </Alert>
+            </Snackbar>
+            <Dialog open={isConfirming} onClose={handleClose} fullWidth maxWidth="xs">
+                <DialogTitle>Confirm Save</DialogTitle>
+                <DialogContent>Are you sure Want to Update the HR Details</DialogContent>
+                <DialogActions>
+                    <IconButton
+                        color="inherit"
+                        onClick={() => setIsConfirming(false)}
+                        edge="start"
+                        aria-label="close"
+                        style={style}
+                    >
+                        <GridCloseIcon />
+                    </IconButton>
+                    <Button onClick={handleSaveClick} color="primary">
+                        Confirm
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Dialog>
-    </Dialog>
-);
+    );
 };
 export default EditHRDetails;

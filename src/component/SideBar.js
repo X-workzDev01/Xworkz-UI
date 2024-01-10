@@ -13,6 +13,7 @@ import { MdAccountBalanceWallet } from "react-icons/md";
 import "./SideBar.css";
 import { NavLink, useLocation } from "react-router-dom";
 import { Urlconstant } from "../constant/Urlconstant";
+import { ArrowCircleDownOutlined } from "@mui/icons-material";
 
 const Sidebar = ({ children }) => {
   const [isOpen, setIsOpen] = useState(true);
@@ -72,6 +73,11 @@ const Sidebar = ({ children }) => {
       name: "Fees Detailes",
       icon: <MdAccountBalanceWallet />,
     },
+    // {
+    //   path: "download",
+    //   name: "Download",
+    //   icon: <ArrowCircleDownOutlined/>,
+    // },
 
   ];
   const click = () => {};

@@ -1,4 +1,4 @@
-import { Alert, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, Snackbar, TextField } from '@mui/material';
+import { Alert, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, MenuItem, Snackbar, TextField } from '@mui/material';
 import { GridCloseIcon } from '@mui/x-data-grid';
 import axios from 'axios';
 import React from 'react';
@@ -14,15 +14,23 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
     const [responseMessage, setResponseMessage] = React.useState("");
     const [snackbarOpen, setSnackbarOpen] = React.useState(false);
     const attemptedEmail = sessionStorage.getItem("userId");
+    const [editedData, setEditedData] = React.useState([]);
+    
+    const [companyNameCheck, setCompanyNameCheck] = React.useState("");
+    const [nameCheck, setNameCheck] = React.useState("");
+    const [verifyEmail, setVerifyEmail] = React.useState("");
+    const [checkCompanyWebsite, setCheckCompanyWebsite] = React.useState("");
+    const [checkPhoneNumberExist, setCheckPhoneNumberExist] = React.useState("");
+    const [error, setError] = React.useState("");
+    const [founderNameCheck, setFounderNameCheck] = React.useState("")
     const [emailCheck, setEmailCheck] = React.useState("");
     const [phoneNumberCheck, setPhoneNumberCheck] = React.useState("");
     const [checkEmailExist, setCheckEmailExist] = React.useState("");
-    const [editedData, setEditedData] = React.useState([]);
-    const [companyNameCheck, setCompanyNameCheck] = React.useState("");
-    const [isDisabled, setIsDisabled] = React.useState(true);
-    const [nameCheck, setNameCheck] = React.useState("");
-    const [verifyEmail, setVerifyEmail] = React.useState("");
 
+    const statusList = ['Active', 'InActive'].slice().sort();
+    const clientType = ['IT Consultency', 'Service Based', 'Product Based', 'Others'];
+    const sourceOfConnection = ['Linkdin', 'Social Media', 'Job Portal', 'Old Student Reference', 'Reference', 'Other Reference'];
+    const sourceOfLocation = ['Bangalore', 'Mumbai', 'Chandigarh', 'Hyderabad', 'Kochi', 'Pune', 'Thiruvanthapuram', 'Chennai', 'Kolakata', 'Ahmedabad', 'Delhi'];
 
     React.useEffect(() => {
         setEditedData(rowData);
@@ -30,7 +38,11 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
         setCompanyNameCheck("")
         setCheckEmailExist("")
         setEmailCheck("")
+        setCheckCompanyWebsite("")
         setPhoneNumberCheck("")
+        setCheckPhoneNumberExist("")
+        setVerifyEmail("")
+        setError("")
     }, [rowData]);
 
 
@@ -48,20 +60,37 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
             if (validateEmail(value)) {
                 setEmailCheck("");
             } else {
-                setIsDisabled(true)
+                setCheckEmailExist("");
+                setVerifyEmail("")
                 setEmailCheck("Enter the correct Email");
             }
         }
         if (name === 'companyLandLineNumber') {
             if (validateContactNumber(value)) {
                 setPhoneNumberCheck("");
-                setIsDisabled(false)
             } else {
-                setIsDisabled(true)
-                setPhoneNumberCheck("Phone number is incorrect");
+                setCheckPhoneNumberExist("");
+                setPhoneNumberCheck("Contact number should be 10 digit");
             }
 
         }
+        if (name === 'companyWebsite') {
+            if (value.length <= 1) {
+                setCheckCompanyWebsite("");
+                setError("Enter the valid website")
+            } else {
+                setError("")
+            }
+        }
+
+        if (name === 'companyFounder') {
+            if (value.length <= 1) {
+                setFounderNameCheck("Enter the Correct Name")
+            } else {
+                setFounderNameCheck("")
+            }
+        }
+
         setEditedData((prevData) => ({
             ...prevData,
             [name]: value,
@@ -85,19 +114,23 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
 
 
     const handleCompanyNameCheck = (companyName) => {
-       if(companyName==="NA"){
-        setCompanyNameCheck("");
-       }else{
-        axios.get(Urlconstant.url + `/api/companynamecheck?companyName=${companyName}`)
-            .then(res => {
-                if (res.data === "Company Already Exists") {
-                    setIsDisabled(false)
-                    setCompanyNameCheck(res.data);
-                } else {
-                    setIsDisabled(false)
-                    setCompanyNameCheck("");
-                }
-            })
+        if (companyName === "NA") {
+            setCompanyNameCheck("");
+        } else {
+            axios.get(Urlconstant.url + `/api/companynamecheck?companyName=${companyName}`)
+                .then(response => {
+                    if (response.data === "Company Already Exists") {
+                        setCompanyNameCheck(response.data);
+                    } else {
+                        setCompanyNameCheck("");
+                    }
+                }).catch(err => {
+                    if (err.response.status === 500) {
+                        setCompanyNameCheck("Error occured please wait for some time");
+                    } else {
+                        setCompanyNameCheck("");
+                    }
+                })
         }
     }
     const handleCompanyEmail = (companyEmail) => {
@@ -111,7 +144,6 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
                     } else {
                         setCheckEmailExist("");
                         validatingEmail(companyEmail);
-                        setIsDisabled(false)
                     }
                 })
         }
@@ -125,7 +157,6 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
                     if (response.data === "accepted_email") {
                         setVerifyEmail(response.data);
                     } else if (response.data === "rejected_email") {
-                        setIsDisabled(true)
                         setVerifyEmail(response.data);
                     } else {
                         setVerifyEmail("");
@@ -143,24 +174,74 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
             });
     };
 
-    const handleEmail = (event) => {
-        const email = event.target.value;
-        if (email === rowData.companyEmail) {
-            setIsDisabled(false);
+    const handleCompanyWebsite = (companyWebsite) => {
+        if (companyWebsite === 'NA') {
+            setCheckCompanyWebsite("");
         } else {
-            handleCompanyEmail(email);
+            axios.get(Urlconstant.url + `/api/checkCompanyWebsite?companyWebsite=${companyWebsite}`)
+                .then(res => {
+                    if (res.data === "CompanyWebsite Already Exists") {
+                        setCheckCompanyWebsite(res.data);
+                        setError("")
+                    } else {
+                        setCheckCompanyWebsite("")
+                    }
+                })
+        }
+    }
+
+    const handleCompanyContactNumber = (companyContactNumber) => {
+        if (companyContactNumber == '0') {
+            setCheckPhoneNumberExist("");
+        } else {
+            axios.get(Urlconstant.url + `/api/checkContactNumber?contactNumber=${companyContactNumber}`)
+                .then(res => {
+                    if (res.data === "Company ContactNumber Already Exists") {
+                        setPhoneNumberCheck("");
+                        setCheckPhoneNumberExist(res.data);
+                    } else {
+                        setCheckPhoneNumberExist("");
+
+                    }
+                })
+                .catch(error => {
+                    if (error.response.status === 500) {
+                        setCheckPhoneNumberExist('Contact number not found.');
+                    } else {
+                        setCheckPhoneNumberExist('An error occurred. Please try again.');
+                    }
+                });
         }
     }
 
 
+    const handleEmail = (event) => {
+        const email = event.target.value;
+        if (email != rowData.companyEmail) {
+            handleCompanyEmail(email);
+        }
+    }
+
     const handleCompanyName = (event) => {
         const companyName = event.target.value;
-        if (companyName === rowData.companyName) {
-            setIsDisabled(false);
-        } else {
-            if (!nameCheck) {
-                handleCompanyNameCheck(companyName)
+        if (companyName != rowData.companyName) {
+            handleCompanyNameCheck(companyName)
+        }
+    }
+    const handlePhoneNumber = (event) => {
+        const phoneNumber = event.target.value;
+        if (phoneNumber != rowData.companyLandLineNumber) {
+            if (phoneNumber.length === 10) {
+                handleCompanyContactNumber(phoneNumber);
             }
+        }
+
+    }
+
+    const handleWebsite = (event) => {
+        const companyWebsite = event.target.value;
+        if (companyWebsite != rowData.companyWebsite) {
+            handleCompanyWebsite(companyWebsite);
         }
     }
 
@@ -193,7 +274,18 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
             }
         }
     }
-    
+
+    const disable = nameCheck
+        || companyNameCheck
+        || emailCheck
+        || phoneNumberCheck
+        || checkEmailExist
+        || nameCheck
+        || checkCompanyWebsite
+        || checkPhoneNumberExist
+        || error
+        || founderNameCheck
+        || verifyEmail;
     return (
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
             <DialogTitle>
@@ -237,6 +329,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
                         />
                         {emailCheck ? <Alert severity="error">{emailCheck}</Alert> : " "}
                         {checkEmailExist ? <Alert severity="error">{checkEmailExist}</Alert> : " "}
+                        {verifyEmail ? <Alert severity="error">{verifyEmail}</Alert> : " "}
 
                     </Grid>
                     <Grid item xs={12} sm={4}>
@@ -247,9 +340,11 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
                             onChange={handleChange}
                             fullWidth
                             margin="normal"
-
+                            onBlur={handlePhoneNumber}
                         />
+
                         {phoneNumberCheck ? <Alert severity="error">{phoneNumberCheck}</Alert> : " "}
+                        {checkPhoneNumberExist ? <Alert severity="error">{checkPhoneNumberExist}</Alert> : " "}
 
 
                     </Grid>
@@ -262,8 +357,12 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
                             onChange={handleChange}
                             fullWidth
                             margin="normal"
+                            onBlur={handleWebsite}
 
                         />
+                        {error ? <Alert severity="error">{error}</Alert> : " "}
+                        {checkCompanyWebsite ? <Alert severity="error">{checkCompanyWebsite}</Alert> : " "}
+
 
                     </Grid>
                     <Grid item xs={12} sm={4}>
@@ -274,7 +373,14 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
                             onChange={handleChange}
                             fullWidth
                             margin="normal"
-                        />
+                            select
+                        >
+                            {sourceOfLocation.map((option) => (
+                                <MenuItem key={option} value={option}>
+                                    {option}
+                                </MenuItem>
+                            ))}
+                        </TextField>
                     </Grid>
                     <Grid item xs={12} sm={4}>
                         <TextField
@@ -285,16 +391,25 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
                             fullWidth
                             margin="normal"
                         />
+                        {founderNameCheck ? <Alert severity="error">{founderNameCheck}</Alert> : " "}
+
                     </Grid>
                     <Grid item xs={12} sm={4}>
                         <TextField
-                            label="Company Source Of Connetion"
+                            label="Source Of Connetion"
                             name="sourceOfConnetion"
                             defaultValue={rowData.sourceOfConnetion}
                             onChange={handleChange}
                             fullWidth
                             margin="normal"
-                        />
+                            select
+                        >
+                            {sourceOfConnection.map((option) => (
+                                <MenuItem key={option} value={option}>
+                                    {option}
+                                </MenuItem>
+                            ))}
+                        </TextField>
                     </Grid>
                     <Grid item xs={12} sm={4}>
                         <TextField
@@ -304,9 +419,16 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
                             onChange={handleChange}
                             fullWidth
                             margin="normal"
+                            select
                         >
+                            {clientType.map((option) => (
+                                <MenuItem key={option} value={option}>
+                                    {option}
+                                </MenuItem>
+                            ))}
                         </TextField>
                     </Grid>
+
                     <Grid item xs={12} sm={4}>
                         <TextField
                             label="Company Status"
@@ -316,7 +438,13 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
                             required
                             fullWidth
                             margin="normal"
+                            select
                         >
+                            {statusList.map((option) => (
+                                <MenuItem key={option} value={option}>
+                                    {option}
+                                </MenuItem>
+                            ))}
                         </TextField>
                     </Grid>
                     <Grid item xs={12} sm={4}>
@@ -340,7 +468,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
                     <CircularProgress size={20} />
                 ) : (
                     <Button
-                        disabled={isDisabled}
+                        disabled={disable}
                         onClick={handleHrAddClick}
                         color="primary"
                     >
