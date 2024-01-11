@@ -89,7 +89,6 @@ export default function ViewClient() {
     const [searchValue, setSearchValue] = React.useState("");
     const [autocompleteOptions, setAutocompleteOptions] = React.useState([]);
     const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
-    const [HrFollowUpStatus, setHrFollowUpStatus] = React.useState("")
 
     const refreshPageEveryTime = () => {
         let active = true;
@@ -239,7 +238,7 @@ export default function ViewClient() {
                         </li>
                     )}
                 />
-                <Button style={buttonPadding}
+                <Button 
                     type="submit"
                     variant="contained"
                     color="primary"
@@ -268,7 +267,6 @@ export default function ViewClient() {
                     keepNonExistentRowsSelected
                 />
             </div>
-            {HrFollowUpStatus ? <HRFollowUpStatusGrid rows={HrFollowUpStatus} /> : null}
         </div>
     )
 }
