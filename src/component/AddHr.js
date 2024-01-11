@@ -9,7 +9,6 @@ import { validateContactNumber, validateEmail } from '../constant/ValidationCons
 
 const AddHr = ({ open, handleClose, rowData }) => {
 
-    // const statusList = ['Active', 'InActive'].slice().sort();
     const hrDisgnation = ['HR', 'HR Manager', 'HR Assistant', 'Recruiter', 'HR Analyst', 'Talent Acquisition', 'Other']
     const [loading, setLoading] = React.useState(false);
     const [isConfirming, setIsConfirming] = React.useState(false);

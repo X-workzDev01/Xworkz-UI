@@ -70,7 +70,6 @@ export default function Registration() {
 
   const handleFormSubmit = (e) => {
     setIsLoading(true);
-    console.log(formData.basicInfo + " n    " + formData.othersDto);
     axios
       .post(Urlconstant.url + "api/register", formData, {
         headers: {

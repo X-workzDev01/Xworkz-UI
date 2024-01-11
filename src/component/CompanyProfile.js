@@ -8,6 +8,7 @@ import AddHr from './AddHr';
 import HRDetails from './HrDetails';
 import EditCompanyDetails from './EditCompanyDetails';
 import HrFollowUp from './HrFollowUp';
+import HRFollowUpStatusGrid from './HRFollowUpStatusGrid';
 
 function stringToColor(string) {
   let hash = 0;
@@ -50,8 +51,8 @@ const CompanyProfile = () => {
   const [isHrFollowupModalOpen, setHrFollowupModalOpen] = React.useState(false);
   const [isGetHRDetailsModalOpen, setGetHRDetailsModalOpen] = React.useState(false);
   const [isEditCompanyDetailsModalOpen, setEditCompanyDetailsModalOpen] = React.useState(false);
-
-
+  const [isHrFollowUpModalOpen,setHrFollowUpModalOpen] =React.useState("");
+  const [HrFollowUpStatus, setHrFollowUpStatus] = React.useState("")
   const fetchData = (id) => {
     axios.get(Urlconstant.url + `api/getdetailsbyid?companyId=${id}`)
       .then(response => {
@@ -61,10 +62,10 @@ const CompanyProfile = () => {
   }
   React.useEffect(() => {
     fetchData(id);
-  },[isEditCompanyDetailsModalOpen]);
-  
+  }, [isEditCompanyDetailsModalOpen]);
+
   React.useEffect(() => {
-  }, [id,isAddHrModalOpen, isHrFollowupModalOpen]);
+  }, [id, isAddHrModalOpen, isHrFollowupModalOpen]);
 
   const handleAddClientHr = () => {
     setAddHrModalOpen(true);
@@ -91,8 +92,16 @@ const CompanyProfile = () => {
     setEditCompanyDetailsModalOpen(false);
   }
 
+  const handleHRFollowUp = () => {
+    setHrFollowUpModalOpen(true);
+}
+
+const handleHRFollowUpClick = () => {
+    setHrFollowUpModalOpen(false);
+}
   return (
-    <div>CompanyProfile
+    <div>
+      <h2>CompanyProfile</h2>
       <div className="card">
         <div className="infos">
           <Avatar {...stringAvatar(companyName)} />
@@ -121,13 +130,13 @@ const CompanyProfile = () => {
               <h4>Company Website</h4>
             </li>
           </ul>
-          <div className="links">
             <Button
               variant="outlined"
               startIcon={<AddCircleOutline />}
               onClick={() => {
                 handleAddClientHr(companyDetails);
               }}
+              sx={{ marginRight: '10px' }}
             >
               Add HR
             </Button>
@@ -137,6 +146,7 @@ const CompanyProfile = () => {
               onClick={() => {
                 handleEditCompanyDetails(companyDetails);
               }}
+              sx={{ marginRight: '10px' }}
             >
               Edit Profile
             </Button>
@@ -146,22 +156,21 @@ const CompanyProfile = () => {
               onClick={() => {
                 handlegetHRDetails(companyDetails);
               }}
+              sx={{ marginRight: '10px' }}
             >
               Get HR Details
             </Button>
-            {/* <Button
+            <Button
               variant="outlined"
               startIcon={<AddCircleOutline />}
-              onClick={()=>{
+              onClick={() => {
                 handleHRFollowUp()
               }}
             >
               Add Follow up
-            </Button> */}
-          </div>
+            </Button>
         </div>
-      </div>
-      <AddHr
+        <AddHr
         open={isAddHrModalOpen}
         handleClose={() => setAddHrModalOpen(false)}
         rowData={companyDetails}
@@ -181,9 +190,16 @@ const CompanyProfile = () => {
         handleSaveClick={handleCompanyDetailsClick}
       />
       <HrFollowUp
-
+        open={isHrFollowUpModalOpen}
+        handleClose={() => setHrFollowUpModalOpen(false)}
+        rowData={companyDetails}
+        handleSaveClick={handleHRFollowUpClick}
       />
-    </div>
+
+      </div>
+      
+      </div>  
+
   )
 }
 export default CompanyProfile;
