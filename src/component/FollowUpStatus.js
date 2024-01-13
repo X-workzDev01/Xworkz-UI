@@ -169,10 +169,11 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
     };
 
     const attendanceDto = {
+
       attemptStatus: attemptStatus,
-      basicInfo: { traineeName: statusDto.basicInfo.traineeName },
+      traineeName: statusDto.basicInfo.traineeName,
       id: statusDto.id,
-      courseInfo: { course: statusDto.courseInfo.course },
+      course: statusDto.courseInfo.course,
       adminDto: { createdBy: sessionStorage.getItem('userId') },
     };
     if (isConfirming) {
