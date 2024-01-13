@@ -53,6 +53,7 @@ const CompanyProfile = () => {
   const [isEditCompanyDetailsModalOpen, setEditCompanyDetailsModalOpen] = React.useState(false);
   const [isHrFollowUpModalOpen, setHrFollowUpModalOpen] = React.useState("");
   const [HrFollowUpStatus, setHrFollowUpStatus] = React.useState("")
+
   const fetchData = (id) => {
     axios.get(Urlconstant.url + `api/getdetailsbyid?companyId=${id}`)
         .then(response => {
@@ -70,13 +71,15 @@ const CompanyProfile = () => {
   React.useEffect(() => {
     fetchData(id);
     fetchHRFollowUp(id);
-  }, [isEditCompanyDetailsModalOpen,isHrFollowUpModalOpen]);
+  }, [id,isEditCompanyDetailsModalOpen,isHrFollowUpModalOpen]);
 
   React.useEffect(() => {
   }, [id, isAddHrModalOpen, isHrFollowupModalOpen]);
   
   const fetchHRFollowUp = (id) => {
-    axios.get(Urlconstant.url + `api/gethrfollowupdetails?hrId=${id}`)
+    console.log(id)
+    const companyId=id;
+    axios.get(Urlconstant.url + `api/getFollowUpDetailsById?companyId=${companyId}`)
         .then(response => {
             setHrFollowUpStatus(response.data);
         })

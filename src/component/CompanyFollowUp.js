@@ -1,5 +1,5 @@
 import { Alert, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, MenuItem, Snackbar, TextField } from '@mui/material';
-import { GridCloseIcon } from '@mui/x-data-grid';
+import { GridCloseIcon, gridColumnsTotalWidthSelector } from '@mui/x-data-grid';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Urlconstant } from '../constant/Urlconstant';
@@ -14,14 +14,12 @@ const CompanyFollowUp = ({ open, handleClose, rowData }) => {
     const [formData, setFormData] = React.useState('');
     const attemtedUser = sessionStorage.getItem("userId");
     const [hrNameList, setHrNameList] = React.useState([]);
+    const [hrScop, setHrScop] = React.useState();
+    const [hrDetails,setHrDetails] = React.useState("");
 
     const getdetailsbyCompanyId = () => {
-        console.log("getting details by company Id")
-        const i = rowData.id;
-        console.log(rowData)
-        axios.get(Urlconstant.url + `api/gethrdetails?companyId=2`).then((response) => {
-            console.log(response.data);
-
+        const companyId = rowData.id
+        axios.get(Urlconstant.url + `api/gethrdetails?companyId=${companyId}`).then((response) => {
             setHrNameList(response.data)
         }).catch((e) => {
             console.log(e);
@@ -31,14 +29,29 @@ const CompanyFollowUp = ({ open, handleClose, rowData }) => {
 
     useEffect(() => {
         getdetailsbyCompanyId();
-    }, [])
+    }, [rowData])
+
+
     const handleInputChange = (event) => {
         const { name, value } = event.target;
+
+        if (name === 'hrScopName') {
+            setHrScop(value);
+            let selectedHrItem;
+
+            hrNameList.forEach((hrItem) => {
+                if (hrItem.hrScopName === value) {
+                    selectedHrItem = hrItem;
+                    setHrDetails(hrItem)
+                }
+            });
+        }
+
         setFormData((prevData) => ({
             ...prevData,
             [name]: value,
         }));
-    }
+    };
 
     const handleHrAddClick = () => {
         setIsConfirming(true);
@@ -60,10 +73,10 @@ const CompanyFollowUp = ({ open, handleClose, rowData }) => {
             try {
                 const hrFollowUpData = {
                     ...formData,
-                    hrId: rowData.id,
+                    hrId: hrDetails.id,
                     attemptBy: attemtedUser
                 };
-
+                console.log(hrFollowUpData)
                 axios.post(Urlconstant.url + `api/hrfollowup`, hrFollowUpData).then((response) => {
                     if (response.status === 200) {
                         setSnackbarOpen(true)
@@ -103,16 +116,16 @@ const CompanyFollowUp = ({ open, handleClose, rowData }) => {
                     <Grid item xs={12} sm={4}>
                         <TextField
                             label="HR Name"
-                            name="attemptStatus"
+                            name="hrScopName"
                             onChange={handleInputChange}
                             style={fieldStyle}
-                            value={formData.attemptStatus}
+                            // value={formData.attemptStatus}
                             fullWidth
                             select
                             margin="normal"
                         >
                             {hrNameList.map((hrItem) => (
-                                <MenuItem key={hrItem.id} value={hrItem.id}>
+                                <MenuItem key={hrItem.id} value={hrItem.hrScopName}>
                                     {hrItem.hrScopName} {/* Assuming that 'name' is the property containing HR names */}
                                 </MenuItem>
                             ))}

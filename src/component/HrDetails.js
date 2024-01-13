@@ -65,9 +65,6 @@ function searchServerRows(page, pageSize, id) {
     });
 }
 
-// ... (existing code)
-
-
 
        const columns=[
         {
