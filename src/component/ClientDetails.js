@@ -99,7 +99,13 @@ export default function ClientDetails() {
                 } else {
                     setCompanyNameCheck("");
                 }
-            })
+            }).catch(error => {
+                if (error.response.status === 500) {
+                    setCompanyNameCheck("");
+                } else {
+                    setCompanyNameCheck('An error occurred. Please try again.');
+                }
+        });
     }
 
 
@@ -112,7 +118,13 @@ export default function ClientDetails() {
                 } else {
                     setCompanyEmailCheck("");
                 }
-            })
+            }).catch(error => {
+                if (error.response.status === 500) {
+                    setCompanyEmailCheck("");
+                } else {
+                    setCompanyEmailCheck('An error occurred. Please try again.');
+                }
+        });
     }
 
     const handleCompanyContactNumber = (event) => {
@@ -128,7 +140,7 @@ export default function ClientDetails() {
             })
             .catch(error => {
                     if (error.response.status === 500) {
-                        setCheckPhoneNumberExist('Contact number not found.');
+                        setCheckPhoneNumberExist("");
                     } else {
                         setCheckPhoneNumberExist('An error occurred. Please try again.');
                     }
@@ -144,7 +156,13 @@ export default function ClientDetails() {
                 } else {
                     setCheckCompanyWebsite("");
                 }
-            })
+            }).catch(error => {
+                if (error.response.status === 500) {
+                    setCheckCompanyWebsite("");
+                } else {
+                    setCheckCompanyWebsite('An error occurred. Please try again.');
+                }
+        });
     }
 
 

@@ -7,8 +7,8 @@ import { AddCircleOutline, EmailRounded, ModeEditOutline, PhoneAndroidOutlined }
 import AddHr from './AddHr';
 import HRDetails from './HrDetails';
 import EditCompanyDetails from './EditCompanyDetails';
-import HrFollowUp from './HrFollowUp';
 import HRFollowUpStatusGrid from './HRFollowUpStatusGrid';
+import CompanyFollowUp from './CompanyFollowUp';
 
 function stringToColor(string) {
   let hash = 0;
@@ -51,21 +51,42 @@ const CompanyProfile = () => {
   const [isHrFollowupModalOpen, setHrFollowupModalOpen] = React.useState(false);
   const [isGetHRDetailsModalOpen, setGetHRDetailsModalOpen] = React.useState(false);
   const [isEditCompanyDetailsModalOpen, setEditCompanyDetailsModalOpen] = React.useState(false);
-  const [isHrFollowUpModalOpen,setHrFollowUpModalOpen] =React.useState("");
+  const [isHrFollowUpModalOpen, setHrFollowUpModalOpen] = React.useState("");
   const [HrFollowUpStatus, setHrFollowUpStatus] = React.useState("")
   const fetchData = (id) => {
     axios.get(Urlconstant.url + `api/getdetailsbyid?companyId=${id}`)
-      .then(response => {
-        setCompanyDetails(response.data);
-        setCompanyName(response.data.companyName);
-      })
-  }
+        .then(response => {
+            setCompanyDetails(response.data);
+            setCompanyName(response.data.companyName);
+        })
+        .catch(error => {
+            if (error.response && error.response.status === 500) {
+              setCompanyDetails("");
+              setCompanyName("");
+            }
+        });
+};
+
   React.useEffect(() => {
     fetchData(id);
-  }, [isEditCompanyDetailsModalOpen]);
+    fetchHRFollowUp(id);
+  }, [isEditCompanyDetailsModalOpen,isHrFollowUpModalOpen]);
 
   React.useEffect(() => {
   }, [id, isAddHrModalOpen, isHrFollowupModalOpen]);
+  
+  const fetchHRFollowUp = (id) => {
+    axios.get(Urlconstant.url + `api/gethrfollowupdetails?hrId=${id}`)
+        .then(response => {
+            setHrFollowUpStatus(response.data);
+        })
+        .catch(error => {
+            if (error.response && error.response.status === 500) {
+              setHrFollowUpStatus("");
+            }
+        });
+};
+
 
   const handleAddClientHr = () => {
     setAddHrModalOpen(true);
@@ -94,11 +115,11 @@ const CompanyProfile = () => {
 
   const handleHRFollowUp = () => {
     setHrFollowUpModalOpen(true);
-}
+  }
 
-const handleHRFollowUpClick = () => {
+  const handleHRFollowUpClick = () => {
     setHrFollowUpModalOpen(false);
-}
+  }
   return (
     <div>
       <h2>CompanyProfile</h2>
@@ -115,21 +136,20 @@ const handleHRFollowUpClick = () => {
               <PhoneAndroidOutlined sx={{ color: "#1277B2" }} />{" "}
               {companyDetails.companyLandLineNumber}
             </h3>
-          </div>
-          <ul className="stats">
-            <li>
-              <h3> {companyDetails.companyType}</h3>
-              <h4>Company Type</h4>
-            </li>
-            <li>
-              <h3> {companyDetails.status}</h3>
-              <h4>Status</h4>
-            </li>
-            <li>
-              <h3> {companyDetails.companyWebsite}</h3>
-              <h4>Company Website</h4>
-            </li>
-          </ul>
+            <ul className="stats">
+              <li>
+                <h3> {companyDetails.companyType}</h3>
+                <h4>Company Type</h4>
+              </li>
+              <li>
+                <h3> {companyDetails.status}</h3>
+                <h4>Status</h4>
+              </li>
+              <li>
+                <h3> {companyDetails.companyWebsite}</h3>
+                <h4>Company Website</h4>
+              </li>
+            </ul>
             <Button
               variant="outlined"
               startIcon={<AddCircleOutline />}
@@ -169,36 +189,39 @@ const handleHRFollowUpClick = () => {
             >
               Add Follow up
             </Button>
+          </div>
+          <AddHr
+            open={isAddHrModalOpen}
+            handleClose={() => setAddHrModalOpen(false)}
+            rowData={companyDetails}
+            handleSaveClick={handleSaveClick}
+          />
+          <HRDetails
+            open={isGetHRDetailsModalOpen}
+            handleClose={() => setGetHRDetailsModalOpen(false)}
+            id={id}
+            handleSaveClick={handleHR}
+            hr={handlegetHRDetails}
+          />
+          <EditCompanyDetails
+            open={isEditCompanyDetailsModalOpen}
+            handleClose={() => setEditCompanyDetailsModalOpen(false)}
+            rowData={companyDetails}
+            handleSaveClick={handleCompanyDetailsClick}
+          />
+          <CompanyFollowUp
+            open={isHrFollowUpModalOpen}
+            handleClose={() => setHrFollowUpModalOpen(false)}
+            rowData={companyDetails}
+            handleSaveClick={handleHRFollowUpClick}
+          />
+
         </div>
-        <AddHr
-        open={isAddHrModalOpen}
-        handleClose={() => setAddHrModalOpen(false)}
-        rowData={companyDetails}
-        handleSaveClick={handleSaveClick}
-      />
-      <HRDetails
-        open={isGetHRDetailsModalOpen}
-        handleClose={() => setGetHRDetailsModalOpen(false)}
-        id={id}
-        handleSaveClick={handleHR}
-        hr={handlegetHRDetails}
-      />
-      <EditCompanyDetails
-        open={isEditCompanyDetailsModalOpen}
-        handleClose={() => setEditCompanyDetailsModalOpen(false)}
-        rowData={companyDetails}
-        handleSaveClick={handleCompanyDetailsClick}
-      />
-      <HrFollowUp
-        open={isHrFollowUpModalOpen}
-        handleClose={() => setHrFollowUpModalOpen(false)}
-        rowData={companyDetails}
-        handleSaveClick={handleHRFollowUpClick}
-      />
 
       </div>
-      
-      </div>  
+      {HrFollowUpStatus ? <HRFollowUpStatusGrid rows={HrFollowUpStatus} /> : null}
+    </div>
+
 
   )
 }
