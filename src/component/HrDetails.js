@@ -28,31 +28,42 @@ const HRDetails = ({ open, handleClose, id }) => {
         );
     }, [open]);
 
-    function searchServerRows(page, pageSize,id) {
+    // ... (existing code)
 
-        const startingIndex = page * pageSize;
-        var apiUrl =
-            Urlconstant.url +
-            `api/hrdetails?startingIndex=${startingIndex}&maxRows=${25}&companyId=${id}`;
-        return new Promise((resolve) => {
-            fetch(apiUrl)
-                .then((response) => response.json())
-                .then((data) => {
-                    const newGridData = {
-                        rows: data.clientHrDetails.map((row) => ({
-                            id: row.id.toString(),
-                            ...row,
-                        })),
-                        rowCount: data.size,
-                    };
+function searchServerRows(page, pageSize, id) {
+    const startingIndex = page * pageSize;
+    var apiUrl =
+        Urlconstant.url +
+        `api/hrdetails?startingIndex=${startingIndex}&maxRows=${25}&companyId=${id}`;
 
-                    resolve(newGridData);
-                })
-                .catch((error) => {
-                    resolve({ rows: [], rowCount: 0 });
-                });
-        });
-    }
+    return new Promise((resolve) => {
+        fetch(apiUrl)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then((data) => {
+                const newGridData = {
+                    rows: data.clientHrDetails.map((row) => ({
+                        id: row.id.toString(),
+                        ...row,
+                    })),
+                    rowCount: data.size,
+                };
+
+                resolve(newGridData);
+            })
+            .catch((error) => {
+                console.error("Error in API call", error);
+                if (error.message.includes("500")) {
+                }
+
+                resolve({ rows: [], rowCount: 0 });
+            });
+    });
+}
 
 
        const columns=[

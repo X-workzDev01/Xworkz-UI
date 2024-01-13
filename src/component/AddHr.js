@@ -85,7 +85,6 @@ const AddHr = ({ open, handleClose, rowData }) => {
     };
 
     const handleSaveClick = () => {
-        //setIsSubmitting(false);
         if (isConfirming) {
             setLoading(true);
             try {
@@ -94,31 +93,45 @@ const AddHr = ({ open, handleClose, rowData }) => {
                     companyId: rowData.id,
                     adminDto: { createdBy: attemptedEmail }
                 };
-
+    
                 for (const field in hrData) {
                     if (!hrData[field]) {
                         hrData[field] = "NA";
                     }
                 }
-
-                axios.post(Urlconstant.url + "api/registerclienthr", hrData).then((response) => {
-                    if (response.status === 200) {
-                        setSnackbarOpen(true)
-                        setLoading(false)
-                        setResponseMessage(response.data)
-                        setIsConfirming(false);
-                        setTimeout(() => {
-                            handleCloseForm();
-                        }, 1000);
-                        setFormData({
-                            hrScopName: '',
-                            hrEmail: '',
-                            hrContactNumber: '',
-                            designation: '',
-                            status: '',
-                        });
-                    }
-                })
+    
+                axios.post(Urlconstant.url + "api/registerclienthr", hrData)
+                    .then((response) => {
+                        if (response.status === 200) {
+                            setSnackbarOpen(true)
+                            setLoading(false)
+                            setResponseMessage(response.data)
+                            setIsConfirming(false);
+                            setTimeout(() => {
+                                handleCloseForm();
+                            }, 1000);
+                            setFormData({
+                                hrScopName: '',
+                                hrEmail: '',
+                                hrContactNumber: '',
+                                designation: '',
+                                status: '',
+                            });
+                        }
+                    })
+                    .catch((error) => {
+                        if (error.response && error.response.status === 500) {
+                            // Handle HTTP status code 500
+                            setLoading(false)
+                            setResponseMessage("Internal Server Error: Please try again later");
+                            setSnackbarOpen(true);
+                        } else {
+                            // Handle other errors
+                            setLoading(false)
+                            setResponseMessage("HR information not saved")
+                            setSnackbarOpen(true);
+                        }
+                    });
             } catch (error) {
                 setLoading(false)
                 setResponseMessage("HR information not saved")
@@ -126,7 +139,7 @@ const AddHr = ({ open, handleClose, rowData }) => {
             }
         }
     }
-
+    
     const validatingEmail = (email) => {
         axios
             .get(`${Urlconstant.url}api/verify-email?email=${email}`)
@@ -142,9 +155,9 @@ const AddHr = ({ open, handleClose, rowData }) => {
                     }
                 } else {
                     if (response.status === 500) {
-                        console.log("Internal Server Error:", response.status);
+                        setVerifyEmail("");
                     } else {
-                        console.log("Unexpected Error:", response.status);
+                        setVerifyEmail("Unexpected Error:");
                     }
                 }
             })
@@ -155,29 +168,45 @@ const AddHr = ({ open, handleClose, rowData }) => {
 
     const handleEmailCheck = (event) => {
         let email = event.target.value;
-        axios.get(Urlconstant.url + `api/hremailcheck?hrEmail=${email}`).then((response) => {
-            if (response.data === 'Email already exists.') {
-                setEmailCheck("")
-                setCheckEmailExist(response.data);
-            } else {
-
-                validatingEmail(email);
-                setCheckEmailExist("");
-            }
-        });
-    }
+        axios.get(Urlconstant.url + `api/hremailcheck?hrEmail=${email}`)
+            .then((response) => {
+                if (response.data === 'Email already exists.') {
+                    setEmailCheck("");
+                    setCheckEmailExist(response.data);
+                } else {
+                    validatingEmail(email);
+                    setCheckEmailExist("");
+                }
+            })
+            .catch((error) => {
+                if (error.response && error.response.status === 500) {
+                    setCheckEmailExist("");
+                } else {
+                    setCheckEmailExist("Error in API call");
+                }
+            });
+    };
+    
     const handleNumberCheck = (event) => {
         let contactNumber = event.target.value;
-        axios.get(Urlconstant.url + `api/hrcontactnumbercheck?contactNumber=${contactNumber}`).then((response) => {
-            if (response.data === "Contact Number Already exist.") {
-                setCheckPhoneNumberExist(response.data);
-            } else {
-                setCheckPhoneNumberExist("");
-                setPhoneNumberCheck("");
-
-            }
-        });
-    }
+        axios.get(Urlconstant.url + `api/hrcontactnumbercheck?contactNumber=${contactNumber}`)
+            .then((response) => {
+                if (response.data === "Contact Number Already exist.") {
+                    setCheckPhoneNumberExist(response.data);
+                } else {
+                    setCheckPhoneNumberExist("");
+                    setPhoneNumberCheck("");
+                }
+            })
+            .catch((error) => {
+                if (error.response && error.response.status === 500) {
+                    setCheckPhoneNumberExist("");
+                } else {
+                    setCheckPhoneNumberExist("Error in API call");
+                }
+            });
+    };
+    
 
     const isDisabled = checkPhoneNumberExist || checkEmailExist || emailCheck || !formData.hrScopName || !formData.hrContactNumber || !formData.designation
     return (

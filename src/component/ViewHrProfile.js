@@ -51,15 +51,27 @@ const ViewHrProfile = () => {
 
 
     const fetchHrDetails = (id) => {
-        axios.get(Urlconstant.url + `api/getdetailsbyhrid?hrId=${id}`).then((response) => {
-            setHrScopName(response.data.hrScopName);
-            setHrDetails(response.data);
-        })
-    }
+        axios.get(Urlconstant.url + `api/getdetailsbyhrid?hrId=${id}`)
+            .then(response => {
+                setHrScopName(response.data.hrScopName);
+                setHrDetails(response.data);
+            })
+            .catch(error => {
+                if (error.response && error.response.status === 500) {
+                    setHrScopName("");
+                    setHrDetails("");
+                } 
+            });
+    };
+    
     const fetchHRFollowUp = (id) => {
         axios.get(Urlconstant.url + `api/gethrfollowupdetails?hrId=${id}`).then((response) => {
             setHrFollowUpStatus(response.data);
-        })
+        })  .catch(error => {
+            if (error.response && error.response.status === 500) {
+                setHrFollowUpStatus("")
+            } 
+        });
     }
     useEffect(() => {
         fetchHrDetails(id);
