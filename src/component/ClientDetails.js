@@ -43,7 +43,7 @@ export default function ClientDetails() {
             if (validateEmail(value)) {
                 setEmailCheck("");
             } else {
-                setCompanyNameCheck("");
+                setCompanyEmailCheck("");    
                 setEmailCheck("Enter the correct Email");
             }
         }
@@ -96,6 +96,7 @@ export default function ClientDetails() {
                 if (res.data === "Company Already Exists") {
                     setEmailCheck("");
                     setCompanyNameCheck(res.data);
+
                 } else {
                     setCompanyNameCheck("");
                 }
@@ -114,6 +115,7 @@ export default function ClientDetails() {
         axios.get(Urlconstant.url + `/api/checkcompanyemail?companyEmail=${companyEmail}`)
             .then(res => {
                 if (res.data === "Company Email Already Exists") {
+                    setEmailCheck("");
                     setCompanyEmailCheck(res.data);
                 } else {
                     setCompanyEmailCheck("");
