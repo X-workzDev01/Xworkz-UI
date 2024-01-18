@@ -39,25 +39,25 @@ function loadServerRows(page, pageSize) {
 
 function searchServerRows(searchValue) {
     const apiUrl =
-      Urlconstant.url + `api/getdetailsbycompanyname?companyName=${searchValue}`;
+        Urlconstant.url + `api/getdetailsbycompanyname?companyName=${searchValue}`;
     const requestOptions = {
-      method: "GET",
+        method: "GET",
     };
-  
+
     return new Promise((resolve) => {
-      fetch(apiUrl, requestOptions)
-        .then((response) => response.json())
-        .then((data) => {
-          resolve({
-            rows: data.map((row) => ({ id: row.id.toString(), ...row })),
-            rowCount: data.size,
-          });
-        })
-        .catch((error) => {
-          resolve({ rows: [], rowCount: 0 });
-        });
+        fetch(apiUrl, requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+                resolve({
+                    rows: data.map((row) => ({ id: row.id.toString(), ...row })),
+                    rowCount: data.size,
+                });
+            })
+            .catch((error) => {
+                resolve({ rows: [], rowCount: 0 });
+            });
     });
-  }
+}
 async function fetchFilteredData(searchValue) {
     try {
         const apiUrl =
@@ -89,7 +89,7 @@ export default function ViewClient() {
     const [searchValue, setSearchValue] = React.useState("");
     const [autocompleteOptions, setAutocompleteOptions] = React.useState([]);
     const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
-
+    const [onChangeSearchValue, setOnChangeSearchValue] = React.useState("");
     const refreshPageEveryTime = () => {
         let active = true;
         setLoading(true);
@@ -118,7 +118,7 @@ export default function ViewClient() {
                     setLoading(false);
                 }
             }
-            
+
         };
 
         fetchDataAndUpdateState();
@@ -210,17 +210,16 @@ export default function ViewClient() {
                 <Autocomplete
                     freeSolo
                     autoSelect
+                    id="free-solo-2-demo"
                     disableClearable
-
                     style={{ width: 300 }}
                     options={autocompleteOptions}
-                    getOptionLabel={(option) => option.companyName}
-                    onChange={(a) => {
-                        setSearchValue(a.target.value)
+                    getOptionLabel={(option) => option.companyName?option.companyName:""}
+                    onChange={(a, val) => {
+                        setSearchValue(val)
                     }
                     }
                     renderInput={(params) => <TextField {...params}
-                        value={searchValue}
                         onChange={(event) => {
                             const searchInput = event.target.value;
                             if (searchInput.length >= 3) {
@@ -238,7 +237,7 @@ export default function ViewClient() {
                         </li>
                     )}
                 />
-                <Button 
+                <Button
                     type="submit"
                     variant="contained"
                     color="primary"
