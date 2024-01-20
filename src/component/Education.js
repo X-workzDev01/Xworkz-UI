@@ -98,14 +98,22 @@ export const Education = ({
             ))}
           </Select>
         </Form>
-        
-          <Button style={{marginTop:"20px"}} variant="contained" onClick={onPrevious}>
-            Previous
-          </Button>
-          &nbsp;&nbsp;&nbsp;
-          <Button style={{marginTop:"20px"}} variant="contained" disabled={isDisabled} onClick={onNext}>
-            Next
-          </Button>
+        <Button
+          style={{ marginTop: "20px" }}
+          variant="contained"
+          onClick={onPrevious}
+        >
+          Previous
+        </Button>
+        &nbsp;&nbsp;&nbsp;
+        <Button
+          style={{ marginTop: "20px" }}
+          variant="contained"
+          disabled={isDisabled}
+          onClick={onNext}
+        >
+          Next
+        </Button>
       </Typography>
     </Container>
   );

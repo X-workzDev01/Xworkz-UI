@@ -60,7 +60,7 @@ export const PayFee = ({ open, handleClose, traineeEmail, feesData }) => {
       },
       lateFees: updateFeesData.lateFees,
       name: feesData.name,
-      comments:updateFeesData.comments,
+      comments: updateFeesData.comments,
     };
     updateFees(feesDto);
   };
@@ -487,7 +487,7 @@ export const PayFee = ({ open, handleClose, traineeEmail, feesData }) => {
       </Modal>
 
       <Snackbar
-      sx={{margin:'1rem'}}
+        sx={{ margin: "1rem" }}
         open={snackbar}
         severity="success"
         autoHideDuration={2000} // Adjust as needed

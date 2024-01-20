@@ -1,19 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  FaTh,
   FaBars,
-  FaUserAlt,
-  FaRegChartBar,
   FaCommentAlt,
-  FaWhatsapp,
   FaList,
+  FaRegChartBar,
+  FaTh,
+  FaUserAlt,
+  FaWhatsapp,
 } from "react-icons/fa";
 import { MdAccountBalanceWallet } from "react-icons/md";
 
-import "./SideBar.css";
 import { NavLink, useLocation } from "react-router-dom";
 import { Urlconstant } from "../constant/Urlconstant";
-import { ArrowCircleDownOutlined } from "@mui/icons-material";
+import "./SideBar.css";
 
 const Sidebar = ({ children }) => {
   const [isOpen, setIsOpen] = useState(true);
@@ -24,7 +23,7 @@ const Sidebar = ({ children }) => {
   const [defaultSelected, setDefaultSelected] = useState("display");
 
   useEffect(() => {
-    setDefaultSelected(location.pathname.replace(Urlconstant.navigate , ""));
+    setDefaultSelected(location.pathname.replace(Urlconstant.navigate, ""));
   }, [location.pathname]);
 
   const menuItem = [
@@ -70,7 +69,7 @@ const Sidebar = ({ children }) => {
     },
     {
       path: "feesDetailes",
-      name: "Fees Detailes",
+      name: "Fees Details",
       icon: <MdAccountBalanceWallet />,
     },
     // {
@@ -78,7 +77,6 @@ const Sidebar = ({ children }) => {
     //   name: "Download",
     //   icon: <ArrowCircleDownOutlined/>,
     // },
-
   ];
   const click = () => {};
   return (

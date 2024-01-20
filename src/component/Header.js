@@ -519,36 +519,38 @@ function Header() {
       <div>
         <AppBar sx={{ background: "#070606" }} spacing={10}>
           <Toolbar>
-          <div  style={{
+            <div
+              style={{
                 display: "flex",
-                justifyItems:"flex-start",
-                width:"100rem",
+                justifyItems: "flex-start",
+                width: "100rem",
                 alignItems: "center",
                 justifyContent: "space-between",
-              }}>
-            <IconButton edge="start" color="inherit" aria-label="logo">
-              <a href="https://www.x-workz.in/Logo.png">
-                <img
-                  src="https://www.x-workz.in/Logo.png"
-                  width={60}
-                  height={40}
-                  alt="Logo"
-                ></img>
-              </a>
-            </IconButton>
-            <Link to={Urlconstant.navigate+"display"}>Home</Link>
-            <Typography variant="h6" component="div" sx={{ flexGrow: 6 }}>
-              <AccountCircle
-                sx={{ color: "action.active", marginRight: "8px" }}
-              />
-            </Typography>
+              }}
+            >
+              <IconButton edge="start" color="inherit" aria-label="logo">
+                <a href="https://www.x-workz.in/Logo.png">
+                  <img
+                    src="https://www.x-workz.in/Logo.png"
+                    width={60}
+                    height={40}
+                    alt="Logo"
+                  ></img>
+                </a>
+              </IconButton>
+              <Link to={Urlconstant.navigate + "display"}>Home</Link>
+              <Typography variant="h6" component="div" sx={{ flexGrow: 6 }}>
+                <AccountCircle
+                  sx={{ color: "action.active", marginRight: "8px" }}
+                />
+              </Typography>
             </div>
             <div
               style={{
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
-                justifyItems:"flex-end"
+                justifyItems: "flex-end",
               }}
             >
               <Typography

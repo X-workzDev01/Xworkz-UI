@@ -9,7 +9,7 @@ import { Container } from "react-bootstrap";
 import axios from "axios";
 import Header from "./Header";
 import { Urlconstant } from "../constant/Urlconstant";
-import {Navigate, Route, Router } from "react-router-dom";
+import { Navigate, Route, Router } from "react-router-dom";
 
 export default function Registration() {
   const email = sessionStorage.getItem("userId");

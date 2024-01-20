@@ -1,10 +1,9 @@
-
 .footer-section {
   position: relative;
   position: fixed;
   background: #0e0d0d;
   position: relative;
-  margin-top:-0.3rem;
+  margin-top: -0.3rem;
 }
 
 .footer-pattern img {
@@ -18,12 +17,10 @@
 .footer-logo {
   margin-bottom: 30px;
   margin-top: 30px;
-  
 }
 .footer-logo img {
-    float: inherit;
-    width: 250px;
-
+  float: inherit;
+  width: 250px;
 }
 .footer-text p {
   margin-bottom: 14px;
@@ -36,7 +33,7 @@
   display: block;
   font-size: 20px;
   font-weight: 700;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   margin-bottom: 20px;
 }
 .footer-social-icon a {
@@ -51,20 +48,24 @@
   line-height: 38px;
   border-radius: 50%;
 }
-.facebook-bg:hover{
-  background-color: #3B5998;
+.facebook-bg:hover {
+  background-color: #3b5998;
   -webkit-transition: background-color 1.2s ease-out;
-  
 }
-.twitter-bg:hover{
-  background-color: #55ACEE;
+.twitter-bg:hover {
+  background-color: #55acee;
   -webkit-transition: background-color 1.2s ease-out;
-  
 }
-.instagram-bg:hover{
-  background:  radial-gradient(circle at 33% 100%, #fed373 4%, #f15245 30%, #d92e7f 62%, #9b36b7 85%, #515ecf);
+.instagram-bg:hover {
+  background: radial-gradient(
+    circle at 33% 100%,
+    #fed373 4%,
+    #f15245 30%,
+    #d92e7f 62%,
+    #9b36b7 85%,
+    #515ecf
+  );
   -webkit-transition: background-color 1.2s ease-out;
-  
 }
 .footer-widget-heading h3 {
   color: #fff;
@@ -73,30 +74,28 @@
   margin-bottom: 40px;
   position: relative;
 }
-.copyright-area{
+.copyright-area {
   background: #070606;
   padding: 25px 0;
 }
 .copyright-text p {
   color: whitesmoke;
- display: flex;
- justify-content: center;
+  display: flex;
+  justify-content: center;
 }
-.copyright-text p a{
+.copyright-text p a {
   color: #ff5e14;
 }
-footer { 
-  margin-top: 100px; 
+footer {
+  margin-top: 100px;
 }
-.footer-icon{
-  display: flex;  
+.footer-icon {
+  display: flex;
   align-items: flex-start;
   justify-content: center;
   margin-bottom: -2rem;
   padding-top: 0.9rem;
 }
-.footer-icon a{
+.footer-icon a {
   padding-left: 0.7rem;
 }
-
-

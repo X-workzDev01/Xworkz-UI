@@ -16,7 +16,7 @@
 //   isModalOpen,
 //   editedRowData,
 
-//   //these are the props which are need to be sent while using this components 
+//   //these are the props which are need to be sent while using this components
 //   //these functions , please check about these fuctions in TraineeTable component
 // }) {
 //   return (
@@ -33,7 +33,7 @@
 //         onRowSelectionModelChange={setRowSelectionModel}
 //         rowSelectionModel={rowSelectionModel}
 //         loading={loading}
-        
+
 //         keepNonExistentRowsSelected
 //       />
 //       <EditModal

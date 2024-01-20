@@ -42,11 +42,10 @@ export const Referral = ({
         setPhoneNumberError("");
       }
     }
-    if(name==="accept"){
-    setIsDiesable(true);
+    if (name === "accept") {
+      setIsDiesable(true);
     }
   };
-  
 
   return (
     <Container maxWidth="sm">
@@ -129,7 +128,6 @@ export const Referral = ({
             }
             label="Confirm register *"
           />
-
         </Form>
         <div style={{ marginTop: "20px" }}>
           {loading ? (
