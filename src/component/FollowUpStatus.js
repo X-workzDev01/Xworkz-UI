@@ -69,7 +69,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
 
         setDropdownData({ ...response.data, status: filteredStatus });
       })
-      .catch((error) => { });
+      .catch((error) => {});
   }, []);
 
   React.useEffect(() => {
@@ -116,8 +116,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
   };
   const attemtedUser = sessionStorage.getItem("userId");
 
-
-  const validateAndSaveData = (statusDto, attendanceDto,dto) => {
+  const validateAndSaveData = (statusDto, attendanceDto, dto) => {
     axios
       .post(Urlconstant.url + `api/updateFollowStatus`, statusDto, {
         headers: {
@@ -142,13 +141,12 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
         setResponseMessage("Error updating data. Please try again.");
         setSnackbarOpen(true);
       });
-    axios.post(Urlconstant.url + `api/attendance/register`, attendanceDto)
-      .then(() => { })
-      .catch((e) => { });
+    axios
+      .post(Urlconstant.url + `api/attendance/register`, attendanceDto)
+      .then(() => {})
+      .catch((e) => {});
     axios.post(Urlconstant.url + `api/saveFees`, dto);
   };
-
-
 
   const handleSaveClick = () => {
     const statusDto = {
@@ -158,7 +156,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
 
     const dto = {
       email: statusDto.basicInfo.email,
-      name: statusDto.basicInfo.traineeName, 
+      name: statusDto.basicInfo.traineeName,
       status: statusDto.attemptStatus,
       adminDto: {
         createdBy: statusDto.adminDto.createdBy,
@@ -169,12 +167,11 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
     };
 
     const attendanceDto = {
-
       attemptStatus: attemptStatus,
       traineeName: statusDto.basicInfo.traineeName,
       id: statusDto.id,
       course: statusDto.courseInfo.course,
-      adminDto: { createdBy: sessionStorage.getItem('userId') },
+      adminDto: { createdBy: sessionStorage.getItem("userId") },
     };
     if (isConfirming) {
       setLoading(true);
@@ -184,7 +181,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
           statusDto[field] = "NA";
         }
       });
-      validateAndSaveData(statusDto, attendanceDto,dto);
+      validateAndSaveData(statusDto, attendanceDto, dto);
     }
   };
   const handleErrr = (e) => {
@@ -390,7 +387,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
         open={snackbarOpen}
         autoHideDuration={3000000}
         onClose={handleSnackbarClose}
-      // message={responseMessage}
+        // message={responseMessage}
       />
 
       <Dialog open={isConfirming} onClose={handleClose} fullWidth maxWidth="xs">

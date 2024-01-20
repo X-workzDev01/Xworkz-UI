@@ -1,30 +1,30 @@
 // AttendanceModal.js
 
-import React, { useState, useEffect } from 'react';
-import Modal from '@mui/material/Modal';
+import CloseIcon from "@mui/icons-material/Close";
 import {
   Box,
-  Typography,
   CircularProgress,
+  Divider,
   Grid,
   IconButton,
   List,
   ListItem,
   ListItemText,
-  Divider,
-} from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import { Urlconstant } from '../constant/Urlconstant';
-import axios from 'axios';
+  Typography,
+} from "@mui/material";
+import Modal from "@mui/material/Modal";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { Urlconstant } from "../constant/Urlconstant";
 
 const CircularProgressWithLabel = (props) => {
   const getColor = (percentage) => {
     if (percentage >= 80) {
-      return 'green';
+      return "green";
     } else if (percentage >= 50) {
-      return 'orange';
+      return "orange";
     } else {
-      return 'red';
+      return "red";
     }
   };
 
@@ -37,14 +37,14 @@ const CircularProgressWithLabel = (props) => {
       />
       <Box
         sx={{
-          position: 'absolute',
+          position: "absolute",
           top: 0,
           left: 0,
           bottom: 0,
           right: 0,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
         }}
       >
         <Typography variant="h5" component="div" color="textSecondary">
@@ -63,13 +63,13 @@ const AttendanceModal = ({ open, handleClose, id, batch }) => {
   useEffect(() => {
     if (open && !initialLoadComplete) {
       // Fetch data only when the modal is open
-      axios.get(Urlconstant.url + `api/attendance/id/${id}?batch=${batch}`)
+      axios
+        .get(Urlconstant.url + `api/attendance/id/${id}?batch=${batch}`)
         .then((response) => {
           setAttendanceData(response.data);
           console.log(response.data);
 
           // Your logic to calculate progressValue and setInitialLoadComplete goes here
-
         })
         .catch((error) => {
           console.error("Error fetching attendance data:", error);
@@ -81,12 +81,11 @@ const AttendanceModal = ({ open, handleClose, id, batch }) => {
   const totalClasses = attendanceData ? attendanceData.totalClass : 0;
   const totalAbsent = attendanceData?.list?.length || 0;
   const totalPresent = totalClasses - totalAbsent;
-  const newAttendancePercentage = totalClasses === 0 ? 0 : (totalPresent / totalClasses) * 100;
+  const newAttendancePercentage =
+    totalClasses === 0 ? 0 : (totalPresent / totalClasses) * 100;
 
   useEffect(() => {
     if (open && !initialLoadComplete) {
-    
-  
       // Set an interval to gradually increase the progressValue
       const interval = setInterval(() => {
         setProgressValue((prevValue) => {
@@ -97,19 +96,19 @@ const AttendanceModal = ({ open, handleClose, id, batch }) => {
             : newAttendancePercentage;
         });
       }, 100); // Adjust the interval duration if needed
-  
+
       // Set a timeout to clear the interval and finalize the progressValue
       setTimeout(() => {
         clearInterval(interval);
         setProgressValue(newAttendancePercentage);
         setInitialLoadComplete(true);
       }, 2000); // Set the timeout duration to a larger value than the interval duration
-  
+
       // Cleanup function to clear the interval when the component unmounts or dependencies change
       return () => clearInterval(interval);
     }
   }, [open, initialLoadComplete]);
-  
+
   // List of absent days with reasons
   const absentDays = attendanceData?.list || [];
 
@@ -118,12 +117,12 @@ const AttendanceModal = ({ open, handleClose, id, batch }) => {
       <Modal open={open} onClose={handleClose}>
         <Box
           sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
             width: 600,
-            bgcolor: 'white',
+            bgcolor: "white",
             boxShadow: 24,
             p: 4,
             borderRadius: 8,
@@ -131,7 +130,7 @@ const AttendanceModal = ({ open, handleClose, id, batch }) => {
         >
           <IconButton
             sx={{
-              position: 'absolute',
+              position: "absolute",
               top: 8,
               right: 8,
             }}
@@ -144,7 +143,7 @@ const AttendanceModal = ({ open, handleClose, id, batch }) => {
           </Typography>
           <Grid container spacing={2} direction="row">
             <Grid item xs={6}>
-              <Box sx={{ textAlign: 'center', margin: '20px 0' }}>
+              <Box sx={{ textAlign: "center", margin: "20px 0" }}>
                 <CircularProgressWithLabel
                   value={newAttendancePercentage.toFixed()}
                   size={100}
@@ -156,7 +155,7 @@ const AttendanceModal = ({ open, handleClose, id, batch }) => {
             </Grid>
 
             <Grid item xs={6}>
-              <Box sx={{ textAlign: 'center', margin: '20px 0' }}>
+              <Box sx={{ textAlign: "center", margin: "20px 0" }}>
                 <CircularProgressWithLabel
                   value={newAttendancePercentage.toFixed()}
                   size={100}

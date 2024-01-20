@@ -1,25 +1,28 @@
 import {
   Button,
+  Container,
+  InputLabel,
   MenuItem,
   Select,
   TextField,
-  Container,
   Typography,
-  InputLabel,
-  FormControl,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
-import { Form } from "react-bootstrap";
 import axios from "axios";
-import { Urlconstant } from "../constant/Urlconstant";
+import { Form } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
+import { Urlconstant } from "../constant/Urlconstant";
 
-
-
-export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious,batchDetiles }) => {
- const [selectedValue, setSelectedValue] = useState(' ');
-
+export const Course = ({
+  dropdown,
+  formData,
+  setFormData,
+  onNext,
+  onPrevious,
+  batchDetiles,
+}) => {
+  const [selectedValue, setSelectedValue] = useState(" ");
 
   const location = useLocation();
 
@@ -32,7 +35,6 @@ export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious,bat
   }, [selectedValue]);
   const fetchData = async () => {
     try {
-
       console.log("course" + selectedValue);
       const response = await axios.get(
         Urlconstant.url + `api/getCourseDetails?courseName=${selectedValue}`,
@@ -67,7 +69,6 @@ export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious,bat
     console.log(formData);
   };
 
-
   const isDisabled = !formData.course || !formData.offeredAs;
 
   return (
@@ -85,9 +86,8 @@ export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious,bat
             id="outlined-basic"
             variant="outlined"
             onChange={handleInputChange}
-            >
+          >
             {batchDetiles.map((item, index) => (
-
               <MenuItem value={item} key={index}>
                 {item}
               </MenuItem>
@@ -144,9 +144,7 @@ export const Course = ({ dropdown, formData, setFormData, onNext, onPrevious,bat
             id="outlined-basic"
             variant="outlined"
           ></TextField>
-          <InputLabel id="demo-simple-select-label">
-            Start date
-          </InputLabel>
+          <InputLabel id="demo-simple-select-label">Start date</InputLabel>
 
           <TextField
             name="startTime"

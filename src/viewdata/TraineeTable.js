@@ -1,4 +1,3 @@
-
 // import React, { useState} from 'react';
 // import SearchComponent from './SearchComponent';
 // import ReusableDataGrid from './ReusableDataGrid';
@@ -10,7 +9,7 @@
 //     const startingIndex = page * pageSize;
 //     const maxRows = pageSize;
 //     const spreadsheetId = Urlconstant.spreadsheetId; // Replace this with the actual spreadsheet ID
-  
+
 //     const apiUrl = Urlconstant.url + `api/readData?startingIndex=${startingIndex}&maxRows=${maxRows}`;
 //     const requestOptions = {
 //       method: 'GET',
@@ -34,16 +33,16 @@
 //         });
 //     });
 //   }
-  
+
 //   const handleEditClick = (row) => {
 //     // setEditedRowData(row);
 //     // setModalOpen(true);
 //   };
-  
+
 //   function loadClientRows(page, pageSize, allData) {
 //     const startingIndex = page * pageSize;
 //     const endingIndex = Math.min(startingIndex + pageSize, allData.length);
-  
+
 //     return new Promise((resolve) => {
 //       // Return the paginated portion of the data
 //       resolve({
@@ -52,7 +51,7 @@
 //       });
 //     });
 //   }
-  
+
 //   function searchServerRows(searchValue) {
 //     const apiUrl = Urlconstant.url + `api/filterData?searchValue=${searchValue}`;
 //     const requestOptions = {
@@ -62,7 +61,7 @@
 //         spreadsheetId: Urlconstant.spreadsheetId,
 //       },
 //     };
-  
+
 //     return new Promise((resolve) => {
 //       fetch(apiUrl, requestOptions)
 //         .then((response) => response.json())
@@ -96,7 +95,7 @@
 //       return [];
 //     }
 //   }
-  
+
 //   function debounce(func, delay) {
 //     let timeout;
 //     return function executedFunction(...args) {
@@ -108,7 +107,6 @@
 //       timeout = setTimeout(later, delay);
 //     };
 //   }
-  
 
 // const columns = [
 //     { headerName: 'ID', field: 'id', flex: 1 },
@@ -172,20 +170,10 @@
 //     // Handle save click logic
 //   };
 
-  
-
-
-
-
-
-
 //   const handleAutocompleteChange = (event, newValue) => {
-//     setSearchValue(newValue || ''); 
+//     setSearchValue(newValue || '');
 
 //   };
-
-
-  
 
 //   const debouncedFetchSuggestions = React.useMemo(
 //     () => debounce((searchValue) => fetchFilteredData(searchValue)
@@ -227,7 +215,6 @@
 //     } else {
 //       console.log("client search");
 
-
 //       setLoading(false);
 //       debouncedFetchSuggestions(searchValue);
 //     }
@@ -236,9 +223,6 @@
 //       active = false;
 //     };
 //   }, [paginationModel.page, paginationModel.pageSize, searchValue]);
-
-
-  
 
 //   return (
 //     <div>

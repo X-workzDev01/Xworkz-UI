@@ -14,7 +14,7 @@ export default function PageList(props) {
   const handleview = () => {
     navigate("/x-workz/display", { state: { email } });
   };
-  
+
   const handleSearch = () => {
     navigate("/x-workz/search");
   };
