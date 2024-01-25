@@ -19,11 +19,13 @@ const WhatsAppLinkSender = ({ formData: initialFormData }) => {
   const [batchDetails, setBatchDetails] = useState([]);
   const [selectedValue, setSelectedValue] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [error, setError] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [formData, setFormData] = useState(
     initialFormData || { course: "", whatsAppLink: "" }
   );
+  const [isWhatsAppLinkNull, setIsWhatsAppLinkNull] = useState(true);
   const [isUpdateMode, setIsUpdateMode] = useState(false);
 
   const setFormDataWithDefault = (data) => {
@@ -42,6 +44,8 @@ const WhatsAppLinkSender = ({ formData: initialFormData }) => {
       );
       const data = response.data;
       setFormDataWithDefault(data);
+      setIsWhatsAppLinkNull(data.whatsAppLink === null);
+      setSuccessMessage("");
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -76,22 +80,17 @@ const WhatsAppLinkSender = ({ formData: initialFormData }) => {
     setIsSending(true);
     try {
       const response = await axios.post(
-        Urlconstant.url + "api/updateWhatsAppLink",
-        {
-          courseName: formData.course,
-          newWhatsAppLink: formData.whatsAppLink,
-        },
-        {
-          headers: {
-            spreadsheetId: Urlconstant.spreadsheetId,
-          },
+        Urlconstant.url + `api/updateWhatsAppLink?courseName=${formData.course}&whatsAppLink=${formData.whatsAppLink}`
+
+      ).then((response)=>{
+        if(response.data==="WhatsAppLink Update successfully"){
+        setSuccessMessage(response.data);
+        }else{
+          setErrorMessage(response.data);
         }
-      );
-      if (response.data === "true") {
-        setSuccessMessage("WhatsApp link updated successfully");
-      } else {
-        setError("Failed to update WhatsApp link");
-      }
+
+      })
+
     } catch (error) {
       console.error("Error updating data:", error);
     } finally {
@@ -107,7 +106,7 @@ const WhatsAppLinkSender = ({ formData: initialFormData }) => {
       } else {
         const response = await axios.get(
           Urlconstant.url +
-            `api/sendWhatsAppLink?courseName=${formData.course}`,
+          `api/sendWhatsAppLink?courseName=${formData.course}`,
           {
             headers: {
               spreadsheetId: Urlconstant.spreadsheetId,
@@ -135,7 +134,15 @@ const WhatsAppLinkSender = ({ formData: initialFormData }) => {
       whatsAppLink: value,
     }));
   };
-
+  const styles = {
+    container: {
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      minHeight: "70vh", // Use minHeight instead of height
+    },
+  }
   //   const isDisabled = !formData.course;
 
   return (
@@ -152,10 +159,13 @@ const WhatsAppLinkSender = ({ formData: initialFormData }) => {
         <Header />
         <Typography
           variant="h4"
-          style={{ fontWeight: "bold", marginBottom: "8px" }}
+          styles={{ fontWeight: "bold", marginBottom: "8px" }}
         >
           WhatsApp Link{" "}
         </Typography>{" "}
+        {successMessage && (
+            <div style={{ color: "green", marginTop: "1px",  fontWeight:"-moz-initial"}}> {successMessage} </div>
+          )}
         <InputLabel id="demo-simple-select-label"> Course </InputLabel>{" "}
         <Form>
           <Select
@@ -194,7 +204,7 @@ const WhatsAppLinkSender = ({ formData: initialFormData }) => {
             submit();
             setIsUpdateMode(false);
           }}
-          disabled={!formData.course || isSending}
+          disabled={!formData.course || isSending || isWhatsAppLinkNull}
           startIcon={<Send />}
         >
           {" "}
@@ -207,9 +217,14 @@ const WhatsAppLinkSender = ({ formData: initialFormData }) => {
         <Button
           variant="contained"
           onClick={handleUpdate}
-          disabled={!formData.course || !formData.whatsAppLink || isSending}
+          disabled={
+            !formData.course ||
+            !formData.whatsAppLink ||
+            isSending ||
+            !isWhatsAppLinkNull
+          }
         >
-          Update{" "}
+          Update Link{" "}
         </Button>{" "}
       </Container>
     </div>

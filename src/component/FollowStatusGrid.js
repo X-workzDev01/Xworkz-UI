@@ -12,23 +12,23 @@ const columns = [
   { field: 'comments', headerName: 'Comments', width: 200 },
 ];
 
-const FollowStatusGrid = ({rows}) => {
-    
+const FollowStatusGrid = ({ rows }) => {
+
   return (
     <div
       style={{
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        height: 'calc(100vh - 100px)', 
+        height: 'calc(100vh - 100px)',
         margin: '50px',
-      
+
       }}
     >
-    <div style={{ height: 400, width: '75%'}}>
-      <DataGrid rows={rows} columns={columns} pageSize={40} />
-      
-    </div>
+      <div style={{ height: 400, width: '75%' }}>
+        <DataGrid rows={rows} columns={columns} pageSize={40} />
+
+      </div>
     </div>
   );
 };
