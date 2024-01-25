@@ -573,3 +573,4 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
   );
 };
 export default EditCompanyDetails;
+

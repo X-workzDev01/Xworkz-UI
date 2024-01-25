@@ -14,6 +14,7 @@ import { Urlconstant } from "../constant/Urlconstant";
 import {
     validateContactNumber,
     validateEmail,
+
 } from "../constant/ValidationConstant";
 
 export default function ClientDetails() {

@@ -226,8 +226,9 @@ const Attandance = () => {
             style={{ color: params.row.ycolor }}
             variant="outlined"
           >
-            Yes   
-          </Button>   
+            Yes{" "}
+          </Button>
+
           <Button
             onClick={() => handleButtonClickNo(params.row)}
             disabled={
@@ -255,7 +256,8 @@ const Attandance = () => {
         style={{ marginTop: "50px", display: "flex", alignItems: "center" }}
       >
         <FormControl>
-          <InputLabel id="demo-simple-select-label"> Select Batch </InputLabel>   
+          <InputLabel id="demo-simple-select-label"> Select Batch </InputLabel>{" "}
+
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
@@ -271,8 +273,7 @@ const Attandance = () => {
               width: "200px",
               fontSize: "12px",
             }}
-          >
-               
+          >        
             {value.map((item, index) => (
               <MenuItem value={item} key={index}>
                    

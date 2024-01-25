@@ -12,6 +12,7 @@ const columns = [
 ];
 
 const FollowStatusGrid = ({ rows }) => {
+
   return (
     <div
       style={{
