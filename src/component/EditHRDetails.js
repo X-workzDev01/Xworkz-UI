@@ -21,6 +21,7 @@ import {
   validateContactNumber,
   validateEmail,
 } from "../constant/ValidationConstant";
+import { ClientDropDown } from "../constant/ClientDropDown";
 
 const EditHRDetails = ({ open, handleClose, rowData }) => {
   const [editedData, setEditedData] = React.useState([]);
@@ -36,15 +37,7 @@ const EditHRDetails = ({ open, handleClose, rowData }) => {
   const [verifyEmail, setVerifyEmail] = React.useState("");
   const [validateName, setValidateName] = React.useState("");
   const [validateDesignation, setValidateDesignation] = React.useState("");
-  const hrDisgnation = [
-    "HR",
-    "HR Manager",
-    "HR Assistant",
-    "Recruiter",
-    "HR Analyst",
-    "Talent Acquisition",
-    "Other",
-  ];
+ 
 
   React.useEffect(() => {
     setEditedData(rowData);
@@ -248,7 +241,7 @@ const EditHRDetails = ({ open, handleClose, rowData }) => {
         <Grid container spacing={3}>
           <Grid item xs={12} sm={4}>
             <TextField
-              label="Hr name"
+              label="Hr Spoc Name"
               name="hrScopName"
               style={fieldStyle}
               defaultValue={rowData.hrScopName}
@@ -304,7 +297,7 @@ const EditHRDetails = ({ open, handleClose, rowData }) => {
               fullWidth
               margin="normal"
             >
-              {hrDisgnation.map((option) => (
+              {ClientDropDown.hrDisgnation.map((option) => (
                 <MenuItem key={option} value={option}>
                   {option}
                 </MenuItem>

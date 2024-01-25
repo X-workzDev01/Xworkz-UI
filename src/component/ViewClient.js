@@ -206,7 +206,7 @@ export default function ViewClient() {
     <div style={gridStyle}>
       <div
         className="search"
-        style={{ display: "flex", alignItems: "center", marginTop: "100px" }}
+        style={{ display: "flex", alignItems: "center", marginTop: "100px", paddingLeft: "20px" }}
       >
         <Autocomplete
           freeSolo
@@ -243,14 +243,16 @@ export default function ViewClient() {
             </li>
           )}
         />
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          onClick={handleSearchInput}
-        >
-          Search
-        </Button>
+        <div style={{ paddingLeft: "10px" }}>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            onClick={handleSearchInput}
+          >
+            <span style={{ paddingLeft: '5px' }}>Search</span>
+          </Button>
+        </div>
       </div>
       <h1></h1>
       <div style={gridStyle}>

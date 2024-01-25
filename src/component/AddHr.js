@@ -21,17 +21,10 @@ import {
     validateContactNumber,
     validateEmail,
 } from "../constant/ValidationConstant";
+import { ClientDropDown } from "../constant/ClientDropDown";
 
 const AddHr = ({ open, handleClose, rowData }) => {
-  const hrDisgnation = [
-    "HR",
-    "HR Manager",
-    "HR Assistant",
-    "Recruiter",
-    "HR Analyst",
-    "Talent Acquisition",
-    "Other",
-  ];
+  
   const [loading, setLoading] = React.useState(false);
   const [isConfirming, setIsConfirming] = React.useState(false);
   const [responseMessage, setResponseMessage] = React.useState("");
@@ -261,7 +254,7 @@ const AddHr = ({ open, handleClose, rowData }) => {
         <Grid container spacing={3}>
           <Grid item xs={12} sm={4}>
             <TextField
-              label="Hr Scop Name"
+              label="Hr Spoc Name"
               name="hrScopName"
               onChange={handleInputChange}
               style={fieldStyle}
@@ -317,7 +310,7 @@ const AddHr = ({ open, handleClose, rowData }) => {
               fullWidth
               margin="normal"
             >
-              {hrDisgnation.map((option) => (
+              {ClientDropDown.hrDisgnation.map((option) => (
                 <MenuItem key={option} value={option}>
                   {option}
                 </MenuItem>

@@ -1,33 +1,26 @@
 import {
-    Alert,
-    Button,
-    CircularProgress,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    Grid,
-    IconButton,
-    MenuItem,
-    Snackbar,
-    TextField,
+  Alert,
+  Button,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Grid,
+  IconButton,
+  MenuItem,
+  Snackbar,
+  TextField,
 } from "@mui/material";
 import { GridCloseIcon } from "@mui/x-data-grid";
 import axios from "axios";
 import React, { useEffect } from "react";
 import { fieldStyle, style } from "../constant/FormStyle";
 import { Urlconstant } from "../constant/Urlconstant";
+import { ClientDropDown } from "../constant/ClientDropDown";
 
 const CompanyFollowUp = ({ open, handleClose, rowData }) => {
-  const callingStatus = [
-    "RNR",
-    "Busy",
-    "Not Reachable",
-    "Call Drop",
-    "Call you later",
-  ]
-    .slice()
-    .sort();
+
   const [responseMessage, setResponseMessage] = React.useState("");
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [isConfirming, setIsConfirming] = React.useState(false);
@@ -35,9 +28,8 @@ const CompanyFollowUp = ({ open, handleClose, rowData }) => {
   const [formData, setFormData] = React.useState("");
   const attemtedUser = sessionStorage.getItem("userId");
   const [hrNameList, setHrNameList] = React.useState([]);
-  const [hrScop, setHrScop] = React.useState();
   const [hrDetails, setHrDetails] = React.useState("");
-
+ 
   const getdetailsbyCompanyId = () => {
     const companyId = rowData.id;
     axios
@@ -58,12 +50,8 @@ const CompanyFollowUp = ({ open, handleClose, rowData }) => {
     const { name, value } = event.target;
 
     if (name === "hrScopName") {
-      setHrScop(value);
-      let selectedHrItem;
-
       hrNameList.forEach((hrItem) => {
         if (hrItem.hrScopName === value) {
-          selectedHrItem = hrItem;
           setHrDetails(hrItem);
         }
       });
@@ -119,7 +107,7 @@ const CompanyFollowUp = ({ open, handleClose, rowData }) => {
       }
     }
   };
-  const isDisabled = !formData.attemptStatus;
+  const isDisabled = !formData.attemptStatus||!hrDetails;
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle>
@@ -155,6 +143,7 @@ const CompanyFollowUp = ({ open, handleClose, rowData }) => {
               ))}
             </TextField>
           </Grid>
+      
           <Grid item xs={12} sm={4}>
             <TextField
               label="attemptBy"
@@ -179,7 +168,7 @@ const CompanyFollowUp = ({ open, handleClose, rowData }) => {
               select
               margin="normal"
             >
-              {callingStatus.map((item) => (
+              {ClientDropDown.callingStatus.map((item) => (
                 <MenuItem key={item} value={item}>
                   {item}
                 </MenuItem>

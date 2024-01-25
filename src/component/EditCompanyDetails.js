@@ -21,6 +21,7 @@ import {
   validateContactNumber,
   validateEmail,
 } from "../constant/ValidationConstant";
+import { ClientDropDown } from "../constant/ClientDropDown";
 
 const EditCompanyDetails = ({ open, handleClose, rowData }) => {
   const [isConfirming, setIsConfirming] = React.useState(false);
@@ -40,35 +41,6 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
   const [emailCheck, setEmailCheck] = React.useState("");
   const [phoneNumberCheck, setPhoneNumberCheck] = React.useState("");
   const [checkEmailExist, setCheckEmailExist] = React.useState("");
-
-  const statusList = ["Active", "InActive"].slice().sort();
-  const clientType = [
-    "IT Consultency",
-    "Service Based",
-    "Product Based",
-    "Others",
-  ];
-  const sourceOfConnection = [
-    "Linkdin",
-    "Social Media",
-    "Job Portal",
-    "Old Student Reference",
-    "Reference",
-    "Other Reference",
-  ];
-  const sourceOfLocation = [
-    "Bangalore",
-    "Mumbai",
-    "Chandigarh",
-    "Hyderabad",
-    "Kochi",
-    "Pune",
-    "Thiruvanthapuram",
-    "Chennai",
-    "Kolakata",
-    "Ahmedabad",
-    "Delhi",
-  ];
 
   React.useEffect(() => {
     setEditedData(rowData);
@@ -441,7 +413,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
               margin="normal"
               select
             >
-              {sourceOfLocation.map((option) => (
+              {ClientDropDown.sourceOfLocation.map((option) => (
                 <MenuItem key={option} value={option}>
                   {option}
                 </MenuItem>
@@ -473,7 +445,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
               margin="normal"
               select
             >
-              {sourceOfConnection.map((option) => (
+              {ClientDropDown.sourceOfConnection.map((option) => (
                 <MenuItem key={option} value={option}>
                   {option}
                 </MenuItem>
@@ -490,7 +462,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
               margin="normal"
               select
             >
-              {clientType.map((option) => (
+              {ClientDropDown.clientType.map((option) => (
                 <MenuItem key={option} value={option}>
                   {option}
                 </MenuItem>
@@ -509,7 +481,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
               margin="normal"
               select
             >
-              {statusList.map((option) => (
+              {ClientDropDown.statusList.map((option) => (
                 <MenuItem key={option} value={option}>
                   {option}
                 </MenuItem>

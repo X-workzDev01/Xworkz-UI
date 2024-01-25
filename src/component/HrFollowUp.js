@@ -17,17 +17,10 @@ import axios from "axios";
 import React, { useState } from "react";
 import { Urlconstant } from "../constant/Urlconstant";
 import { fieldStyle, style } from "../constant/FormStyle";
+import { ClientDropDown } from "../constant/ClientDropDown";
 
 const HrFollowUp = ({ open, handleClose, rowData }) => {
-  const callingStatus = [
-    "RNR",
-    "Busy",
-    "Not Reachable",
-    "Call Drop",
-    "Call you later",
-  ]
-    .slice()
-    .sort();
+
   const [responseMessage, setResponseMessage] = React.useState("");
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [isConfirming, setIsConfirming] = React.useState(false);
@@ -128,7 +121,7 @@ const HrFollowUp = ({ open, handleClose, rowData }) => {
               select
               margin="normal"
             >
-              {callingStatus.map((item) => (
+              {ClientDropDown.callingStatus.map((item) => (
                 <MenuItem key={item} value={item}>
                   {item}
                 </MenuItem>

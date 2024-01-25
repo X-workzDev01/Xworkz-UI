@@ -72,7 +72,7 @@ const HRDetails = ({ open, handleClose, id }) => {
   const columns = [
     {
       field: "hrScopName",
-      headerName: "HR Scope Name",
+      headerName: "HR Spoc Name",
       flex: 1,
       valueGetter: (params) => params.row.hrScopName,
     },
