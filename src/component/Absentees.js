@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
+import Autocomplete from "@mui/material/Autocomplete";
+import Button from "@mui/material/Button";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-import Autocomplete from "@mui/material/Autocomplete";
-import { Urlconstant } from "../constant/Urlconstant";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+import TextField from "@mui/material/TextField";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { Urlconstant } from "../constant/Urlconstant";
 
 
 const batches = [
@@ -84,6 +84,7 @@ const Absentees = () => {
         Urlconstant.url + `api/attendance/trainee?batch=${selectedBatchValue}`
       )
       .then((response) => {
+
         const fetchedStudents = response.data;
         setSuccessMessage("");
         setStudents(fetchedStudents);
@@ -163,8 +164,8 @@ const Absentees = () => {
         )
         .then((response) => {
           console.log("API Response:", response.data);
-
           setSuccessMessage("Attendance submitted successfully!");
+
           // Reset state after successful submission
           setSelectedStudents([]);
           setReasons({});
@@ -182,6 +183,7 @@ const Absentees = () => {
       flexDirection: "column",
       alignItems: "center",
       marginTop: "100px",
+
       justifyContent: "center",
       minHeight: "70vh", // Use minHeight instead of height
     },
@@ -227,6 +229,7 @@ const Absentees = () => {
       display: "flex",
       flexDirection: "column",
     },
+
   };
 
   return (

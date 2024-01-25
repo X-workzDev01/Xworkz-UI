@@ -22,7 +22,6 @@ import { Modal } from "react-bootstrap";
 import { FeesHistory } from "./FeesHistory";
 import { MdWorkHistory } from "react-icons/md";
 
-
 function stringToColor(string) {
   let hash = 0;
   let i;
@@ -87,7 +86,6 @@ const Profile = (courseName, searchValue) => {
   const handleAttendanceModalOpen = (rowData) => {
     setAttendanceModalOpen(true);
   };
-
 
   React.useEffect(() => {
     fetchData(
@@ -177,7 +175,6 @@ const Profile = (courseName, searchValue) => {
     setFollowUpStatusModalOpen(false);
   };
 
-
   const handleAttendence = (row) => {
     console.log(row);
     setShowAttendence(true);
@@ -190,7 +187,6 @@ const Profile = (courseName, searchValue) => {
     getFeesDetiles();
     setOpenFeesHistory(true);
   };
-
 
   return (
     <div>
@@ -343,11 +339,8 @@ const Profile = (courseName, searchValue) => {
         open={isAttendanceModalOpen}
         handleClose={() => setAttendanceModalOpen(false)}
         id={profileData.id}
-        batch = {profileData.courseInfo.course}
-        
-        
+        batch={profileData.courseInfo.course}
       />
-
 
       <FeesHistory
         isOpen={openFeesHistory}
@@ -370,7 +363,6 @@ const Profile = (courseName, searchValue) => {
       ) : (
         ""
       )}
-
 
       {statusData ? <FollowStatusGrid rows={statusData} /> : null}
     </div>

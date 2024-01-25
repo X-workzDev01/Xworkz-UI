@@ -1,6 +1,3 @@
-import { DataGrid } from "@mui/x-data-grid";
-import React, { useEffect, useState } from "react";
-import "./Attandance.css";
 import {
   Button,
   FormControl,
@@ -9,9 +6,11 @@ import {
   Select,
   TextField,
 } from "@mui/material";
+import { DataGrid } from "@mui/x-data-grid";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { Urlconstant } from "../constant/Urlconstant";
-import { json } from "react-router-dom";
+import "./Attandance.css";
 
 const Attandance = () => {
   const [clickedButtonIds, setClickedButtonIds] = useState(new Set());
@@ -229,6 +228,7 @@ const Attandance = () => {
           >
             Yes{" "}
           </Button>
+
           <Button
             onClick={() => handleButtonClickNo(params.row)}
             disabled={
@@ -237,8 +237,8 @@ const Attandance = () => {
             style={{ color: params.row.ncolor }}
             variant="outlined"
           >
-            No{" "}
-          </Button>
+            No   
+          </Button>   
         </div>
       ),
     },
@@ -257,6 +257,7 @@ const Attandance = () => {
       >
         <FormControl>
           <InputLabel id="demo-simple-select-label"> Select Batch </InputLabel>{" "}
+
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
@@ -272,27 +273,26 @@ const Attandance = () => {
               width: "200px",
               fontSize: "12px",
             }}
-          >
-            {" "}
+          >        
             {value.map((item, index) => (
               <MenuItem value={item} key={index}>
-                {" "}
-                {item}{" "}
+                   
+                {item}   
               </MenuItem>
-            ))}{" "}
-          </Select>{" "}
-        </FormControl>{" "}
+            ))}   
+          </Select>   
+        </FormControl>   
         <TextField
           type="date"
           label="Select Date"
           InputLabelProps={{
             shrink: true,
           }}
-        />{" "}
+        />   
         <Button variant="contained" color="primary">
-          Search{" "}
-        </Button>{" "}
-      </div>{" "}
+          Search   
+        </Button>   
+      </div>   
       <DataGrid
         columns={columns}
         rows={gridData.rows}

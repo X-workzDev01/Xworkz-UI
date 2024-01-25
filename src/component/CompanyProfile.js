@@ -1,14 +1,19 @@
-import axios from 'axios';
-import React from 'react'
-import { useParams } from 'react-router-dom';
-import { Urlconstant } from '../constant/Urlconstant';
-import { Avatar, Button } from '@mui/material';
-import { AddCircleOutline, EmailRounded, ModeEditOutline, PhoneAndroidOutlined } from '@mui/icons-material';
-import AddHr from './AddHr';
-import HRDetails from './HrDetails';
-import EditCompanyDetails from './EditCompanyDetails';
-import HRFollowUpStatusGrid from './HRFollowUpStatusGrid';
-import CompanyFollowUp from './CompanyFollowUp';
+import axios from "axios";
+import React from "react";
+import { useParams } from "react-router-dom";
+import { Urlconstant } from "../constant/Urlconstant";
+import { Avatar, Button } from "@mui/material";
+import {
+  AddCircleOutline,
+  EmailRounded,
+  ModeEditOutline,
+  PhoneAndroidOutlined,
+} from "@mui/icons-material";
+import AddHr from "./AddHr";
+import HRDetails from "./HrDetails";
+import EditCompanyDetails from "./EditCompanyDetails";
+import HRFollowUpStatusGrid from "./HRFollowUpStatusGrid";
+import CompanyFollowUp from "./CompanyFollowUp";
 
 function stringToColor(string) {
   let hash = 0;
@@ -49,47 +54,51 @@ const CompanyProfile = () => {
   const [companyName, setCompanyName] = React.useState("");
   const [isAddHrModalOpen, setAddHrModalOpen] = React.useState(false);
   const [isHrFollowupModalOpen, setHrFollowupModalOpen] = React.useState(false);
-  const [isGetHRDetailsModalOpen, setGetHRDetailsModalOpen] = React.useState(false);
-  const [isEditCompanyDetailsModalOpen, setEditCompanyDetailsModalOpen] = React.useState(false);
+  const [isGetHRDetailsModalOpen, setGetHRDetailsModalOpen] =
+    React.useState(false);
+  const [isEditCompanyDetailsModalOpen, setEditCompanyDetailsModalOpen] =
+    React.useState(false);
   const [isHrFollowUpModalOpen, setHrFollowUpModalOpen] = React.useState("");
-  const [HrFollowUpStatus, setHrFollowUpStatus] = React.useState("")
+  const [HrFollowUpStatus, setHrFollowUpStatus] = React.useState("");
 
   const fetchData = (id) => {
-    axios.get(Urlconstant.url + `api/getdetailsbyid?companyId=${id}`)
-        .then(response => {
-            setCompanyDetails(response.data);
-            setCompanyName(response.data.companyName);
-        })
-        .catch(error => {
-            if (error.response && error.response.status === 500) {
-              setCompanyDetails("");
-              setCompanyName("");
-            }
-        });
-};
+    axios
+      .get(Urlconstant.url + `api/getdetailsbyid?companyId=${id}`)
+      .then((response) => {
+        setCompanyDetails(response.data);
+        setCompanyName(response.data.companyName);
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 500) {
+          setCompanyDetails("");
+          setCompanyName("");
+        }
+      });
+  };
 
   React.useEffect(() => {
     fetchData(id);
     fetchHRFollowUp(id);
-  }, [id,isEditCompanyDetailsModalOpen,isHrFollowUpModalOpen]);
+  }, [id, isEditCompanyDetailsModalOpen, isHrFollowUpModalOpen]);
 
-  React.useEffect(() => {
-  }, [id, isAddHrModalOpen, isHrFollowupModalOpen]);
-  
+  React.useEffect(() => {}, [id, isAddHrModalOpen, isHrFollowupModalOpen]);
+
   const fetchHRFollowUp = (id) => {
-    console.log(id)
-    const companyId=id;
-    axios.get(Urlconstant.url + `api/getFollowUpDetailsById?companyId=${companyId}`)
-        .then(response => {
-            setHrFollowUpStatus(response.data);
-        })
-        .catch(error => {
-            if (error.response && error.response.status === 500) {
-              setHrFollowUpStatus("");
-            }
-        });
-};
-
+    console.log(id);
+    const companyId = id;
+    axios
+      .get(
+        Urlconstant.url + `api/getFollowUpDetailsById?companyId=${companyId}`
+      )
+      .then((response) => {
+        setHrFollowUpStatus(response.data);
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 500) {
+          setHrFollowUpStatus("");
+        }
+      });
+  };
 
   const handleAddClientHr = () => {
     setAddHrModalOpen(true);
@@ -107,22 +116,21 @@ const CompanyProfile = () => {
     setGetHRDetailsModalOpen(false);
   };
 
-
   const handleEditCompanyDetails = () => {
     setEditCompanyDetailsModalOpen(true);
-  }
+  };
 
   const handleCompanyDetailsClick = () => {
     setEditCompanyDetailsModalOpen(false);
-  }
+  };
 
   const handleHRFollowUp = () => {
     setHrFollowUpModalOpen(true);
-  }
+  };
 
   const handleHRFollowUpClick = () => {
     setHrFollowUpModalOpen(false);
-  }
+  };
   return (
     <div>
       <h2>CompanyProfile</h2>
@@ -159,7 +167,7 @@ const CompanyProfile = () => {
               onClick={() => {
                 handleAddClientHr(companyDetails);
               }}
-              sx={{ marginRight: '10px' }}
+              sx={{ marginRight: "10px" }}
             >
               Add HR
             </Button>
@@ -169,7 +177,7 @@ const CompanyProfile = () => {
               onClick={() => {
                 handleEditCompanyDetails(companyDetails);
               }}
-              sx={{ marginRight: '10px' }}
+              sx={{ marginRight: "10px" }}
             >
               Edit Profile
             </Button>
@@ -179,7 +187,7 @@ const CompanyProfile = () => {
               onClick={() => {
                 handlegetHRDetails(companyDetails);
               }}
-              sx={{ marginRight: '10px' }}
+              sx={{ marginRight: "10px" }}
             >
               Get HR Details
             </Button>
@@ -187,7 +195,7 @@ const CompanyProfile = () => {
               variant="outlined"
               startIcon={<AddCircleOutline />}
               onClick={() => {
-                handleHRFollowUp()
+                handleHRFollowUp();
               }}
             >
               Add Follow up
@@ -218,15 +226,12 @@ const CompanyProfile = () => {
             rowData={companyDetails}
             handleSaveClick={handleHRFollowUpClick}
           />
-
         </div>
-
       </div>
-      {HrFollowUpStatus ? <HRFollowUpStatusGrid rows={HrFollowUpStatus} /> : null}
+      {HrFollowUpStatus ? (
+        <HRFollowUpStatusGrid rows={HrFollowUpStatus} />
+      ) : null}
     </div>
-
-
-  )
-}
+  );
+};
 export default CompanyProfile;
-

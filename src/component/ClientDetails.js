@@ -1,19 +1,20 @@
 import {
-  Alert,
-  Button,
-  Grid,
-  MenuItem,
-  Snackbar,
-  TextField,
-  Typography,
+    Alert,
+    Button,
+    Grid,
+    MenuItem,
+    Snackbar,
+    TextField,
+    Typography,
 } from "@mui/material";
 import axios from "axios";
 import React from "react";
 import { Form } from "react-bootstrap";
 import { Urlconstant } from "../constant/Urlconstant";
 import {
-  validateContactNumber,
-  validateEmail,
+    validateContactNumber,
+    validateEmail,
+
 } from "../constant/ValidationConstant";
 
 export default function ClientDetails() {
