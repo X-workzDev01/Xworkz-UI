@@ -15,36 +15,10 @@ import {
     validateContactNumber,
     validateEmail,
 } from "../constant/ValidationConstant";
+import { ClientDropDown } from "../constant/ClientDropDown";
 
 export default function ClientDetails() {
-  const statusList = ["Active", "InActive"].slice().sort();
-  const clientType = [
-    "IT Consultency",
-    "Service Based",
-    "Product Based",
-    "Others",
-  ];
-  const sourceOfConnection = [
-    "Linkdin",
-    "Social Media",
-    "Job Portal",
-    "Old Student Reference",
-    "Reference",
-    "Other Reference",
-  ];
-  const sourceOfLocation = [
-    "Bangalore",
-    "Mumbai",
-    "Chandigarh",
-    "Hyderabad",
-    "Kochi",
-    "Pune",
-    "Thiruvanthapuram",
-    "Chennai",
-    "Kolakata",
-    "Ahmedabad",
-    "Delhi",
-  ];
+ 
   const email = sessionStorage.getItem("userId");
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [open, setOpen] = React.useState(false);
@@ -310,7 +284,7 @@ export default function ClientDetails() {
               margin="normal"
               select
             >
-              {sourceOfLocation.map((option) => (
+              {ClientDropDown.sourceOfLocation.map((option) => (
                 <MenuItem key={option} value={option}>
                   {option}
                 </MenuItem>
@@ -337,7 +311,7 @@ export default function ClientDetails() {
               margin="normal"
               select
             >
-              {sourceOfConnection.map((option) => (
+              {ClientDropDown.sourceOfConnection.map((option) => (
                 <MenuItem key={option} value={option}>
                   {option}
                 </MenuItem>
@@ -354,7 +328,7 @@ export default function ClientDetails() {
               margin="normal"
               select
             >
-              {clientType.map((option) => (
+              {ClientDropDown.clientType.map((option) => (
                 <MenuItem key={option} value={option}>
                   {option}
                 </MenuItem>
@@ -372,7 +346,7 @@ export default function ClientDetails() {
               margin="normal"
               select
             >
-              {statusList.map((option) => (
+              {ClientDropDown.statusList.map((option) => (
                 <MenuItem key={option} value={option}>
                   {option}
                 </MenuItem>
