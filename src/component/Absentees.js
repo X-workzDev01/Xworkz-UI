@@ -27,6 +27,7 @@ const Absentees = () => {
   const [students, setStudents] = useState([]);
   const [isSubmitDisabled, setSubmitDisabled] = useState(false);
   const [successMessage, setSuccessMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
   const [isTraineePresent, setIsTraineePresent] = useState(true);
   const [totalClass, setTotalClass] = useState(0);
 
@@ -87,6 +88,7 @@ const Absentees = () => {
 
         const fetchedStudents = response.data;
         setSuccessMessage("");
+        setErrorMessage("");
         setStudents(fetchedStudents);
       })
       .catch((error) => {
@@ -122,14 +124,22 @@ const Absentees = () => {
   };
 
   const handleUpdateBatchAttendance = () => {
+    setIsTraineePresent(true);
     axios
       .post(
         Urlconstant.url + `api/attendance/batchAttendance?courseName=${selectedBatch}&batchAttendanceStatus=${isTraineePresent}`)
       .then((response) => {
         console.log("API Response:", response.data);
-
-        setSuccessMessage(response.data);
+        if(response.data==="Batch Attendance Update successfully"){
+          setSuccessMessage(response.data);
         getTotalClass();
+        }else{
+          setErrorMessage(response.data);
+          getTotalClass();
+        }
+
+       
+       
       })
       .catch((error) => {
         console.error("API Error:", error);
@@ -201,6 +211,10 @@ const Absentees = () => {
       color: "green",
       marginTop: "10px",
     },
+    errorMessage: {
+      color: "red",
+      marginTop: "10px",
+    },
     toggleContainer: {
       display: "flex",
       justifyContent: "center",
@@ -209,7 +223,7 @@ const Absentees = () => {
     },
     totalClassContainer: {
       marginLeft: "270px",
-      marginTop:'-1.7rem',
+      marginTop: '-1.7rem',
     },
     totalClassCircle: {
       display: 'inline-block',
@@ -231,15 +245,19 @@ const Absentees = () => {
     },
 
   };
+  const isDisabled = successMessage;
 
   return (
     <div style={styles.container}>
       <div style={styles.form}>
         <div style={styles.formFields}>
-          <h2> Absentees Form </h2>{" "}
+          <h1> Absentees Form </h1>{" "}
           {successMessage && (
             <div style={styles.successMessage}> {successMessage} </div>
           )}{" "}
+          {errorMessage && (
+            <div style={styles.errorMessage}> {errorMessage} </div>
+          )}
           <FormControl style={{ minWidth: 200, marginBottom: 16 }}>
             <InputLabel> Select Batch </InputLabel>{" "}
             <Select
@@ -271,12 +289,10 @@ const Absentees = () => {
               <div style={styles.toggleContainer}>
                 <h3> Trainee Attendance: </h3>{" "}
                 <Button
+                  disabled={isDisabled}
                   variant={isTraineePresent ? "contained" : "outlined"}
                   color="primary"
-                  onClick={() => {
-                    setIsTraineePresent(true);
-                    handleUpdateBatchAttendance();
-                  }}
+                  onClick={handleUpdateBatchAttendance}
                 >
                   Yes{" "}
                 </Button>{" "}
@@ -333,7 +349,7 @@ const Absentees = () => {
           </Button>{" "}
         </div>{" "}
       </div>
-    </div>
+    </div >
   );
 };
 
