@@ -44,7 +44,7 @@ const WhatsAppLinkSender = ({ formData: initialFormData }) => {
       );
       const data = response.data;
       setFormDataWithDefault(data);
-      setIsWhatsAppLinkNull(data.whatsAppLink === null);
+      setIsWhatsAppLinkNull(data.whatsAppLink === 'NA');
       setSuccessMessage("");
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -189,7 +189,7 @@ const WhatsAppLinkSender = ({ formData: initialFormData }) => {
           <InputLabel id="demo-simple-select-label"> WhatsApp Link </InputLabel>{" "}
           <TextField
             name="whatsappLink"
-            value={formData.whatsAppLink}
+            value={formData.whatsAppLink  && formData.whatsAppLink==='NA'? "": formData.whatsAppLink}
             required
             fullWidth
             margin="normal"
