@@ -66,6 +66,7 @@ const Absentees = () => {
 
   const handleStudentChange = (event, value) => {
     setSuccessMessage("");
+    setErrorMessage("");
     if (value && !selectedStudents.some((student) => student.id === value.id)) {
       setSelectedStudents([...selectedStudents, value]);
       setReasons({ ...reasons, [value.id]: "" });
