@@ -46,6 +46,7 @@ const WhatsAppLinkSender = ({ formData: initialFormData }) => {
       setFormDataWithDefault(data);
       setIsWhatsAppLinkNull(data.whatsAppLink === 'NA');
       setSuccessMessage("");
+      setErrorMessage("");
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -82,10 +83,10 @@ const WhatsAppLinkSender = ({ formData: initialFormData }) => {
       const response = await axios.post(
         Urlconstant.url + `api/updateWhatsAppLink?courseName=${formData.course}&whatsAppLink=${formData.whatsAppLink}`
 
-      ).then((response)=>{
-        if(response.data==="WhatsAppLink Update successfully"){
-        setSuccessMessage(response.data);
-        }else{
+      ).then((response) => {
+        if (response.data === "WhatsAppLink Update successfully") {
+          setSuccessMessage(response.data);
+        } else {
           setErrorMessage(response.data);
         }
 
@@ -115,9 +116,9 @@ const WhatsAppLinkSender = ({ formData: initialFormData }) => {
         );
         if (response.data === "true") {
           console.log("Data from submit URL:", response.data);
-          setSuccessMessage("WhatsApp link sent successfully");
+          setSuccessMessage("WhatsApp link sent To Mail successfully");
         } else {
-          setError("WhatsApp Link already send");
+          setErrorMessage("WhatsApp Link already send Trainee");
         }
       }
     } catch (error) {
@@ -164,8 +165,11 @@ const WhatsAppLinkSender = ({ formData: initialFormData }) => {
           WhatsApp Link{" "}
         </Typography>{" "}
         {successMessage && (
-            <div style={{ color: "green", marginTop: "1px",  fontWeight:"-moz-initial"}}> {successMessage} </div>
-          )}
+          <div style={{ color: "green", marginTop: "1px", fontWeight: "-moz-initial" }}> {successMessage} </div>
+        )}
+        {errorMessage && (
+          <div style={{ color: "red", marginTop: "1px", fontWeight: "-moz-initial" }}> {errorMessage} </div>
+        )}
         <InputLabel id="demo-simple-select-label"> Course </InputLabel>{" "}
         <Form>
           <Select
@@ -189,7 +193,7 @@ const WhatsAppLinkSender = ({ formData: initialFormData }) => {
           <InputLabel id="demo-simple-select-label"> WhatsApp Link </InputLabel>{" "}
           <TextField
             name="whatsappLink"
-            value={formData.whatsAppLink  && formData.whatsAppLink==='NA'? "": formData.whatsAppLink}
+            value={formData.whatsAppLink && formData.whatsAppLink === 'NA' ? "" : formData.whatsAppLink}
             required
             fullWidth
             margin="normal"
