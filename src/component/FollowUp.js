@@ -159,11 +159,7 @@ export default function FollowUp() {
         },
       };
     }
-    if (name === "date") {
-      apiUrl =
-        Urlconstant.url +
-        `api/getFollowupstatusByDate?startIndex=${startingIndex}&endIndex=25&date=${date}`;
-    }
+    
     return new Promise((resolve, reject) => {
       fetch(apiUrl, requestOptions)
         .then((response) => response.json())
