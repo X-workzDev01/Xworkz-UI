@@ -185,9 +185,9 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
     }
   };
   const handleErrr = (e) => {
-    if (e.target.value.length < 30) {
+    if (e.target.value.length < 20) {
       setLoading(false);
-      setResponseMessage("Comment must be at least 30 characters.");
+      setResponseMessage("Comment must be at least 20 characters.");
       setIdDisabled(true);
     } else {
       setResponseMessage("");
@@ -330,7 +330,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
                 }}
               >
                 {" "}
-                {count}/30
+                {count}/20
               </p>
             ) : (
               ""

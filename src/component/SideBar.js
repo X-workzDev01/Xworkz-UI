@@ -47,6 +47,7 @@ const Sidebar = ({ children }) => {
       name: "Enquiry",
       icon: <FaCommentAlt />,
     },
+
     {
       path: "absentees",
       name: "Add Absentees",
