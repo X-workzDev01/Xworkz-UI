@@ -5,77 +5,74 @@
     background-color:white;
     transform: translate(38rem,6rem);
     
-}
- .close{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 1.3rem;
-    padding-top: 0.6rem;
-    margin-bottom: 0.2rem;
-}
-.field{
-    padding-left: 2rem;
-    padding-right: 2rem;
-    height: auto;
-    width: auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    justify-self: center;
-    margin-bottom: 2rem;
 
 }
-.success{
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 0.5rem;
-    margin-right: 1rem;
-
+.close {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1.3rem;
+  padding-top: 0.6rem;
+  margin-bottom: 0.2rem;
+}
+.field {
+  padding-left: 2rem;
+  padding-right: 2rem;
+  height: auto;
+  width: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  justify-self: center;
+  margin-bottom: 2rem;
+}
+.success {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+  margin-right: 1rem;
 }
 
-.popup{
-    height: 10rem;
-    width: 25rem;
-    border-radius: 1.2rem;
-    background-color: white;
-    transform: translate(41rem,14rem);
+.popup {
+  height: 10rem;
+  width: 25rem;
+  border-radius: 1.2rem;
+  background-color: white;
+  transform: translate(41rem, 14rem);
 }
-.confirm{
-    display: flex;
-    justify-content: flex-end;
-    margin-top:-2.5rem;
-    margin-right: 0.4rem;
+.confirm {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -2.5rem;
+  margin-right: 0.4rem;
 }
-.error{
-    display: flex;
-    transform: translate(35.1rem,4.3rem);
-    color: red;
-    size: 0rem;
-    
+.error {
+  display: flex;
+  transform: translate(35.1rem, 4.3rem);
+  color: red;
+  size: 0rem;
 }
 
-.error{
-    font-size: 0.7rem;
+.error {
+  font-size: 0.7rem;
 }
-.text{
-    margin-left: 1rem;
-    color:green ;
-    font-weight: bolder;   
-    font-size: 1.2rem; 
+.text {
+  margin-left: 1rem;
+  color: green;
+  font-weight: bolder;
+  font-size: 1.2rem;
 }
-.closed{
-    display: flex;
-    justify-content: flex-end;
-    margin-right: 1rem;
-    padding-top: 0.8rem;
+.closed {
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 1rem;
+  padding-top: 0.8rem;
 }
-.late-error{
-    display: flex;
-    transform: translate(34rem,15rem);
-    color: red;
-    size: 0rem;
+.late-error {
+  display: flex;
+  transform: translate(34rem, 15rem);
+  color: red;
+  size: 0rem;
 }
-.table{
-    
+.table {
 }

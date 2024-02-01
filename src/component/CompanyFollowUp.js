@@ -14,12 +14,12 @@ import {
 } from "@mui/material";
 import { GridCloseIcon } from "@mui/x-data-grid";
 import axios from "axios";
-import React, { useState } from "react";
-import { Urlconstant } from "../constant/Urlconstant";
+import React, { useEffect } from "react";
 import { fieldStyle, style } from "../constant/FormStyle";
+import { Urlconstant } from "../constant/Urlconstant";
 import { ClientDropDown } from "../constant/ClientDropDown";
 
-const HrFollowUp = ({ open, handleClose, rowData }) => {
+const CompanyFollowUp = ({ open, handleClose, rowData }) => {
 
   const [responseMessage, setResponseMessage] = React.useState("");
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
@@ -27,9 +27,36 @@ const HrFollowUp = ({ open, handleClose, rowData }) => {
   const [loading, setLoading] = React.useState(false);
   const [formData, setFormData] = React.useState("");
   const attemtedUser = sessionStorage.getItem("userId");
+  const [hrNameList, setHrNameList] = React.useState([]);
+  const [hrDetails, setHrDetails] = React.useState("");
+ 
+  const getdetailsbyCompanyId = () => {
+    const companyId = rowData.id;
+    axios
+      .get(Urlconstant.url + `api/gethrdetails?companyId=${companyId}`)
+      .then((response) => {
+        setHrNameList(response.data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
+  useEffect(() => {
+    getdetailsbyCompanyId();
+  }, [rowData]);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
+
+    if (name === "hrScopName") {
+      hrNameList.forEach((hrItem) => {
+        if (hrItem.hrScopName === value) {
+          setHrDetails(hrItem);
+        }
+      });
+    }
+
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
@@ -56,10 +83,10 @@ const HrFollowUp = ({ open, handleClose, rowData }) => {
       try {
         const hrFollowUpData = {
           ...formData,
-          hrId: rowData.id,
+          hrId: hrDetails.id,
           attemptBy: attemtedUser,
         };
-
+        console.log(hrFollowUpData);
         axios
           .post(Urlconstant.url + `api/hrfollowup`, hrFollowUpData)
           .then((response) => {
@@ -80,7 +107,7 @@ const HrFollowUp = ({ open, handleClose, rowData }) => {
       }
     }
   };
-  const isDisabled = !formData.attemptStatus;
+  const isDisabled = !formData.attemptStatus||!hrDetails;
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle>
@@ -97,6 +124,26 @@ const HrFollowUp = ({ open, handleClose, rowData }) => {
       </DialogTitle>
       <DialogContent>
         <Grid container spacing={3}>
+          <Grid item xs={12} sm={4}>
+            <TextField
+              label="HR Name"
+              name="hrScopName"
+              onChange={handleInputChange}
+              style={fieldStyle}
+              // value={formData.attemptStatus}
+              fullWidth
+              select
+              margin="normal"
+            >
+              {hrNameList.map((hrItem) => (
+                <MenuItem key={hrItem.id} value={hrItem.hrScopName}>
+                  {hrItem.hrScopName}{" "}
+                  {/* Assuming that 'name' is the property containing HR names */}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+      
           <Grid item xs={12} sm={4}>
             <TextField
               label="attemptBy"
@@ -220,4 +267,4 @@ const HrFollowUp = ({ open, handleClose, rowData }) => {
     </Dialog>
   );
 };
-export default HrFollowUp;
+export default CompanyFollowUp;

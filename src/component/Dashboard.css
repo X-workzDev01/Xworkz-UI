@@ -1,11 +1,8 @@
-.dashboard{
-    display: flex;
-    height:auto;
+.dashboard {
+  display: flex;
+  height: auto;
 }
 
-
-  
-  .content {
-    flex: 1; 
-  }
-  
+.content {
+  flex: 1;
+}

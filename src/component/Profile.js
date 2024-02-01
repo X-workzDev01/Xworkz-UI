@@ -363,6 +363,13 @@ const Profile = (courseName, searchValue) => {
         handleClose={() => setAttendanceModalOpen(false)}
         id={profileData.id}
         batch={profileData.courseInfo.course}
+
+      />
+
+      <FeesHistory
+        isOpen={openFeesHistory}
+        handleClose={() => setOpenFeesHistory(false)}
+        row={feesHistory}
       />
 
       {followUpData.currentStatus ? (

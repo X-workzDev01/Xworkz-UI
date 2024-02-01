@@ -1,11 +1,7 @@
+import React from "react";
 
+const percentage = () => {
+  return <div>percentage</div>;
+};
 
-import React from 'react'
-
-const percentage=()=> {
-  return (
-    <div>percentage</div>
-  )
-}
-
-export default percentage
+export default percentage;
