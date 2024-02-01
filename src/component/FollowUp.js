@@ -206,7 +206,7 @@ export default function FollowUp() {
 
   const handleClear = () => {
     setCourseName("null");
-    sessionStorage.setItem("course", "null");  
+    sessionStorage.setItem("course", "null");
   };
   return (
     <div>

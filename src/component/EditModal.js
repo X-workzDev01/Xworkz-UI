@@ -192,7 +192,6 @@ const EditModal = ({ open, handleClose, rowData }) => {
         .then((response) => {
           if (response.data === "accepted_email") {
             setverifyHandleEmail(response.data);
-            console.log(response.data);
           }
           if (response.data === "rejected_email") {
             setverifyHandleEmailError(response.data);

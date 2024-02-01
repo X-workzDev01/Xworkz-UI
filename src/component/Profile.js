@@ -1,22 +1,26 @@
-import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import "./Profile.css";
-import axios from "axios";
-import { Urlconstant } from "../constant/Urlconstant";
-import PhoneAndroidIcon from "@mui/icons-material/PhoneAndroid";
-import EmailIcon from "@mui/icons-material/Email";
-import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
+import EmailIcon from "@mui/icons-material/Email";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
-import FollowStatusGrid from "./FollowStatusGrid";
+import PhoneAndroidIcon from "@mui/icons-material/PhoneAndroid";
 import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import axios from "axios";
+import React, { useState } from "react";
+import { SiContactlesspayment } from "react-icons/si";
+import { useParams } from "react-router-dom";
+import { Urlconstant } from "../constant/Urlconstant";
 import EditModal from "./EditModal";
+import FollowStatusGrid from "./FollowStatusGrid";
 import FollowUpStatus from "./FollowUpStatus";
-import { Alert } from "@mui/material";
-import { VisibilityOutlined } from "@mui/icons-material";
-import FollowUp from "./FollowUp";
 import Header from "./Header";
 
+import AttendanceModal from "./AttendanceModal";
+
+import "./Profile.css";
+import { PayFee } from "./PayFee";
+import { Modal } from "react-bootstrap";
+import { FeesHistory } from "./FeesHistory";
+import { MdWorkHistory } from "react-icons/md";
 
 function stringToColor(string) {
   let hash = 0;
@@ -53,6 +57,7 @@ function stringAvatar(name) {
 }
 const Profile = (courseName, searchValue) => {
   console.log(courseName, searchValue);
+  const [openFeesHistory, setOpenFeesHistory] = useState(false);
   const { email } = useParams();
   const [profileData, setProfileData] = useState(null);
   const [followUpData, setFollowUpData] = useState(null);
@@ -60,6 +65,9 @@ const Profile = (courseName, searchValue) => {
   const [isModalOpen, setModalOpen] = React.useState(false);
   const [editedRowData, setEditedRowData] = React.useState(null);
   const [dataLoadingError, setDataLoadingError] = React.useState(null);
+  const [open, setOpen] = useState(false);
+  const [feesData, setFeesData] = useState({});
+  const [feesHistory, setFeesHistory] = useState({});
 
   const [isFollowUpModalOpen, setFollowUpModalOpen] = React.useState(false);
   const [editedFollowUpRowData, setEditedFollowUpRowData] =
@@ -71,9 +79,18 @@ const Profile = (courseName, searchValue) => {
     React.useState(null);
   const [showAttendence, setShowAttendence] = useState(false);
 
+  const [isAttendanceModalOpen, setAttendanceModalOpen] = useState(false);
+  const [attendanceId, setAttendanceId] = useState(null);
+  const [batch, setbatch] = useState(null);
+
+  const handleAttendanceModalOpen = (rowData) => {
+    setAttendanceModalOpen(true);
+  };
+
   React.useEffect(() => {
     fetchData(
       email,
+
       isFollowUpStatusModalOpen,
       isModalOpen,
       setProfileData,
@@ -81,8 +98,18 @@ const Profile = (courseName, searchValue) => {
       setStatusData,
       setDataLoadingError
     );
-  }, [email, isFollowUpStatusModalOpen, isModalOpen]);
-
+  }, [email, isFollowUpStatusModalOpen, isModalOpen, openFeesHistory]);
+  const getFeesDetiles = () => {
+    setFeesData("");
+    const response = axios.get(
+      Urlconstant.url + `api/getFeesDetilesByEmail/${email}`
+    );
+    response.then((res) => {
+      setFeesData(res.data.feesDto[0]);
+      setFeesHistory(res.data.feesHistoryDto);
+    });
+    response.catch(() => {});
+  };
   const fetchData = (
     email,
     isFollowUpStatusModalOpen,
@@ -95,7 +122,7 @@ const Profile = (courseName, searchValue) => {
     const traineeApi = Urlconstant.url + `api/readByEmail?email=${email}`;
     const followUpApi = Urlconstant.url + `api/getFollowUpEmail/${email}`;
     const statusApi = Urlconstant.url + `api/getFollowUpStatusByEmail/${email}`;
-
+    getFeesDetiles();
     axios
       .all([
         axios.get(traineeApi, {
@@ -154,6 +181,14 @@ const Profile = (courseName, searchValue) => {
     console.log(row);
     setShowAttendence(true);
   };
+  const handleFees = () => {
+    getFeesDetiles();
+    setOpen(true);
+  };
+  const handleFeesHistory = () => {
+    getFeesDetiles();
+    setOpenFeesHistory(true);
+  };
 
   return (
     <div>
@@ -211,6 +246,7 @@ const Profile = (courseName, searchValue) => {
           </ul>
           <div className="links">
             <Button
+              style={{ marginRight: "0.5rem" }}
               variant="outlined"
               startIcon={<AddIcon />}
               onClick={() => {
@@ -220,14 +256,24 @@ const Profile = (courseName, searchValue) => {
               Add FollowUp
             </Button>
             <Button
+              style={{ marginRight: "0.5rem" }}
               variant="outlined"
               startIcon={<ModeEditIcon />}
               onClick={() => handleEditClick(profileData)}
             >
               Edit Profile
             </Button>
+            <Button
+              variant="outlined"
+              startIcon={<ModeEditIcon />}
+              onClick={() => handleAttendanceModalOpen(profileData)} // Pass profileData or appropriate rowData
+            >
+              View Attendance
+            </Button>
             {/* <Button
               variant="outlined"
+                          style={{marginRight: '0.5rem'}}
+
               startIcon={<VisibilityOutlined />}
               component={Link}
               to={
@@ -237,6 +283,47 @@ const Profile = (courseName, searchValue) => {
             >
               View Attendance
             </Button> */}
+
+            {followUpData.currentStatus ? (
+              feesData ? (
+                followUpData.currentStatus === "Joined" ? (
+                  <Button
+                    style={{ marginRight: "0.5rem" }}
+                    variant="outlined"
+                    startIcon={<SiContactlesspayment />}
+                    onClick={handleFees}
+                  >
+                    Pay Fees
+                  </Button>
+                ) : (
+                  ""
+                )
+              ) : (
+                ""
+              )
+            ) : (
+              ""
+            )}
+            {followUpData.currentStatus ? (
+              followUpData.currentStatus === "Joined" ? (
+                feesHistory && feesHistory.length > 0 ? (
+                  <Button
+                    style={{ marginRight: "0.5rem" }}
+                    variant="outlined"
+                    startIcon={<MdWorkHistory />}
+                    onClick={handleFeesHistory}
+                  >
+                    Fees History
+                  </Button>
+                ) : (
+                  ""
+                )
+              ) : (
+                ""
+              )
+            ) : (
+              ""
+            )}
           </div>
         </div>
       </div>
@@ -257,6 +344,50 @@ const Profile = (courseName, searchValue) => {
         handleSaveClick={handleFollowUpStatusSave}
         FollowUp={handleFollowUp}
       />
+
+      {followUpData.currentStatus ? (
+        followUpData.currentStatus == "Joined" && feesHistory ? (
+          <FeesHistory
+            isOpen={openFeesHistory}
+            handleClose={() => setOpenFeesHistory(false)}
+            row={feesHistory}
+          />
+        ) : (
+          ""
+        )
+      ) : (
+        ""
+      )}
+      <AttendanceModal
+        open={isAttendanceModalOpen}
+        handleClose={() => setAttendanceModalOpen(false)}
+        id={profileData.id}
+        batch={profileData.courseInfo.course}
+
+      />
+
+      <FeesHistory
+        isOpen={openFeesHistory}
+        handleClose={() => setOpenFeesHistory(false)}
+        row={feesHistory}
+      />
+
+      {followUpData.currentStatus ? (
+        followUpData.currentStatus === "Joined" && feesData ? (
+          <PayFee
+            open={open}
+            handleClose={() => setOpen(false)}
+            traineeEmail={profileData.basicInfo.email}
+            name={profileData.basicInfo.tr}
+            feesData={feesData}
+          />
+        ) : (
+          ""
+        )
+      ) : (
+        ""
+      )}
+
       {statusData ? <FollowStatusGrid rows={statusData} /> : null}
     </div>
   );

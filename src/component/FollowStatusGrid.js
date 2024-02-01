@@ -17,6 +17,7 @@ const columns = [
       return (<BasicPopover comment={currentRow} />);
     }
   }
+
 ];
 
 const FollowStatusGrid = ({ rows }) => {
@@ -34,7 +35,6 @@ const FollowStatusGrid = ({ rows }) => {
     >
       <div style={{ height: 400, width: '60%' }}>
         <DataGrid rows={rows} columns={columns} pageSize={40} />
-
       </div>
     </div>
   );

@@ -56,7 +56,6 @@ const LoginPage = (props) => {
           if (response.data === "OTP Wrong") {
             setOtpError("Wrong Otp entered");
           } else {
-        
             navigate(Urlconstant.navigate + "display", { state: { email } });
           }
           setEffect(true);
@@ -101,7 +100,7 @@ const LoginPage = (props) => {
       <Container
         maxWidth="sm"
         style={{
-          marginBottom:"4.5rem",
+          marginBottom: "4.5rem",
           border: "1px solid #C9C8C8",
           maxWidth: "400px",
           borderRadius: "6px",
@@ -109,8 +108,8 @@ const LoginPage = (props) => {
           height: "70vh",
         }}
       >
-        <Typography  component="div" style={{ height: "50vh" }}>
-          <Form  onSubmit={handleFormSubmit} style={{ textAlign: "center" }}>
+        <Typography component="div" style={{ height: "50vh" }}>
+          <Form onSubmit={handleFormSubmit} style={{ textAlign: "center" }}>
             <h2>Login</h2>
             {emailError && <Alert severity="error">{emailError}</Alert>}
             <TextField
@@ -175,7 +174,6 @@ const LoginPage = (props) => {
           </Form>
         </Typography>
       </Container>
-      
     </div>
   );
 };

@@ -1,36 +1,35 @@
-import React from 'react';
-import Sidebar from './SideBar';
-import Registration from './Registration';
+import React from "react";
+import Registration from "./Registration";
+import Sidebar from "./SideBar";
 
-import ViewTable from './ViewTable';
-import FollowUp from './FollowUp';
-import Profile from './Profile';
-import   './Dashboard.css';
+import "./Dashboard.css";
+import FollowUp from "./FollowUp";
+import Profile from "./Profile";
+import ViewTable from "./ViewTable";
 
-import { Route, Routes } from 'react-router-dom';
-import Header from './Header';
-import Attandance from './Attandance';
-import Enquiry from './Enquiry';
-import ViewAttendance from './ViewAttendance';
-import WhatsApp from './WhatsApp';
-import WhatsAppLinkSender from './WhatsApp';
-import ClientDetails from './ClientDetails';
-import ViewClient from './ViewClient';
-import CompanyProfile from './CompanyProfile';
-import Absentees from './Absentees';
-
-
+import { Route, Routes } from "react-router-dom";
+import Absentees from "./Absentees";
+import ClientDetails from "./ClientDetails";
+import CompanyProfile from "./CompanyProfile";
+import DownLoadToExcel from "./DownLoadToExcel";
+import Enquiry from "./Enquiry";
+import { FeesDetailes } from "./FeesDetailes";
+import Header from "./Header";
+import ViewAttendance from "./ViewAttendance";
+import ViewClient from "./ViewClient";
+import ViewHrProfile from "./ViewHrProfile";
+import WhatsAppLinkSender from "./WhatsApp";
 
 const Dashboard = ({ isLoggedIn }) => {
   if (!isLoggedIn) {
-    return null; 
+    return null;
   }
 
   return (
     <div className="dashboard">
       <Header />
       <div className="Sidebar">
-      <Sidebar />
+        <Sidebar />
       </div>
       <div className="content">
       <Routes>
@@ -41,24 +40,19 @@ const Dashboard = ({ isLoggedIn }) => {
         <Route path="/profile/:email" element={<Profile />} />
         <Route path="/absentees" element={<Absentees />} />
         <Route path="/enquiry" element={<Enquiry />} />
-
         <Route path="/attenance/:email" element={<ViewAttendance/>}/>
         <Route path="/whatsapp" element={<WhatsAppLinkSender />} />
-        <Route path="/client" element={<ClientDetails/>}/>
-        <Route path="/displayclient" element={<ViewClient/>}/>
-        <Route path="/clientprofile/:id" element={<CompanyProfile/>}/>
-      </Routes>
-
-      
+        <Route path="/feesDetails" element={<FeesDetailes/>}/>
+        <Route path="/company" element={<ClientDetails/>}/>
+        <Route path="/companylist" element={<ViewClient/>}/>
+        <Route path="/companylist/:id" element={<CompanyProfile/>}/>
+        <Route path="/company/hr/:id" element={<ViewHrProfile/>}/>
+      </Routes>      
     </div>
+
 
     </div>
   );
-}
+};
 
 export default Dashboard;
-
-
-
-
-
