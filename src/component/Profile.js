@@ -106,7 +106,7 @@ const Profile = (courseName, searchValue) => {
       setFeesData(res.data.feesDto[0]);
       setFeesHistory(res.data.feesHistoryDto);
     });
-    response.catch(() => {});
+    response.catch(() => { });
   };
   const fetchData = (
     email,
@@ -261,26 +261,26 @@ const Profile = (courseName, searchValue) => {
             >
               Edit Profile
             </Button>
-            <Button
-              variant="outlined"
-              startIcon={<ModeEditIcon />}
-              onClick={() => handleAttendanceModalOpen(profileData)} // Pass profileData or appropriate rowData
-            >
-              View Attendance
-            </Button>
-            {/* <Button
-              variant="outlined"
-                          style={{marginRight: '0.5rem'}}
-
-              startIcon={<VisibilityOutlined />}
-              component={Link}
-              to={
-                Urlconstant.navigate +
-                `attenance/${profileData.basicInfo.email}`
-              }
-            >
-              View Attendance
-            </Button> */}
+            {followUpData.currentStatus ? (
+              feesData ? (
+                followUpData.currentStatus === "Joined" ? (
+                  <Button
+                    style={{ marginRight: "0.5rem" }}
+                    variant="outlined"
+                    startIcon={<ModeEditIcon />}
+                    onClick={() => handleAttendanceModalOpen(profileData)} // Pass profileData or appropriate rowData
+                  >
+                    View Attendance
+                  </Button>
+                ) : (
+                  ""
+                )
+              ) : (
+                ""
+              )
+            ) : (
+              ""
+            )}
 
             {followUpData.currentStatus ? (
               feesData ? (
