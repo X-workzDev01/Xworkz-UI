@@ -46,13 +46,13 @@ export const FeesHistory = ({ isOpen, handleClose, row }) => {
     },
     {
       field: "Transection Id",
-      headerName: "Contact Number",
+      headerName: "Transection id",
       width: 120,
       valueGetter: (param) => param.row.transectionId,
     },
     {
       field: "paidAmount",
-      headerName: "Course",
+      headerName: "Paid Amount",
       width: 120,
       valueGetter: (param) => param.row.paidAmount,
     },
@@ -86,7 +86,7 @@ export const FeesHistory = ({ isOpen, handleClose, row }) => {
             width: "57.2rem",
             borderRadius: "1.2rem",
             backgroundColor: "white",
-            transform: "translate(20rem,9rem)",
+            transform: "translate(35rem,11rem)",
           }}
         >
           <div className="closed">

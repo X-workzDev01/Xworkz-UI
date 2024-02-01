@@ -23,6 +23,7 @@ import { Textarea } from "@mui/joy";
 
 export const PayFee = ({ open, handleClose, traineeEmail, feesData }) => {
   const [updateFeesData, setUpdateFeesData] = useState({});
+  const [amountError, setAmountError] = useState("");
   const paidTo = ["Mamatha", "Akshara", "Amulya", "Omkar"];
   const [loading, setLoading] = useState(false);
   const paymentMode = ["Online", "Upi", "Cash"];
@@ -33,11 +34,13 @@ export const PayFee = ({ open, handleClose, traineeEmail, feesData }) => {
   const [balance, setBalance] = useState(0);
   const [response, setResponse] = useState("");
   const [snackbar, setSnackbar] = useState(false);
+  const [totalBalance, setTotalBalance] = useState("");
 
   useEffect(() => {
     setUpdateFeesData("");
     setPaidAmountError("");
     setLateFeesError("");
+    setTotalBalance(feesData.totalAmount);
     setBalance(feesData.balance);
   }, [open, traineeEmail, handleClose, feesData]);
 
@@ -73,7 +76,11 @@ export const PayFee = ({ open, handleClose, traineeEmail, feesData }) => {
       setPaidAmountError("");
     } else if (name === "paidAmount" && value <= 0) {
       setPaidAmountError("Entered amount should be Greater Than 0 *");
-      setUpdateFeesData({ ...updateFeesData, [name]: "" });
+    }
+    if (name === "paidAmount" && value <= totalBalance) {
+      setAmountError("");
+    } else {
+      setAmountError("Enter Valid Amount");
     }
     if (name === "lateFees" && value > 0) {
       setUpdateFeesData({ ...updateFeesData, [name]: value });
@@ -142,6 +149,7 @@ export const PayFee = ({ open, handleClose, traineeEmail, feesData }) => {
             </div>
             <div className="error">
               <span>{paidAmountError}</span>
+              <span>{amountError}</span>
             </div>
             <div className="late-error error">
               <span>{lateFeesError}</span>

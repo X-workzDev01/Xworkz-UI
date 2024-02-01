@@ -68,15 +68,11 @@ const Sidebar = ({ children }) => {
       icon: <FaUserAlt />,
     },
     {
-      path: "feesDetailes",
+      path: "feesDetails",
+
       name: "Fees Details",
       icon: <MdAccountBalanceWallet />,
     },
-    // {
-    //   path: "download",
-    //   name: "Download",
-    //   icon: <ArrowCircleDownOutlined/>,
-    // },
   ];
   const click = () => {};
   return (

@@ -1,9 +1,11 @@
 .containe {
-  height: auto;
-  width: 50rem;
-  border-radius: 1.2rem;
-  background-color: white;
-  transform: translate(25rem, 5rem);
+    height: auto;
+    width: 50rem;
+    border-radius: 1.2rem;
+    background-color:white;
+    transform: translate(38rem,6rem);
+    
+
 }
 .close {
   display: flex;

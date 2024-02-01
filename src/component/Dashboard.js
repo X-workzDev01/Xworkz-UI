@@ -32,24 +32,25 @@ const Dashboard = ({ isLoggedIn }) => {
         <Sidebar />
       </div>
       <div className="content">
-        <Routes>
-          <Route path="/home" element={<Dashboard />} />
-          <Route path="/register" element={<Registration />} />
-          <Route path="/display" element={<ViewTable />} />
-          <Route path="/followup" element={<FollowUp />} />
-          <Route path="/profile/:email" element={<Profile />} />
-          <Route path="/absentees" element={<Absentees />} />
-          <Route path="/enquiry" element={<Enquiry />} />
-          <Route path="/attenance/:email" element={<ViewAttendance />} />
-          <Route path="/whatsapp" element={<WhatsAppLinkSender />} />
-          <Route path="/feesDetails" element={<FeesDetailes />} />
-          <Route path="/company" element={<ClientDetails />} />
-          <Route path="/companylist" element={<ViewClient />} />
-          <Route path="/companylist/:id" element={<CompanyProfile />} />
-          <Route path="/company/hr/:id" element={<ViewHrProfile />} />
-          <Route path="/download" element={<DownLoadToExcel />} />
-        </Routes>
-      </div>
+      <Routes>
+        <Route path="/home" element={<Dashboard />} />
+        <Route path="/register" element={<Registration />} />
+        <Route path="/display" element={<ViewTable />} />
+        <Route path="/followup" element={<FollowUp />} />
+        <Route path="/profile/:email" element={<Profile />} />
+        <Route path="/absentees" element={<Absentees />} />
+        <Route path="/enquiry" element={<Enquiry />} />
+        <Route path="/attenance/:email" element={<ViewAttendance/>}/>
+        <Route path="/whatsapp" element={<WhatsAppLinkSender />} />
+        <Route path="/feesDetails" element={<FeesDetailes/>}/>
+        <Route path="/company" element={<ClientDetails/>}/>
+        <Route path="/companylist" element={<ViewClient/>}/>
+        <Route path="/companylist/:id" element={<CompanyProfile/>}/>
+        <Route path="/company/hr/:id" element={<ViewHrProfile/>}/>
+      </Routes>      
+    </div>
+
+
     </div>
   );
 };

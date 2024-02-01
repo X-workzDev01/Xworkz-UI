@@ -90,6 +90,7 @@ const Profile = (courseName, searchValue) => {
   React.useEffect(() => {
     fetchData(
       email,
+
       isFollowUpStatusModalOpen,
       isModalOpen,
       setProfileData,
@@ -97,8 +98,9 @@ const Profile = (courseName, searchValue) => {
       setStatusData,
       setDataLoadingError
     );
-  }, [email, isFollowUpStatusModalOpen, isModalOpen]);
+  }, [email, isFollowUpStatusModalOpen, isModalOpen, openFeesHistory]);
   const getFeesDetiles = () => {
+    setFeesData("");
     const response = axios.get(
       Urlconstant.url + `api/getFeesDetilesByEmail/${email}`
     );
@@ -302,15 +304,23 @@ const Profile = (courseName, searchValue) => {
             ) : (
               ""
             )}
-            {feesHistory && feesHistory.length > 0 ? (
-              <Button
-                style={{ marginRight: "0.5rem" }}
-                variant="outlined"
-                startIcon={<MdWorkHistory />}
-                onClick={handleFeesHistory}
-              >
-                Fees History
-              </Button>
+            {followUpData.currentStatus ? (
+              followUpData.currentStatus === "Joined" ? (
+                feesHistory && feesHistory.length > 0 ? (
+                  <Button
+                    style={{ marginRight: "0.5rem" }}
+                    variant="outlined"
+                    startIcon={<MdWorkHistory />}
+                    onClick={handleFeesHistory}
+                  >
+                    Fees History
+                  </Button>
+                ) : (
+                  ""
+                )
+              ) : (
+                ""
+              )
             ) : (
               ""
             )}
@@ -335,11 +345,25 @@ const Profile = (courseName, searchValue) => {
         FollowUp={handleFollowUp}
       />
 
+      {followUpData.currentStatus ? (
+        followUpData.currentStatus == "Joined" && feesHistory ? (
+          <FeesHistory
+            isOpen={openFeesHistory}
+            handleClose={() => setOpenFeesHistory(false)}
+            row={feesHistory}
+          />
+        ) : (
+          ""
+        )
+      ) : (
+        ""
+      )}
       <AttendanceModal
         open={isAttendanceModalOpen}
         handleClose={() => setAttendanceModalOpen(false)}
         id={profileData.id}
         batch={profileData.courseInfo.course}
+
       />
 
       <FeesHistory
@@ -349,7 +373,7 @@ const Profile = (courseName, searchValue) => {
       />
 
       {followUpData.currentStatus ? (
-        followUpData.currentStatus == "Joined" && feesData ? (
+        followUpData.currentStatus === "Joined" && feesData ? (
           <PayFee
             open={open}
             handleClose={() => setOpen(false)}
