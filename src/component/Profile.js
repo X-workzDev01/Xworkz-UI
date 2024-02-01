@@ -22,7 +22,6 @@ import { Modal } from "react-bootstrap";
 import { FeesHistory } from "./FeesHistory";
 import { MdWorkHistory } from "react-icons/md";
 
-
 function stringToColor(string) {
   let hash = 0;
   let i;
@@ -88,10 +87,10 @@ const Profile = (courseName, searchValue) => {
     setAttendanceModalOpen(true);
   };
 
-
   React.useEffect(() => {
     fetchData(
       email,
+
       isFollowUpStatusModalOpen,
       isModalOpen,
       setProfileData,
@@ -101,6 +100,7 @@ const Profile = (courseName, searchValue) => {
     );
   }, [email, isFollowUpStatusModalOpen, isModalOpen, openFeesHistory]);
   const getFeesDetiles = () => {
+    setFeesData("");
     const response = axios.get(
       Urlconstant.url + `api/getFeesDetilesByEmail/${email}`
     );
@@ -177,7 +177,6 @@ const Profile = (courseName, searchValue) => {
     setFollowUpStatusModalOpen(false);
   };
 
-
   const handleAttendence = (row) => {
     console.log(row);
     setShowAttendence(true);
@@ -190,7 +189,6 @@ const Profile = (courseName, searchValue) => {
     getFeesDetiles();
     setOpenFeesHistory(true);
   };
-
 
   return (
     <div>
@@ -364,16 +362,11 @@ const Profile = (courseName, searchValue) => {
         open={isAttendanceModalOpen}
         handleClose={() => setAttendanceModalOpen(false)}
         id={profileData.id}
-        batch = {profileData.courseInfo.course}
-        
-        
+        batch={profileData.courseInfo.course}
       />
 
-
-
-
       {followUpData.currentStatus ? (
-        followUpData.currentStatus == "Joined" && feesData ? (
+        followUpData.currentStatus === "Joined" && feesData ? (
           <PayFee
             open={open}
             handleClose={() => setOpen(false)}
@@ -387,7 +380,6 @@ const Profile = (courseName, searchValue) => {
       ) : (
         ""
       )}
-
 
       {statusData ? <FollowStatusGrid rows={statusData} /> : null}
     </div>

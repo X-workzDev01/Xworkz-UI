@@ -68,8 +68,8 @@ const Sidebar = ({ children }) => {
       icon: <FaUserAlt />,
     },
     {
-      path: "feesDetailes",
-      name: "Fees Detailes",
+      path: "feesDetails",
+      name: "Fees Details",
       icon: <MdAccountBalanceWallet />,
     },
 

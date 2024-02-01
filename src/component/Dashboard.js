@@ -45,7 +45,7 @@ const Dashboard = ({ isLoggedIn }) => {
         <Route path="/enquiry" element={<Enquiry />} />
         <Route path="/attenance/:email" element={<ViewAttendance/>}/>
         <Route path="/whatsapp" element={<WhatsAppLinkSender />} />
-        <Route path="/feesDetailes" element={<FeesDetailes/>}/>
+        <Route path="/feesDetails" element={<FeesDetailes/>}/>
         <Route path="/company" element={<ClientDetails/>}/>
         <Route path="/companylist" element={<ViewClient/>}/>
         <Route path="/companylist/:id" element={<CompanyProfile/>}/>
