@@ -7,6 +7,7 @@ import { Autocomplete, Button, TextField } from "@mui/material";
 import axios from "axios";
 import { buttonPadding, gridStyle } from "../constant/FormStyle";
 import HRFollowUpStatusGrid from "./HRFollowUpStatusGrid";
+import { GridToolbar } from "@mui/x-data-grid";
 
 function loadServerRows(page, pageSize) {
   const startingIndex = page * pageSize;
@@ -269,6 +270,7 @@ export default function ViewClient() {
           onRowSelectionModelChange={(newRowSelectionModel) => {
             setRowSelectionModel(newRowSelectionModel);
           }}
+          slots={{ toolbar: GridToolbar}}
           rowSelectionModel={rowSelectionModel}
           loading={loading}
           keepNonExistentRowsSelected
