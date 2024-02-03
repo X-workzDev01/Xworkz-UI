@@ -11,14 +11,14 @@ export default function Home() {
   };
   return (
     <div>
-      <h2>Home</h2>
+      <h2 className="">Home</h2>
       <h3>Welcome to X-workz</h3>
       <Button
         type="submit"
         variant="contained"
         color="primary"
         onClick={handleLogin}
-      >
+      > 
         Login
       </Button>
     </div>

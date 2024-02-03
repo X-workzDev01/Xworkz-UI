@@ -45,11 +45,11 @@ export const Course = ({
 
       // Update the formData state with fetched data
       setFormData({
-        branch: data.branch,
+        branch: data.branchName,
         trainerName: data.trainerName,
         batchType: data.batchType,
         course: data.courseName,
-        batchTiming: data.timing,
+        batchTiming: data.startTime,
         startDate: data.startDate,
       });
     } catch (error) {
