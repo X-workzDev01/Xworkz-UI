@@ -7,14 +7,7 @@
     
 
 }
-.close {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 1.3rem;
-  padding-top: 0.6rem;
-  margin-bottom: 0.2rem;
-}
+
 .field {
   padding-left: 2rem;
   padding-right: 2rem;
@@ -38,7 +31,7 @@
   width: 25rem;
   border-radius: 1.2rem;
   background-color: white;
-  transform: translate(41rem, 14rem);
+  transform: translate(49rem, 14rem);
 }
 .confirm {
   display: flex;
