@@ -12,6 +12,7 @@ import { gridStyle, style } from "../constant/FormStyle";
 import { DataGrid } from "@mui/x-data-grid";
 import { PersonOutline } from "@mui/icons-material";
 import { Link } from "react-router-dom";
+import { GridToolbar } from "@mui/x-data-grid";
 
 const HRDetails = ({ open, handleClose, id }) => {
   const initialPageSize = 25;
@@ -146,6 +147,7 @@ const HRDetails = ({ open, handleClose, id }) => {
             paginationModel={paginationModel}
             onPaginationModelChange={setPaginationModel}
             keepNonExistentRowsSelected
+            slots={{ toolbar: GridToolbar}}
           />
         </div>
       </DialogContent>
