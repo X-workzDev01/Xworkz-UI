@@ -42,6 +42,8 @@ export default function FollowUp() {
     "Joined",
     "Past followup",
     "Never followUp",
+    "CSR",
+    "NonCSR",
   ]);
   const [date, setDate] = useState("");
   const initialPageSize = 25;
@@ -159,7 +161,7 @@ export default function FollowUp() {
         },
       };
     }
-    
+
     return new Promise((resolve, reject) => {
       fetch(apiUrl, requestOptions)
         .then((response) => response.json())

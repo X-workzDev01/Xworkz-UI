@@ -98,7 +98,7 @@ const Profile = (courseName, searchValue) => {
       setStatusData,
       setDataLoadingError
     );
-  }, [email, isFollowUpStatusModalOpen, isModalOpen, openFeesHistory]);
+  }, [email, isFollowUpStatusModalOpen, isModalOpen]);
   const getFeesDetiles = () => {
     setFeesData("");
     const response = axios.get(
@@ -108,7 +108,7 @@ const Profile = (courseName, searchValue) => {
       setFeesData(res.data.feesDto[0]);
       setFeesHistory(res.data.feesHistoryDto);
     });
-    response.catch(() => { });
+    response.catch(() => {});
   };
   const fetchData = (
     email,
@@ -182,11 +182,9 @@ const Profile = (courseName, searchValue) => {
     setShowAttendence(true);
   };
   const handleFees = () => {
-    getFeesDetiles();
     setOpen(true);
   };
   const handleFeesHistory = () => {
-    getFeesDetiles();
     setOpenFeesHistory(true);
   };
 
@@ -264,19 +262,15 @@ const Profile = (courseName, searchValue) => {
               Edit Profile
             </Button>
             {followUpData.currentStatus ? (
-              feesData ? (
-                followUpData.currentStatus === "Joined" ? (
-                  <Button
-                    style={{ marginRight: "0.5rem" }}
-                    variant="outlined"
-                    startIcon={<ModeEditIcon />}
-                    onClick={() => handleAttendanceModalOpen(profileData)} // Pass profileData or appropriate rowData
-                  >
-                    View Attendance
-                  </Button>
-                ) : (
-                  ""
-                )
+              followUpData.currentStatus === "Joined" ? (
+                <Button
+                  style={{ marginRight: "0.5rem" }}
+                  variant="outlined"
+                  startIcon={<ModeEditIcon />}
+                  onClick={() => handleAttendanceModalOpen(profileData)} // Pass profileData or appropriate rowData
+                >
+                  View Attendance
+                </Button>
               ) : (
                 ""
               )
@@ -304,7 +298,7 @@ const Profile = (courseName, searchValue) => {
             ) : (
               ""
             )}
-            {followUpData.currentStatus ? (
+            {followUpData.currentStatus && feesData ? (
               followUpData.currentStatus === "Joined" ? (
                 feesHistory && feesHistory.length > 0 ? (
                   <Button
@@ -343,6 +337,7 @@ const Profile = (courseName, searchValue) => {
         setRowData={setEditedFollowUpStatusRowData}
         handleSaveClick={handleFollowUpStatusSave}
         FollowUp={handleFollowUp}
+
       />
 
       {followUpData.currentStatus ? (
@@ -363,7 +358,6 @@ const Profile = (courseName, searchValue) => {
         handleClose={() => setAttendanceModalOpen(false)}
         id={profileData.id}
         batch={profileData.courseInfo.course}
-
       />
 
       <FeesHistory
@@ -380,6 +374,7 @@ const Profile = (courseName, searchValue) => {
             traineeEmail={profileData.basicInfo.email}
             name={profileData.basicInfo.tr}
             feesData={feesData}
+            feesDetils={getFeesDetiles}
           />
         ) : (
           ""

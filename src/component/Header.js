@@ -85,7 +85,7 @@ function Header() {
 
   const popup = () => {
     return (
-      <div>
+      <div className="container-fluid">
         <Popover
           id={id}
           open={open}
@@ -538,7 +538,7 @@ function Header() {
                   ></img>
                 </a>
               </IconButton>
-              <Link to={Urlconstant.navigate + "display"}>Home</Link>
+              <Link to={Urlconstant.navigate + "display"} className="text-decoration-none text-white fs-4">Home</Link>
               <Typography variant="h6" component="div" sx={{ flexGrow: 6 }}>
                 <AccountCircle
                   sx={{ color: "action.active", marginRight: "8px" }}
