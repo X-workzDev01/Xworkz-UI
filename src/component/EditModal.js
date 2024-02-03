@@ -16,6 +16,7 @@ import {
   InputLabel,
   IconButton,
   Alert,
+  Grid,
 } from "@mui/material";
 import { GridCloseIcon } from "@mui/x-data-grid";
 
@@ -67,7 +68,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
       .then((response) => {
         setDropDown(response.data);
       })
-      .catch((error) => {});
+      .catch((error) => { });
     axios
       .get(Urlconstant.url + "api/getCourseName?status=Active", {
         headers: {
@@ -81,7 +82,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
           fetchData(selectedValue); // Call fetchData with the selectedValue
         }
       })
-      .catch((e) => {});
+      .catch((e) => { });
   }, []);
   React.useEffect(() => {
     if (rowData && rowData.courseInfo) {
@@ -113,7 +114,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
           startDate: data.startDate,
         });
       })
-      .catch((error) => {});
+      .catch((error) => { });
   };
 
   const handleInputChange = (event) => {
@@ -147,8 +148,11 @@ const EditModal = ({ open, handleClose, rowData }) => {
       } else {
         setPhoneNumberError(""); // Clear the error if phone number is valid
       }
-    }
+      if (name === "csrDto.unsNumber") {
+        console.log(value)
+      }
 
+    }
     setEditedData((prevData) => ({
       ...prevData,
       [section]: {
@@ -212,7 +216,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
     axios
       .get(
         Urlconstant.url +
-          `api/contactNumberCheck?contactNumber=${formData.contactNumber}`,
+        `api/contactNumberCheck?contactNumber=${formData.contactNumber}`,
         {
           headers: {
             spreadsheetId: Urlconstant.spreadsheetId,
@@ -226,7 +230,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
           setNumberCheck("");
         }
       })
-      .catch((error) => {});
+      .catch((error) => { });
   };
   const handleEditClick = () => {
     setIsConfirming(true);
@@ -314,6 +318,10 @@ const EditModal = ({ open, handleClose, rowData }) => {
     verifyEmail(event.target.value);
   };
 
+  const handleUsnNumber = (event) => {
+    console.log(event.target.value)
+  }
+
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle>Edit Details</DialogTitle>
@@ -328,310 +336,402 @@ const EditModal = ({ open, handleClose, rowData }) => {
         >
           <GridCloseIcon />
         </IconButton>
-        <TextField
-          label="Email"
-          name="email"
-          defaultValue={rowData.basicInfo.email}
-          onChange={handleInputChange}
-          onBlur={handleVerifyEmail}
-          style={fieldStyle}
-          // InputProps={{
-          //   readOnly: true,
-          // }}
-        />
-        {verifyHandaleEmailerror ? (
-          <Alert severity="success">{verifyHandaleEmailerror}</Alert>
-        ) : (
-          " "
-        )}
-        {verifyHandaleEmailerror ? (
-          <Alert severity="error">{verifyHandaleEmailerror}</Alert>
-        ) : (
-          " "
-        )}
-        {emailError ? <Alert severity="error">{emailError} </Alert> : " "}
-        {emailCheck ? <Alert severity="error">{emailCheck}</Alert> : " "}
+        <Grid container spacing={2}>
+          <Grid item xs={4}>
+            <TextField
+              label="Email"
+              name="email"
+              defaultValue={rowData.basicInfo.email}
+              onChange={handleInputChange}
+              onBlur={handleVerifyEmail}
+              style={fieldStyle}
+            // InputProps={{
+            //   readOnly: true,
+            // }}
+            />
+            {verifyHandaleEmailerror ? (
+              <Alert severity="success">{verifyHandaleEmailerror}</Alert>
+            ) : (
+              " "
+            )}
+            {verifyHandaleEmailerror ? (
+              <Alert severity="error">{verifyHandaleEmailerror}</Alert>
+            ) : (
+              " "
+            )}
+            {emailError ? <Alert severity="error">{emailError} </Alert> : " "}
+            {emailCheck ? <Alert severity="error">{emailCheck}</Alert> : " "}
 
-        {verifyHandaleEmail ? (
-          <Alert severity="success">{verifyHandaleEmail}</Alert>
-        ) : (
-          " "
-        )}
+            {verifyHandaleEmail ? (
+              <Alert severity="success">{verifyHandaleEmail}</Alert>
+            ) : (
+              " "
+            )}
+          </Grid>
+          <Grid item xs={4}>
+            <TextField
+              label="Name"
+              name="basicInfo.traineeName"
+              defaultValue={rowData.basicInfo.traineeName}
+              style={fieldStyle}
+              onChange={handleInputChange}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <TextField
+              label="Contact Number"
+              name="basicInfo.contactNumber"
+              defaultValue={rowData.basicInfo.contactNumber}
+              onChange={handleInputChange}
+              style={fieldStyle}
+              onBlur={handleNumberChange}
+            />
+            {phoneNumberError && <Alert severity="error">{phoneNumberError}</Alert>}
+            {numberCheck && <Alert severity="error">{numberCheck}</Alert>}
+          </Grid>
+          <Grid item xs={4}>
+            <TextField
+              label="Date Of Birth"
+              name="basicInfo.dateOfBirth"
+              defaultValue={rowData.basicInfo.dateOfBirth}
+              style={fieldStyle}
+              onChange={handleInputChange}
+              InputProps={{
+                readOnly: true,
+              }}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <FormControl>
+              <InputLabel id="demo-simple-select-label">Qualification</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                inputLabel="Qualification"
+                name="educationInfo.qualification"
+                defaultValue={rowData.educationInfo.qualification}
+                onChange={handleInputChange}
+                style={fieldStyle}
+                sx={{
+                  marginRight: "20px",
+                  width: "225px",
+                }}
+              >
+                {dropdown.qualification.map((item, index) => (
+                  <MenuItem value={item} key={index}>
+                    {item}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={4}>
+            <FormControl>
+              <InputLabel id="demo-simple-select-label">Stream</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                inputLabel="Stream"
+                name="educationInfo.stream"
+                defaultValue={rowData.educationInfo.stream}
+                onChange={handleInputChange}
+                style={fieldStyle}
+                sx={{
+                  marginRight: "20px",
+                  width: "225px",
+                }}
+              >
+                {dropdown.stream.map((item, index) => (
+                  <MenuItem value={item} key={index}>
+                    {item}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={4}>
+            <FormControl>
+              <InputLabel id="demo-simple-select-label">Year Of Passout</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                label="Year Of Passout"
+                name="educationInfo.yearOfPassout"
+                defaultValue={rowData.educationInfo.yearOfPassout}
+                onChange={handleInputChange}
+                style={fieldStyle}
+                sx={{
+                  marginRight: "20px",
+                  width: "225px",
+                }}
+              >
+                {dropdown.yearofpass.map((item, index) => (
+                  <MenuItem value={item} key={index}>
+                    {item}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
 
-        <TextField
-          label="Name"
-          name="basicInfo.traineeName"
-          defaultValue={rowData.basicInfo.traineeName}
-          style={fieldStyle}
-          onChange={handleInputChange}
-        />
-        <TextField
-          label="Contact Number"
-          name="basicInfo.contactNumber"
-          defaultValue={rowData.basicInfo.contactNumber}
-          onChange={handleInputChange}
-          style={fieldStyle}
-          onBlur={handleNumberChange}
-        />
-        {phoneNumberError && <Alert severity="error">{phoneNumberError}</Alert>}
-        {numberCheck && <Alert severity="error">{numberCheck}</Alert>}
-        <FormControl>
-          <InputLabel id="demo-simple-select-label">Qualification</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            inputLabel="Qualification"
-            name="educationInfo.qualification"
-            defaultValue={rowData.educationInfo.qualification}
-            onChange={handleInputChange}
-            style={fieldStyle}
-            sx={{
-              marginRight: "20px",
-              width: "300px",
-            }}
-          >
-            {dropdown.qualification.map((item, index) => (
-              <MenuItem value={item} key={index}>
-                {item}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl>
-          <InputLabel id="demo-simple-select-label">Stream</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            inputLabel="Stream"
-            name="educationInfo.stream"
-            defaultValue={rowData.educationInfo.stream}
-            onChange={handleInputChange}
-            style={fieldStyle}
-            sx={{
-              marginRight: "20px",
-              width: "300px",
-            }}
-          >
-            {dropdown.stream.map((item, index) => (
-              <MenuItem value={item} key={index}>
-                {item}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl>
-          <InputLabel id="demo-simple-select-label">Year Of Passout</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            label="Year Of Passout"
-            name="educationInfo.yearOfPassout"
-            defaultValue={rowData.educationInfo.yearOfPassout}
-            onChange={handleInputChange}
-            style={fieldStyle}
-            sx={{
-              marginRight: "20px",
-              width: "300px", // Adjust padding for a smaller size
-              // Adjust font size for a smaller size
-            }}
-          >
-            {dropdown.yearofpass.map((item, index) => (
-              <MenuItem value={item} key={index}>
-                {item}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl>
-          <InputLabel id="demo-simple-select-label">College Name</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            label="College Name"
-            name="educationInfo.collegeName"
-            defaultValue={rowData.educationInfo.collegeName}
-            onChange={handleInputChange}
-            style={fieldStyle}
-            sx={{
-              marginRight: "20px",
-              width: "500px", // Adjust padding for a smaller size
-              // Adjust font size for a smaller size
-            }}
-          >
-            {dropdown.college.map((item, index) => (
-              <MenuItem value={item} key={index}>
-                {item}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl>
-          <InputLabel id="demo-simple-select-label">Course</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            label="Course"
-            name="courseInfo.course"
-            defaultValue={rowData.courseInfo.course}
-            onChange={handleInputChange}
-            style={fieldStyle}
-            sx={{
-              marginRight: "20px",
-              width: "300px", // Adjust padding for a smaller size
-              // Adjust font size for a smaller size
-            }}
-          >
-            {batchDetails.map((item, index) => (
-              <MenuItem value={item} key={index}>
-                {item}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <TextField
-          label="Branch"
-          name="courseInfo.branch"
-          value={formData.branch || ""}
-          onChange={handleInputChange}
-          style={fieldStyle}
-        />
-        <TextField
-          label="Batch Type"
-          name="courseInfo.batchType"
-          value={formData.batchType || ""}
-          onChange={handleInputChange}
-          style={fieldStyle}
-        />
-        <TextField
-          label="Trainer Name"
-          name="courseInfo.trainerName"
-          value={formData.trainerName || ""}
-          onChange={handleInputChange}
-          style={fieldStyle}
-        />
-        <TextField
-          label="Batch Timing"
-          name="courseInfo.batchTiming"
-          value={formData.batchTiming || ""}
-          onChange={handleInputChange}
-          style={fieldStyle}
-        />
-        <TextField
-          label="Start Date"
-          name="courseInfo.startTime"
-          value={formData.startDate || ""}
-          onChange={handleInputChange}
-          style={fieldStyle}
-        />
-        <FormControl style={fieldStyle}>
-          <InputLabel id="demo-simple-select-label">Offered As</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            label="Offered As"
-            name="courseInfo.offeredAs"
-            onChange={handleInputChange}
-            defaultValue={rowData.courseInfo.offeredAs}
-            variant="outlined"
-            style={{ width: "12rem" }}
-          >
-            {dropdown.offered.map((item, index) => (
-              <MenuItem value={item} key={index}>
-                {item}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <TextField
-          label="Referal Name"
-          name="referralInfo.referalName"
-          defaultValue={rowData.othersDto.referalName}
-          onChange={handleInputChange}
-          style={fieldStyle}
-        />
-        <TextField
-          label="Referal Contact Number"
-          name="othersDto.referalContactNumber"
-          defaultValue={rowData.othersDto.referalContactNumber}
-          onChange={handleInputChange}
-          style={fieldStyle}
-        />
-        <TextField
-          label="Comments"
-          name="othersDto.comments"
-          defaultValue={rowData.othersDto.comments}
-          onChange={handleInputChange}
-          style={fieldStyle}
-          className="custom-textfield" // Apply the custom CSS class
-          multiline
-          rows={4}
-        />
-        <TextField
-          label="X-workz E-mail"
-          name="othersDto.xworkzEmail"
-          defaultValue={rowData.othersDto.xworkzEmail}
-          onChange={handleInputChange}
-          style={fieldStyle}
-          onBlur={handleVerifyEmail}
-        />
+          <Grid item xs={4}>
+            <TextField
+              label="Unique ID"
+              name="csrDto.uniqueId"
+              defaultValue={rowData.csrDto.uniqueId}
+              onChange={handleInputChange}
+              style={fieldStyle}
+              InputProps={{
+                readOnly: true,
+              }}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <TextField
+              label="USN Number"
+              name="csrDto.usnNumber"
+              defaultValue={rowData.csrDto.usnNumber}
+              onChange={handleInputChange}
+              style={fieldStyle}
+              onBlur={handleUsnNumber}
+            />
+          </Grid>
 
-        {verifyHandaleEmailerror ? (
-          <Alert severity="error">{verifyHandaleEmailerror}</Alert>
-        ) : (
-          " "
-        )}
-        {emailError ? <Alert severity="error">{emailError} </Alert> : " "}
+          <Grid item xs={4}>
+            {/* need to add validation */}
+            <TextField
+              label="WhatsApp Number"
+              name="csrDto.alternateContactNumber"
+              defaultValue={rowData.csrDto.alternateContactNumber}
+              onChange={handleInputChange}
+              style={fieldStyle}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <FormControl>
+              <InputLabel id="demo-simple-select-label">College Name</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                label="College Name"
+                name="educationInfo.collegeName"
+                defaultValue={rowData.educationInfo.collegeName}
+                onChange={handleInputChange}
+                style={fieldStyle}
+                sx={{
+                  marginRight: "20px",
+                  width: "225px",
+                }}
+              >
+                {dropdown.college.map((item, index) => (
+                  <MenuItem value={item} key={index}>
+                    {item}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={4}>
+            <FormControl>
+              <InputLabel id="demo-simple-select-label">Course</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                label="Course"
+                name="courseInfo.course"
+                defaultValue={rowData.courseInfo.course}
+                onChange={handleInputChange}
+                style={fieldStyle}
+                sx={{
+                  marginRight: "20px",
+                  width: "225px",
+                }}
+              >
+                {batchDetails.map((item, index) => (
+                  <MenuItem value={item} key={index}>
+                    {item}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={4}>
+            <TextField
+              label="Branch"
+              name="courseInfo.branch"
+              value={formData.branch || ""}
+              onChange={handleInputChange}
+              style={fieldStyle}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <TextField
+              label="Batch Type"
+              name="courseInfo.batchType"
+              value={formData.batchType || ""}
+              onChange={handleInputChange}
+              style={fieldStyle}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <TextField
+              label="Trainer Name"
+              name="courseInfo.trainerName"
+              value={formData.trainerName || ""}
+              onChange={handleInputChange}
+              style={fieldStyle}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <TextField
+              label="Batch Timing"
+              name="courseInfo.batchTiming"
+              value={formData.batchTiming || ""}
+              onChange={handleInputChange}
+              style={fieldStyle}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <TextField
+              label="Start Date"
+              name="courseInfo.startTime"
+              value={formData.startDate || ""}
+              onChange={handleInputChange}
+              style={fieldStyle}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <FormControl style={fieldStyle}>
+              <InputLabel id="demo-simple-select-label">Offered As</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                label="Offered As"
+                name="courseInfo.offeredAs"
+                onChange={handleInputChange}
+                defaultValue={rowData.courseInfo.offeredAs}
+                variant="outlined"
 
-        <FormControl>
-          <InputLabel id="demo-simple-select-label">
-            preferred Location
-          </InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            label="Preferred Location"
-            name="othersDto.preferredLocation"
-            onChange={handleInputChange}
-            defaultValue={rowData.othersDto.preferredLocation}
-            variant="outlined"
-            sx={{
-              marginRight: "20px",
-              width: "200px", // Adjust padding for a smaller size
-              fontSize: "20px", // Adjust font size for a smaller size
-            }}
-          >
-            {dropdown.branchname.map((item, index) => (
-              <MenuItem value={item} key={index}>
-                {item}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl>
-          <InputLabel id="demo-simple-select-label">
-            preferred Class Type
-          </InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            label="Preferred Class Type"
-            name="othersDto.preferredClassType"
-            onChange={handleInputChange}
-            defaultValue={rowData.othersDto.preferredClassType}
-            variant="outlined"
-            sx={{
-              marginRight: "20px",
-              width: "200px", // Adjust padding for a smaller size
-              fontSize: "20px", // Adjust font size for a smaller size
-            }}
-          >
-            {dropdown.batch.map((item, index) => (
-              <MenuItem value={item} key={index}>
-                {item}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+                sx={{
+                  marginRight: "20px",
+                  width: "225px",
+                }}
+              >
+                {dropdown.offered.map((item, index) => (
+                  <MenuItem value={item} key={index}>
+                    {item}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={4}>
+            <TextField
+              label="Referal Name"
+              name="referralInfo.referalName"
+              defaultValue={rowData.othersDto.referalName}
+              onChange={handleInputChange}
+              style={fieldStyle}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <TextField
+              label="Referal Contact Number"
+              name="othersDto.referalContactNumber"
+              defaultValue={rowData.othersDto.referalContactNumber}
+              onChange={handleInputChange}
+              style={fieldStyle}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <TextField
+              label="X-workz E-mail"
+              name="othersDto.xworkzEmail"
+              defaultValue={rowData.othersDto.xworkzEmail}
+              onChange={handleInputChange}
+              style={fieldStyle}
+              onBlur={handleVerifyEmail}
+            />
+
+            {verifyHandaleEmailerror ? (
+              <Alert severity="error">{verifyHandaleEmailerror}</Alert>
+            ) : (
+              " "
+            )}
+            {emailError ? <Alert severity="error">{emailError} </Alert> : " "}
+          </Grid>
+
+          <Grid item xs={4}>
+            <FormControl>
+              <InputLabel id="demo-simple-select-label">
+                preferred Location
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                label="Preferred Location"
+                name="othersDto.preferredLocation"
+                onChange={handleInputChange}
+                defaultValue={rowData.othersDto.preferredLocation}
+                variant="outlined"
+                sx={{
+                  marginRight: "20px",
+                  width: "225px",
+                }}
+                style={fieldStyle}
+              >
+                {dropdown.branchname.map((item, index) => (
+                  <MenuItem value={item} key={index}>
+                    {item}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={4}>
+            <FormControl>
+              <InputLabel id="demo-simple-select-label">
+                preferred Class Type
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                label="Preferred Class Type"
+                name="othersDto.preferredClassType"
+                onChange={handleInputChange}
+                defaultValue={rowData.othersDto.preferredClassType}
+                variant="outlined"
+                sx={{
+                  marginRight: "20px",
+                  width: "225px",
+                }}
+                style={fieldStyle}
+              >
+                {dropdown.batch.map((item, index) => (
+                  <MenuItem value={item} key={index}>
+                    {item}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={4}>
+            <TextField
+              label="Comments"
+              name="othersDto.comments"
+              defaultValue={rowData.othersDto.comments}
+              onChange={handleInputChange}
+              style={fieldStyle}
+              className="custom-textfield"
+              multiline
+              rows={4}
+              sx={{
+                marginRight: "20px",
+                width: "500px",
+              }}
+            />
+          </Grid>
+        </Grid>
       </DialogContent>
 
       <DialogActions>

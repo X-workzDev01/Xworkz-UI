@@ -11,6 +11,7 @@ import { Link } from "react-router-dom";
 import { Urlconstant } from "../constant/Urlconstant";
 import EditModal from "./EditModal";
 import Header from "./Header";
+import { GridToolbar } from "@mui/x-data-grid";
 
 function loadServerRows(page, pageSize, courseName) {
   const startingIndex = page * pageSize;
@@ -245,7 +246,7 @@ export default function ControlledSelectionServerPaginationGrid() {
       .then((response) => {
         setCourseDropdown(response.data);
       })
-      .catch((error) => {});
+      .catch((error) => { });
   };
 
   const handleCourseChange = (event) => {
@@ -282,30 +283,30 @@ export default function ControlledSelectionServerPaginationGrid() {
       flex: 1,
       valueGetter: (params) => params.row.othersDto.registrationDate,
     },
-    // {
-    //   field: "qualification",
-    //   headerName: "Qualification",
-    //   flex: 1,
-    //   valueGetter: (params) => params.row.educationInfo.qualification,
-    // },
-    // {
-    //   field: "stream",
-    //   headerName: "Stream",
-    //   flex: 1,
-    //   valueGetter: (params) => params.row.educationInfo.stream,
-    // },
-    // {
-    //   field: "yearOfPassout",
-    //   headerName: "Year of Passout",
-    //   flex: 1,
-    //   valueGetter: (params) => params.row.educationInfo.yearOfPassout,
-    //  },
-    // {
-    //   field: "collegeName",
-    //   headerName: "College Name",
-    //   flex: 1,
-    //   valueGetter: (params) => params.row.educationInfo.collegeName,
-    // },
+    {
+      field: "qualification",
+      headerName: "Qualification",
+      flex: 1,
+      valueGetter: (params) => params.row.educationInfo.qualification,
+    },
+    {
+      field: "stream",
+      headerName: "Stream",
+      flex: 1,
+      valueGetter: (params) => params.row.educationInfo.stream,
+    },
+    {
+      field: "yearOfPassout",
+      headerName: "Year of Passout",
+      flex: 1,
+      valueGetter: (params) => params.row.educationInfo.yearOfPassout,
+     },
+    {
+      field: "collegeName",
+      headerName: "College Name",
+      flex: 1,
+      valueGetter: (params) => params.row.educationInfo.collegeName,
+    },
     {
       field: "course",
       headerName: "Course",
@@ -323,6 +324,24 @@ export default function ControlledSelectionServerPaginationGrid() {
       headerName: "Batch",
       flex: 1,
       valueGetter: (params) => params.row.courseInfo.batchType,
+    },
+    {
+      field: "usnNumber",
+      headerName: "USN number",
+      flex: 1,
+      valueGetter: (params) => params.row.csrDto.usnNumber,
+    },
+    {
+      field: "alternateContactNumber",
+      headerName: "AlternateContactNumber",
+      flex: 1,
+      valueGetter: (params) => params.row.csrDto.alternateContactNumber,
+    },
+    {
+      field: "uniqueId",
+      headerName: "Unique Id",
+      flex: 1,
+      valueGetter: (params) => params.row.csrDto.uniqueId,
     },
     {
       field: "actions",
@@ -411,10 +430,10 @@ export default function ControlledSelectionServerPaginationGrid() {
           >
             {Array.isArray(courseDropdown)
               ? courseDropdown.map((item, k) => (
-                  <MenuItem value={item} key={k}>
-                    {item}
-                  </MenuItem>
-                ))
+                <MenuItem value={item} key={k}>
+                  {item}
+                </MenuItem>
+              ))
               : null}
           </Select>
         </FormControl>
@@ -450,7 +469,10 @@ export default function ControlledSelectionServerPaginationGrid() {
           rowSelectionModel={rowSelectionModel}
           loading={loading}
           keepNonExistentRowsSelected
+          slots={{ toolbar: GridToolbar}}
+          
         />
+        
       </div>
       <EditModal
         open={isModalOpen}
