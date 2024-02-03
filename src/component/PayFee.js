@@ -21,7 +21,13 @@ import { Urlconstant } from "../constant/Urlconstant";
 import "./PayFee.css";
 import { Textarea } from "@mui/joy";
 
-export const PayFee = ({ open, handleClose, traineeEmail, feesData ,feesDetils}) => {
+export const PayFee = ({
+  open,
+  handleClose,
+  traineeEmail,
+  feesData,
+  feesDetils,
+}) => {
   const [updateFeesData, setUpdateFeesData] = useState({});
   const [amountError, setAmountError] = useState("");
   const paidTo = ["Mamatha", "Akshara", "Amulya", "Omkar"];
@@ -35,6 +41,7 @@ export const PayFee = ({ open, handleClose, traineeEmail, feesData ,feesDetils})
   const [response, setResponse] = useState("");
   const [snackbar, setSnackbar] = useState(false);
   const [totalBalance, setTotalBalance] = useState("");
+  const [confirmIsDisabled, setConfirmIsDisabled] = useState(false);
 
   useEffect(() => {
     setUpdateFeesData("");
@@ -48,6 +55,7 @@ export const PayFee = ({ open, handleClose, traineeEmail, feesData ,feesDetils})
     setIsConfirm(true);
   };
   const handleSubmit = () => {
+    setConfirmIsDisabled(true);
     const feesDto = {
       admin: {
         updatedBy: sessionStorage.getItem("userId"),
@@ -66,7 +74,6 @@ export const PayFee = ({ open, handleClose, traineeEmail, feesData ,feesDetils})
       comments: updateFeesData.comments,
     };
     updateFees(feesDto);
-
   };
   const handleSetData = (e) => {
     const { name, value } = e.target;
@@ -107,6 +114,7 @@ export const PayFee = ({ open, handleClose, traineeEmail, feesData ,feesDetils})
           setLoading(false);
           setSnackbar(true);
           setBalance(0);
+          setConfirmIsDisabled(false);
         }
       });
   };
@@ -135,7 +143,7 @@ export const PayFee = ({ open, handleClose, traineeEmail, feesData ,feesDetils})
   }
 
   return (
-    <Container>
+    <Container maxWidth="sm">
       <Modal open={open} onClose={handleClose}>
         <div>
           <div className="containe">
@@ -153,9 +161,7 @@ export const PayFee = ({ open, handleClose, traineeEmail, feesData ,feesDetils})
                   marginBottom: "1.5rem",
                 }}
               >
-                <span className="text">
-                  Pay fees
-                </span>
+                <span className="text">Pay fees</span>
               </div>
               <div
                 style={{
@@ -512,8 +518,13 @@ export const PayFee = ({ open, handleClose, traineeEmail, feesData ,feesDetils})
               </h6>
             </div>
           </div>
-          <div className="confirm" >
-            <Button className="confirm" size="large" onClick={handleSubmit}>
+          <div className="confirm">
+            <Button
+              disabled={confirmIsDisabled}
+              className="confirm"
+              size="large"
+              onClick={handleSubmit}
+            >
               Confirm
             </Button>
           </div>

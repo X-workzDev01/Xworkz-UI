@@ -68,7 +68,7 @@ const Profile = (courseName, searchValue) => {
   const [open, setOpen] = useState(false);
   const [feesData, setFeesData] = useState({});
   const [feesHistory, setFeesHistory] = useState({});
-
+  const [payFeesDisabled, setPayFeesDisabled] = useState(false);
   const [isFollowUpModalOpen, setFollowUpModalOpen] = React.useState(false);
   const [editedFollowUpRowData, setEditedFollowUpRowData] =
     React.useState(null);
@@ -107,6 +107,9 @@ const Profile = (courseName, searchValue) => {
     response.then((res) => {
       setFeesData(res.data.feesDto[0]);
       setFeesHistory(res.data.feesHistoryDto);
+      if (res.data.feesDto[0].balance === 0) {
+        setPayFeesDisabled(true);
+      }
     });
     response.catch(() => {});
   };
@@ -286,6 +289,7 @@ const Profile = (courseName, searchValue) => {
                     variant="outlined"
                     startIcon={<SiContactlesspayment />}
                     onClick={handleFees}
+                    disabled={payFeesDisabled}
                   >
                     Pay Fees
                   </Button>
@@ -298,6 +302,7 @@ const Profile = (courseName, searchValue) => {
             ) : (
               ""
             )}
+
             {followUpData.currentStatus && feesData ? (
               followUpData.currentStatus === "Joined" ? (
                 feesHistory && feesHistory.length > 0 ? (
@@ -337,7 +342,6 @@ const Profile = (courseName, searchValue) => {
         setRowData={setEditedFollowUpStatusRowData}
         handleSaveClick={handleFollowUpStatusSave}
         FollowUp={handleFollowUp}
-
       />
 
       {followUpData.currentStatus ? (
