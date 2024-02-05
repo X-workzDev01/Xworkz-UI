@@ -46,6 +46,7 @@ export const PayFee = ({
   useEffect(() => {
     setUpdateFeesData("");
     setPaidAmountError("");
+    setAmountError("")
     setLateFeesError("");
     setTotalBalance(feesData.totalAmount);
     setBalance(feesData.balance);
@@ -114,7 +115,7 @@ export const PayFee = ({
           setLoading(false);
           setSnackbar(true);
           setBalance(0);
-          setConfirmIsDisabled(false);
+          setConfirmIsDisabled(false)
         }
       });
   };
@@ -129,7 +130,9 @@ export const PayFee = ({
       !updateFeesData.paidAmount ||
       !updateFeesData.followupCallbackDate ||
       !updateFeesData.paymentMode ||
-      !updateFeesData.paidTo;
+      !updateFeesData.paidTo||
+      amountError;
+
   } else {
     isDisabled =
       !updateFeesData.transectionId ||
@@ -139,7 +142,7 @@ export const PayFee = ({
       !updateFeesData.paymentMode ||
       !updateFeesData.paidTo ||
       !updateFeesData.selectlateFees ||
-      paidAmountError;
+      amountError;
   }
 
   return (
