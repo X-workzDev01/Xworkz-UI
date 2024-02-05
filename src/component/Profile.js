@@ -107,9 +107,9 @@ const Profile = (courseName, searchValue) => {
     response.then((res) => {
       setFeesData(res.data.feesDto[0]);
       setFeesHistory(res.data.feesHistoryDto);
-      if (res.data.feesDto[0].balance === 0) {
-        setPayFeesDisabled(true);
-      }
+      // if (res.data.feesDto[0].balance === 0) {
+      //   setPayFeesDisabled(true);
+      // }
     });
     response.catch(() => {});
   };

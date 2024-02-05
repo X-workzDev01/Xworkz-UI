@@ -106,11 +106,11 @@ const EditModal = ({ open, handleClose, rowData }) => {
       .then((response) => {
         const data = response.data;
         setFormData({
-          branch: data.branch,
+          branch: data.branchName,
           trainerName: data.trainerName,
           batchType: data.batchType,
           course: data.courseName,
-          batchTiming: data.timing,
+          batchTiming: data.startTime,
           startDate: data.startDate,
         });
       })
@@ -323,10 +323,9 @@ const EditModal = ({ open, handleClose, rowData }) => {
   }
 
   return (
-    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
+    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="lg">
       <DialogTitle>Edit Details</DialogTitle>
       <DialogContent>
-        {/* Render your form fields here */}
         <IconButton
           color="inherit"
           onClick={handlefunctionClose}
@@ -345,9 +344,6 @@ const EditModal = ({ open, handleClose, rowData }) => {
               onChange={handleInputChange}
               onBlur={handleVerifyEmail}
               style={fieldStyle}
-            // InputProps={{
-            //   readOnly: true,
-            // }}
             />
             {verifyHandaleEmailerror ? (
               <Alert severity="success">{verifyHandaleEmailerror}</Alert>
@@ -396,8 +392,13 @@ const EditModal = ({ open, handleClose, rowData }) => {
               defaultValue={rowData.basicInfo.dateOfBirth}
               style={fieldStyle}
               onChange={handleInputChange}
-              InputProps={{
-                readOnly: true,
+              type="date"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              sx={{
+                marginRight: "20px",
+                width: "225px",
               }}
             />
           </Grid>
@@ -407,7 +408,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
-                inputLabel="Qualification"
+                label="Qualification"
                 name="educationInfo.qualification"
                 defaultValue={rowData.educationInfo.qualification}
                 onChange={handleInputChange}
@@ -431,7 +432,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
-                inputLabel="Stream"
+                label="Stream"
                 name="educationInfo.stream"
                 defaultValue={rowData.educationInfo.stream}
                 onChange={handleInputChange}
@@ -600,6 +601,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
               style={fieldStyle}
             />
           </Grid>
+
           <Grid item xs={4}>
             <FormControl style={fieldStyle}>
               <InputLabel id="demo-simple-select-label">Offered As</InputLabel>
@@ -608,10 +610,9 @@ const EditModal = ({ open, handleClose, rowData }) => {
                 id="demo-simple-select"
                 label="Offered As"
                 name="courseInfo.offeredAs"
-                onChange={handleInputChange}
                 defaultValue={rowData.courseInfo.offeredAs}
+                onChange={handleInputChange}
                 variant="outlined"
-
                 sx={{
                   marginRight: "20px",
                   width: "225px",
@@ -727,11 +728,12 @@ const EditModal = ({ open, handleClose, rowData }) => {
               rows={4}
               sx={{
                 marginRight: "20px",
-                width: "500px",
+                width: "300px",
               }}
             />
           </Grid>
         </Grid>
+        
       </DialogContent>
 
       <DialogActions>

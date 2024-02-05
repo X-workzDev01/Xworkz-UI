@@ -133,7 +133,7 @@ export const Course = ({
           <TextField
             name="startTime"
             onBlur={setSelect}
-            value={formData.startTime}
+            value={formData.batchTiming}
             required
             aria-readonly
             fullWidth
