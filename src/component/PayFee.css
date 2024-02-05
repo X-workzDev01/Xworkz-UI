@@ -1,11 +1,12 @@
 .containe {
-    height: auto;
-    width: 50rem;
-    border-radius: 1.2rem;
-    background-color:white;
-    transform: translate(38rem,6rem);
-    
-
+  height: auto;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50rem;
+  border-radius: 1.2rem;
+  background-color: white;
+  transform: translate(-50%,-50%);
 }
 
 .field {
@@ -29,9 +30,12 @@
 .popup {
   height: 10rem;
   width: 25rem;
+  position: absolute;
+  top:50%;
+  left:50%;
   border-radius: 1.2rem;
   background-color: white;
-  transform: translate(49rem, 14rem);
+  transform: translate(-50%, -50%);
 }
 .confirm {
   display: flex;
@@ -66,6 +70,4 @@
   transform: translate(34rem, 15rem);
   color: red;
   size: 0rem;
-}
-.table {
 }
