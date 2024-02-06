@@ -90,7 +90,6 @@ const Profile = (courseName, searchValue) => {
   React.useEffect(() => {
     fetchData(
       email,
-
       isFollowUpStatusModalOpen,
       isModalOpen,
       setProfileData,
@@ -264,19 +263,15 @@ const Profile = (courseName, searchValue) => {
               Edit Profile
             </Button>
             {followUpData.currentStatus ? (
-              feesData ? (
-                followUpData.currentStatus === "Joined" ? (
-                  <Button
-                    style={{ marginRight: "0.5rem" }}
-                    variant="outlined"
-                    startIcon={<ModeEditIcon />}
-                    onClick={() => handleAttendanceModalOpen(profileData)} // Pass profileData or appropriate rowData
-                  >
-                    View Attendance
-                  </Button>
-                ) : (
-                  ""
-                )
+              followUpData.currentStatus === "Joined" ? (
+                <Button
+                  style={{ marginRight: "0.5rem" }}
+                  variant="outlined"
+                  startIcon={<ModeEditIcon />}
+                  onClick={() => handleAttendanceModalOpen(profileData)} // Pass profileData or appropriate rowData
+                >
+                  View Attendance
+                </Button>
               ) : (
                 ""
               )
