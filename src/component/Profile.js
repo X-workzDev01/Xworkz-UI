@@ -107,7 +107,7 @@ const Profile = (courseName, searchValue) => {
     response.then((res) => {
       setFeesData(res.data.feesDto[0]);
       setFeesHistory(res.data.feesHistoryDto);
-      if (res.data.feesDto[0].balance === 0) {
+      if (res.data.feesDto.length !== 0 && res.data.feesDto[0].balance === 0) {
         setPayFeesDisabled(true);
       }
     });
@@ -345,7 +345,7 @@ const Profile = (courseName, searchValue) => {
       />
 
       {followUpData.currentStatus ? (
-        followUpData.currentStatus == "Joined" && feesHistory ? (
+        followUpData.currentStatus === "Joined" && feesHistory ? (
           <FeesHistory
             isOpen={openFeesHistory}
             handleClose={() => setOpenFeesHistory(false)}
