@@ -74,6 +74,7 @@ export default function FollowUp() {
     searchValue,
     date,
     courseName,
+    status
   ]);
 
   React.useEffect(() => {
@@ -92,7 +93,7 @@ export default function FollowUp() {
       .then((response) => {
         setCourseDropdown(response.data);
       })
-      .catch(() => {});
+      .catch(() => { });
   };
 
   const filterData = () => {
@@ -195,7 +196,7 @@ export default function FollowUp() {
       .then((response) => {
         setDropDown(response.data);
       })
-      .catch((error) => {});
+      .catch((error) => { });
   };
   const dateByfollowupStatus = (e) => {
     const { name, value } = e.target;
@@ -208,7 +209,9 @@ export default function FollowUp() {
   };
 
   const handleClear = () => {
-    setCourseName("null");
+    setCourseName("");
+    setStatus("");
+    setDate("");
     sessionStorage.setItem("course", "null");
   };
   return (
@@ -227,7 +230,7 @@ export default function FollowUp() {
             label="Status Values"
             onChange={handleInputChange}
             name="status"
-            value={searchValue}
+            value={status}
             fullWidth
             required
             variant="outlined"
@@ -265,10 +268,10 @@ export default function FollowUp() {
             {/* <MenuItem value="null">Select</MenuItem> */}
             {Array.isArray(courseDropdown)
               ? courseDropdown.map((item, k) => (
-                  <MenuItem value={item} key={k}>
-                    {item}
-                  </MenuItem>
-                ))
+                <MenuItem value={item} key={k}>
+                  {item}
+                </MenuItem>
+              ))
               : null}
           </Select>
         </FormControl>
@@ -369,7 +372,7 @@ export default function FollowUp() {
           onPaginationModelChange={setPaginationModel}
           loading={loading}
           keepNonExistentRowsSelected
-          slots={{ toolbar: GridToolbar}}
+          slots={{ toolbar: GridToolbar }}
         />
 
         <EditFollowUp
