@@ -41,15 +41,13 @@ export const Course = ({
         { headers: { spreadsheetId: Urlconstant.spreadsheetId } }
       );
       const data = await response.data;
-      console.log(data.courseName);
-
       // Update the formData state with fetched data
       setFormData({
-        branch: data.branch,
+        branch: data.branchName,
         trainerName: data.trainerName,
         batchType: data.batchType,
         course: data.courseName,
-        batchTiming: data.timing,
+        batchTiming: data.startTime,
         startDate: data.startDate,
       });
     } catch (error) {
@@ -66,7 +64,6 @@ export const Course = ({
   const setSelect = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    console.log(formData);
   };
 
   const isDisabled = !formData.course || !formData.offeredAs;
@@ -94,7 +91,7 @@ export const Course = ({
             ))}
           </Select>
 
-          <InputLabel id="demo-simple-select-label">Branch</InputLabel>
+          <InputLabel id="demo-simple-select-label">Branch </InputLabel>
           <TextField
             name="branch"
             value={formData.branch}
@@ -134,9 +131,9 @@ export const Course = ({
           <InputLabel id="demo-simple-select-label">Batch Timing </InputLabel>
 
           <TextField
-            name="batchTiming"
+            name="startTime"
             onBlur={setSelect}
-            value={formData.batchTiming}
+            value={formData.startTime}
             required
             aria-readonly
             fullWidth

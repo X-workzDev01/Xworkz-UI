@@ -21,7 +21,13 @@ import { Urlconstant } from "../constant/Urlconstant";
 import "./PayFee.css";
 import { Textarea } from "@mui/joy";
 
-export const PayFee = ({ open, handleClose, traineeEmail, feesData }) => {
+export const PayFee = ({
+  open,
+  handleClose,
+  traineeEmail,
+  feesData,
+  feesDetils,
+}) => {
   const [updateFeesData, setUpdateFeesData] = useState({});
   const [amountError, setAmountError] = useState("");
   const paidTo = ["Mamatha", "Akshara", "Amulya", "Omkar"];
@@ -35,6 +41,7 @@ export const PayFee = ({ open, handleClose, traineeEmail, feesData }) => {
   const [response, setResponse] = useState("");
   const [snackbar, setSnackbar] = useState(false);
   const [totalBalance, setTotalBalance] = useState("");
+  const [confirmIsDisabled, setConfirmIsDisabled] = useState(false);
 
   useEffect(() => {
     setUpdateFeesData("");
@@ -48,6 +55,7 @@ export const PayFee = ({ open, handleClose, traineeEmail, feesData }) => {
     setIsConfirm(true);
   };
   const handleSubmit = () => {
+    setConfirmIsDisabled(true);
     const feesDto = {
       admin: {
         updatedBy: sessionStorage.getItem("userId"),
@@ -77,9 +85,9 @@ export const PayFee = ({ open, handleClose, traineeEmail, feesData }) => {
     } else if (name === "paidAmount" && value <= 0) {
       setPaidAmountError("Entered amount should be Greater Than 0 *");
     }
-    if (name === "paidAmount" && value <= totalBalance) {
+    if (name === "paidAmount" && value <= feesData.balance) {
       setAmountError("");
-    } else {
+    } else if (name === "paidAmount" && value >= feesData.balance) {
       setAmountError("Enter Valid Amount");
     }
     if (name === "lateFees" && value > 0) {
@@ -101,10 +109,12 @@ export const PayFee = ({ open, handleClose, traineeEmail, feesData }) => {
         setResponse(response.data);
         if (response.status === 200) {
           setIsConfirm(false);
-          handleClose(false);
+          feesDetils();
+          handleClose();
           setLoading(false);
           setSnackbar(true);
           setBalance(0);
+          setConfirmIsDisabled(false);
         }
       });
   };
@@ -128,24 +138,46 @@ export const PayFee = ({ open, handleClose, traineeEmail, feesData }) => {
       !updateFeesData.followupCallbackDate ||
       !updateFeesData.paymentMode ||
       !updateFeesData.paidTo ||
-      !updateFeesData.selectlateFees;
+      !updateFeesData.selectlateFees ||
+      paidAmountError;
   }
 
   return (
-    <Container>
+    <Container maxWidth="sm">
       <Modal open={open} onClose={handleClose}>
         <div>
-          {" "}
           <div className="containe">
-            <div className="close">
-              <span className="text">PayFees</span>
-
-              <TfiClose
-                color="inherit"
-                onClick={() => {
-                  handleClose();
+            <div
+              style={{
+                display: "flex",
+                justifyItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <div
+                style={{
+                  marginLeft: "18rem",
+                  marginTop: "1rem",
+                  marginBottom: "1.5rem",
                 }}
-              />
+              >
+                <span className="text">Pay fees</span>
+              </div>
+              <div
+                style={{
+                  marginLeft: "21rem",
+                  marginTop: "1rem",
+                  marginBottom: "1.5rem",
+                }}
+              >
+                {" "}
+                <TfiClose
+                  color="inherit"
+                  onClick={() => {
+                    handleClose();
+                  }}
+                />
+              </div>
             </div>
             <div className="error">
               <span>{paidAmountError}</span>
@@ -487,7 +519,12 @@ export const PayFee = ({ open, handleClose, traineeEmail, feesData }) => {
             </div>
           </div>
           <div className="confirm">
-            <Button className="confirm" size="large" onClick={handleSubmit}>
+            <Button
+              disabled={confirmIsDisabled}
+              className="confirm"
+              size="large"
+              onClick={handleSubmit}
+            >
               Confirm
             </Button>
           </div>

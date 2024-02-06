@@ -15,6 +15,7 @@ import { Urlconstant } from "../constant/Urlconstant";
 import EditFollowUp from "./EditFollowUp";
 import Course from "./Course";
 import Header from "./Header";
+import { GridToolbar } from "@mui/x-data-grid";
 
 export default function FollowUp() {
   const [isModalOpen, setModalOpen] = React.useState(false);
@@ -42,6 +43,8 @@ export default function FollowUp() {
     "Joined",
     "Past followup",
     "Never followUp",
+    "CSR",
+    "NonCSR",
   ]);
   const [date, setDate] = useState("");
   const initialPageSize = 25;
@@ -159,7 +162,7 @@ export default function FollowUp() {
         },
       };
     }
-    
+
     return new Promise((resolve, reject) => {
       fetch(apiUrl, requestOptions)
         .then((response) => response.json())
@@ -366,6 +369,7 @@ export default function FollowUp() {
           onPaginationModelChange={setPaginationModel}
           loading={loading}
           keepNonExistentRowsSelected
+          slots={{ toolbar: GridToolbar}}
         />
 
         <EditFollowUp

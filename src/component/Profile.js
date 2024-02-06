@@ -68,7 +68,7 @@ const Profile = (courseName, searchValue) => {
   const [open, setOpen] = useState(false);
   const [feesData, setFeesData] = useState({});
   const [feesHistory, setFeesHistory] = useState({});
-
+  const [payFeesDisabled, setPayFeesDisabled] = useState(false);
   const [isFollowUpModalOpen, setFollowUpModalOpen] = React.useState(false);
   const [editedFollowUpRowData, setEditedFollowUpRowData] =
     React.useState(null);
@@ -97,7 +97,7 @@ const Profile = (courseName, searchValue) => {
       setStatusData,
       setDataLoadingError
     );
-  }, [email, isFollowUpStatusModalOpen, isModalOpen, openFeesHistory]);
+  }, [email, isFollowUpStatusModalOpen, isModalOpen]);
   const getFeesDetiles = () => {
     setFeesData("");
     const response = axios.get(
@@ -106,8 +106,11 @@ const Profile = (courseName, searchValue) => {
     response.then((res) => {
       setFeesData(res.data.feesDto[0]);
       setFeesHistory(res.data.feesHistoryDto);
+      if (res.data.feesDto[0].balance === 0) {
+        setPayFeesDisabled(true);
+      }
     });
-    response.catch(() => { });
+    response.catch(() => {});
   };
   const fetchData = (
     email,
@@ -181,11 +184,9 @@ const Profile = (courseName, searchValue) => {
     setShowAttendence(true);
   };
   const handleFees = () => {
-    getFeesDetiles();
     setOpen(true);
   };
   const handleFeesHistory = () => {
-    getFeesDetiles();
     setOpenFeesHistory(true);
   };
 
@@ -287,6 +288,7 @@ const Profile = (courseName, searchValue) => {
                     variant="outlined"
                     startIcon={<SiContactlesspayment />}
                     onClick={handleFees}
+                    disabled={payFeesDisabled}
                   >
                     Pay Fees
                   </Button>
@@ -299,7 +301,8 @@ const Profile = (courseName, searchValue) => {
             ) : (
               ""
             )}
-            {followUpData.currentStatus ? (
+
+            {followUpData.currentStatus && feesData ? (
               followUpData.currentStatus === "Joined" ? (
                 feesHistory && feesHistory.length > 0 ? (
                   <Button
@@ -358,7 +361,6 @@ const Profile = (courseName, searchValue) => {
         handleClose={() => setAttendanceModalOpen(false)}
         id={profileData.id}
         batch={profileData.courseInfo.course}
-
       />
 
       <FeesHistory
@@ -375,6 +377,7 @@ const Profile = (courseName, searchValue) => {
             traineeEmail={profileData.basicInfo.email}
             name={profileData.basicInfo.tr}
             feesData={feesData}
+            feesDetils={getFeesDetiles}
           />
         ) : (
           ""
