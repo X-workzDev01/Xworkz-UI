@@ -110,7 +110,6 @@ const Profile = (courseName, searchValue) => {
       if (res.data.feesDto.length !== 0 && res.data.feesDto[0].balance === 0) {
         setPayFeesDisabled(true);
       }
-
     });
     response.catch(() => {});
   };
