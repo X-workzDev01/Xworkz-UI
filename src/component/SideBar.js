@@ -54,6 +54,11 @@ const Sidebar = ({ children }) => {
       icon: <FaList />,
     },
     {
+      path: "attenances",
+      name: "Absentees Details",
+      icon: <FaRegChartBar />
+    },
+    {
       path: "whatsapp",
       name: "WhatsApp",
       icon: <FaWhatsapp />,

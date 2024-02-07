@@ -90,7 +90,6 @@ const Profile = (courseName, searchValue) => {
   React.useEffect(() => {
     fetchData(
       email,
-
       isFollowUpStatusModalOpen,
       isModalOpen,
       setProfileData,

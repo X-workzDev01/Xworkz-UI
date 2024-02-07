@@ -57,11 +57,10 @@ const CircularProgressWithLabel = (props) => {
 
 const AttendanceModal = ({ open, handleClose, id, batch }) => {
   const [attendanceData, setAttendanceData] = useState(null);
-  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
   const [progressValue, setProgressValue] = useState(0);
 
   useEffect(() => {
-    if (open && !initialLoadComplete) {
+    if (open  ) {
       // Fetch data only when the modal is open
       axios
         .get(Urlconstant.url + `api/attendance/id/${id}?batch=${batch}`)
@@ -75,7 +74,7 @@ const AttendanceModal = ({ open, handleClose, id, batch }) => {
           console.error("Error fetching attendance data:", error);
         });
     }
-  }, [open, id, batch, initialLoadComplete]);
+  }, [open, id, batch]);
 
   // Dummy data, replace with your actual data
   const totalClasses = attendanceData ? attendanceData.totalClass : 0;
@@ -85,7 +84,7 @@ const AttendanceModal = ({ open, handleClose, id, batch }) => {
     totalClasses === 0 ? 0 : (totalPresent / totalClasses) * 100;
 
   useEffect(() => {
-    if (open && !initialLoadComplete) {
+    if (open ) {
       // Set an interval to gradually increase the progressValue
       const interval = setInterval(() => {
         setProgressValue((prevValue) => {
@@ -101,13 +100,12 @@ const AttendanceModal = ({ open, handleClose, id, batch }) => {
       setTimeout(() => {
         clearInterval(interval);
         setProgressValue(newAttendancePercentage);
-        setInitialLoadComplete(true);
       }, 2000); // Set the timeout duration to a larger value than the interval duration
 
       // Cleanup function to clear the interval when the component unmounts or dependencies change
       return () => clearInterval(interval);
     }
-  }, [open, initialLoadComplete]);
+  }, [open]);
 
   // List of absent days with reasons
   const absentDays = attendanceData?.list || [];

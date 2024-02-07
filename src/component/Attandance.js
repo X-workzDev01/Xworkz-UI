@@ -1,271 +1,344 @@
+import { PersonOutline } from "@mui/icons-material";
 import {
-  Button,
   FormControl,
   InputLabel,
   MenuItem,
   Select,
-  TextField,
 } from "@mui/material";
+import Autocomplete from "@mui/material/Autocomplete";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
 import { DataGrid } from "@mui/x-data-grid";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import * as React from "react";
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Urlconstant } from "../constant/Urlconstant";
-import "./Attandance.css";
+import EditModal from "./EditModal";
+import Header from "./Header";
+import AttendanceModal from "./AttendanceModal";
 
-const Attandance = () => {
-  const [clickedButtonIds, setClickedButtonIds] = useState(new Set());
-  const [value, setValue] = useState([]);
-  const [searchValue, setSearchValue] = useState("");
 
-  const currentDate = new Date();
+// Function to load data from the server based on pagination
+async function loadServerRows(page, pageSize, courseName) {
+  const startingIndex = page * pageSize;
+  const maxRows = pageSize;
+  const apiUrl =
+    Urlconstant.url +
+    `api/attendance/readData?startingIndex=${startingIndex}&maxRows=${maxRows}&courseName=${courseName}`;
 
-  const year = currentDate.getFullYear();
-  const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Months are zero-based
-  const day = String(currentDate.getDate()).padStart(2, "0");
-  const formattedDate = `${year}-${month}-${day}`;
+  return new Promise((resolve) => {
+    fetch(apiUrl)
+      .then((response) => response.json())
+      .then((data) => {
+        resolve({
+          rows: data.attendanceData.map((row) => ({
+            ...row,
+            id: row.id.toString(), // Make sure to include a unique identifier
+          })),
+          rowCount: data.size,
+        });
+      })
+      .catch((error) => {
+        console.error("Error fetching attendance data:", error);
+        resolve({ rows: [], rowCount: 0 });
+      });
+  });
+}
 
-  useEffect(() => {
-    render();
-  }, []);
+async function fetchFilteredData(searchValue, courseName) {
+  try {
+    const apiUrl =
+      Urlconstant.url +
+      `api/attendance/suggestion/${courseName}?value=${searchValue}`;
 
-  const initialPageSize = 10;
-  const [paginationModel, setPaginationModel] = useState({
+    const response = await axios.get(apiUrl);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return [];
+  }
+}
+
+
+function searchServerRows(searchValue, courseName) {
+  const apiUrl =
+    Urlconstant.url + `api/attendance/filterData/${courseName}?searchValue=${searchValue}`;
+  return new Promise((resolve) => {
+    fetch(apiUrl)
+      .then((response) => response.json())
+      .then((data) => {
+        resolve({
+          rows: data.map((row) => ({ id: row.id.toString(), ...row })),
+          rowCount: data.size,
+        });
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+        resolve({ rows: [], rowCount: 0 });
+      });
+  });
+}
+
+// ... (Other utility functions)
+
+export default function ControlledSelectionServerPaginationGrid() {
+  const initialPageSize = 25;
+  const [paginationModel, setPaginationModel] = React.useState({
     page: 0,
     pageSize: initialPageSize,
   });
-  const [gridData, setGridData] = useState({
+  const [gridData, setGridData] = React.useState({
     rows: [],
     rowCount: 0,
   });
-  const [loading, setLoading] = useState(false);
+  const [handleOpen, setHandleOpen] = useState(false)
+  const [loading, setLoading] = React.useState(false);
+  const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
+  const [searchValue, setSearchValue] = React.useState("");
+  const [searchInputValue, setSearchInputValue] = React.useState("");
+  const [autocompleteOptions, setAutocompleteOptions] = React.useState([]);
+  const [isModalOpen, setModalOpen] = React.useState(false);
+  const [editedRowData, setEditedRowData] = React.useState(null);
+  const [courseName, setCourseName] = React.useState(
+    sessionStorage.getItem("courseValue") || ""
+  );
+  const [courseDropdown, setCourseDropdown] = React.useState("");
+  const [totalClass, setTotalClass] = useState(0);
+  const [course, setCourse] = useState('');
+  const [id, setId] = useState('');
 
-  const refresh = (select) => {
-    setLoading(true);
-    setPaginationModel({ page: 0, pageSize: initialPageSize });
-    searchServerRows(0, initialPageSize, select).then((newGridData) => {
-      setGridData(newGridData);
-      setLoading(false);
-    });
+  useEffect(() => {
+    refreshPageEveryTime();
+    getActiveCourse();
+  }, []);
+
+  useEffect(() => {
+    if (courseName) {
+      getTotalClass();
+    }
+  }, [courseName])
+
+  const handleCourseChange = (event) => {
+    const courseValue = event.target.value;
+    sessionStorage.setItem("courseValue", courseValue);
+    setCourseName(courseValue);
   };
 
-  React.useEffect(() => {
-    setLoading(true);
-    searchServerRows(
-      paginationModel.page,
-      paginationModel.pageSize,
-      searchValue
-    ).then((newGridData) => {
-      setGridData(newGridData);
-      setLoading(false);
-    });
-  }, [paginationModel.page, paginationModel.pageSize, searchValue]);
+  function getTotalClass() {
+    axios
+      .get(Urlconstant.url + `api/getTotalClass?courseName=${courseName}`)
+      .then((response) => {
+        setTotalClass(response.data);
 
-  function searchServerRows(page, pageSize, select) {
-    const startingIndex = page * pageSize;
-    console.log(
-      "Loading server rows with page:",
-      page,
-      "pageSize:",
-      pageSize,
-      "status:",
-      select
-    );
-
-    return new Promise((resolve, reject) => {
-      axios(
-        Urlconstant.url +
-          `api/byBatch?batch=${select}&startIndex=${startingIndex}&maxRows=10`
-      )
-        .then((json) => {
-          console.log("Received data from server:", json.data.size);
-          const newGridData = {
-            rows: json.data.dto.map((row) => ({
-              id: row.id.toString(),
-              ...row,
-            })),
-            rowCount: json.data.size,
-          };
-          resolve(newGridData);
-        }, 1000)
-        .catch((error) => {
-          console.error("Error fetching data:", error);
-
-          resolve({ rows: [], rowCount: 0 });
-        });
-    });
+      })
+      .catch((error) => {
+        console.error("Error fetching total class data:", error);
+      });
   }
 
-  const render = () => {
+  const refreshPageEveryTime = () => {
+    let active = true;
+    setLoading(true);
+    const fetchDataAndUpdateState = async () => {
+      try {
+        const newGridData = await loadServerRows(
+          paginationModel.page,
+          paginationModel.pageSize,
+          courseName
+        );
+
+        if (active) {
+          setGridData(newGridData);
+          setAutocompleteOptions([]);
+          setLoading(false);
+        } else {
+            const suggestions = await fetchFilteredData(
+              searchValue,
+              courseName,
+              paginationModel.page,
+              paginationModel.pageSize,
+              setPaginationModel
+            );
+
+            if (active) {
+              setAutocompleteOptions(suggestions);
+              setLoading(false);
+            }
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        if (active) {
+          setGridData({ rows: [], rowCount: 0 });
+          setAutocompleteOptions([]);
+          setLoading(false);
+        }
+      }
+    };
+    fetchDataAndUpdateState();
+    return () => {
+      active = false;
+    };
+  };
+
+  const getActiveCourse = () => {
     axios
       .get(Urlconstant.url + "api/getCourseName?status=Active", {
         headers: {
           spreadsheetId: Urlconstant.spreadsheetId,
         },
       })
-      .then((res) => {
-        setValue(res.data);
+      .then((response) => {
+        setCourseDropdown(response.data);
       })
-      .catch((e) => {});
+      .catch((error) => { });
   };
-  const everydayAttandance = (attandanceData, batch) => {
-    axios
-      .post(Urlconstant.url + "api/addAttendennce", attandanceData)
-      .then((res) => {
-        refresh(batch);
-      })
-      .catch((e) => {});
+  const handleSearchClick = () => {
+    searchServerRows(searchValue, courseName).then((newGridData) => {
+      setGridData(newGridData);
+      setPaginationModel({ page: 0, pageSize: initialPageSize });
+      setSearchInputValue("");
+    });
   };
+  const handleModelOpen = (batch, id) => {
+    setHandleOpen(true);
+    setCourse(batch);
+    setId(id);
 
-  const handleButtonClickYes = (rowData) => {
-    const attandanceData = {
-      id: rowData.id,
-      markAs: 1,
-      basicInfo: {
-        traineeName: rowData.basicInfo.traineeName,
-        email: rowData.basicInfo.email,
-        contactNumber: rowData.basicInfo.contactNumber,
-      },
-      courseInfo: {
-        course: rowData.courseInfo.course,
-        branch: rowData.courseInfo.branch,
-        batchTiming: rowData.courseInfo.batchTiming,
-      },
-    };
-    if (!clickedButtonIds.has(rowData.id)) {
-      const updatedClickedButtonIds = new Set(clickedButtonIds);
-      updatedClickedButtonIds.add(rowData.id);
-      setClickedButtonIds(updatedClickedButtonIds);
-    }
 
-    everydayAttandance(attandanceData, rowData.courseInfo.course);
+  }
+  const handleClear = () => {
+    setCourseName("null");
+    setTotalClass(0);
   };
-
-  const handleButtonClickNo = (rowData) => {
-    const attandanceData = {
-      id: rowData.id,
-      markAs: 0,
-      basicInfo: {
-        traineeName: rowData.basicInfo.traineeName,
-        email: rowData.basicInfo.email,
-        contactNumber: rowData.basicInfo.contactNumber,
-      },
-      courseInfo: {
-        course: rowData.courseInfo.course,
-        branch: rowData.courseInfo.branch,
-        batchTiming: rowData.courseInfo.batchTiming,
-      },
-    };
-    if (!clickedButtonIds.has(rowData.id)) {
-      const updatedClickedButtonIds = new Set(clickedButtonIds);
-      updatedClickedButtonIds.add(rowData.id);
-      setClickedButtonIds(updatedClickedButtonIds);
-    }
-    everydayAttandance(attandanceData, rowData.courseInfo.course);
-  };
+  React.useEffect(() => {
+    refreshPageEveryTime();
+  }, [paginationModel.page, paginationModel.pageSize, searchValue, courseName]);
 
   const columns = [
-    { field: "id", headerName: "ID", width: 80 },
     {
-      headerName: "Name",
-      width: 120,
-      valueGetter: (params) => params.row.basicInfo.traineeName,
-    },
-    {
-      field: "email",
-      headerName: "Email",
-      width: 200,
-      valueGetter: (params) => params.row.basicInfo.email,
-    },
-    {
-      field: "contactNumber",
-      headerName: "Contact Number",
-      width: 120,
-      valueGetter: (params) => params.row.basicInfo.contactNumber,
+      field: "traineeName",
+      headerName: "Trainee Name",
+      width: 450,
+      valueGetter: (params) => params.row.traineeName,
     },
     {
       field: "course",
-      headerName: "Course",
-      width: 120,
-      valueGetter: (params) => params.row.courseInfo.course,
+      headerNam1e: "Course",
+      width: 550,
+      valueGetter: (params) => params.row.course,
+    },
+
+    {
+      field: "totalAbsent",
+      headerName: "Total Absent",
+      width: 300,
+      valueGetter: (params) => params.row.totalAbsent,
     },
     {
-      field: "branch",
-      headerName: "Branch",
+      field: "actions",
+      headerName: "Actions",
       width: 120,
-      valueGetter: (params) => params.row.courseInfo.branch,
-    },
-    {
-      field: "batchTiming",
-      headerName: "Batch",
-      width: 120,
-      valueGetter: (params) => params.row.courseInfo.batchTiming,
-    },
-    {
-      field: "present",
-      headerName: "Present",
-      width: 120,
-      valueGetter: (params) => params.row.present,
-    },
-    {
-      field: "absent",
-      headerName: "Absent",
-      width: 120,
-      valueGetter: (params) => params.row.absent,
-    },
-    {
-      field: "action",
-      headerName: "Action",
-      width: 150,
       renderCell: (params) => (
         <div>
           <Button
-            onClick={() => handleButtonClickYes(params.row)}
-            disabled={
-              params.row.isButton || clickedButtonIds.has(params.row.id)
-            }
-            style={{ color: params.row.ycolor }}
             variant="outlined"
+            color="secondary"
+            startIcon={<PersonOutline />}
+            onClick={() => { handleModelOpen(params.row.course, params.row.id) }}
           >
-            Yes{" "}
+            View
           </Button>
-
-          <Button
-            onClick={() => handleButtonClickNo(params.row)}
-            disabled={
-              params.row.isButton || clickedButtonIds.has(params.row.id)
-            }
-            style={{ color: params.row.ncolor }}
-            variant="outlined"
-          >
-            No   
-          </Button>   
         </div>
       ),
     },
+
   ];
 
-  const handleInputChange = (e) => {
-    setSearchValue(e.target.value);
-    refresh(e.target.value);
-  };
+
+  const styles = {
+    totalClassContainer: {
+      marginLeft: "900px",
+      marginTop: '-1.7rem',
+    },
+    totalClassCircle: {
+      display: 'inline-block',
+      marginRight: '600px',
+      width: "40px",
+      height: "40px",
+      borderRadius: "50%",
+      backgroundColor: "#e0e0e0",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      textAlign: 'center',
+      marginTop: '-30px'
+
+
+    },
+  }
 
   return (
-    <div className="attandance">
+    <div>
+      <Header />
+
       <div
         className="search"
-        style={{ marginTop: "50px", display: "flex", alignItems: "center" }}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          marginTop: "100px",
+        }}
       >
-        <FormControl>
-          <InputLabel id="demo-simple-select-label"> Select Batch </InputLabel>{" "}
+        <Autocomplete
+          options={autocompleteOptions}
+          freeSolo
+          id="free-solo-2-demo"
+          disableClearable
+          getOptionLabel={(option) => option.traineeName}
+          style={{ width: "22rem", padding: "10px 20px" }}
+          onChange={(event, newValue) => {
+            sessionStorage.setItem("name", newValue.traineeName);
+            setSearchValue(newValue.course);
+          }}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              type="text"
+              onChange={(e) => {
+                const value = e.target.value;
 
+                if (value.length >= 3) {
+                  setSearchValue(value);
+                  setPaginationModel({
+                    page: 0,
+                    pageSize: initialPageSize,
+                  });
+                }
+                if (value.length >= 1 && value.length <= 3) {
+                  setPaginationModel({
+                    page: 0,
+                    pageSize: initialPageSize,
+                  });
+                }
+              }}
+              placeholder="Search..."
+            />
+          )}
+          renderOption={(props, option) => (
+            <li {...props}>
+              {option.traineeName} - {option.email} - {option.totalAbsent} - {option.totalAttendance}
+            </li>
+          )}
+        />
+        <FormControl>
+          <InputLabel id="demo-simple-select-label">Select Course</InputLabel>
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
-            label="Select Batch"
-            onChange={handleInputChange}
-            value={searchValue}
-            defaultValue={"Please Select Batch"}
-            fullWidth
+            label="Course Name"
+            name="courseName"
+            value={courseName}
             required
             variant="outlined"
             sx={{
@@ -273,41 +346,79 @@ const Attandance = () => {
               width: "200px",
               fontSize: "12px",
             }}
-          >        
-            {value.map((item, index) => (
-              <MenuItem value={item} key={index}>
-                   
-                {item}   
-              </MenuItem>
-            ))}   
-          </Select>   
-        </FormControl>   
-        <TextField
-          type="date"
-          label="Select Date"
-          InputLabelProps={{
-            shrink: true,
+            onChange={handleCourseChange}
+          >
+            {Array.isArray(courseDropdown)
+              ? courseDropdown.map((item, k) => (
+                <MenuItem value={item} key={k}>
+                  {item}
+                </MenuItem>
+              ))
+              : null}
+          </Select>
+        </FormControl>
+        <div>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSearchClick}
+          >
+            Search
+          </Button>
+        </div>
+        <div style={{ paddingLeft: "10px" }}>
+          <Button variant="contained" color="primary" onClick={handleClear}>
+            Clear
+          </Button>
+        </div>
+      </div>
+      <div style={{ marginTop: "-35px" }}>TotalClass :
+        <div style={styles.totalClassContainer}>
+          <div style={styles.totalClassCircle}>
+            <p>{totalClass}</p>
+          </div>
+        </div>
+      </div>
+      <div style={{ height: "650px", width: "100%" }}>
+        <DataGrid
+          style={{ width: "100%" }}
+          columns={columns}
+          rows={gridData.rows}
+          pagination
+          paginationModel={paginationModel}
+          pageSizeOptions={[5, 10, 15]}
+          rowCount={gridData.rowCount}
+          paginationMode={searchValue === "" ? "server" : "client"}
+          onPaginationModelChange={setPaginationModel}
+          onRowSelectionModelChange={(newRowSelectionModel) => {
+            setRowSelectionModel(newRowSelectionModel);
           }}
-        />   
-        <Button variant="contained" color="primary">
-          Search   
-        </Button>   
-      </div>   
-      <DataGrid
-        columns={columns}
-        rows={gridData.rows}
-        pagination
-        autoHeight
-        paginationModel={paginationModel}
-        pageSizeOptions={[5, 10, 15, 20]}
-        rowCount={gridData.rowCount}
-        paginationMode="server"
-        onPaginationModelChange={setPaginationModel}
-        loading={loading}
-        keepNonExistentRowsSelected
+          rowSelectionModel={rowSelectionModel}
+          loading={loading}
+          keepNonExistentRowsSelected
+        />
+      </div>
+      <EditModal
+        open={isModalOpen}
+        handleClose={() => setModalOpen(false)}
+        rowData={editedRowData}
+        setRowData={setEditedRowData}
+        handleSaveClick={() => {
+          // Your save logic here
+          setModalOpen(false);
+        }}
       />
+      {id && course ?
+        <AttendanceModal
+          open={handleOpen}
+          handleClose={() => setHandleOpen(false)}
+          id={id}
+          batch={course}
+
+
+        />
+        : ""}
+
     </div>
   );
-};
-
-export default Attandance;
+}
