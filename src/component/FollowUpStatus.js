@@ -23,14 +23,16 @@ import "dayjs/locale/de";
 import "dayjs/locale/en-gb";
 const fieldStyle = { margin: "20px" };
 
+
 const FollowUpStatus = ({ open, handleClose, rowData }) => {
+  const [joinedError ,setJoinedError] = useState("")
   const [isConfirming, setIsConfirming] = React.useState(false);
   const [editedData, setEditedData] = React.useState({ ...rowData });
   const [loading, setLoading] = React.useState(false);
   const [responseMessage, setResponseMessage] = React.useState("");
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [dropdownData, setDropdownData] = React.useState([]);
-  const [isDisabled, setIdDisabled] = React.useState(true);
+  const [isDisabled, setIdDisabled] = React.useState(false);
   const [feesData, setFeesData] = useState({});
 
   const fieldsToCheck = [
@@ -55,6 +57,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
   };
 
   useEffect(() => {
+ 
     axios
       .get(Urlconstant.url + "utils/dropdown", {
         headers: {
@@ -74,6 +77,8 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
 
   React.useEffect(() => {
     setEditedData(rowData);
+    setIdDisabled(false)
+    setJoinedError(null)
   }, [rowData]);
 
   if (!rowData) {
@@ -95,8 +100,14 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
 
     if (name === "attemptStatus") {
       setAttemptStatus(updatedValue);
-
-      setIdDisabled(false);
+      if (value == "Joined" && rowData.courseInfo.course === "NA") {
+        setIdDisabled(true);
+        setJoinedError("Please Update Batch in edit modal")
+        
+      } else {
+        setJoinedError("")
+        setIdDisabled(false);
+      }
     }
   };
 
@@ -191,7 +202,6 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
       setIdDisabled(true);
     } else {
       setResponseMessage("");
-      setIdDisabled(false);
     }
   };
   return (
@@ -208,6 +218,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
           <GridCloseIcon />
         </IconButton>
       </DialogTitle>
+      <div style={{marginLeft:'19rem'}} > <span style={{color:'red' ,}}>{joinedError}</span></div>
       <DialogContent>
         <TextField
           label="Email"
@@ -248,7 +259,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
             label="Attempt Status"
             name="attemptStatus"
             onChange={handleInputChange}
-            defaultValue={attemptStatus}
+            // defaultValue={attemptStatus}
             variant="outlined"
             sx={{
               marginRight: "20px",

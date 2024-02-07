@@ -85,7 +85,10 @@ export const FeesHistory = ({ isOpen, handleClose, row }) => {
             width: "57.2rem",
             borderRadius: "1.2rem",
             backgroundColor: "white",
-            transform: "translate(35rem,11rem)",
+            transform: "translate(-50%,-50%)",
+            top:'50%',
+            left:'50%',
+            position:'absolute',
           }}
         >
           <div className="closed">

@@ -35,7 +35,6 @@ function stringToColor(string) {
 
 function stringAvatar(name) {
   let avatarText = "";
-
   if (name.includes(" ")) {
     const [firstName, lastName] = name.split(" ");
     avatarText = `${firstName[0]}${lastName[0]}`;
