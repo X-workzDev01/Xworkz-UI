@@ -80,12 +80,12 @@ export const FeesDetailes = () => {
     {
       field: "email",
       headerName: "Email",
-      width: 250,
+      width: 150,
       valueGetter: (params) => params.row.feesHistoryDto.email,
     },
     {
       field: "transectionId",
-      width: 200,
+      width: 150,
 
       headerName: "Transection Id",
       valueGetter: (params) => params.row.feesHistoryDto.transectionId,
@@ -95,6 +95,18 @@ export const FeesDetailes = () => {
       width: 150,
       headerName: "Payment Mode",
       valueGetter: (params) => params.row.feesHistoryDto.paymentMode,
+    },
+    {
+      field: "paymentpaidDate",
+      width: 150,
+      headerName: "Payment paid date",
+      valueGetter: (params) => params.row.feesHistoryDto.lastFeesPaidDate,
+    },
+    {
+      field: "Fees Followup date",
+      width: 150,
+      headerName: "Fees Followup date",
+      valueGetter: (params) => params.row.feesHistoryDto.feesfollowupDate,
     },
     {
       headerName: "Paid To",
@@ -134,22 +146,36 @@ export const FeesDetailes = () => {
                 padding: "0.4rem",
                 borderRadius: "0.5rem",
                 color: "white",
+                textTransform: "uppercase",
               }}
             >
               Completed
             </span>
           ) : (
-            <span
-              style={{
-                backgroundColor: "#ff3333",
-                padding: "0.4rem",
-                borderRadius: "0.5rem",
-                color: "white",
-              }}
-            >
-              {" "}
-              {params.row.feesStatus}
-            </span>
+            <div style={{ backgroundSize: "2rem" }}>
+              <span
+                style={{
+                  // backgroundColor: "#ff3333",
+                  padding: "0.4rem",
+                  borderRadius: "0.5rem",
+                  color: "blue",
+                }}
+              >
+                {params.row.feesStatus === "FEES_DUE" ? (
+                  <span style={{ color: "red", textTransform: "uppercase" }}>
+                    {params.row.feesStatus}
+                  </span>
+                ) : (
+                  <span style={{ textTransform: "uppercase" }}>
+                    {params.row.feesStatus === "FREE" ? (
+                      <span style={{color:"green"}}>{params.row.feesStatus}</span>
+                    ) : (
+                      <span>{params.row.feesStatus}</span>
+                    )}
+                  </span>
+                )}
+              </span>
+            </div>
           )}
         </div>
       ),
@@ -235,11 +261,10 @@ export const FeesDetailes = () => {
             </Select>
           </FormControl>
           <TextField
-            required
             type="date"
             name="date"
             onChange={handleSetData}
-            label="Fees Paid Date"
+            label="Fees Followup date"
             id="outlined-size-small"
             size="small"
             value={date ? date : " "}
@@ -262,7 +287,7 @@ export const FeesDetailes = () => {
           height: "650px",
           width: "95%",
           marginLeft: "2rem",
-          paddingRight: "4rem",
+          paddingRight: "1rem",
         }}
       >
         <DataGrid

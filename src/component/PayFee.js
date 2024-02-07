@@ -38,6 +38,7 @@ export const PayFee = ({
   const [paidAmountError, setPaidAmountError] = useState("");
   const [lateFeesError, setLateFeesError] = useState("");
   const [balance, setBalance] = useState(0);
+
   const [response, setResponse] = useState("");
   const [snackbar, setSnackbar] = useState(false);
   const [totalBalance, setTotalBalance] = useState("");
@@ -46,6 +47,7 @@ export const PayFee = ({
   useEffect(() => {
     setUpdateFeesData("");
     setPaidAmountError("");
+    setAmountError("");
     setLateFeesError("");
     setTotalBalance(feesData.totalAmount);
     setBalance(feesData.balance);
@@ -79,6 +81,9 @@ export const PayFee = ({
     const { name, value } = e.target;
     setUpdateFeesData({ ...updateFeesData, [name]: value });
 
+    if (name === "selectlateFees" && value === "No") {
+      setLateFeesError("");
+    }
     if (name === "paidAmount" && value > 0) {
       setUpdateFeesData({ ...updateFeesData, [name]: value });
       setPaidAmountError("");
@@ -93,9 +98,11 @@ export const PayFee = ({
     if (name === "lateFees" && value > 0) {
       setUpdateFeesData({ ...updateFeesData, [name]: value });
       setLateFeesError("");
+      setTotalBalance(balance + Number(value));
     } else if (name === "lateFees" && value <= 0) {
       setLateFeesError("Entered amount should be Greater Than 0 *");
       setUpdateFeesData({ ...updateFeesData, [name]: "" });
+      setTotalBalance(balance);
     }
     if (name === "paidAmount") {
       setBalance(feesData.balance - value);
@@ -129,7 +136,8 @@ export const PayFee = ({
       !updateFeesData.paidAmount ||
       !updateFeesData.followupCallbackDate ||
       !updateFeesData.paymentMode ||
-      !updateFeesData.paidTo;
+      !updateFeesData.paidTo ||
+      amountError;
   } else {
     isDisabled =
       !updateFeesData.transectionId ||
@@ -139,7 +147,7 @@ export const PayFee = ({
       !updateFeesData.paymentMode ||
       !updateFeesData.paidTo ||
       !updateFeesData.selectlateFees ||
-      paidAmountError;
+      amountError;
   }
 
   return (
@@ -228,8 +236,8 @@ export const PayFee = ({
                 />
                 <TextField
                   required
-                  label="Transection id "
-                  placeholder="Enter Transection Id"
+                  label="Transaction id "
+                  placeholder="Enter Transaction Id"
                   name="transectionId"
                   onChange={handleSetData}
                   id="outlined-size-small"
@@ -258,7 +266,7 @@ export const PayFee = ({
                   }}
                   name="totalAmount"
                   label="Total Amount *"
-                  value={feesData.totalAmount}
+                  value={totalBalance}
                   id="outlined-size-small"
                   size="small"
                   color="primary"
@@ -389,11 +397,13 @@ export const PayFee = ({
                     ))}
                   </Select>
                 </FormControl>
-                {updateFeesData ? (
-                  updateFeesData.selectlateFees === "Yes" ? (
+                {updateFeesData || feesData.lateFees > 0 ? (
+                  updateFeesData.selectlateFees === "Yes" ||
+                  feesData.lateFees > 0 ? (
                     <TextField
                       required
                       name="lateFees"
+                      defaultValue={feesData.lateFees?feesData.lateFees:""}
                       sx={{ backgroundColor: "lightcyan" }}
                       label="Select Late Fees"
                       placeholder="Enter Late Fees Amount"
