@@ -11,7 +11,7 @@ const columns = [
   { field: 'callDuration', headerName: 'Call Duration', width: 100 },
   { field: 'callBack', headerName: 'Call Back', width: 150 },
   {
-    field: 'comments', headerName: 'Comments',cellStyle:{alignItems:"center"}, width: 180, renderCell: (params) => {
+    field: 'comments', headerName: 'Comments', width: 180, renderCell: (params) => {
       const currentRow = params.row.comments;
 
       return (<BasicPopover comment={currentRow} />);
