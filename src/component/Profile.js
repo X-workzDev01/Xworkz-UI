@@ -56,7 +56,6 @@ function stringAvatar(name) {
   };
 }
 const Profile = (courseName, searchValue) => {
-  console.log(courseName, searchValue);
   const [openFeesHistory, setOpenFeesHistory] = useState(false);
   const { email } = useParams();
   const [profileData, setProfileData] = useState(null);
