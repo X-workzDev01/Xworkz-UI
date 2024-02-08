@@ -30,9 +30,12 @@ export default function FollowUp() {
   );
   const [courseDropdown, setCourseDropdown] = React.useState("");
   const [status, setStatus] = React.useState("");
+  const [college, setCollege] = React.useState("");
+  // const [collegeDropdown, setCollegeDropdown] = useState([]);
   const statusList = ["Interested", "RNR", "Not Interested", "Others"];
   const [dropdown, setDropDown] = useState({
     status: [],
+    college: [],
   });
   const [statusLists, setStatusLists] = useState([
     "New",
@@ -92,7 +95,7 @@ export default function FollowUp() {
       .then((response) => {
         setCourseDropdown(response.data);
       })
-      .catch(() => {});
+      .catch(() => { });
   };
 
   const filterData = () => {
@@ -104,18 +107,24 @@ export default function FollowUp() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setSearchValue(value);
-    sessionStorage.setItem("status", value);
+    // sessionStorage.setItem("status", value);
     setName(name);
     setStatus(value);
-
-    setCourseName("null");
+    // setCourseName("null");
   };
 
   const handleCourseChange = (event) => {
+    setPaginationModel({ page: 0, pageSize: initialPageSize });
     const { name, value } = event.target;
     setName(name);
     sessionStorage.setItem("course", value);
     setCourseName(value);
+  };
+
+  const handleCollegeChange = (event) => {
+    const { name, value } = event.target;
+    setName(name);
+    setCollege(value);
   };
 
   const getTraineeDetailsByCourseAndStatus = async (courseName, status) => {
@@ -195,7 +204,7 @@ export default function FollowUp() {
       .then((response) => {
         setDropDown(response.data);
       })
-      .catch((error) => {});
+      .catch((error) => { });
   };
   const dateByfollowupStatus = (e) => {
     const { name, value } = e.target;
@@ -208,10 +217,13 @@ export default function FollowUp() {
   };
 
   const handleClear = () => {
-    setCourseName("");
-    setStatus("");
-    setDate("");
+    setCourseName(null);
+    setStatus(null);
+    setSearchValue("New");
+    setDate(null);
+    setCollege(null);
     sessionStorage.setItem("course", "null");
+    sessionStorage.setItem("status", "New");
   };
   return (
     <div>
@@ -263,17 +275,43 @@ export default function FollowUp() {
               fontSize: "12px",
             }}
             onChange={handleCourseChange}
-          >
+          > 
             {/* <MenuItem value="null">Select</MenuItem> */}
             {Array.isArray(courseDropdown)
               ? courseDropdown.map((item, k) => (
-                  <MenuItem value={item} key={k}>
-                    {item}
-                  </MenuItem>
-                ))
+                <MenuItem value={item} key={k}>
+                  {item}
+                </MenuItem>
+              ))
               : null}
           </Select>
         </FormControl>
+
+        <FormControl>
+          <InputLabel id="demo-simple-select-label">Select College</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            label="college Name"
+            name="college"
+            value={college}
+            required
+            variant="outlined"
+            sx={{
+              marginRight: "10px",
+              width: "200px",
+              fontSize: "12px",
+            }}
+            onChange={handleCollegeChange}
+          >
+            {dropdown.college.map((item, index) => (
+              <MenuItem value={item} key={index}>
+                {item}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
         {
           <TextField
             type="date"
@@ -371,7 +409,7 @@ export default function FollowUp() {
           onPaginationModelChange={setPaginationModel}
           loading={loading}
           keepNonExistentRowsSelected
-          slots={{ toolbar: GridToolbar}}
+          slots={{ toolbar: GridToolbar }}
         />
 
         <EditFollowUp

@@ -224,7 +224,11 @@ const Profile = (courseName, searchValue) => {
             </li>
             <li>
               <h3>{profileData.othersDto.preferredClassType}</h3>
-              <h4>Preferred Class TYpe</h4>
+              <h4>Preferred Class Type</h4>
+            </li>
+            <li>
+              <h3>{profileData.educationInfo.collegeName}</h3>
+              <h4>College Name</h4>
             </li>
           </ul>
           <ul className="stats">
