@@ -25,9 +25,8 @@ export default function FollowUp() {
     sessionStorage.getItem("status")
   );
   const [name, setName] = useState("status");
-  const [courseName, setCourseName] = React.useState(
-    sessionStorage.getItem("course")
-  );
+  const [selectCollege, setSelectCollege] = useState(null);
+  const [courseName, setCourseName] = React.useState(null);
   const [courseDropdown, setCourseDropdown] = React.useState("");
   const [status, setStatus] = React.useState("");
   const [college, setCollege] = React.useState("");
@@ -49,7 +48,7 @@ export default function FollowUp() {
     "CSR",
     "NonCSR",
   ]);
-  const [date, setDate] = useState("");
+  const [date, setDate] = useState(null);
   const initialPageSize = 25;
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -77,6 +76,7 @@ export default function FollowUp() {
     searchValue,
     date,
     courseName,
+    selectCollege,
   ]);
 
   React.useEffect(() => {
@@ -107,10 +107,12 @@ export default function FollowUp() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setSearchValue(value);
-    // sessionStorage.setItem("status", value);
+    sessionStorage.setItem("status", value);
     setName(name);
     setStatus(value);
-    // setCourseName("null");
+
+    setCourseName(null);
+
   };
 
   const handleCourseChange = (event) => {
@@ -161,7 +163,7 @@ export default function FollowUp() {
     if (name === "status" || name === "CourseName") {
       apiUrl =
         Urlconstant.url +
-        `api/followUp?startingIndex=${startingIndex}&maxRows=25&status=${searchValue}&date=${date}&courseName=${courseName}`;
+        `api/followUp?startingIndex=${startingIndex}&maxRows=25&status=${searchValue}&date=${date}&courseName=${courseName}&collegeName=${selectCollege}`;
 
       var requestOptions = {
         method: "GET",
@@ -208,7 +210,6 @@ export default function FollowUp() {
   };
   const dateByfollowupStatus = (e) => {
     const { name, value } = e.target;
-    setName(name);
     setDate(value);
   };
 
@@ -218,12 +219,16 @@ export default function FollowUp() {
 
   const handleClear = () => {
     setCourseName(null);
+    setSelectCollege(null);
     setStatus(null);
     setSearchValue("New");
     setDate(null);
-    setCollege(null);
+   
     sessionStorage.setItem("course", "null");
     sessionStorage.setItem("status", "New");
+  };
+  const handleColegeChange = (event) => {
+    setSelectCollege(event.target.value);
   };
   return (
     <div>
@@ -231,7 +236,7 @@ export default function FollowUp() {
       <h2>VeiwFollowUp</h2>
       <div
         className="search"
-        style={{ marginTop: "50px", display: "flex", alignItems: "center" }}
+        style={{ marginTop: "50px", marginBottom:'0.5rem', display: "flex", alignItems: "center" }}
       >
         <FormControl>
           <InputLabel id="demo-simple-select-label">Select Status</InputLabel>
@@ -324,7 +329,32 @@ export default function FollowUp() {
             sx={{ marginRight: "10px" }}
             onChange={dateByfollowupStatus}
           />
+          
         }
+        <FormControl>
+          <InputLabel id="demo-simple-select-label">Select College</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            label="Select College"
+            name="college"
+            value={selectCollege}
+            required
+            variant="outlined"
+            sx={{
+              marginRight: "10px",
+              width: "200px",
+              fontSize: "12px",
+            }}
+            onChange={handleColegeChange}
+          >
+            {dropdown.college.map((item, k) => (
+              <MenuItem value={item} key={k}>
+                {item}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
         <div>
           <Button variant="contained" onClick={handleClear} size="small">
