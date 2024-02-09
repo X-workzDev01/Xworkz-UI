@@ -56,7 +56,6 @@ function stringAvatar(name) {
   };
 }
 const Profile = (courseName, searchValue) => {
-  console.log(courseName, searchValue);
   const [openFeesHistory, setOpenFeesHistory] = useState(false);
   const { email } = useParams();
   const [profileData, setProfileData] = useState(null);
@@ -90,7 +89,6 @@ const Profile = (courseName, searchValue) => {
   React.useEffect(() => {
     fetchData(
       email,
-
       isFollowUpStatusModalOpen,
       isModalOpen,
       setProfileData,
@@ -107,6 +105,7 @@ const Profile = (courseName, searchValue) => {
     response.then((res) => {
       setFeesData(res.data.feesDto[0]);
       setFeesHistory(res.data.feesHistoryDto);
+
       if (res.data.feesDto.length !== 0 && res.data.feesDto[0].balance === 0) {
         setPayFeesDisabled(true);
       }
@@ -224,7 +223,11 @@ const Profile = (courseName, searchValue) => {
             </li>
             <li>
               <h3>{profileData.othersDto.preferredClassType}</h3>
-              <h4>Preferred Class TYpe</h4>
+              <h4>Preferred Class Type</h4>
+            </li>
+            <li>
+              <h3>{profileData.educationInfo.collegeName}</h3>
+              <h4>College Name</h4>
             </li>
           </ul>
           <ul className="stats">
