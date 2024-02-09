@@ -43,7 +43,13 @@ export const PayFee = ({
   const [snackbar, setSnackbar] = useState(false);
   const [totalBalance, setTotalBalance] = useState("");
   const [confirmIsDisabled, setConfirmIsDisabled] = useState(false);
-
+  const getCurrentDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
   useEffect(() => {
     setUpdateFeesData("");
     setPaidAmountError("");
@@ -258,6 +264,10 @@ export const PayFee = ({
                   size="small"
                   color="primary"
                   focused
+                  sx={{ width: "28.5%" }}
+                  inputProps={{
+                    max: getCurrentDate(),
+                  }}
                 />
                 <TextField
                   sx={{ backgroundColor: "lightcyan" }}
@@ -358,16 +368,22 @@ export const PayFee = ({
                 }}
               >
                 <TextField
-                  style={{ marginRight: "4.5rem" }}
                   required
                   type="date"
                   name="followupCallbackDate"
                   onChange={handleSetData}
-                  label=" Fees Call Back Date"
+                  label="Fees Call Back Date"
                   id="outlined-size-small"
                   size="small"
                   color="primary"
                   focused
+                  sx={{ width: "27.5%", marginRight: "6.5%" }}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  inputProps={{
+                    min: getCurrentDate(),
+                  }}
                 />
                 <FormControl>
                   <InputLabel id="demo-simple-select-label">
@@ -380,12 +396,11 @@ export const PayFee = ({
                     id="demo-simple-select"
                     label="Select Late Fees"
                     required
-                    style={{ marginRight: "4.5rem" }}
                     name="selectlateFees"
                     onChange={handleSetData}
                     variant="outlined"
                     sx={{
-                      marginRight: "12px",
+                      marginRight: "3.9rem",
                       width: "200px",
                       fontSize: "12px",
                     }}
@@ -403,7 +418,7 @@ export const PayFee = ({
                     <TextField
                       required
                       name="lateFees"
-                      defaultValue={feesData.lateFees?feesData.lateFees:""}
+                      defaultValue={feesData.lateFees ? feesData.lateFees : ""}
                       sx={{ backgroundColor: "lightcyan" }}
                       label="Select Late Fees"
                       placeholder="Enter Late Fees Amount"

@@ -75,66 +75,70 @@ export const FeesDetailes = () => {
       field: "name",
       headerName: "Trainee Name",
       valueGetter: (params) => params.row.name,
-      width: 150,
+      flex: 1,
     },
     {
       field: "email",
       headerName: "Email",
-      width: 150,
+      flex: 1,
       valueGetter: (params) => params.row.feesHistoryDto.email,
     },
     {
+      field: "Batch",
+      headerName: "Batch",
+      flex: 1,
+      valueGetter: (params) => params.row.courseName,
+    },
+    {
       field: "transectionId",
-      width: 150,
-
+      flex: 1,
       headerName: "Transection Id",
       valueGetter: (params) => params.row.feesHistoryDto.transectionId,
     },
     {
       field: "paymentMode",
-      width: 150,
+      flex: 1,
       headerName: "Payment Mode",
       valueGetter: (params) => params.row.feesHistoryDto.paymentMode,
     },
     {
       field: "paymentpaidDate",
-      width: 150,
+      flex: 1,
       headerName: "Payment paid date",
       valueGetter: (params) => params.row.feesHistoryDto.lastFeesPaidDate,
     },
     {
       field: "Fees Followup date",
-      width: 150,
+      flex: 1,
       headerName: "Fees Followup date",
       valueGetter: (params) => params.row.feesHistoryDto.feesfollowupDate,
     },
     {
       headerName: "Paid To",
       field: "paidTo",
-      width: 150,
-
+      flex: 1,
       valueGetter: (params) => params.row.feesHistoryDto.paidTo,
     },
     {
       field: "totalAmount",
-      width: 140,
+      flex: 1,
       headerName: "Total Amount",
       valueGetter: (params) => params.row.totalAmount,
     },
     {
       field: "balance",
-      width: 140,
+      flex: 1,
       headerName: "Balance",
       valueGetter: (params) => params.row.balance,
     },
     {
       field: "lateFees",
-      width: 140,
+      flex: 1,
       headerName: "Late Fees",
       valueGetter: (params) => params.row.lateFees,
     },
     {
-      width: 140,
+      flex: 1,
       headerName: "FeesStatus",
       valueGetter: (params) => params.row.feesStatus,
       renderCell: (params) => (
@@ -168,7 +172,9 @@ export const FeesDetailes = () => {
                 ) : (
                   <span style={{ textTransform: "uppercase" }}>
                     {params.row.feesStatus === "FREE" ? (
-                      <span style={{color:"green"}}>{params.row.feesStatus}</span>
+                      <span style={{ color: "green" }}>
+                        {params.row.feesStatus}
+                      </span>
                     ) : (
                       <span>{params.row.feesStatus}</span>
                     )}
@@ -199,99 +205,88 @@ export const FeesDetailes = () => {
     setPaymentMode("null");
   };
   return (
-    <div style={{ color: "red", marginTop: "8rem" }}>
+    <div style={{ marginTop: "7%", marginBottom:'2%', marginLeft:'0.7%' }}>
       <div
         style={{
           display: "flex",
           justifyContent: "flex-start",
-          marginLeft: "2rem",
-          marginBottom: "0.4rem",
+          alignItems: "center",
+          marginBottom:'1%'
         }}
       >
-        <div>
-          <FormControl>
-            <InputLabel id="demo-simple-select-label">
-              <span>Select batch</span>
-            </InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              label="Select batch"
-              value={batch ? batch : " "}
-              required
-              name="batch"
-              onChange={handleSetData}
-              sx={{
-                marginRight: "10px",
-                width: "200px",
-                fontSize: "12px",
-              }}
-              size="medium"
-            >
-              {batchDetiles.map((item, index) => (
-                <MenuItem value={item} key={index}>
-                  {item}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <FormControl>
-            <InputLabel id="demo-simple-select-label">
-              <span>Select Payment Mode</span>
-            </InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={paymentMode ? paymentMode : " "}
-              label="Select payment mode "
-              required
-              name="paymentMode"
-              onChange={handleSetData}
-              sx={{
-                marginRight: "10px",
-                width: "200px",
-                fontSize: "12px",
-              }}
-            >
-              {selectPaymentMode.map((item, index) => (
-                <MenuItem value={item} key={index}>
-                  {item}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <TextField
-            type="date"
-            name="date"
-            onChange={handleSetData}
-            label="Fees Followup date"
-            id="outlined-size-small"
-            size="small"
-            value={date ? date : " "}
-            color="primary"
-            sx={{
-              marginRight: "10px",
-              width: "200px",
-              fontSize: "12px",
-            }}
-            focused
-          />
-          <Button variant="contained" color="primary" onClick={handleClear}>
-            Clear
-          </Button>
-        </div>
+      <FormControl>
+        <InputLabel id="demo-simple-select-label">
+          <span>Select batch</span>
+        </InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          label="Select batch"
+          value={batch ? batch : " "}
+          required
+          name="batch"
+          onChange={handleSetData}
+          sx={{
+            marginRight: "10px",
+            width: "200px",
+            fontSize: "12px",
+          }}
+          size="medium"
+        >
+          {batchDetiles.map((item, index) => (
+            <MenuItem value={item} key={index}>
+              {item}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+      <FormControl>
+        <InputLabel id="demo-simple-select-label">
+          <span>Select Payment Mode</span>
+        </InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={paymentMode ? paymentMode : " "}
+          label="Select payment mode "
+          required
+          name="paymentMode"
+          onChange={handleSetData}
+          sx={{
+            marginRight: "10px",
+            width: "200px",
+            fontSize: "12px",
+          }}
+        >
+          {selectPaymentMode.map((item, index) => (
+            <MenuItem value={item} key={index}>
+              {item}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+      <TextField
+        type="date"
+        name="date"
+        onChange={handleSetData}
+        label="Fees Followup date"
+        id="outlined-size-small"
+        size="small"
+        value={date ? date : " "}
+        color="primary"
+        sx={{
+          marginRight: "10px",
+          width: "200px",
+          fontSize: "12px",
+        }}
+        focused
+      />
+      <Button variant="contained" color="primary" onClick={handleClear}>
+        Clear
+      </Button>
       </div>
-
-      <div
-        style={{
-          height: "650px",
-          width: "95%",
-          marginLeft: "2rem",
-          paddingRight: "1rem",
-        }}
-      >
         <DataGrid
-          style={{ height: "42rem" }}
+          style={{ height: "42rem", width: "100%"  }}
           columns={columns}
           rows={gridData.rows}
           pagination
@@ -303,7 +298,6 @@ export const FeesDetailes = () => {
           onPaginationModelChange={setPaginationModel}
           keepNonExistentRowsSelected
         />
-      </div>
     </div>
   );
 };
