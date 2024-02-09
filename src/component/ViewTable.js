@@ -13,13 +13,13 @@ import EditModal from "./EditModal";
 import Header from "./Header";
 import { GridToolbar } from "@mui/x-data-grid";
 
-function loadServerRows(page, pageSize, courseName) {
+function loadServerRows(page, pageSize, courseName, collegeName) {
   const startingIndex = page * pageSize;
   const maxRows = pageSize;
   const spreadsheetId = Urlconstant.spreadsheetId;
   const apiUrl =
     Urlconstant.url +
-    `api/readData?startingIndex=${startingIndex}&maxRows=${maxRows}&courseName=${courseName}`;
+    `api/readData?startingIndex=${startingIndex}&maxRows=${maxRows}&courseName=${courseName}&collegeName=${collegeName}`;
   const requestOptions = {
     method: "GET",
     headers: {
@@ -136,7 +136,15 @@ export default function ControlledSelectionServerPaginationGrid() {
   const [courseName, setCourseName] = React.useState(
     sessionStorage.getItem("courseValue")
   );
+  const [collegeName, setCollegeName] = React.useState("null");
   const [courseDropdown, setCourseDropdown] = React.useState("");
+  const [dropdown, setDropDown] = useState({
+    course: [],
+    qualification: [],
+    batch: [],
+    stream: [],
+    college: [],
+  });
 
   const handleSaveClick = () => {
     setModalOpen(false);
@@ -162,11 +170,7 @@ export default function ControlledSelectionServerPaginationGrid() {
             setPaginationModel
           )
             .then((suggestions) => {
-              console.log(suggestions);
-
               setAutocompleteOptions(suggestions);
-              console.log(autocompleteOptions);
-
               setLoading(false);
             })
             .catch((error) => {
@@ -193,7 +197,8 @@ export default function ControlledSelectionServerPaginationGrid() {
           const newGridData = await loadServerRows(
             paginationModel.page,
             paginationModel.pageSize,
-            courseName
+            courseName,
+            collegeName
           );
 
           if (active) {
@@ -216,7 +221,6 @@ export default function ControlledSelectionServerPaginationGrid() {
           }
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
         if (active) {
           setGridData({ rows: [], rowCount: 0 });
           setAutocompleteOptions([]);
@@ -233,8 +237,20 @@ export default function ControlledSelectionServerPaginationGrid() {
 
   React.useEffect(() => {
     getActiveCourse();
+    getDropdown();
   }, []);
-
+  const getDropdown = () => {
+    axios
+      .get(Urlconstant.url + "utils/dropdown", {
+        headers: {
+          spreadsheetId: Urlconstant.spreadsheetId,
+        },
+      })
+      .then((response) => {
+        setDropDown(response.data);
+      })
+      .catch((error) => { });
+  }
   const getActiveCourse = () => {
     axios
       .get(Urlconstant.url + "api/getCourseName?status=Active", {
@@ -257,7 +273,7 @@ export default function ControlledSelectionServerPaginationGrid() {
 
   React.useEffect(() => {
     refreshPageEveryTime();
-  }, [paginationModel.page, paginationModel.pageSize, searchValue, courseName]);
+  }, [paginationModel.page, paginationModel.pageSize, searchValue, courseName, collegeName]);
   const columns = [
     {
       field: "traineeName",
@@ -300,7 +316,7 @@ export default function ControlledSelectionServerPaginationGrid() {
       headerName: "Year of Passout",
       flex: 1,
       valueGetter: (params) => params.row.educationInfo.yearOfPassout,
-     },
+    },
     {
       field: "collegeName",
       headerName: "College Name",
@@ -365,9 +381,16 @@ export default function ControlledSelectionServerPaginationGrid() {
 
   const handleClear = () => {
     sessionStorage.setItem("courseValue", "null");
+    sessionStorage.setItem("name", "null");
     setCourseName("null");
+    setCollegeName("null");
+    setSearchValue("");
   };
 
+  const handleCollegeChange = (event) => {
+    const collegeName = event.target.value;
+    setCollegeName(collegeName);
+  }
   return (
     <div>
       <Header />
@@ -437,6 +460,30 @@ export default function ControlledSelectionServerPaginationGrid() {
               : null}
           </Select>
         </FormControl>
+        <FormControl>
+          <InputLabel id="demo-simple-select-label">College Name</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            label="College Name"
+            name="collegeName"
+            value={collegeName}
+            required
+            variant="outlined"
+            sx={{
+              marginRight: "10px",
+              width: "200px",
+              fontSize: "12px",
+            }}
+            onChange={handleCollegeChange}
+          >
+            {dropdown.college.map((item, index) => (
+              <MenuItem value={item} key={index}>
+                {item}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
         <div>
           <Button
             variant="contained"
@@ -469,10 +516,10 @@ export default function ControlledSelectionServerPaginationGrid() {
           rowSelectionModel={rowSelectionModel}
           loading={loading}
           keepNonExistentRowsSelected
-          slots={{ toolbar: GridToolbar}}
-          
+          slots={{ toolbar: GridToolbar }}
+
         />
-        
+
       </div>
       <EditModal
         open={isModalOpen}
