@@ -155,7 +155,7 @@ export default function Registration() {
       <div key={messages} style={{ color: "Green" }}>
         <h4> {messages}</h4>
       </div>
-      <Stepper activeStep={currentSection}>
+      <Stepper activeStep={currentSection-1}>
         <Step>
           <StepLabel>Trainee</StepLabel>
         </Step>
