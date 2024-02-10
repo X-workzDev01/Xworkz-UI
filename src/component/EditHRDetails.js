@@ -125,6 +125,7 @@ const EditHRDetails = ({ open, handleClose, rowData }) => {
               setSnackbarOpen(true);
               setLoading(false);
               setResponseMessage(response.data);
+              setIsConfirmed(false);
               setIsConfirming(false);
               setTimeout(() => {
                 handleCloseForm();

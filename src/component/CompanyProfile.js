@@ -228,10 +228,9 @@ const CompanyProfile = () => {
           />
         </div>
       </div>
-      {HrFollowUpStatus && HrFollowUpStatus.length > 0 && (
-        <HRFollowUpStatusGrid rows={HrFollowUpStatus} />
-      )}
-
+      {HrFollowUpStatus ?
+        <HRFollowUpStatusGrid rows={HrFollowUpStatus} /> : null
+      }
     </div>
   );
 };

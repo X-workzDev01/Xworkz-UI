@@ -287,6 +287,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
               setLoading(false);
               setResponseMessage(response.data);
               setIsConfirming(false);
+              setIsConfirmed(false);
               setTimeout(() => {
                 handleCloseForm();
               }, 1000);

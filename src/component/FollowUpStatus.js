@@ -34,6 +34,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
   const [dropdownData, setDropdownData] = React.useState([]);
   const [isDisabled, setIdDisabled] = React.useState(false);
   const [feesData, setFeesData] = useState({});
+  const [isConfirmed,setIsConfirmed]=React.useState(false);
 
   const fieldsToCheck = [
     "attemptStatus",
@@ -128,6 +129,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
   const attemtedUser = sessionStorage.getItem("userId");
 
   const validateAndSaveData = (statusDto, attendanceDto, dto) => {
+    setIsConfirmed(true);
     axios
       .post(Urlconstant.url + `api/updateFollowStatus`, statusDto, {
         headers: {
@@ -140,6 +142,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
         setResponseMessage("Data updated successfully!");
         setSnackbarOpen(true);
         setIsConfirming(false);
+        setIsConfirmed(false);
         if (response.status === 200) {
           setTimeout(() => {
             handleCloseForm();
@@ -414,7 +417,7 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
           >
             <GridCloseIcon />
           </IconButton>
-          <Button onClick={handleSaveClick} color="primary">
+          <Button onClick={handleSaveClick} color="primary" disabled={isConfirmed}>
             Confirm
           </Button>
         </DialogActions>

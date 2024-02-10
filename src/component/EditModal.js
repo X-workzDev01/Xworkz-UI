@@ -378,18 +378,17 @@ const EditModal = ({ open, handleClose, rowData }) => {
         setResponseMessage("Data updated successfully!");
         setSnackbarOpen(true);
         setIsConfirming(false);
+        setIsConfirmed(false);
         if (response.status === 200) {
           setTimeout(() => {
             handleCloseForm();
           }, 1000);
         }
-
         if (emailValue === "" && emailValue != null) {
           navigate(Urlconstant.navigate + `profile/${rowData.basicInfo.email}`);
 
           return;
         }
-
         navigate(Urlconstant.navigate + `profile/${emailValue}`);
       })
       .catch((error) => {
