@@ -30,7 +30,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const attemptedEmail = sessionStorage.getItem("userId");
   const [editedData, setEditedData] = React.useState([]);
-
+  const [isConfirmed,setIsConfirmed]=React.useState(false);
   const [companyNameCheck, setCompanyNameCheck] = React.useState("");
   const [nameCheck, setNameCheck] = React.useState("");
   const [verifyEmail, setVerifyEmail] = React.useState("");
@@ -267,6 +267,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
   const handleSaveClick = () => {
     if (setIsConfirming) {
       setLoading(true);
+      setIsConfirmed(true)
       try {
         const updatedData = {
           ...editedData,
@@ -536,7 +537,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
           >
             <GridCloseIcon />
           </IconButton>
-          <Button onClick={handleSaveClick} color="primary">
+          <Button onClick={handleSaveClick} color="primary" disabled={isConfirmed}>
             Confirm
           </Button>
         </DialogActions>

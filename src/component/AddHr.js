@@ -1,16 +1,16 @@
 import {
-    Alert,
-    Button,
-    CircularProgress,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    Grid,
-    IconButton,
-    MenuItem,
-    Snackbar,
-    TextField
+  Alert,
+  Button,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Grid,
+  IconButton,
+  MenuItem,
+  Snackbar,
+  TextField
 } from "@mui/material";
 import { GridCloseIcon } from "@mui/x-data-grid";
 import axios from "axios";
@@ -18,15 +18,16 @@ import React from "react";
 import { fieldStyle, style } from "../constant/FormStyle";
 import { Urlconstant } from "../constant/Urlconstant";
 import {
-    validateContactNumber,
-    validateEmail,
+  validateContactNumber,
+  validateEmail,
 } from "../constant/ValidationConstant";
 import { ClientDropDown } from "../constant/ClientDropDown";
 
 const AddHr = ({ open, handleClose, rowData }) => {
-  
+
   const [loading, setLoading] = React.useState(false);
   const [isConfirming, setIsConfirming] = React.useState(false);
+  const [isConfirmed, setIsConfirmed] = React.useState(false);
   const [responseMessage, setResponseMessage] = React.useState("");
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [formData, setFormData] = React.useState("");
@@ -101,6 +102,7 @@ const AddHr = ({ open, handleClose, rowData }) => {
 
   const handleSaveClick = () => {
     if (isConfirming) {
+      setIsConfirmed(true)
       setLoading(true);
       try {
         const hrData = {
@@ -210,7 +212,7 @@ const AddHr = ({ open, handleClose, rowData }) => {
     axios
       .get(
         Urlconstant.url +
-          `api/hrcontactnumbercheck?contactNumber=${contactNumber}`
+        `api/hrcontactnumbercheck?contactNumber=${contactNumber}`
       )
       .then((response) => {
         if (response.data === "Contact Number Already exist.") {
@@ -310,7 +312,7 @@ const AddHr = ({ open, handleClose, rowData }) => {
               fullWidth
               margin="normal"
             >
-              {ClientDropDown.hrDisgnation.map((option) => (
+              {ClientDropDown.hrDesignation.map((option) => (
                 <MenuItem key={option} value={option}>
                   {option}
                 </MenuItem>
@@ -368,7 +370,7 @@ const AddHr = ({ open, handleClose, rowData }) => {
           >
             <GridCloseIcon />
           </IconButton>
-          <Button onClick={handleSaveClick} color="primary">
+          <Button onClick={handleSaveClick} color="primary" disabled={isConfirmed}>
             Confirm
           </Button>
         </DialogActions>

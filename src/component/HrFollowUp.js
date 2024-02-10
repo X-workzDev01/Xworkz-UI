@@ -20,7 +20,7 @@ import { fieldStyle, style } from "../constant/FormStyle";
 import { ClientDropDown } from "../constant/ClientDropDown";
 
 const HrFollowUp = ({ open, handleClose, rowData }) => {
-
+  const [isConfirmed,setIsConfirmed]=React.useState(false);
   const [responseMessage, setResponseMessage] = React.useState("");
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [isConfirming, setIsConfirming] = React.useState(false);
@@ -53,6 +53,7 @@ const HrFollowUp = ({ open, handleClose, rowData }) => {
   const handleSaveClick = () => {
     if (setIsConfirming) {
       setLoading(true);
+      setIsConfirmed(true)
       try {
         const hrFollowUpData = {
           ...formData,
@@ -212,7 +213,7 @@ const HrFollowUp = ({ open, handleClose, rowData }) => {
           >
             <GridCloseIcon />
           </IconButton>
-          <Button onClick={handleSaveClick} color="primary">
+          <Button onClick={handleSaveClick} color="primary" disabled={isConfirmed}>
             Confirm
           </Button>
         </DialogActions>

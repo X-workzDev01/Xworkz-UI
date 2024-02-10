@@ -81,7 +81,7 @@ const CompanyProfile = () => {
     fetchHRFollowUp(id);
   }, [id, isEditCompanyDetailsModalOpen, isHrFollowUpModalOpen]);
 
-  React.useEffect(() => {}, [id, isAddHrModalOpen, isHrFollowupModalOpen]);
+  React.useEffect(() => { }, [id, isAddHrModalOpen, isHrFollowupModalOpen]);
 
   const fetchHRFollowUp = (id) => {
     console.log(id);
@@ -228,9 +228,10 @@ const CompanyProfile = () => {
           />
         </div>
       </div>
-      {HrFollowUpStatus ? (
+      {HrFollowUpStatus && HrFollowUpStatus.length > 0 && (
         <HRFollowUpStatusGrid rows={HrFollowUpStatus} />
-      ) : null}
+      )}
+
     </div>
   );
 };
