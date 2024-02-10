@@ -230,9 +230,9 @@ export default function ViewClient() {
                   setSearchValue(searchInput);
                   setPaginationModel({ page: 0, pageSize: initialPageSize });
                 }
-                // if (searchInput >= 1 && searchInput < 3) {
-                //   setPaginationModel({ page: 0, pageSize: initialPageSize });
-                // }
+                if (searchInput >= 1 && searchInput < 3) {
+                  setPaginationModel({ page: 0, pageSize: initialPageSize });
+                }
               }}
               label="Search"
             />
