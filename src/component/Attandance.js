@@ -100,7 +100,9 @@ export default function ControlledSelectionServerPaginationGrid() {
   const [autocompleteOptions, setAutocompleteOptions] = React.useState([]);
   const [isModalOpen, setModalOpen] = React.useState(false);
   const [editedRowData, setEditedRowData] = React.useState(null);
-  const [courseName, setCourseName] = React.useState(null);
+  const [courseName, setCourseName] = React.useState(
+    sessionStorage.getItem("courseValue") || ""
+  );
   const [courseDropdown, setCourseDropdown] = React.useState("");
   const [totalClass, setTotalClass] = useState(0);
   const [course, setCourse] = useState('');
@@ -371,8 +373,8 @@ export default function ControlledSelectionServerPaginationGrid() {
         </div>
       </div>
       <div style={{ marginTop: "-35px" }}>TotalClass :
-        <div style={styles.totalClassContainer}>
-          <div style={styles.totalClassCircle}>
+        <div style={{ ...styles.totalClassContainer, position: 'relative'}}>
+          <div style={{ ...styles.totalClassCircle,position: 'relative'}}>
             <p>{totalClass}</p>
           </div>
         </div>
