@@ -1,25 +1,26 @@
 import {
-    Alert,
-    Button,
-    Grid,
-    MenuItem,
-    Snackbar,
-    TextField,
-    Typography,
+  Alert,
+  Button,
+  Grid,
+  MenuItem,
+  Snackbar,
+  TextField,
+  Typography,
 } from "@mui/material";
 import axios from "axios";
 import React from "react";
-import { Form } from "react-bootstrap";
 import { Urlconstant } from "../constant/Urlconstant";
 import {
-    validateContactNumber,
-    validateEmail,
+  validateContactNumber,
+  validateEmail,
+  validateWebsite,
 
 } from "../constant/ValidationConstant";
 import { ClientDropDown } from "../constant/ClientDropDown";
-
+import { textFieldStyles } from "../constant/FormStyle";
+import "./Company.css"
 export default function ClientDetails() {
- 
+
   const email = sessionStorage.getItem("userId");
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [open, setOpen] = React.useState(false);
@@ -28,7 +29,19 @@ export default function ClientDetails() {
   const [companyEmailCheck, setCompanyEmailCheck] = React.useState("");
   const [emailCheck, setEmailCheck] = React.useState("");
   const [phoneNumberCheck, setPhoneNumberCheck] = React.useState("");
-  const [formData, setFormData] = React.useState("");
+  const [formData, setFormData] = React.useState({
+    companyName: "",
+    companyEmail: "",
+    companyLandLineNumber: "",
+    companyWebsite: "",
+    companyLocation: "",
+    companyFounder: "",
+    sourceOfConnetion: "",
+    companyType: "",
+    companyAddress: "",
+    status: "Active", // Default value set to "Active"
+  });
+
   const [checkPhoneNumberExist, setCheckPhoneNumberExist] = React.useState("");
   const [checkCompanyWebsite, setCheckCompanyWebsite] = React.useState("");
   const [catchErrors, setCatchErrors] = React.useState("");
@@ -42,51 +55,70 @@ export default function ClientDetails() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    switch (name) {
+      case "companyName":
+        if (value.length <= 2) {
+          setCompanyNameCheck("Name should not be empty");
+        } else {
+          setCompanyNameCheck("");
+        }
+        break;
+      case "companyEmail":
+        if (!validateEmail(value)) {
+          setCompanyEmailCheck("");
+          setEmailCheck("Enter the valid Email");
+        } else {
+          setEmailCheck("");
+          handleCompanyEmail(value)
+        }
+        break;
+      case "companyLandLineNumber":
+        if (!validateContactNumber(value)) {
+          setCheckPhoneNumberExist("");
+          setPhoneNumberCheck("Enter valid contact number");
+        } else {
+          setPhoneNumberCheck("");
+        }
+        break;
+      case "companyWebsite":
+        if (!validateWebsite(value)) {
+          setCheckCompanyWebsite("Enter valid website")
+        } else {
+          handleCompanyWebsite(value);
+        }
+        break;
+      default:
+        break;
+    }
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
-    // Validate email and phone number as the user types
-    if (name === "companyEmail") {
-      if (validateEmail(value)) {
-        setEmailCheck("");
-      } else {
-        setCompanyEmailCheck("");
-        setEmailCheck("Enter the correct Email");
-      }
-    }
-    if (name === "companyLandLineNumber") {
-      if (validateContactNumber(value)) {
-        setPhoneNumberCheck("");
-      } else {
-        setCheckPhoneNumberExist("");
-        setPhoneNumberCheck("Phone number is incorrect");
-      }
-    }
   };
 
   const handleSubmit = (e) => {
+    setIsSubmitting(true)
     e.preventDefault();
-    //        setIsSubmitting(false);
     try {
       const clientData = {
         ...formData,
         adminDto: { createdBy: email },
       };
-      axios.post(Urlconstant.url + "api/registerclient", clientData);
-      setOpen(true);
-      setSnackbarMessage("Client information added successfully");
-      setFormData({
-        companyName: "",
-        companyEmail: "",
-        companyLandLineNumber: "",
-        companyWebsite: "",
-        companyLocation: "",
-        companyFounder: "",
-        sourceOfConnetion: "",
-        companyType: "",
-        companyAddress: "",
-        status: "",
+      axios.post(Urlconstant.url + "api/registerclient", clientData).then((response) => {
+        setOpen(true);
+        setSnackbarMessage(response.data);
+        setFormData({
+          companyName: "",
+          companyEmail: "",
+          companyLandLineNumber: "",
+          companyWebsite: "",
+          companyLocation: "",
+          companyFounder: "",
+          sourceOfConnetion: "",
+          companyType: "",
+          companyAddress: "",
+          status: "Active",
+        });
       });
     } catch (error) {
       setCatchErrors("Wait for some time");
@@ -101,7 +133,6 @@ export default function ClientDetails() {
       .get(Urlconstant.url + `/api/companynamecheck?companyName=${companyname}`)
       .then((res) => {
         if (res.data === "Company Already Exists") {
-          setEmailCheck("");
           setCompanyNameCheck(res.data);
         } else {
           setCompanyNameCheck("");
@@ -116,8 +147,7 @@ export default function ClientDetails() {
       });
   };
 
-  const handleCompanyEmail = (event) => {
-    const companyEmail = event.target.value;
+  const handleCompanyEmail = (companyEmail) => {
     axios
       .get(
         Urlconstant.url + `/api/checkcompanyemail?companyEmail=${companyEmail}`
@@ -128,6 +158,7 @@ export default function ClientDetails() {
           setCompanyEmailCheck(res.data);
         } else {
           setCompanyEmailCheck("");
+          verifyEmail(companyEmail)
         }
       })
       .catch((error) => {
@@ -138,13 +169,43 @@ export default function ClientDetails() {
         }
       });
   };
+  const verifyEmail = (email) => {
+    console.log("calling verifyEmail")
+    axios
+      .get(`${Urlconstant.url}api/verify-email?email=${email}`)
+      .then((response) => {
+        if (response.status === 200) {
+          if (response.data === "accepted_email") {
+            setEmailCheck("");
+            setCompanyEmailCheck("");
+          } else if (response.data === "rejected_email") {
+            setEmailCheck("");
+            setCompanyEmailCheck(response.data);
+          } else if (response.data === "invalid_domain") {
+            setEmailCheck("");
+            setCompanyEmailCheck(response.data);
+          } else {
+            setCompanyEmailCheck("")
+          }
+        } else {
+          if (response.status === 500) {
+            console.log("Internal Server Error:", response.status);
+          } else {
+            console.log("Unexpected Error:", response.status);
+          }
+        }
+      })
+      .catch((error) => {
+        console.log("check emailable credentils");
+      });
+  };
 
   const handleCompanyContactNumber = (event) => {
     const companyContactNumber = event.target.value;
     axios
       .get(
         Urlconstant.url +
-          `/api/checkContactNumber?contactNumber=${companyContactNumber}`
+        `/api/checkContactNumber?contactNumber=${companyContactNumber}`
       )
       .then((res) => {
         if (res.data === "Company ContactNumber Already Exists") {
@@ -163,12 +224,11 @@ export default function ClientDetails() {
       });
   };
 
-  const handleCompanyWebsite = (event) => {
-    const companyWebsite = event.target.value;
+  const handleCompanyWebsite = (website) => {
     axios
       .get(
         Urlconstant.url +
-          `/api/checkCompanyWebsite?companyWebsite=${companyWebsite}`
+        `/api/checkCompanyWebsite?companyWebsite=${website}`
       )
       .then((res) => {
         if (res.data === "CompanyWebsite Already Exists") {
@@ -186,199 +246,238 @@ export default function ClientDetails() {
       });
   };
 
-  const isSubmitValid =
-    !formData.companyName ||
-    companyNameCheck ||
-    companyEmailCheck ||
-    emailCheck ||
-    phoneNumberCheck ||
-    checkPhoneNumberExist ||
-    checkCompanyWebsite;
+
+  const handleClearAction = () => {
+    setFormData({
+      companyName: "",
+      companyEmail: "",
+      companyLandLineNumber: "",
+      companyWebsite: "",
+      companyLocation: "",
+      companyFounder: "",
+      sourceOfConnetion: "",
+      companyType: "",
+      companyAddress: "",
+      status: "Active",
+    });
+    setCheckCompanyWebsite("");
+    setCheckPhoneNumberExist("")
+    setPhoneNumberCheck("")
+    setCompanyEmailCheck("")
+    setCompanyNameCheck("")
+    setEmailCheck("")
+  }
   return (
     <div>
-      <h2>Register Client</h2>
-
-      <Typography variant="h5" gutterBottom>
-        Register Company
-        {/* {setCatchErrors ? <Alert severity="error">{setCatchErrors}</Alert> : " "} */}
-      </Typography>
-      <Form onSubmit={handleSubmit}>
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={4}>
-            <TextField
-              label="Company Name"
-              name="companyName"
-              value={formData.companyName}
-              onChange={handleChange}
-              onBlur={handleCompanyName}
-              required
-              fullWidth
-              margin="normal"
-            />
-            {companyNameCheck ? (
-              <Alert severity="error">{companyNameCheck}</Alert>
-            ) : (
-              " "
-            )}
+      <h1>Register Client</h1>
+      
+      <div className="container border mt-4 p-4">
+        <div className="form-container">
+          <Typography variant="h5" className="bold-text">
+            Register Company
+          </Typography>
+          <Grid container spacing={3}>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                label="Company Name"
+                name="companyName"
+                value={formData.companyName}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                onBlur={handleCompanyName}
+                sx={textFieldStyles}
+              />
+              {companyNameCheck && (
+                <Alert severity="error">{companyNameCheck}</Alert>
+              )}
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                label="Company Email"
+                name="companyEmail"
+                value={formData.companyEmail}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                sx={textFieldStyles}
+              />
+              {emailCheck && (
+                <Alert severity="error">{emailCheck}</Alert>
+              )}
+              {companyEmailCheck && (
+                <Alert severity="error">{companyEmailCheck}</Alert>
+              )}
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                label="Company Contact Number"
+                name="companyLandLineNumber"
+                value={formData.companyLandLineNumber}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                onBlur={handleCompanyContactNumber}
+                sx={textFieldStyles}
+              />
+              {phoneNumberCheck && (
+                <Alert severity="error">{phoneNumberCheck}</Alert>
+              )}
+              {checkPhoneNumberExist && (
+                <Alert severity="error">{checkPhoneNumberExist}</Alert>
+              )}
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                label="Company Founder"
+                name="companyFounder"
+                value={formData.companyFounder}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                sx={textFieldStyles}
+              />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                label="Company Website"
+                name="companyWebsite"
+                value={formData.companyWebsite}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                sx={textFieldStyles}
+              />
+              {checkCompanyWebsite ? (
+                <Alert severity="error">{checkCompanyWebsite}</Alert>
+              ) : (
+                " "
+              )}
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                label="Company Location"
+                name="companyLocation"
+                value={formData.companyLocation}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                select
+                sx={textFieldStyles}
+              >
+                {ClientDropDown.sourceOfLocation.map((option) => (
+                  <MenuItem key={option} value={option}>
+                    {option}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                label="Source Of Connetion"
+                name="sourceOfConnetion"
+                value={formData.sourceOfConnetion}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                select
+                sx={textFieldStyles}
+              >
+                {ClientDropDown.sourceOfConnection.map((option) => (
+                  <MenuItem key={option} value={option}>
+                    {option}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                label="Company Type"
+                name="companyType"
+                value={formData.companyType}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                select
+                sx={textFieldStyles}
+              >
+                {ClientDropDown.clientType.map((option) => (
+                  <MenuItem key={option} value={option}>
+                    {option}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                label="Company Status"
+                name="status"
+                value={formData.status}
+                onChange={handleChange}
+                required
+                fullWidth
+                margin="normal"
+                select
+                sx={textFieldStyles}
+              >
+                {ClientDropDown.statusList.map((option) => (
+                  <MenuItem key={option} value={option}>
+                    {option}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                id="standard-multiline-static"
+                rows={3}
+                label="Company Address"
+                name="companyAddress"
+                value={formData.companyAddress}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                multiline
+                sx={textFieldStyles}
+              />
+            </Grid>
+            <Grid item xs={12} sm={12}>
+              <Grid container justifyContent="center">
+                {/* Submit button */}
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  disabled={
+                    isSubmitting||
+                    !formData.companyName ||
+                    !formData.companyEmail ||
+                    !formData.companyLandLineNumber ||
+                    companyNameCheck ||
+                    companyEmailCheck ||
+                    emailCheck ||
+                    phoneNumberCheck ||
+                    checkPhoneNumberExist ||
+                    checkCompanyWebsite
+                  }
+                  onClick={handleSubmit}
+                  className="dark-button"
+                  sx={{ marginRight: 1 }}
+                >
+                  Register
+                </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleClearAction}
+                >
+                  Reset
+                </Button>
+              </Grid>
+            </Grid>
           </Grid>
-          <Grid item xs={12} sm={4}>
-            <TextField
-              label="Company Email"
-              name="companyEmail"
-              value={formData.companyEmail}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-              onBlur={handleCompanyEmail}
-            />
-            {companyEmailCheck ? (
-              <Alert severity="error">{companyEmailCheck}</Alert>
-            ) : (
-              " "
-            )}
-            {emailCheck ? <Alert severity="error">{emailCheck}</Alert> : " "}
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <TextField
-              label="Company Contact Number"
-              name="companyLandLineNumber"
-              value={formData.companyLandLineNumber}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-              onBlur={handleCompanyContactNumber}
-            />
-            {phoneNumberCheck ? (
-              <Alert severity="error">{phoneNumberCheck}</Alert>
-            ) : (
-              " "
-            )}
-            {checkPhoneNumberExist ? (
-              <Alert severity="error">{checkPhoneNumberExist}</Alert>
-            ) : (
-              " "
-            )}
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <TextField
-              label="Company Website"
-              name="companyWebsite"
-              value={formData.companyWebsite}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-              onBlur={handleCompanyWebsite}
-            />
-            {checkCompanyWebsite ? (
-              <Alert severity="error">{checkCompanyWebsite}</Alert>
-            ) : (
-              " "
-            )}
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <TextField
-              label="Company Location"
-              name="companyLocation"
-              value={formData.companyLocation}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-              select
-            >
-              {ClientDropDown.sourceOfLocation.map((option) => (
-                <MenuItem key={option} value={option}>
-                  {option}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <TextField
-              label="Company Founder"
-              name="companyFounder"
-              value={formData.companyFounder}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <TextField
-              label="Source Of Connetion"
-              name="sourceOfConnetion"
-              value={formData.sourceOfConnetion}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-              select
-            >
-              {ClientDropDown.sourceOfConnection.map((option) => (
-                <MenuItem key={option} value={option}>
-                  {option}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <TextField
-              label="Company Type"
-              name="companyType"
-              value={formData.companyType}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-              select
-            >
-              {ClientDropDown.clientType.map((option) => (
-                <MenuItem key={option} value={option}>
-                  {option}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <TextField
-              label="Company Status"
-              name="status"
-              value={formData.status}
-              onChange={handleChange}
-              required
-              fullWidth
-              margin="normal"
-              select
-            >
-              {ClientDropDown.statusList.map((option) => (
-                <MenuItem key={option} value={option}>
-                  {option}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <TextField
-              id="standard-multiline-static"
-              rows={4}
-              label="Company Address"
-              name="companyAddress"
-              value={formData.companyAddress}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-              multiline
-            />
-          </Grid>
-        </Grid>
-
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          disabled={isSubmitValid}
-        >
-          Register
-        </Button>
-      </Form>
-
+        </div>
+      </div>
       <Snackbar
         open={open}
         onClose={handleClose}

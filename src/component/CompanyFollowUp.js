@@ -20,7 +20,7 @@ import { Urlconstant } from "../constant/Urlconstant";
 import { ClientDropDown } from "../constant/ClientDropDown";
 
 const CompanyFollowUp = ({ open, handleClose, rowData }) => {
-
+  const [isConfirmed, setIsConfirmed] = React.useState(false);
   const [responseMessage, setResponseMessage] = React.useState("");
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [isConfirming, setIsConfirming] = React.useState(false);
@@ -80,6 +80,7 @@ const CompanyFollowUp = ({ open, handleClose, rowData }) => {
   const handleSaveClick = () => {
     if (setIsConfirming) {
       setLoading(true);
+      setIsConfirmed(true)
       try {
         const hrFollowUpData = {
           ...formData,
@@ -130,7 +131,6 @@ const CompanyFollowUp = ({ open, handleClose, rowData }) => {
               name="hrScopName"
               onChange={handleInputChange}
               style={fieldStyle}
-              // value={formData.attemptStatus}
               fullWidth
               select
               margin="normal"
@@ -259,7 +259,7 @@ const CompanyFollowUp = ({ open, handleClose, rowData }) => {
           >
             <GridCloseIcon />
           </IconButton>
-          <Button onClick={handleSaveClick} color="primary">
+          <Button onClick={handleSaveClick} color="primary"disabled={isConfirmed} >
             Confirm
           </Button>
         </DialogActions>

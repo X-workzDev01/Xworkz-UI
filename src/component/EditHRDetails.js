@@ -37,7 +37,7 @@ const EditHRDetails = ({ open, handleClose, rowData }) => {
   const [verifyEmail, setVerifyEmail] = React.useState("");
   const [validateName, setValidateName] = React.useState("");
   const [validateDesignation, setValidateDesignation] = React.useState("");
- 
+  const [isConfirmed, setIsConfirmed] = React.useState(false);
 
   React.useEffect(() => {
     setEditedData(rowData);
@@ -105,6 +105,7 @@ const EditHRDetails = ({ open, handleClose, rowData }) => {
   const handleSaveClick = () => {
     if (setIsConfirming) {
       setLoading(true);
+      setIsConfirmed(true)
       try {
         const updatedData = {
           ...editedData,
@@ -124,6 +125,7 @@ const EditHRDetails = ({ open, handleClose, rowData }) => {
               setSnackbarOpen(true);
               setLoading(false);
               setResponseMessage(response.data);
+              setIsConfirmed(false);
               setIsConfirming(false);
               setTimeout(() => {
                 handleCloseForm();
@@ -187,7 +189,7 @@ const EditHRDetails = ({ open, handleClose, rowData }) => {
       axios
         .get(
           Urlconstant.url +
-            `api/hrcontactnumbercheck?contactNumber=${contactNumber}`
+          `api/hrcontactnumbercheck?contactNumber=${contactNumber}`
         )
         .then((response) => {
           if (response.data === "Contact Number Already exist.") {
@@ -292,17 +294,18 @@ const EditHRDetails = ({ open, handleClose, rowData }) => {
               name="designation"
               onChange={handleInput}
               style={fieldStyle}
-              defaultValue={rowData.designation}
+              value={rowData.designation}
               select
               fullWidth
               margin="normal"
             >
-              {ClientDropDown.hrDisgnation.map((option) => (
+              {ClientDropDown.clientType.map((option) => ( // Changed from hrDesignation to clientType
                 <MenuItem key={option} value={option}>
                   {option}
                 </MenuItem>
               ))}
             </TextField>
+
           </Grid>
           <Grid item xs={12} sm={4}>
             <TextField
@@ -356,7 +359,7 @@ const EditHRDetails = ({ open, handleClose, rowData }) => {
           >
             <GridCloseIcon />
           </IconButton>
-          <Button onClick={handleSaveClick} color="primary">
+          <Button onClick={handleSaveClick} color="primary" disabled={isConfirmed}>
             Confirm
           </Button>
         </DialogActions>

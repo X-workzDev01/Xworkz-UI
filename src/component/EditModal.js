@@ -62,7 +62,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
   const [referalNameCheck, setReferalNameCheck] = React.useState("");
   const [comments, setComments] = React.useState("");
   const [xworkzemailCheck,setXworkzEmailCheck]= React.useState("");
-
+  const [isConfirmed,setIsConfirmed]=React.useState(false);
   React.useEffect(() => {
     setEditedData(rowData);
     setUsnCheck("");
@@ -345,6 +345,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
     if (!isConfirming || loading) {
       setIsConfirming(false);
     }
+    setIsConfirmed(true)
     const updatedData = {
       ...editedData,
       adminDto: {
@@ -377,18 +378,17 @@ const EditModal = ({ open, handleClose, rowData }) => {
         setResponseMessage("Data updated successfully!");
         setSnackbarOpen(true);
         setIsConfirming(false);
+        setIsConfirmed(false);
         if (response.status === 200) {
           setTimeout(() => {
             handleCloseForm();
           }, 1000);
         }
-
         if (emailValue === "" && emailValue != null) {
           navigate(Urlconstant.navigate + `profile/${rowData.basicInfo.email}`);
 
           return;
         }
-
         navigate(Urlconstant.navigate + `profile/${emailValue}`);
       })
       .catch((error) => {
@@ -948,7 +948,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
           >
             <GridCloseIcon />
           </IconButton>
-          <Button onClick={handleSaveClick} color="primary">
+          <Button onClick={handleSaveClick} color="primary" disabled={isConfirmed}>
             Confirm
           </Button>
         </DialogActions>
