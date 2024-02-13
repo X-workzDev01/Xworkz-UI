@@ -105,6 +105,7 @@ export default function FollowUp() {
   };
 
   const handleInputChange = (e) => {
+    setPaginationModel({ page: 0, pageSize: initialPageSize });
     const { name, value } = e.target;
     setSearchValue(value);
     sessionStorage.setItem("status", value);
@@ -221,11 +222,8 @@ export default function FollowUp() {
     setCourseName(null);
     setSelectCollege(null);
     setStatus(null);
-    setSearchValue("New");
     setDate(null);
-   
     sessionStorage.setItem("course", "null");
-    sessionStorage.setItem("status", "New");
   };
   const handleColegeChange = (event) => {
     setSelectCollege(event.target.value);
@@ -246,7 +244,7 @@ export default function FollowUp() {
             label="Status Values"
             onChange={handleInputChange}
             name="status"
-            value={status}
+            value={searchValue}
             fullWidth
             required
             variant="outlined"
@@ -289,31 +287,6 @@ export default function FollowUp() {
                 </MenuItem>
               ))
               : null}
-          </Select>
-        </FormControl>
-
-        <FormControl>
-          <InputLabel id="demo-simple-select-label">Select College</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            label="college Name"
-            name="college"
-            value={college}
-            required
-            variant="outlined"
-            sx={{
-              marginRight: "10px",
-              width: "200px",
-              fontSize: "12px",
-            }}
-            onChange={handleCollegeChange}
-          >
-            {dropdown.college.map((item, index) => (
-              <MenuItem value={item} key={index}>
-                {item}
-              </MenuItem>
-            ))}
           </Select>
         </FormControl>
 

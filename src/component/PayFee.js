@@ -50,6 +50,13 @@ export const PayFee = ({
     const day = String(today.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
+  const getMinDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0") + 1;
+    const day = String(today.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
   useEffect(() => {
     setUpdateFeesData("");
     setPaidAmountError("");
