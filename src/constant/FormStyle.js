@@ -14,3 +14,9 @@ export const gridStyle = { height: "650px", width: "100%" };
 export const buttonPadding = { paddingLeft: "20px" };
 
 export const searchStyle = { width: "22rem", padding: "10px 20px" };
+export const textFieldStyles = {
+  width: '100%',
+  '& .MuiInputBase-input': {
+    padding: '10px 16px',
+  },
+};
