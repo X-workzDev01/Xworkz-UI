@@ -11,7 +11,6 @@ import { Route, Routes } from "react-router-dom";
 import Absentees from "./Absentees";
 import ClientDetails from "./ClientDetails";
 import CompanyProfile from "./CompanyProfile";
-import DownLoadToExcel from "./DownLoadToExcel";
 import Enquiry from "./Enquiry";
 import { FeesDetailes } from "./FeesDetailes";
 import Header from "./Header";

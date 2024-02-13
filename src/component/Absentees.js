@@ -100,10 +100,10 @@ const Absentees = () => {
   const handleReasonChange = (studentId, value) => {
     const updatedReasons = { ...reasons, [studentId]: value };
     setReasons(updatedReasons);
-    if (value.length > 20) {
+    if (value.length > 40) {
       setErrors({
         ...errors,
-        [studentId]: "Reason should not exceed 10 characters",
+        [studentId]: "Reason should not exceed 40 characters",
       });
     } else {
       setErrors({ ...errors, [studentId]: "" });
@@ -149,6 +149,7 @@ const Absentees = () => {
 
   const handleAttendanceSubmit = () => {
     // Validate all reason fields before submitting
+    getTotalClass();
     const validationErrors = {};
     Object.keys(reasons).forEach((studentId) => {
       if (reasons[studentId].trim() === "") {
