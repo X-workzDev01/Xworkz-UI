@@ -86,11 +86,24 @@ export const FeesHistory = ({ isOpen, handleClose, row }) => {
             borderRadius: "1.2rem",
             backgroundColor: "white",
             transform: "translate(-50%,-50%)",
-            top:'50%',
-            left:'50%',
-            position:'absolute',
+            top: "50%",
+            left: "50%",
+            position: "absolute",
           }}
         >
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: "15px",
+              marginBottom: "-25px",
+              color: "green",
+              fontSize:'20px',
+              fontWeight: "bold",
+            }}
+          >
+            Fees History
+          </div>
           <div className="closed">
             <TfiClose color="inherit" onClick={() => handleClose()} />
           </div>
