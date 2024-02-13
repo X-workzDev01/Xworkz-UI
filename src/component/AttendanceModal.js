@@ -75,10 +75,12 @@ const AttendanceModal = ({ open, handleClose, id, batch }) => {
         });
     }
   }, [open, id, batch]);
-
+  const filteredAbsentDays = attendanceData?.list?.filter(
+    (day) => day.reason !== "NA"
+  ) || [];
   // Dummy data, replace with your actual data
   const totalClasses = attendanceData ? attendanceData.totalClass : 0;
-  const totalAbsent = attendanceData?.list?.length || 0;
+  const totalAbsent = filteredAbsentDays.length;
   const totalPresent = totalClasses - totalAbsent;
   const newAttendancePercentage =
     totalClasses === 0 ? 0 : (totalPresent / totalClasses) * 100;
@@ -171,6 +173,7 @@ const AttendanceModal = ({ open, handleClose, id, batch }) => {
           </Typography>
           <List>
             {absentDays.map((absentDay, index) => (
+              absentDay.reason !== "NA" && (
               <React.Fragment key={index}>
                 <ListItem>
                   <ListItemText
@@ -180,6 +183,7 @@ const AttendanceModal = ({ open, handleClose, id, batch }) => {
                 </ListItem>
                 {index < absentDays.length - 1 && <Divider />}
               </React.Fragment>
+              )
             ))}
             {absentDays.length === 0 && (
               <Typography variant="body2" color="textSecondary" align="center">
