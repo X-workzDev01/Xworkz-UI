@@ -295,7 +295,7 @@ export default function ControlledSelectionServerPaginationGrid() {
     },
     {
       field: "registrationDate",
-      headerName: "registrationDate",
+      headerName: "RegistrationDate",
       flex: 1,
       valueGetter: (params) => params.row.othersDto.registrationDate,
     },
@@ -506,7 +506,7 @@ export default function ControlledSelectionServerPaginationGrid() {
           rows={gridData.rows}
           pagination
           paginationModel={paginationModel}
-          pageSizeOptions={[5, 10, 15]}
+          pageSizeOptions={[25,50,100]}
           rowCount={gridData.rowCount}
           paginationMode={searchValue === "" ? "server" : "client"}
           onPaginationModelChange={setPaginationModel}

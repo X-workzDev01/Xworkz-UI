@@ -1,14 +1,14 @@
 
 export const ClientDropDown = {
-  statusList: ["Active", "InActive"].slice().sort(),
+  statusList: ["Active", "Inactive"].slice().sort(),
   clientType: [
-    "IT Consultency",
+    "IT Consultancy",
     "Service Based",
     "Product Based",
     "Others",
   ],
   sourceOfConnection: [
-    "Linkdin",
+    "LinkedIn",
     "Social Media",
     "Job Portal",
     "Old Student Reference",
@@ -22,14 +22,14 @@ export const ClientDropDown = {
     "Hyderabad",
     "Kochi",
     "Pune",
-    "Thiruvanthapuram",
+    "Thiruvananthapuram",
     "Chennai",
-    "Kolakata",
+    "Kolkata",
     "Ahmedabad",
     "Delhi",
     "Other",
   ],
-  hrDisgnation: [
+  hrDesignation: [
     "HR",
     "HR Manager",
     "HR Assistant",
@@ -47,11 +47,11 @@ export const ClientDropDown = {
     "No Fresher Hiring",
     "No Openings Currently",
     "Fresher Hiring",
-    "Experience Candidate Hiring",
+    "Experienced Candidate Hiring",
     "Switch Off",
     "Sent JD",
     "There are no openings on Java",
     "Should check for Freshers hiring",
   ].slice().sort(),
+};
 
-}
