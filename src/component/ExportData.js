@@ -58,6 +58,7 @@ const ExportData = ({ open, handleClose }) => {
 
 
     const getActiveCourse = () => {
+        setError("");
         axios
             .get(Urlconstant.url + "api/getCourseName?status=Active", {
                 headers: {
