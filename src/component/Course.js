@@ -35,7 +35,6 @@ export const Course = ({
   }, [selectedValue]);
   const fetchData = async () => {
     try {
-      console.log("course" + selectedValue);
       const response = await axios.get(
         Urlconstant.url + `api/getCourseDetails?courseName=${selectedValue}`,
         { headers: { spreadsheetId: Urlconstant.spreadsheetId } }

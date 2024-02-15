@@ -9,9 +9,9 @@ import * as React from "react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Urlconstant } from "../constant/Urlconstant";
-import EditModal from "./EditModal";
 import Header from "./Header";
 import { GridToolbar } from "@mui/x-data-grid";
+import ExportData from "./ExportData";
 
 function loadServerRows(page, pageSize, courseName, collegeName) {
   const startingIndex = page * pageSize;
@@ -57,9 +57,9 @@ function loadClientRows(page, pageSize, allData) {
   });
 }
 
-function searchServerRows(searchValue, courseName) {
+function searchServerRows(searchValue, courseName,collegeName) {
   const apiUrl =
-    Urlconstant.url + `api/filterData/${courseName}?searchValue=${searchValue}`;
+    Urlconstant.url + `api/filterData/${courseName}?searchValue=${searchValue}&&collegeName=${collegeName}`;
   const requestOptions = {
     method: "GET",
     headers: {
@@ -83,11 +83,11 @@ function searchServerRows(searchValue, courseName) {
       });
   });
 }
-async function fetchFilteredData(searchValue, courseName) {
+async function fetchFilteredData(searchValue, courseName,collegeName) {
   try {
     const apiUrl =
       Urlconstant.url +
-      `api/register/suggestion/${courseName}?value=${searchValue}`;
+      `api/register/suggestion/${courseName}?value=${searchValue}&&collegeName=${collegeName}`;
     const requestOptions = {
       method: "GET",
       headers: {
@@ -131,8 +131,6 @@ export default function ControlledSelectionServerPaginationGrid() {
   const [searchValue, setSearchValue] = React.useState("");
   const [searchInputValue, setSearchInputValue] = React.useState("");
   const [autocompleteOptions, setAutocompleteOptions] = React.useState([]);
-  const [isModalOpen, setModalOpen] = React.useState(false);
-  const [editedRowData, setEditedRowData] = React.useState(null);
   const [courseName, setCourseName] = React.useState(
     sessionStorage.getItem("courseValue")
   );
@@ -145,13 +143,12 @@ export default function ControlledSelectionServerPaginationGrid() {
     stream: [],
     college: [],
   });
-
-  const handleSaveClick = () => {
-    setModalOpen(false);
-  };
+  const [isExportModalOpen, setExportModalOpen] = React.useState(false);
+  const [selectedOption, setSelectedOption] = useState(null);
+  const [isClearClicked, setIsClearClicked] = useState(false);
 
   const handleSearchClick = () => {
-    searchServerRows(searchValue, courseName).then((newGridData) => {
+    searchServerRows(searchValue, courseName,collegeName).then((newGridData) => {
       setGridData(newGridData);
       setPaginationModel({ page: 0, pageSize: initialPageSize });
       setSearchInputValue("");
@@ -165,6 +162,7 @@ export default function ControlledSelectionServerPaginationGrid() {
           fetchFilteredData(
             searchValue,
             courseName,
+            collegeName,
             paginationModel.page,
             paginationModel.pageSize,
             setPaginationModel
@@ -210,6 +208,7 @@ export default function ControlledSelectionServerPaginationGrid() {
           const suggestions = await fetchFilteredData(
             searchValue,
             courseName,
+            collegeName,
             paginationModel.page,
             paginationModel.pageSize,
             setPaginationModel
@@ -382,15 +381,24 @@ export default function ControlledSelectionServerPaginationGrid() {
   const handleClear = () => {
     sessionStorage.setItem("courseValue", "null");
     sessionStorage.setItem("name", "null");
-    setCourseName("null");
-    setCollegeName("null");
+    sessionStorage.setItem("searchValue", "null");
+    setCourseName(null);
+    setCollegeName(null);
     setSearchValue("");
+    setSelectedOption({ basicInfo: { traineeName: '' } });
   };
-
-  const handleCollegeChange = (event) => {
-    const collegeName = event.target.value;
-    setCollegeName(collegeName);
+  const handleExportClickModal = () => {
+    setExportModalOpen(false);
   }
+  const handleExportClick = () => {
+    setExportModalOpen(true);
+  }
+   const handleAutocompleteChange = (event, newValue) => {
+    setSelectedOption(isClearClicked ? null : newValue);
+    sessionStorage.setItem("searchValue", newValue?.basicInfo?.traineeName);
+    setIsClearClicked(false); // Reset clear clicked state
+    setSearchValue(newValue?.basicInfo?.email || '');
+  };
   return (
     <div>
       <Header />
@@ -406,10 +414,8 @@ export default function ControlledSelectionServerPaginationGrid() {
           disableClearable
           getOptionLabel={(option) => option.basicInfo.traineeName}
           style={{ width: "22rem", padding: "10px 20px" }}
-          onChange={(event, newValue) => {
-            sessionStorage.setItem("name", newValue.basicInfo.traineeName);
-            setSearchValue(newValue.basicInfo.email);
-          }}
+          value={selectedOption}
+          onChange={handleAutocompleteChange}
           renderInput={(params) => (
             <TextField
               {...params}
@@ -451,6 +457,7 @@ export default function ControlledSelectionServerPaginationGrid() {
             }}
             onChange={handleCourseChange}
           >
+            <MenuItem value={null} > Select course </MenuItem>
             {Array.isArray(courseDropdown)
               ? courseDropdown.map((item, k) => (
                 <MenuItem value={item} key={k}>
@@ -475,8 +482,9 @@ export default function ControlledSelectionServerPaginationGrid() {
               width: "200px",
               fontSize: "12px",
             }}
-            onChange={handleCollegeChange}
+            onChange={(e) => setCollegeName(e.target.value)}
           >
+            <MenuItem value={null} > Select College </MenuItem>
             {dropdown.college.map((item, index) => (
               <MenuItem value={item} key={index}>
                 {item}
@@ -498,6 +506,9 @@ export default function ControlledSelectionServerPaginationGrid() {
             Clear
           </Button>
         </div>
+        <div style={{ display: 'flex', paddingLeft: "700px" }}>
+          <Button variant="contained" color="primary" onClick={handleExportClick}>Export Data</Button>
+        </div>
       </div>
       <div style={{ height: "650px", width: "100%" }}>
         <DataGrid
@@ -517,16 +528,12 @@ export default function ControlledSelectionServerPaginationGrid() {
           loading={loading}
           keepNonExistentRowsSelected
           slots={{ toolbar: GridToolbar }}
-
         />
-
       </div>
-      <EditModal
-        open={isModalOpen}
-        handleClose={() => setModalOpen(false)}
-        rowData={editedRowData}
-        setRowData={setEditedRowData}
-        handleSaveClick={handleSaveClick}
+      <ExportData
+        open={isExportModalOpen}
+        handleClose={() => setExportModalOpen(false)}
+        handleSaveClick={handleExportClickModal}
       />
     </div>
   );
