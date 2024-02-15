@@ -1,4 +1,4 @@
-import { Alert, Button, Dialog, DialogTitle, FormControl, IconButton, InputLabel, MenuItem, Select } from "@mui/material"
+import { Alert, Button, CircularProgress, Dialog, DialogTitle, FormControl, IconButton, InputLabel, MenuItem, Select } from "@mui/material"
 import { GridCloseIcon } from "@mui/x-data-grid";
 import { Urlconstant } from "../constant/Urlconstant";
 import React, { useEffect, useState } from "react";
@@ -37,7 +37,9 @@ const ExportData = ({ open, handleClose }) => {
     const [offeredAs, setOfferedAs] = useState(null);
     const [error, setError] = React.useState("");
     const [courseName, setCourseName] = React.useState(null);
-    const [courseDetails,setCourseDetails]=React.useState([]);
+    const [courseDetails, setCourseDetails] = React.useState([]);
+    const [loading, setLoading] = useState(false);
+
     React.useEffect(() => {
         getDropdown();
         setError("");
@@ -55,18 +57,18 @@ const ExportData = ({ open, handleClose }) => {
 
 
 
-    const getActiveCourse=()=>{
+    const getActiveCourse = () => {
         axios
-      .get(Urlconstant.url + "api/getCourseName?status=Active", {
-        headers: {
-          spreadsheetId: Urlconstant.spreadsheetId,
-        },
-      })
+            .get(Urlconstant.url + "api/getCourseName?status=Active", {
+                headers: {
+                    spreadsheetId: Urlconstant.spreadsheetId,
+                },
+            })
 
-      .then((res) => {
-        setCourseDetails(res.data);
-      })
-      .catch((e) => {});
+            .then((res) => {
+                setCourseDetails(res.data);
+            })
+            .catch((e) => { });
     }
     const getDropdown = () => {
         axios
@@ -82,6 +84,7 @@ const ExportData = ({ open, handleClose }) => {
     }
 
     const handleDataClick = () => {
+        setLoading(true);
         const encodedCollegeName = encodeURIComponent(collegeName);
         axios.get(Urlconstant.url + `export/getFilteredData?collegeName=${encodedCollegeName}&offeredAs=${offeredAs}&yearOfPass=${yearOfPassout}&courseName=${courseName}`)
             .then((response) => {
@@ -91,10 +94,12 @@ const ExportData = ({ open, handleClose }) => {
                 link.href = window.URL.createObjectURL(blob);
                 link.download = 'X-workz.csv';
                 link.click();
+                setLoading(false);
                 handleClose();
             })
             .catch((error) => {
                 setError("Error exporting data:");
+                setLoading(false);
             });
     };
     return (
@@ -111,7 +116,7 @@ const ExportData = ({ open, handleClose }) => {
             </IconButton>
             {error ? <Alert severity="error">{error}</Alert> : " "}
             <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-                <FormControl>
+                <FormControl fullWidth>
                     <InputLabel id="demo-simple-select-label">College Name</InputLabel>
                     <Select
                         labelId="demo-simple-select-label"
@@ -136,7 +141,7 @@ const ExportData = ({ open, handleClose }) => {
                         ))}
                     </Select>
                 </FormControl>
-                <FormControl>
+                <FormControl fullWidth>
                     <InputLabel id="demo-simple-select-label">Year </InputLabel>
                     <Select
                         labelId="demo-simple-select-label"
@@ -161,7 +166,7 @@ const ExportData = ({ open, handleClose }) => {
                         ))}
                     </Select>
                 </FormControl>
-                <FormControl>
+                <FormControl fullWidth>
                     <InputLabel id="demo-simple-select-label">offered As </InputLabel>
                     <Select
                         labelId="demo-simple-select-label"
@@ -186,7 +191,7 @@ const ExportData = ({ open, handleClose }) => {
                         ))}
                     </Select>
                 </FormControl>
-                <FormControl>
+                <FormControl fullWidth>
                     <InputLabel id="demo-simple-select-label">Course </InputLabel>
                     <Select
                         labelId="demo-simple-select-label"
@@ -212,8 +217,10 @@ const ExportData = ({ open, handleClose }) => {
                     </Select>
                 </FormControl>
             </div>
-            <div style={{ paddingLeft: "400px" }}>
-                <Button variant="contained" color="primary" onClick={handleDataClick}>Export</Button>
+            <div style={{ marginTop: "20px", display: "flex", justifyContent: "center" }}>
+                <Button variant="contained" color="primary" onClick={handleDataClick}>
+                    {loading ? <CircularProgress size={24} /> : "Export"}
+                </Button>
             </div>
 
         </Dialog>
