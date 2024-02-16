@@ -154,7 +154,7 @@ export default function ViewClient() {
     },
     {
       field: "companyWebsite",
-      headerName: " Website",
+      headerName: "Website",
       flex: 1,
       valueGetter: (params) => params.row.companyWebsite,
     },
@@ -166,7 +166,7 @@ export default function ViewClient() {
     },
     {
       field: "companyAddress",
-      headerName: " Address",
+      headerName: "Address",
       flex: 1,
       valueGetter: (params) => params.row.companyAddress,
     },
@@ -213,7 +213,6 @@ export default function ViewClient() {
           freeSolo
           autoSelect
           id="free-solo-2-demo"
-          disableClearable
           style={{ width: 300 }}
           options={autocompleteOptions}
           getOptionLabel={(option) =>
@@ -263,7 +262,7 @@ export default function ViewClient() {
           rows={gridData.rows}
           pagination
           paginationModel={paginationModel}
-          pageSizeOptions={[5, 10, 15]}
+          pageSizeOptions={[25,50,100]}
           rowCount={gridData.rowCount}
           paginationMode={searchValue === "" ? "server" : "client"}
           onPaginationModelChange={setPaginationModel}

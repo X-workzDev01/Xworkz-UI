@@ -148,8 +148,6 @@ const Absentees = () => {
   };
 
   const handleAttendanceSubmit = () => {
-    // Validate all reason fields before submitting
-    getTotalClass();
     const validationErrors = {};
     Object.keys(reasons).forEach((studentId) => {
       if (reasons[studentId].trim() === "") {
@@ -182,6 +180,7 @@ const Absentees = () => {
           setSelectedStudents([]);
           setReasons({});
           setErrors({});
+          getTotalClass();
         })
         .catch((error) => {
           console.error("API Error:", error);
@@ -303,7 +302,7 @@ const Absentees = () => {
               <h3> Select Students: </h3>{" "}
               <Autocomplete
                 options={students}
-                getOptionLabel={(option) => option.name}
+                getOptionLabel={(option) => `${option.name} - ${option.email}`}
                 value={selectedStudent}
                 onChange={handleStudentChange}
                 renderInput={(params) => (
