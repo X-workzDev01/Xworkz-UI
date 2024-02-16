@@ -94,7 +94,9 @@ export default function ControlledSelectionServerPaginationGrid() {
   const [autocompleteOptions, setAutocompleteOptions] = React.useState([]);
   const [isModalOpen, setModalOpen] = React.useState(false);
   const [editedRowData, setEditedRowData] = React.useState(null);
-  const [courseName, setCourseName] = React.useState(null);
+  const [courseName, setCourseName] = React.useState(
+    sessionStorage.getItem("courseValue")
+  );
   const [courseDropdown, setCourseDropdown] = React.useState("");
   const [totalClass, setTotalClass] = useState(0);
   const [course, setCourse] = useState("");
