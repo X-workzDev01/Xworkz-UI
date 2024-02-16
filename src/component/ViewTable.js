@@ -57,7 +57,7 @@ function loadClientRows(page, pageSize, allData) {
   });
 }
 
-function searchServerRows(searchValue, courseName,collegeName) {
+function searchServerRows(searchValue, courseName, collegeName) {
   const apiUrl =
     Urlconstant.url + `api/filterData/${courseName}?searchValue=${searchValue}&&collegeName=${collegeName}`;
   const requestOptions = {
@@ -83,7 +83,7 @@ function searchServerRows(searchValue, courseName,collegeName) {
       });
   });
 }
-async function fetchFilteredData(searchValue, courseName,collegeName) {
+async function fetchFilteredData(searchValue, courseName, collegeName) {
   try {
     const apiUrl =
       Urlconstant.url +
@@ -148,7 +148,7 @@ export default function ControlledSelectionServerPaginationGrid() {
   const [isClearClicked, setIsClearClicked] = useState(false);
 
   const handleSearchClick = () => {
-    searchServerRows(searchValue, courseName,collegeName).then((newGridData) => {
+    searchServerRows(searchValue, courseName, collegeName).then((newGridData) => {
       setGridData(newGridData);
       setPaginationModel({ page: 0, pageSize: initialPageSize });
       setSearchInputValue("");
@@ -393,12 +393,16 @@ export default function ControlledSelectionServerPaginationGrid() {
   const handleExportClick = () => {
     setExportModalOpen(true);
   }
-   const handleAutocompleteChange = (event, newValue) => {
+  const handleAutocompleteChange = (event, newValue) => {
     setSelectedOption(isClearClicked ? null : newValue);
     sessionStorage.setItem("searchValue", newValue?.basicInfo?.traineeName);
     setIsClearClicked(false); // Reset clear clicked state
     setSearchValue(newValue?.basicInfo?.email || '');
   };
+  const handleCollegeChange = (event) => {
+    const collegeName = event.target.value;
+    setCollegeName(collegeName);
+  }
   return (
     <div>
       <Header />
@@ -482,7 +486,7 @@ export default function ControlledSelectionServerPaginationGrid() {
               width: "200px",
               fontSize: "12px",
             }}
-            onChange={(e) => setCollegeName(e.target.value)}
+            onChange={handleCollegeChange}
           >
             <MenuItem value={null} > Select College </MenuItem>
             {dropdown.college.map((item, index) => (
@@ -517,7 +521,7 @@ export default function ControlledSelectionServerPaginationGrid() {
           rows={gridData.rows}
           pagination
           paginationModel={paginationModel}
-          pageSizeOptions={[25,50,100]}
+          pageSizeOptions={[25, 50, 100]}
           rowCount={gridData.rowCount}
           paginationMode={searchValue === "" ? "server" : "client"}
           onPaginationModelChange={setPaginationModel}

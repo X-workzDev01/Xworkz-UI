@@ -103,6 +103,22 @@ const ExportData = ({ open, handleClose }) => {
                 setLoading(false);
             });
     };
+    const handleCollegeChange = (event) => {
+        const collegeName = event.target.value;
+        setCollegeName(collegeName);
+    }
+    const handleYearOfPass = (event) => {
+        const yearOFPass = event.target.value;
+        setYearOfPassout(yearOfPassout);
+    }
+    const handleOfferedAs = (event) => {
+        const offeredAs = event.target.value;
+        setOfferedAs(offeredAs)
+    }
+    const handleCourseChange = (event) => {
+        const courseName = event.target.value;
+        setCollegeName(courseName);
+    }
     return (
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
             <DialogTitle>Download Here</DialogTitle>
@@ -132,7 +148,7 @@ const ExportData = ({ open, handleClose }) => {
                             width: "200px",
                             fontSize: "12px",
                         }}
-                        onChange={(e) => setCollegeName(e.target.value)}
+                        onChange={handleCollegeChange}
                     >
                         <MenuItem value={null} > Select College </MenuItem>
                         {dropdown.college.map((item, index) => (
@@ -157,7 +173,7 @@ const ExportData = ({ open, handleClose }) => {
                             width: "200px",
                             fontSize: "12px",
                         }}
-                        onChange={(e) => setYearOfPassout(e.target.value)}
+                        onChange={handleYearOfPass}
                     >
                         <MenuItem value={null} > Select year </MenuItem>
                         {years.map((item, index) => (
@@ -182,7 +198,7 @@ const ExportData = ({ open, handleClose }) => {
                             width: "200px",
                             fontSize: "12px",
                         }}
-                        onChange={(e) => setOfferedAs(e.target.value)}
+                        onChange={handleOfferedAs}
                     >
                         <MenuItem value={null} > Select OfferedAs </MenuItem>
                         {offeredState.map((item, index) => (
@@ -208,6 +224,7 @@ const ExportData = ({ open, handleClose }) => {
                             fontSize: "12px",
                         }}
                         onChange={(e) => setCourseName(e.target.value)}
+                        onChange={handleCourseChange}
                     >
                         <MenuItem value={null} > Select Course  </MenuItem>
                         {courseDetails.map((item, index) => (
