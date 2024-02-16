@@ -114,11 +114,11 @@ const WhatsAppLinkSender = ({ formData: initialFormData }) => {
             },
           }
         );
-        if (response.data === "true") {
-          console.log("Data from submit URL:", response.data);
-          setSuccessMessage("WhatsApp link sent To Mail successfully");
+        if (response.data === "Send WhatsAppLink successfully") {
+          setSuccessMessage(response.data);
+          setFormData({ course: "", whatsAppLink: "" });
         } else {
-          setErrorMessage("WhatsApp Link already send Trainee");
+          setErrorMessage(response.data);
         }
       }
     } catch (error) {
