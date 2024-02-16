@@ -75,7 +75,6 @@ const Sidebar = ({ children }) => {
     },
     {
       path: "feesDetails",
-
       name: "Fees Details",
       icon: <MdAccountBalanceWallet />,
     },
