@@ -25,12 +25,11 @@ export default function FollowUp() {
     sessionStorage.getItem("status")
   );
   const [name, setName] = useState("status");
-  const [selectCollege, setSelectCollege] = useState(null);
-  const [courseName, setCourseName] = React.useState(null);
+  const [selectCollege, setSelectCollege] = useState(sessionStorage.getItem("selectCollege"));
+  const [courseName, setCourseName] = React.useState(sessionStorage.getItem("course"));
   const [courseDropdown, setCourseDropdown] = React.useState("");
   const [status, setStatus] = React.useState("");
   const [college, setCollege] = React.useState("");
-  // const [collegeDropdown, setCollegeDropdown] = useState([]);
   const statusList = ["Interested", "RNR", "Not Interested", "Others"];
   const [dropdown, setDropDown] = useState({
     status: [],
@@ -43,12 +42,12 @@ export default function FollowUp() {
     "RNR",
     "Enquiry",
     "Joined",
-    "Past followup",
+    "Past followUp",
     "Never followUp",
     "CSR",
     "NonCSR",
   ]);
-  const [date, setDate] = useState(null);
+  const [date, setDate] = useState(sessionStorage.getItem("date"));
   const initialPageSize = 25;
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -111,9 +110,6 @@ export default function FollowUp() {
     sessionStorage.setItem("status", value);
     setName(name);
     setStatus(value);
-
-    setCourseName(null);
-
   };
 
   const handleCourseChange = (event) => {
@@ -122,12 +118,6 @@ export default function FollowUp() {
     setName(name);
     sessionStorage.setItem("course", value);
     setCourseName(value);
-  };
-
-  const handleCollegeChange = (event) => {
-    const { name, value } = event.target;
-    setName(name);
-    setCollege(value);
   };
 
   const getTraineeDetailsByCourseAndStatus = async (courseName, status) => {
@@ -211,7 +201,11 @@ export default function FollowUp() {
   };
   const dateByfollowupStatus = (e) => {
     const { name, value } = e.target;
-    setDate(value);
+    setPaginationModel({ page: 0, pageSize: initialPageSize });
+    sessionStorage.setItem("date", value);
+
+
+    { value ? setDate(value) : setDate(null) }
   };
 
   const handleSaveClick = () => {
@@ -221,11 +215,16 @@ export default function FollowUp() {
   const handleClear = () => {
     setCourseName(null);
     setSelectCollege(null);
-    setStatus(null);
+    setSearchValue("New");
     setDate(null);
-    sessionStorage.setItem("course", "null");
+    sessionStorage.setItem("status", "New");
+    sessionStorage.setItem("course", null);
+    sessionStorage.setItem("date", null);
+    sessionStorage.setItem("selectCollege", null);
   };
   const handleColegeChange = (event) => {
+    setPaginationModel({ page: 0, pageSize: initialPageSize });
+    sessionStorage.setItem("selectCollege", event.target.value);
     setSelectCollege(event.target.value);
   };
   return (
@@ -234,7 +233,7 @@ export default function FollowUp() {
       <h2>VeiwFollowUp</h2>
       <div
         className="search"
-        style={{ marginTop: "50px", marginBottom:'0.5rem', display: "flex", alignItems: "center" }}
+        style={{ marginTop: "50px", marginBottom: '0.5rem', display: "flex", alignItems: "center" }}
       >
         <FormControl>
           <InputLabel id="demo-simple-select-label">Select Status</InputLabel>
@@ -251,7 +250,7 @@ export default function FollowUp() {
             sx={{
               marginRight: "10px",
               width: "200px",
-              fontSize: "12px",
+              fontSize: "14px",
             }}
           >
             {statusLists.map((item, index) => (
@@ -268,6 +267,7 @@ export default function FollowUp() {
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             label="Course Name"
+            onChange={handleCourseChange}
             name="CourseName"
             value={courseName}
             required
@@ -275,11 +275,10 @@ export default function FollowUp() {
             sx={{
               marginRight: "10px",
               width: "200px",
-              fontSize: "12px",
+              fontSize: "14px",
             }}
-            onChange={handleCourseChange}
-          > 
-            {/* <MenuItem value="null">Select</MenuItem> */}
+          >
+            <MenuItem value={null} > Select course </MenuItem>
             {Array.isArray(courseDropdown)
               ? courseDropdown.map((item, k) => (
                 <MenuItem value={item} key={k}>
@@ -294,7 +293,7 @@ export default function FollowUp() {
           <TextField
             type="date"
             name="date"
-            value={date || ""}
+            value={date||"null"}
             label="Select call back date"
             InputLabelProps={{
               shrink: true,
@@ -302,7 +301,7 @@ export default function FollowUp() {
             sx={{ marginRight: "10px" }}
             onChange={dateByfollowupStatus}
           />
-          
+
         }
         <FormControl>
           <InputLabel id="demo-simple-select-label">Select College</InputLabel>
@@ -317,10 +316,11 @@ export default function FollowUp() {
             sx={{
               marginRight: "10px",
               width: "200px",
-              fontSize: "12px",
+              fontSize: "14px",
             }}
             onChange={handleColegeChange}
           >
+            <MenuItem value={null} > Select College </MenuItem>
             {dropdown.college.map((item, k) => (
               <MenuItem value={item} key={k}>
                 {item}
@@ -406,7 +406,7 @@ export default function FollowUp() {
           rows={gridData.rows}
           pagination
           paginationModel={paginationModel}
-          pageSizeOptions={[5, 10, 15]}
+          pageSizeOptions={[25, 50, 100]}
           rowCount={gridData.rowCount}
           paginationMode="server"
           onPaginationModelChange={setPaginationModel}
