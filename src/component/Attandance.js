@@ -360,10 +360,10 @@ export default function ControlledSelectionServerPaginationGrid() {
           </Button>
         </div>
       </div>
-      <div style={{ marginTop: "-35px" }}>
-        TotalClass :
-        <div style={{ ...styles.totalClassContainer, position: "relative" }}>
-          <div style={{ ...styles.totalClassCircle, position: "relative" }}>
+
+      <div style={{ marginTop: "-35px" }}>TotalClass :
+        <div style={styles.totalClassContainer}>
+          <div style={styles.totalClassCircle}>
             <p>{totalClass}</p>
           </div>
         </div>
