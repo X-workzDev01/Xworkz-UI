@@ -45,7 +45,7 @@ export const FeesDetailes = () => {
       paymentMode
     );
     getBatch();
-  }, [batch, paymentMode, date]);
+  }, [batch, paymentMode, date,paginationModel]);
 
   const getBatch = () => {
     axios
