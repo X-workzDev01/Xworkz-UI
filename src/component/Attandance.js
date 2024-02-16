@@ -1,10 +1,5 @@
 import { PersonOutline } from "@mui/icons-material";
-import {
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-} from "@mui/material";
+import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -17,7 +12,6 @@ import { Urlconstant } from "../constant/Urlconstant";
 import EditModal from "./EditModal";
 import Header from "./Header";
 import AttendanceModal from "./AttendanceModal";
-
 
 // Function to load data from the server based on pagination
 async function loadServerRows(page, pageSize, courseName) {
@@ -60,10 +54,10 @@ async function fetchFilteredData(searchValue, courseName) {
   }
 }
 
-
 function searchServerRows(searchValue, courseName) {
   const apiUrl =
-    Urlconstant.url + `api/attendance/filterData/${courseName}?searchValue=${searchValue}`;
+    Urlconstant.url +
+    `api/attendance/filterData/${courseName}?searchValue=${searchValue}`;
   return new Promise((resolve) => {
     fetch(apiUrl)
       .then((response) => response.json())
@@ -92,7 +86,7 @@ export default function ControlledSelectionServerPaginationGrid() {
     rows: [],
     rowCount: 0,
   });
-  const [handleOpen, setHandleOpen] = useState(false)
+  const [handleOpen, setHandleOpen] = useState(false);
   const [loading, setLoading] = React.useState(false);
   const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
   const [searchValue, setSearchValue] = React.useState("");
@@ -100,13 +94,11 @@ export default function ControlledSelectionServerPaginationGrid() {
   const [autocompleteOptions, setAutocompleteOptions] = React.useState([]);
   const [isModalOpen, setModalOpen] = React.useState(false);
   const [editedRowData, setEditedRowData] = React.useState(null);
-  const [courseName, setCourseName] = React.useState(
-    sessionStorage.getItem("courseValue") || ""
-  );
+  const [courseName, setCourseName] = React.useState(null);
   const [courseDropdown, setCourseDropdown] = React.useState("");
   const [totalClass, setTotalClass] = useState(0);
-  const [course, setCourse] = useState('');
-  const [id, setId] = useState('');
+  const [course, setCourse] = useState("");
+  const [id, setId] = useState("");
 
   useEffect(() => {
     refreshPageEveryTime();
@@ -117,7 +109,7 @@ export default function ControlledSelectionServerPaginationGrid() {
     if (courseName) {
       getTotalClass();
     }
-  }, [courseName])
+  }, [courseName]);
 
   const handleCourseChange = (event) => {
     const courseValue = event.target.value;
@@ -130,7 +122,6 @@ export default function ControlledSelectionServerPaginationGrid() {
       .get(Urlconstant.url + `api/getTotalClass?courseName=${courseName}`)
       .then((response) => {
         setTotalClass(response.data);
-
       })
       .catch((error) => {
         console.error("Error fetching total class data:", error);
@@ -153,18 +144,18 @@ export default function ControlledSelectionServerPaginationGrid() {
           setAutocompleteOptions([]);
           setLoading(false);
         } else {
-            const suggestions = await fetchFilteredData(
-              searchValue,
-              courseName,
-              paginationModel.page,
-              paginationModel.pageSize,
-              setPaginationModel
-            );
+          const suggestions = await fetchFilteredData(
+            searchValue,
+            courseName,
+            paginationModel.page,
+            paginationModel.pageSize,
+            setPaginationModel
+          );
 
-            if (active) {
-              setAutocompleteOptions(suggestions);
-              setLoading(false);
-            }
+          if (active) {
+            setAutocompleteOptions(suggestions);
+            setLoading(false);
+          }
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -191,7 +182,7 @@ export default function ControlledSelectionServerPaginationGrid() {
       .then((response) => {
         setCourseDropdown(response.data);
       })
-      .catch((error) => { });
+      .catch((error) => {});
   };
   const handleSearchClick = () => {
     searchServerRows(searchValue, courseName).then((newGridData) => {
@@ -204,9 +195,7 @@ export default function ControlledSelectionServerPaginationGrid() {
     setHandleOpen(true);
     setCourse(batch);
     setId(id);
-
-
-  }
+  };
   const handleClear = () => {
     setCourseName("null");
     setTotalClass(0);
@@ -245,25 +234,25 @@ export default function ControlledSelectionServerPaginationGrid() {
             variant="outlined"
             color="secondary"
             startIcon={<PersonOutline />}
-            onClick={() => { handleModelOpen(params.row.course, params.row.id) }}
+            onClick={() => {
+              handleModelOpen(params.row.course, params.row.id);
+            }}
           >
             View
           </Button>
         </div>
       ),
     },
-
   ];
-
 
   const styles = {
     totalClassContainer: {
       marginLeft: "900px",
-      marginTop: '-1.7rem',
+      marginTop: "-1.7rem",
     },
     totalClassCircle: {
-      display: 'inline-block',
-      marginRight: '600px',
+      display: "inline-block",
+      marginRight: "600px",
       width: "40px",
       height: "40px",
       borderRadius: "50%",
@@ -271,12 +260,10 @@ export default function ControlledSelectionServerPaginationGrid() {
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      textAlign: 'center',
-      marginTop: '-30px'
-
-
+      textAlign: "center",
+      marginTop: "-30px",
     },
-  }
+  };
 
   return (
     <div>
@@ -327,7 +314,8 @@ export default function ControlledSelectionServerPaginationGrid() {
           )}
           renderOption={(props, option) => (
             <li {...props}>
-              {option.traineeName} - {option.email} - {option.totalAbsent} - {option.totalAttendance}
+              {option.traineeName} - {option.email} - {option.totalAbsent} -{" "}
+              {option.totalAttendance}
             </li>
           )}
         />
@@ -350,10 +338,10 @@ export default function ControlledSelectionServerPaginationGrid() {
           >
             {Array.isArray(courseDropdown)
               ? courseDropdown.map((item, k) => (
-                <MenuItem value={item} key={k}>
-                  {item}
-                </MenuItem>
-              ))
+                  <MenuItem value={item} key={k}>
+                    {item}
+                  </MenuItem>
+                ))
               : null}
           </Select>
         </FormControl>
@@ -372,9 +360,10 @@ export default function ControlledSelectionServerPaginationGrid() {
           </Button>
         </div>
       </div>
-      <div style={{ marginTop: "-35px" }}>TotalClass :
-        <div style={{ ...styles.totalClassContainer, position: 'relative'}}>
-          <div style={{ ...styles.totalClassCircle,position: 'relative'}}>
+      <div style={{ marginTop: "-35px" }}>
+        TotalClass :
+        <div style={{ ...styles.totalClassContainer, position: "relative" }}>
+          <div style={{ ...styles.totalClassCircle, position: "relative" }}>
             <p>{totalClass}</p>
           </div>
         </div>
@@ -408,17 +397,16 @@ export default function ControlledSelectionServerPaginationGrid() {
           setModalOpen(false);
         }}
       />
-      {id && course ?
+      {id && course ? (
         <AttendanceModal
           open={handleOpen}
           handleClose={() => setHandleOpen(false)}
           id={id}
           batch={course}
-
-
         />
-        : ""}
-
+      ) : (
+        ""
+      )}
     </div>
   );
 }
