@@ -147,7 +147,6 @@ const ExportData = ({ open, handleClose }) => {
                             marginRight: "10px",
                             width: "200px",
                             fontSize: "12px",
-                            paddingRight: "20pz"
                         }}
                         onChange={handleCollegeChange}
                     >
