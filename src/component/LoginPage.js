@@ -75,7 +75,7 @@ const LoginPage = (props) => {
       })
       .then((response) => {
         if (response.status === 200) {
-          sessionStorage.setItem("status", "New");
+          sessionStorage.setItem("status", "null");
           sessionStorage.setItem("course", "null");
           console.log(response.data);
         } else {
