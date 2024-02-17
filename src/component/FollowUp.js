@@ -16,7 +16,7 @@ import EditFollowUp from "./EditFollowUp";
 import Course from "./Course";
 import Header from "./Header";
 import { GridToolbar } from "@mui/x-data-grid";
-
+import { nullLiteral } from "@babel/types";
 
 export default function FollowUp() {
   const [isModalOpen, setModalOpen] = React.useState(false);
@@ -26,8 +26,12 @@ export default function FollowUp() {
     sessionStorage.getItem("status")
   );
   const [name, setName] = useState("status");
-  const [selectCollege, setSelectCollege] = useState(sessionStorage.getItem("selectCollege"));
-  const [courseName, setCourseName] = React.useState(sessionStorage.getItem("course"));
+  const [selectCollege, setSelectCollege] = useState(
+    sessionStorage.getItem("selectCollege")
+  );
+  const [courseName, setCourseName] = React.useState(
+    sessionStorage.getItem("course")
+  );
   const [courseDropdown, setCourseDropdown] = React.useState("");
   const [status, setStatus] = React.useState("");
   const [college, setCollege] = React.useState("");
@@ -96,7 +100,7 @@ export default function FollowUp() {
       .then((response) => {
         setCourseDropdown(response.data);
       })
-      .catch(() => { });
+      .catch(() => {});
   };
 
   const filterData = () => {
@@ -199,26 +203,24 @@ export default function FollowUp() {
       .then((response) => {
         setDropDown(response.data);
       })
-      .catch((error) => { });
+      .catch((error) => {});
   };
   const dateByfollowupStatus = (e) => {
-    const { name, value } = e.target;
+    const { value } = e.target;
     setPaginationModel({ page: 0, pageSize: initialPageSize });
     sessionStorage.setItem("date", value);
-
-
-    { value ? setDate(value) : setDate(null) && sessionStorage.setItem("date",null) }
+    setDate(value);
   };
 
   const handleSaveClick = () => {
     setModalOpen(false);
   };
- 
+
   const handleClear = () => {
     setCourseName(null);
     setSelectCollege(null);
     setSearchValue(null);
-    setDate(null);
+    setDate("null");
     sessionStorage.setItem("status", null);
     sessionStorage.setItem("course", null);
     sessionStorage.setItem("date", null);
@@ -235,7 +237,12 @@ export default function FollowUp() {
       <h2>VeiwFollowUp</h2>
       <div
         className="search"
-        style={{ marginTop: "50px", marginBottom: '0.5rem', display: "flex", alignItems: "center" }}
+        style={{
+          marginTop: "50px",
+          marginBottom: "0.5rem",
+          display: "flex",
+          alignItems: "center",
+        }}
       >
         <FormControl>
           <InputLabel id="demo-simple-select-label">Select Status</InputLabel>
@@ -255,7 +262,7 @@ export default function FollowUp() {
               fontSize: "14px",
             }}
           >
-           <MenuItem value={null} > Select status </MenuItem>
+            <MenuItem value={null}> Select status </MenuItem>
             {statusLists.map((item, index) => (
               <MenuItem value={item} key={index}>
                 {item}
@@ -281,13 +288,13 @@ export default function FollowUp() {
               fontSize: "14px",
             }}
           >
-            <MenuItem value={null} > Select course </MenuItem>
+            <MenuItem value={null}> Select course </MenuItem>
             {Array.isArray(courseDropdown)
               ? courseDropdown.map((item, k) => (
-                <MenuItem value={item} key={k}>
-                  {item}
-                </MenuItem>
-              ))
+                  <MenuItem value={item} key={k}>
+                    {item}
+                  </MenuItem>
+                ))
               : null}
           </Select>
         </FormControl>
@@ -296,7 +303,7 @@ export default function FollowUp() {
           <TextField
             type="date"
             name="date"
-            value={date||"null" && sessionStorage.setItem("date",null) }
+            value={date || ("null" && sessionStorage.setItem("date", null))}
             label="Select call back date"
             InputLabelProps={{
               shrink: true,
@@ -322,7 +329,7 @@ export default function FollowUp() {
             }}
             onChange={handleColegeChange}
           >
-            <MenuItem value={null} > Select College </MenuItem>
+            <MenuItem value={null}> Select College </MenuItem>
             {dropdown.college.map((item, k) => (
               <MenuItem value={item} key={k}>
                 {item}

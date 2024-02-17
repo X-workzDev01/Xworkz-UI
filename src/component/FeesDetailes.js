@@ -45,7 +45,7 @@ export const FeesDetailes = () => {
       paymentMode
     );
     getBatch();
-  }, [batch, paymentMode, date,paginationModel]);
+  }, [batch, paymentMode, date, paginationModel]);
 
   const getBatch = () => {
     axios
@@ -69,15 +69,17 @@ export const FeesDetailes = () => {
     response.then((res) => {
       console.log(res.data.listOfFeesDto);
       setGridData({
-        id: res.data.listOfFeesDto.id,
-        rows: res.data.listOfFeesDto.map((row) => ({
-          ...row,
-        })),
+        rows: res.data.listOfFeesDto
+          ? res.data.listOfFeesDto.map((row) => ({
+              ...row,
+            }))
+          : "",
         rowCount: res.data.size,
       });
       setOpenSyncLoader(false);
       setIsOpen(false);
     });
+    response.catch(() => {});
   };
   const columns = [
     {
