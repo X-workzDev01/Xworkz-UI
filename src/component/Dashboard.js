@@ -20,6 +20,7 @@ import ViewHrProfile from "./ViewHrProfile";
 import WhatsAppLinkSender from "./WhatsApp";
 import Attandance from "./Attandance";
 import AttendanceModal from "./AttendanceModal";
+import ExportData from "./ExportData";
 
 
 const Dashboard = ({ isLoggedIn }) => {
@@ -43,13 +44,14 @@ const Dashboard = ({ isLoggedIn }) => {
           <Route path="/absentees" element={<Absentees />} />
           <Route path="/attenances" element={<Attandance />} />
           <Route path="/enquiry" element={<Enquiry />} />
-          <Route path="/attenance/:id/:courseName" element={<AttendanceModal/>} />
+          <Route path="/attenance/:id/:courseName" element={<AttendanceModal />} />
           <Route path="/whatsapp" element={<WhatsAppLinkSender />} />
           <Route path="/feesDetails" element={<FeesDetailes />} />
           <Route path="/company" element={<ClientDetails />} />
           <Route path="/companylist" element={<ViewClient />} />
           <Route path="/companylist/:id" element={<CompanyProfile />} />
           <Route path="/company/hr/:id" element={<ViewHrProfile />} />
+          <Route path="/exportdata" element={<ExportData />} />
         </Routes>
       </div>
 

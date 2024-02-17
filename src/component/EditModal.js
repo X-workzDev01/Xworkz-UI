@@ -149,7 +149,6 @@ const EditModal = ({ open, handleClose, rowData }) => {
       fetchData(value);
     }
     if (name === "othersDto.referalName") {
-      console.log("Others")
       if (!value) {
         setReferalNameCheck("Referal Name is Required");
         setDisable(true);
@@ -468,7 +467,6 @@ const EditModal = ({ open, handleClose, rowData }) => {
         .catch((error) => { });
     }
   }
-
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="lg">
       <DialogTitle>Edit Details</DialogTitle>
@@ -828,12 +826,6 @@ const EditModal = ({ open, handleClose, rowData }) => {
               onBlur={handleVerifyEmail}
               required
             />
-            {}
-            {verifyHandaleEmailerror ? (
-              <Alert severity="error">{verifyHandaleEmailerror}</Alert>
-            ) : (
-              " "
-            )}
             {xworkzemailCheck ? <Alert severity="error">{xworkzemailCheck} </Alert> : " "}
             
           </Grid>

@@ -11,12 +11,6 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Urlconstant } from "../constant/Urlconstant";
 
-
-const batches = [
-  { value: "batch1", label: "Batch 1" },
-  { value: "batch2", label: "Batch 2" },
-];
-
 const Absentees = () => {
   const [selectedBatch, setSelectedBatch] = useState("");
   const [selectedStudent, setSelectedStudent] = useState(null);
@@ -51,13 +45,13 @@ const Absentees = () => {
     if (selectedBatch) {
       getTotalClass();
     }
-  }, [selectedBatch])
+  }, [selectedBatch]);
+
   function getTotalClass() {
     axios
       .get(Urlconstant.url + `api/getTotalClass?courseName=${selectedBatch}`)
       .then((response) => {
         setTotalClass(response.data);
-
       })
       .catch((error) => {
         console.error("Error fetching total class data:", error);
@@ -71,8 +65,10 @@ const Absentees = () => {
       setSelectedStudents([...selectedStudents, value]);
       setReasons({ ...reasons, [value.id]: "" });
       setErrors({ ...errors, [value.id]: "" });
+      setSubmitDisabled(true);
     }
   };
+
   const handleBatchChange = (event) => {
     const selectedBatchValue = event.target.value;
     setSelectedBatch(selectedBatchValue);
@@ -80,13 +76,13 @@ const Absentees = () => {
     setReasons({});
     setErrors({});
     setSelectedStudents([]);
+    setSubmitDisabled(true);
 
     axios
       .get(
         Urlconstant.url + `api/attendance/trainee?batch=${selectedBatchValue}`
       )
       .then((response) => {
-
         const fetchedStudents = response.data;
         setSuccessMessage("");
         setErrorMessage("");
@@ -105,10 +101,19 @@ const Absentees = () => {
         ...errors,
         [studentId]: "Reason should not exceed 40 characters",
       });
-    } else {
+    } else if (value.length > 10) {
       setErrors({ ...errors, [studentId]: "" });
+      // Check if all reasons meet the condition (length > 5)
+      const areAllReasonsValid = selectedStudents.every(
+        (student) => student.id === studentId ? value.length > 8 : reasons[student.id]?.length > 8
+      );
+      setSubmitDisabled(!areAllReasonsValid);
+    } else {
+      setErrors({ ...errors, [studentId]: "Reason should be at least 8 characters" });
+      setSubmitDisabled(true); // Disable the button if the reason is less than 6 characters
     }
   };
+
 
   const handleCancelReason = (studentId) => {
     const updatedStudents = selectedStudents.filter(
@@ -124,23 +129,23 @@ const Absentees = () => {
     setErrors(updatedErrors);
   };
 
+
   const handleUpdateBatchAttendance = () => {
     setIsTraineePresent(true);
     axios
       .post(
-        Urlconstant.url + `api/attendance/batchAttendance?courseName=${selectedBatch}&batchAttendanceStatus=${isTraineePresent}`)
+        Urlconstant.url +
+        `api/attendance/batchAttendance?courseName=${selectedBatch}&batchAttendanceStatus=${isTraineePresent}`
+      )
       .then((response) => {
         console.log("API Response:", response.data);
-        if(response.data==="Batch Attendance Update successfully"){
+        if (response.data === "Batch Attendance Update successfully") {
           setSuccessMessage(response.data);
-        getTotalClass();
-        }else{
+          getTotalClass();
+        } else {
           setErrorMessage(response.data);
           getTotalClass();
         }
-
-       
-       
       })
       .catch((error) => {
         console.error("API Error:", error);
@@ -149,34 +154,34 @@ const Absentees = () => {
 
   const handleAttendanceSubmit = () => {
     const validationErrors = {};
+    let isAllReasonsProvided = true;
+
     Object.keys(reasons).forEach((studentId) => {
       if (reasons[studentId].trim() === "") {
         validationErrors[studentId] = "Reason should not be empty";
+        isAllReasonsProvided = false;
       }
     });
     setErrors(validationErrors);
 
-    // Check if there are any validation errors
-    if (Object.keys(validationErrors).length === 0) {
-      // Proceed with the API call
+    if (isAllReasonsProvided) {
       const attendanceData = selectedStudents.map((student) => ({
         id: student.id,
         name: student.name,
         reason: reasons[student.id] || "",
         updatedBy: sessionStorage.getItem("userId"),
       }));
-      const jsonData = JSON.stringify(attendanceData);
-      // Make an API call using the Urlconstant
+
       axios
         .post(
-          Urlconstant.url + `api/attendance/absentees?batch=${selectedBatch}`,
+          Urlconstant.url +
+          `api/attendance/absentees?batch=${selectedBatch}`,
           attendanceData
         )
         .then((response) => {
           console.log("API Response:", response.data);
           setSuccessMessage("Attendance submitted successfully!");
 
-          // Reset state after successful submission
           setSelectedStudents([]);
           setReasons({});
           setErrors({});
@@ -184,19 +189,18 @@ const Absentees = () => {
         })
         .catch((error) => {
           console.error("API Error:", error);
-          // Handle error if needed
         });
     }
   };
+
   const styles = {
     container: {
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
       marginTop: "100px",
-
       justifyContent: "center",
-      minHeight: "70vh", // Use minHeight instead of height
+      minHeight: "70vh",
     },
     form: {
       maxWidth: 450,
@@ -205,8 +209,8 @@ const Absentees = () => {
       flexDirection: "column",
     },
     reasonsColumn: {
-      height: "200px", // Set a fixed height for the reasons column
-      overflowY: "auto", // Add scroll if the content exceeds the height
+      height: "200px",
+      overflowY: "auto",
     },
     successMessage: {
       color: "green",
@@ -224,11 +228,11 @@ const Absentees = () => {
     },
     totalClassContainer: {
       marginLeft: "270px",
-      marginTop: '-1.7rem',
+      marginTop: "-1.7rem",
     },
     totalClassCircle: {
-      display: 'inline-block',
-      marginRight: '800px',
+      display: "inline-block",
+      marginRight: "800px",
       width: "40px",
       height: "40px",
       borderRadius: "50%",
@@ -236,16 +240,15 @@ const Absentees = () => {
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      textAlign: 'center',
-      lineHeight: '40px',
-
+      textAlign: "center",
+      lineHeight: "40px",
     },
     formFields: {
       display: "flex",
       flexDirection: "column",
     },
-
   };
+
   const isDisabled = successMessage;
 
   return (
@@ -275,15 +278,14 @@ const Absentees = () => {
               ))}
             </Select>{" "}
 
-            <h5 >TotalClass :
+            <h5>
+              TotalClass :
               <div style={styles.totalClassContainer}>
                 <div style={styles.totalClassCircle}>
                   <p>{totalClass}</p>
                 </div>
               </div>
             </h5>
-
-
           </FormControl>
           {selectedBatch && (
             <div>
@@ -297,7 +299,6 @@ const Absentees = () => {
                 >
                   Yes{" "}
                 </Button>{" "}
-
               </div>{" "}
               <h3> Select Students: </h3>{" "}
               <Autocomplete
@@ -344,13 +345,13 @@ const Absentees = () => {
           <Button
             variant="contained"
             onClick={handleAttendanceSubmit}
-            disabled={!selectedBatch}
+            disabled={!selectedBatch || isSubmitDisabled}
           >
             Submit Attendance{" "}
           </Button>{" "}
         </div>{" "}
       </div>
-    </div >
+    </div>
   );
 };
 

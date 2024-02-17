@@ -17,6 +17,7 @@ import Course from "./Course";
 import Header from "./Header";
 import { GridToolbar } from "@mui/x-data-grid";
 
+
 export default function FollowUp() {
   const [isModalOpen, setModalOpen] = React.useState(false);
   const [editedRowData, setEditedRowData] = React.useState(null);
@@ -79,6 +80,7 @@ export default function FollowUp() {
   ]);
 
   React.useEffect(() => {
+    // sessionStorage.setItem("status", "New");
     getDropDown();
     getActiveCourse();
   }, []);
@@ -205,19 +207,19 @@ export default function FollowUp() {
     sessionStorage.setItem("date", value);
 
 
-    { value ? setDate(value) : setDate(null) }
+    { value ? setDate(value) : setDate(null) && sessionStorage.setItem("date",null) }
   };
 
   const handleSaveClick = () => {
     setModalOpen(false);
   };
-
+ 
   const handleClear = () => {
     setCourseName(null);
     setSelectCollege(null);
-    setSearchValue("New");
+    setSearchValue(null);
     setDate(null);
-    sessionStorage.setItem("status", "New");
+    sessionStorage.setItem("status", null);
     sessionStorage.setItem("course", null);
     sessionStorage.setItem("date", null);
     sessionStorage.setItem("selectCollege", null);
@@ -253,6 +255,7 @@ export default function FollowUp() {
               fontSize: "14px",
             }}
           >
+           <MenuItem value={null} > Select status </MenuItem>
             {statusLists.map((item, index) => (
               <MenuItem value={item} key={index}>
                 {item}
@@ -293,7 +296,7 @@ export default function FollowUp() {
           <TextField
             type="date"
             name="date"
-            value={date||"null"}
+            value={date||"null" && sessionStorage.setItem("date",null) }
             label="Select call back date"
             InputLabelProps={{
               shrink: true,
@@ -301,7 +304,6 @@ export default function FollowUp() {
             sx={{ marginRight: "10px" }}
             onChange={dateByfollowupStatus}
           />
-
         }
         <FormControl>
           <InputLabel id="demo-simple-select-label">Select College</InputLabel>
