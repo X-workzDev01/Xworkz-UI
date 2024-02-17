@@ -303,6 +303,10 @@ const EditModal = ({ open, handleClose, rowData }) => {
         });
     }
   };
+  const handleVerifyEmail = (event) => {
+    verifyEmail(event.target.value);
+  };
+
 
   const handleNumberChange = (e) => {
     const contactNumber = e.target.value;
@@ -417,7 +421,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
     setDisable(false);
     handleClose();
   };
-  const handleVerifyEmail = (event) => {
+  const handleVerifyXworkzEmail = (event) => {
     let xworkzemail=event.target.value;
     if(xworkzemail.includes(".xworkz")){
       if(!validateEmail(xworkzemail)){
@@ -426,7 +430,6 @@ const EditModal = ({ open, handleClose, rowData }) => {
       }else{
         setXworkzEmailCheck("");
         setDisable(false);
-        verifyEmail(event.target.value);
       }
     }else if(xworkzemail === "rowData.othersDto.xworkzEmail"){
       setXworkzEmailCheck("");
@@ -823,7 +826,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
               defaultValue={rowData.othersDto.xworkzEmail}
               onChange={handleInputChange}
               style={fieldStyle}
-              onBlur={handleVerifyEmail}
+              onBlur={handleVerifyXworkzEmail}
               required
             />
             {xworkzemailCheck ? <Alert severity="error">{xworkzemailCheck} </Alert> : " "}

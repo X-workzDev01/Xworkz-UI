@@ -513,6 +513,7 @@ export default function ControlledSelectionServerPaginationGrid() {
         <div style={{ display: 'flex', paddingLeft: "700px" }}>
           <Button variant="contained" color="primary" onClick={handleExportClick}>Export Data</Button>
         </div>
+        
       </div>
       <div style={{ height: "650px", width: "100%" }}>
         <DataGrid
@@ -532,7 +533,8 @@ export default function ControlledSelectionServerPaginationGrid() {
           loading={loading}
           keepNonExistentRowsSelected
           slots={{ toolbar: GridToolbar }}
-        />
+        >
+        </DataGrid>
       </div>
       <ExportData
         open={isExportModalOpen}
