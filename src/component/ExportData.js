@@ -132,7 +132,7 @@ const ExportData = ({ open, handleClose }) => {
                 <GridCloseIcon />
             </IconButton>
             {error ? <Alert severity="error">{error}</Alert> : " "}
-            <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "20px"}}>
                 <FormControl fullWidth>
                     <InputLabel id="demo-simple-select-label">College Name</InputLabel>
                     <Select
@@ -223,7 +223,6 @@ const ExportData = ({ open, handleClose }) => {
                             width: "200px",
                             fontSize: "12px",
                         }}
-                        onChange={(e) => setCourseName(e.target.value)}
                         onChange={handleCourseChange}
                     >
                         <MenuItem value={null} > Select Course  </MenuItem>
