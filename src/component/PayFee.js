@@ -9,17 +9,16 @@ import {
   Select,
   Snackbar,
   TextField,
-  TextareaAutosize,
   Typography,
 } from "@mui/material";
 
+import { Textarea } from "@mui/joy";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Container } from "react-bootstrap";
 import { TfiClose } from "react-icons/tfi";
 import { Urlconstant } from "../constant/Urlconstant";
 import "./PayFee.css";
-import { Textarea } from "@mui/joy";
 
 export const PayFee = ({
   open,
@@ -38,10 +37,11 @@ export const PayFee = ({
   const [paidAmountError, setPaidAmountError] = useState("");
   const [lateFeesError, setLateFeesError] = useState("");
   const [balance, setBalance] = useState(0);
-
   const [response, setResponse] = useState("");
   const [snackbar, setSnackbar] = useState(false);
-  const [totalBalance, setTotalBalance] = useState("");
+  const [totalBalance, setTotalBalance] = useState(0);
+  const [updatedTotalAmount, setupdatedTotalAmount] = useState("");
+  const [updatedBalance, setUpdatedBalance] = useState("");
   const [confirmIsDisabled, setConfirmIsDisabled] = useState(false);
   const getCurrentDate = () => {
     const today = new Date();
@@ -50,19 +50,15 @@ export const PayFee = ({
     const day = String(today.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
-  const getMinDate = () => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, "0") + 1;
-    const day = String(today.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  };
+
   useEffect(() => {
     setUpdateFeesData("");
     setPaidAmountError("");
     setAmountError("");
     setLateFeesError("");
     setTotalBalance(feesData.totalAmount);
+    setupdatedTotalAmount(totalBalance);
+    setUpdatedBalance(feesData.balance);
     setBalance(feesData.balance);
   }, [open, traineeEmail, handleClose, feesData]);
 
@@ -97,6 +93,9 @@ export const PayFee = ({
     if (name === "selectlateFees" && value === "No") {
       setLateFeesError("");
     }
+    if (name === "selectlateFees" && value === "Yes") {
+      setLateFeesError("");
+    }
     if (name === "paidAmount" && value > 0) {
       setUpdateFeesData({ ...updateFeesData, [name]: value });
       setPaidAmountError("");
@@ -108,19 +107,23 @@ export const PayFee = ({
     } else if (name === "paidAmount" && value >= feesData.balance) {
       setAmountError("Enter Valid Amount");
     }
-    if (name === "lateFees" && value > 0) {
-      setUpdateFeesData({ ...updateFeesData, [name]: value });
+    if (name === "lateFees") {
       setLateFeesError("");
-      setTotalBalance(balance + Number(value));
-    } else if (name === "lateFees" && value <= 0) {
-      setLateFeesError("Entered amount should be Greater Than 0 *");
-      setUpdateFeesData({ ...updateFeesData, [name]: "" });
-      setTotalBalance(balance);
+      setupdatedTotalAmount(totalBalance + Number(value));
+      setUpdatedBalance(balance + Number(value));
+      setUpdateFeesData({ ...updateFeesData, [name]: value });
     }
+    if (name === "lateFees" && value <= 0) {
+      setLateFeesError("Entered amount should be Greater Than 0 *");
+      setupdatedTotalAmount(totalBalance);
+    }
+
     if (name === "paidAmount") {
-      setBalance(feesData.balance - value);
+      setUpdatedBalance(updatedTotalAmount - value);
+      setBalance(updatedTotalAmount - value);
     }
   };
+
   const updateFees = (feesDto) => {
     setLoading(true);
     axios
@@ -283,7 +286,7 @@ export const PayFee = ({
                   }}
                   name="totalAmount"
                   label="Total Amount *"
-                  value={totalBalance}
+                  value={updatedTotalAmount}
                   id="outlined-size-small"
                   size="small"
                   color="primary"
@@ -309,7 +312,7 @@ export const PayFee = ({
                     sx={{ backgroundColor: "lightcyan" }}
                     label="balance "
                     placeholder="Enter Amount"
-                    value={balance}
+                    value={updatedBalance}
                     id="outlined-size-small"
                     size="small"
                     color="primary"
@@ -526,7 +529,7 @@ export const PayFee = ({
                     marginLeft: "0.2rem",
                   }}
                 >
-                  {balance}
+                  {updatedBalance}
                 </span>
               </span>
             </div>

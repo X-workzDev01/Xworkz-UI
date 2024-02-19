@@ -38,8 +38,8 @@ export const FeesHistory = ({ isOpen, handleClose, row }) => {
       valueGetter: (parm) => parm.row.email,
     },
     {
-      field: "LastFeesPaidDate",
-      headerName: "LastFeesPaidDate",
+      field: "Callback Date",
+      headerName: "Call back date",
       width: 150,
       valueGetter: (param) => param.row.lastFeesPaidDate,
     },
@@ -69,8 +69,8 @@ export const FeesHistory = ({ isOpen, handleClose, row }) => {
     },
 
     {
-      field: "Followup Callback Date",
-      headerName: "Followup Callback Date",
+      field: "LastFeesPaidDate",
+      headerName: "LastFeesPaidDate",
       width: 120,
       valueGetter: (param) => param.row.followupCallbackDate,
     },
@@ -98,7 +98,7 @@ export const FeesHistory = ({ isOpen, handleClose, row }) => {
               marginTop: "15px",
               marginBottom: "-25px",
               color: "green",
-              fontSize:'20px',
+              fontSize: "20px",
               fontWeight: "bold",
             }}
           >
