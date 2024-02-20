@@ -17,7 +17,7 @@ import axios from "axios";
 import React, { useEffect } from "react";
 import { fieldStyle, style } from "../constant/FormStyle";
 import { Urlconstant } from "../constant/Urlconstant";
-import { ClientDropDown } from "../constant/ClientDropDown";
+
 
 const CompanyFollowUp = ({ open, handleClose, rowData }) => {
   const [isConfirmed, setIsConfirmed] = React.useState(false);
@@ -29,6 +29,20 @@ const CompanyFollowUp = ({ open, handleClose, rowData }) => {
   const attemtedUser = sessionStorage.getItem("userId");
   const [hrNameList, setHrNameList] = React.useState([]);
   const [hrDetails, setHrDetails] = React.useState("");
+  
+  const [dropdown, setDropDown] = React.useState({
+    clientType: [],
+    sourceOfConnection: [],
+    sourceOfLocation: [],
+    hrDesignation: [],
+    callingStatus: []
+  });
+ 
+  const getDropdown = () => {
+    axios.get(Urlconstant.url + `utils/clientdropdown`).then((response) => {
+      setDropDown(response.data);
+    })
+  }
  
   const getdetailsbyCompanyId = () => {
     const companyId = rowData.id;
@@ -44,6 +58,7 @@ const CompanyFollowUp = ({ open, handleClose, rowData }) => {
 
   useEffect(() => {
     getdetailsbyCompanyId();
+    getDropdown();
   }, [rowData]);
 
   const handleInputChange = (event) => {
@@ -168,8 +183,8 @@ const CompanyFollowUp = ({ open, handleClose, rowData }) => {
               select
               margin="normal"
             >
-              {ClientDropDown.callingStatus.map((item) => (
-                <MenuItem key={item} value={item}>
+              {dropdown.callingStatus.map((item, index) => (
+                <MenuItem key={index} value={item}>
                   {item}
                 </MenuItem>
               ))}
