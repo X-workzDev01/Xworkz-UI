@@ -161,7 +161,7 @@ export default function ViewClient() {
     })
   }
 
-  const column = [
+  const columns = [
     //  { headerName: 'ID', field: 'id' },
     {
       field: "companyName",
@@ -203,7 +203,7 @@ export default function ViewClient() {
       field: "status",
       headerName: "Status",
       flex: 1,
-      valueGetter: (params) => params.row.status, 
+      valueGetter: (params) => params.row.status,
     },
 
     {
@@ -227,14 +227,6 @@ export default function ViewClient() {
     },
   ];
 
-  const hiddenFields =["companyLocation"]
-
- const  getTogglableColumns=(column)=>{
-    console.log(column.length)
-    return column
-    .filter((columns) => !hiddenFields.includes(columns.field))
-    .map((columns) => columns.field);
- };
 
   const handleCallBackDateChange = (event) => {
     setCallBackDate(event.target.value);
@@ -243,11 +235,16 @@ export default function ViewClient() {
     setClientType(event.target.value);
   }
   const handleClear = () => {
+    setSearchValue(""); // Clear the search value
     setCallBackDate("null");
     setClientType("null");
+    setSelectedOption(null);
+    sessionStorage.setItem("Search", "null");
+    setSelectedOption({ companyName: '' });
   }
-  const handleAutoSuggestion=(event, newValue)=>{
+  const handleAutoSuggestion = (event, newValue) => {
     setSearchValue(newValue.companyName);
+    sessionStorage.setItem("Search", newValue.companyName);
   }
 
 
@@ -258,11 +255,11 @@ export default function ViewClient() {
         style={{ display: "flex", alignItems: "center", marginTop: "100px", paddingLeft: "20px" }}
       >
         <Autocomplete
-         options={autocompleteOptions}
+          options={autocompleteOptions}
           freeSolo
           id="free-solo-2-demo"
           disableClearable
-          style={{ width: 300 }}  
+          style={{ width: 300 }}
           getOptionLabel={(option) =>
             option.companyName
           }
@@ -352,7 +349,7 @@ export default function ViewClient() {
       <div style={gridStyle}>
         <DataGrid
           style={{ width: "100%" }}
-          columns={column}
+          columns={columns}
           rows={gridData.rows}
           pagination
           paginationModel={paginationModel}
@@ -367,12 +364,6 @@ export default function ViewClient() {
           rowSelectionModel={rowSelectionModel}
           loading={loading}
           keepNonExistentRowsSelected
-          
-          slotProps={{
-            columnsPanel: {
-              getTogglableColumns,
-            },
-          }}
         />
       </div>
     </div>

@@ -71,7 +71,6 @@ export default function ClientDetails() {
     hrDesignation: [],
     callingStatus: []
   });
-  console.log(dropdownState.college)
   React.useEffect(() => {
     getDropdown();
   }, [])
@@ -87,7 +86,6 @@ export default function ClientDetails() {
     }
     setOpen(false);
   };
-
 
 
   const handleChange = (e) => {
@@ -342,6 +340,7 @@ export default function ClientDetails() {
               {formData.companyType === 'College' ? (
                 <Autocomplete
                   freeSolo
+                  disableClearable
                   options={dropdownState.college}
                   value={formData.companyName}
                   onChange={(event, newValue) => {

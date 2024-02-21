@@ -108,13 +108,11 @@ const ExportData = ({ open, handleClose }) => {
         setCollegeName(collegeName);
     }
     const handleYearOfPass = (event) => {
-        const yearOFPass = event.target.value;
-        console.log(yearOfPassout)
-        setYearOfPassout(yearOfPassout);
+        const yearOfPass = event.target.value;
+        setYearOfPassout(yearOfPass);
     }
     const handleOfferedAs = (event) => {
-        const offeredAs = event.target.svalue;
-        
+        const offeredAs = event.target.svalue;   
         setOfferedAs(offeredAs)
     }
     const handleCourseChange = (event) => {
