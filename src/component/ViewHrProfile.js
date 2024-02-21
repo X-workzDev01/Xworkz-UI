@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { Urlconstant } from "../constant/Urlconstant";
 import { Avatar, Button } from "@mui/material";
 import {
@@ -8,6 +8,7 @@ import {
   EmailOutlined,
   ModeEditOutline,
   ModeEditOutlined,
+  PersonOutline,
   PhoneAndroid,
   WorkOutlineOutlined,
 } from "@mui/icons-material";
@@ -56,6 +57,7 @@ const ViewHrProfile = () => {
   const [isEditHRDetailsModalOpen, setEditHRDetailsModalOpen] =
     React.useState(false);
   const [isHrFollowUpModalOpen, setHrFollowUpModalOpen] = React.useState("");
+  const [companyId,setCompanyId] = React.useState("");
 
   const fetchHrDetails = (id) => {
     axios
@@ -63,6 +65,7 @@ const ViewHrProfile = () => {
       .then((response) => {
         setHrScopName(response.data.hrScopName);
         setHrDetails(response.data);
+        setCompanyId(response.data.companyId);
       })
       .catch((error) => {
         if (error.response && error.response.status === 500) {
@@ -71,7 +74,6 @@ const ViewHrProfile = () => {
         }
       });
   };
-
   const fetchHRFollowUp = (id) => {
     axios
       .get(Urlconstant.url + `api/gethrfollowupdetails?hrId=${id}`)
@@ -131,6 +133,7 @@ const ViewHrProfile = () => {
             onClick={() => {
               handleEditHRDetails(HrDetails);
             }}
+            sx={{ marginRight: "10px" }}
           >
             Edit Details
           </Button>
@@ -140,8 +143,18 @@ const ViewHrProfile = () => {
             onClick={() => {
               handleHRFollowUp(HrDetails);
             }}
+            sx={{ marginRight: "10px" }}
           >
             Follow Up
+          </Button>
+          <Button
+            variant="outlined"
+            color="primary"
+            startIcon={<PersonOutline />}
+            component={Link}
+            to={Urlconstant.navigate + `companylist/${companyId}`}
+          >
+            Back
           </Button>
         </div>
         <EditHRDetails

@@ -1,5 +1,6 @@
 import {
   Alert,
+  Autocomplete,
   Button,
   Grid,
   MenuItem,
@@ -45,6 +46,39 @@ export default function ClientDetails() {
   const [checkPhoneNumberExist, setCheckPhoneNumberExist] = React.useState("");
   const [checkCompanyWebsite, setCheckCompanyWebsite] = React.useState("");
   const [catchErrors, setCatchErrors] = React.useState("");
+  const [clientTypeCheck, setClientTypeCheck] = React.useState("");
+  const [dropdownState, setDropdownState] = React.useState({
+    college: [],
+  });
+
+
+  const getCollegeDropDown = () => {
+    axios
+      .get(Urlconstant.url + "utils/dropdown", {
+        headers: {
+          spreadsheetId: Urlconstant.spreadsheetId,
+        },
+      })
+      .then((response) => {
+        setDropdownState({ college: response.data.college });
+      })
+      .catch((error) => { });
+  };
+  const [dropdown, setDropDown] = React.useState({
+    clientType: [],
+    sourceOfConnection: [],
+    sourceOfLocation: [],
+    hrDesignation: [],
+    callingStatus: []
+  });
+  React.useEffect(() => {
+    getDropdown();
+  }, [])
+  const getDropdown = () => {
+    axios.get(Urlconstant.url + `utils/clientdropdown`).then((response) => {
+      setDropDown(response.data);
+    })
+  }
 
   const handleClose = (reason) => {
     if (reason === "clickaway") {
@@ -53,8 +87,14 @@ export default function ClientDetails() {
     setOpen(false);
   };
 
+
   const handleChange = (e) => {
     const { name, value } = e.target;
+    if (name === "companyType") {
+      if (value.length >= 3) {
+        getCollegeDropDown();
+      }
+    }
     switch (name) {
       case "companyName":
         if (value.length <= 2) {
@@ -270,28 +310,69 @@ export default function ClientDetails() {
   return (
     <div>
       <h1>Register Client</h1>
-      
+
       <div className="container border mt-4 p-4">
         <div className="form-container">
           <Typography variant="h5" className="bold-text">
             Register Company
           </Typography>
+
           <Grid container spacing={3}>
             <Grid item xs={12} sm={4}>
               <TextField
-                label="Company Name"
-                name="companyName"
-                value={formData.companyName}
+                label="Company Type"
+                name="companyType"
+                value={formData.companyType}
                 onChange={handleChange}
                 fullWidth
                 margin="normal"
-                onBlur={handleCompanyName}
+                select
                 sx={textFieldStyles}
-              />
+              >
+                {dropdown.clientType.map((item, option) => (
+                  <MenuItem value={item} key={option}>
+                    {item}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              {formData.companyType === 'College' ? (
+                <Autocomplete
+                  freeSolo
+                  disableClearable
+                  options={dropdownState.college}
+                  value={formData.companyName}
+                  onChange={(event, newValue) => {
+                    handleChange({ target: { name: 'companyName', value: newValue } });
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Company Name"
+                      name="companyName"
+                      fullWidth
+                      margin="normal"
+                      sx={textFieldStyles}
+                    />
+                  )}
+                />
+              ) : (
+                <TextField
+                  label="Company Name"
+                  name="companyName"
+                  value={formData.companyName}
+                  onChange={handleChange}
+                  fullWidth
+                  margin="normal"
+                  sx={textFieldStyles}
+                />
+              )}
               {companyNameCheck && (
                 <Alert severity="error">{companyNameCheck}</Alert>
               )}
             </Grid>
+
             <Grid item xs={12} sm={4}>
               <TextField
                 label="Company Email"
@@ -365,9 +446,9 @@ export default function ClientDetails() {
                 select
                 sx={textFieldStyles}
               >
-                {ClientDropDown.sourceOfLocation.map((option) => (
-                  <MenuItem key={option} value={option}>
-                    {option}
+                {dropdown.sourceOfLocation.map((item, option) => (
+                  <MenuItem value={item} key={option}>
+                    {item}
                   </MenuItem>
                 ))}
               </TextField>
@@ -383,31 +464,14 @@ export default function ClientDetails() {
                 select
                 sx={textFieldStyles}
               >
-                {ClientDropDown.sourceOfConnection.map((option) => (
-                  <MenuItem key={option} value={option}>
-                    {option}
+                {dropdown.sourceOfConnection.map((item, option) => (
+                  <MenuItem value={item} key={option}>
+                    {item}
                   </MenuItem>
                 ))}
               </TextField>
             </Grid>
-            <Grid item xs={12} sm={4}>
-              <TextField
-                label="Company Type"
-                name="companyType"
-                value={formData.companyType}
-                onChange={handleChange}
-                fullWidth
-                margin="normal"
-                select
-                sx={textFieldStyles}
-              >
-                {ClientDropDown.clientType.map((option) => (
-                  <MenuItem key={option} value={option}>
-                    {option}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
+
             <Grid item xs={12} sm={4}>
               <TextField
                 label="Company Status"
@@ -449,7 +513,7 @@ export default function ClientDetails() {
                   variant="contained"
                   color="primary"
                   disabled={
-                    isSubmitting||
+                    isSubmitting ||
                     !formData.companyName ||
                     !formData.companyEmail ||
                     !formData.companyLandLineNumber ||

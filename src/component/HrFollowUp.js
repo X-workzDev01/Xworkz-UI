@@ -20,13 +20,30 @@ import { fieldStyle, style } from "../constant/FormStyle";
 import { ClientDropDown } from "../constant/ClientDropDown";
 
 const HrFollowUp = ({ open, handleClose, rowData }) => {
-  const [isConfirmed,setIsConfirmed]=React.useState(false);
+  const [isConfirmed, setIsConfirmed] = React.useState(false);
   const [responseMessage, setResponseMessage] = React.useState("");
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [isConfirming, setIsConfirming] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [formData, setFormData] = React.useState("");
   const attemtedUser = sessionStorage.getItem("userId");
+  const [dropdown, setDropDown] = React.useState({
+    clientType: [],
+    sourceOfConnection: [],
+    sourceOfLocation: [],
+    hrDesignation: [],
+    callingStatus: []
+  });
+
+  const getDropdown = () => {
+    axios.get(Urlconstant.url + `utils/clientdropdown`).then((response) => {
+      setDropDown(response.data);
+    })
+  }
+
+  React.useEffect(() => {
+    getDropdown();
+  }, [])
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -123,8 +140,8 @@ const HrFollowUp = ({ open, handleClose, rowData }) => {
               select
               margin="normal"
             >
-              {ClientDropDown.callingStatus.map((item) => (
-                <MenuItem key={item} value={item}>
+              {dropdown.callingStatus.map((item, index) => (
+                <MenuItem key={index} value={item}>
                   {item}
                 </MenuItem>
               ))}
