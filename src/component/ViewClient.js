@@ -1,4 +1,4 @@
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, GridToolbarDensitySelector } from "@mui/x-data-grid";
 import React from "react";
 import { Urlconstant } from "../constant/Urlconstant";
 import { PersonOutline } from "@mui/icons-material";
@@ -9,6 +9,10 @@ import { gridStyle } from "../constant/FormStyle";
 import { GridToolbar } from "@mui/x-data-grid";
 import { selectedGridRowsSelector } from "@mui/x-data-grid";
 import { gridFilteredSortedRowIdsSelector } from "@mui/x-data-grid";
+import { GridToolbarContainer } from "@mui/x-data-grid";
+import { GridToolbarColumnsButton } from "@mui/x-data-grid";
+import { GridToolbarFilterButton } from "@mui/x-data-grid";
+import { GridToolbarExport } from "@mui/x-data-grid";
 
 function loadServerRows(page, pageSize, callBackDate, clientType) {
   const startingIndex = page * pageSize;
@@ -246,8 +250,16 @@ export default function ViewClient() {
     setSearchValue(newValue.companyName);
     sessionStorage.setItem("Search", newValue.companyName);
   }
+  const [visibleColumns, setVisibleColumns] = React.useState(columns.map(column => column.field));
+  const [hiddenColumns, setHiddenColumns] = React.useState(['State']);
+  const handleColumnsChange = (newColumns) => {
+    console.log(newColumns)
+    setVisibleColumns(newColumns.map(column => column.field));
+  };
 
-
+  const handleToggleHiddenColumns = () => {
+    setHiddenColumns([]); // Show all hidden columns
+  };
   return (
     <div style={gridStyle}>
       <div
@@ -349,7 +361,7 @@ export default function ViewClient() {
       <div style={gridStyle}>
         <DataGrid
           style={{ width: "100%" }}
-          columns={columns}
+          columns={columns.filter(column => visibleColumns.includes(column.field) || hiddenColumns.includes(column.field))}
           rows={gridData.rows}
           pagination
           paginationModel={paginationModel}
@@ -360,10 +372,23 @@ export default function ViewClient() {
           onRowSelectionModelChange={(newRowSelectionModel) => {
             setRowSelectionModel(newRowSelectionModel);
           }}
-          slots={{ toolbar: GridToolbar }}
+          slots={{
+            toolbar: () => (
+              <GridToolbarContainer>
+                <GridToolbarColumnsButton onColumnsChange={handleColumnsChange} />
+                {hiddenColumns.length > 0 && (
+                  <button onClick={handleToggleHiddenColumns}>Show Hidden Columns</button>
+                )}
+                <GridToolbarFilterButton />
+                <GridToolbarDensitySelector />
+                <GridToolbarExport />
+              </GridToolbarContainer>
+            )
+          }}
           rowSelectionModel={rowSelectionModel}
           loading={loading}
           keepNonExistentRowsSelected
+
         />
       </div>
     </div>
