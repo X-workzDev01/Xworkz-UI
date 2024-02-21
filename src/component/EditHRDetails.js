@@ -21,7 +21,6 @@ import {
   validateContactNumber,
   validateEmail,
 } from "../constant/ValidationConstant";
-import { ClientDropDown } from "../constant/ClientDropDown";
 
 const EditHRDetails = ({ open, handleClose, rowData }) => {
   const [editedData, setEditedData] = React.useState([]);
@@ -38,8 +37,22 @@ const EditHRDetails = ({ open, handleClose, rowData }) => {
   const [validateName, setValidateName] = React.useState("");
   const [validateDesignation, setValidateDesignation] = React.useState("");
   const [isConfirmed, setIsConfirmed] = React.useState(false);
+  const [dropdown, setDropDown] = React.useState({
+    clientType: [],
+    sourceOfConnection: [],
+    sourceOfLocation: [],
+    hrDesignation: [],
+    callingStatus: []
+  });
+  
+  const getDropdown = () => {
+    axios.get(Urlconstant.url + `utils/clientdropdown`).then((response) => {
+      setDropDown(response.data);
+    })
+  }
 
   React.useEffect(() => {
+    getDropdown();
     setEditedData(rowData);
     setValidateDesignation("");
     setEmailCheck("");
@@ -294,14 +307,14 @@ const EditHRDetails = ({ open, handleClose, rowData }) => {
               name="designation"
               onChange={handleInput}
               style={fieldStyle}
-              value={rowData.designation}
+              defaultValue={rowData.designation}
               select
               fullWidth
               margin="normal"
             >
-              {ClientDropDown.clientType.map((option) => ( // Changed from hrDesignation to clientType
-                <MenuItem key={option} value={option}>
-                  {option}
+             {dropdown.hrDesignation.map((item, index) => (
+                <MenuItem key={index} value={item}>
+                  {item}
                 </MenuItem>
               ))}
             </TextField>
