@@ -19,14 +19,17 @@ const Absentees = () => {
   const [errors, setErrors] = useState({});
   const [batchDropdown, setBatchDropdown] = useState([]);
   const [students, setStudents] = useState([]);
+  const [studentOptions, setStudentOptions] = useState([]);
   const [isSubmitDisabled, setSubmitDisabled] = useState(false);
+  const [isSubmitBatch, setSubmitBatch] = useState(false);
   const [successMessage, setSuccessMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [isTraineePresent, setIsTraineePresent] = useState(true);
   const [totalClass, setTotalClass] = useState(0);
 
+
   useEffect(() => {
-    // Fetch batch data
+
     axios
       .get(Urlconstant.url + "api/getCourseName?status=Active", {
         headers: {
@@ -43,18 +46,24 @@ const Absentees = () => {
 
   useEffect(() => {
     if (selectedBatch) {
-      getTotalClass();
+      getBatchAttendanceCount();
     }
   }, [selectedBatch]);
 
-  function getTotalClass() {
+  function getBatchAttendanceCount() {
     axios
-      .get(Urlconstant.url + `api/getTotalClass?courseName=${selectedBatch}`)
+      .get(
+        Urlconstant.url + `api/attendance/getBatchAttendanceCount?courseName=${selectedBatch}`
+      )
       .then((response) => {
-        setTotalClass(response.data);
+        const batchAttendanceData = response.data;
+        const key = Object.keys(batchAttendanceData)[0];
+        const value = batchAttendanceData[key];
+        setTotalClass(key);
+        setSubmitBatch(value);
       })
       .catch((error) => {
-        console.error("Error fetching total class data:", error);
+        console.error("Error fetching batch attendance count:", error);
       });
   }
 
@@ -87,6 +96,8 @@ const Absentees = () => {
         setSuccessMessage("");
         setErrorMessage("");
         setStudents(fetchedStudents);
+        // Update the student options for Autocomplete component
+        setStudentOptions(fetchedStudents);
       })
       .catch((error) => {
         console.error("Error fetching student data:", error);
@@ -103,17 +114,15 @@ const Absentees = () => {
       });
     } else if (value.length > 10) {
       setErrors({ ...errors, [studentId]: "" });
-      // Check if all reasons meet the condition (length > 5)
       const areAllReasonsValid = selectedStudents.every(
         (student) => student.id === studentId ? value.length > 8 : reasons[student.id]?.length > 8
       );
       setSubmitDisabled(!areAllReasonsValid);
     } else {
       setErrors({ ...errors, [studentId]: "Reason should be at least 8 characters" });
-      setSubmitDisabled(true); // Disable the button if the reason is less than 6 characters
+      setSubmitDisabled(true);
     }
   };
-
 
   const handleCancelReason = (studentId) => {
     const updatedStudents = selectedStudents.filter(
@@ -129,7 +138,6 @@ const Absentees = () => {
     setErrors(updatedErrors);
   };
 
-
   const handleUpdateBatchAttendance = () => {
     setIsTraineePresent(true);
     axios
@@ -141,10 +149,12 @@ const Absentees = () => {
         console.log("API Response:", response.data);
         if (response.data === "Batch Attendance Update successfully") {
           setSuccessMessage(response.data);
-          getTotalClass();
+          getBatchAttendanceCount();
+          handleBatchChange(selectedBatch);
+
         } else {
           setErrorMessage(response.data);
-          getTotalClass();
+          getBatchAttendanceCount();
         }
       })
       .catch((error) => {
@@ -185,7 +195,8 @@ const Absentees = () => {
           setSelectedStudents([]);
           setReasons({});
           setErrors({});
-          getTotalClass();
+          getBatchAttendanceCount();
+          handleBatchChange({ target: { value: selectedBatch } });
         })
         .catch((error) => {
           console.error("API Error:", error);
@@ -249,7 +260,7 @@ const Absentees = () => {
     },
   };
 
-  const isDisabled = successMessage;
+
 
   return (
     <div style={styles.container}>
@@ -292,7 +303,7 @@ const Absentees = () => {
               <div style={styles.toggleContainer}>
                 <h3> Trainee Attendance: </h3>{" "}
                 <Button
-                  disabled={isDisabled}
+                  disabled={isSubmitBatch}
                   variant={isTraineePresent ? "contained" : "outlined"}
                   color="primary"
                   onClick={handleUpdateBatchAttendance}
@@ -302,7 +313,7 @@ const Absentees = () => {
               </div>{" "}
               <h3> Select Students: </h3>{" "}
               <Autocomplete
-                options={students}
+                options={studentOptions}
                 getOptionLabel={(option) => `${option.name} - ${option.email}`}
                 value={selectedStudent}
                 onChange={handleStudentChange}
