@@ -77,6 +77,10 @@ const LoginPage = (props) => {
         if (response.status === 200) {
           sessionStorage.setItem("status", "null");
           sessionStorage.setItem("course", "null");
+          sessionStorage.setItem("feesBatch","null");
+          sessionStorage.setItem("feesDate","null");
+          sessionStorage.setItem("feesPaymentMode","null")
+          sessionStorage.setItem("feesStatus","null")
           console.log(response.data);
         } else {
           console.log("user not found:", response.status);

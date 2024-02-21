@@ -104,6 +104,7 @@ function Header() {
               style={{
                 width: "23rem",
                 maxHeight: "470px",
+                // minWidth:"550px",
                 overflowY: "auto",
                 overflowX: "auto",
                 marginRight: "-1rem",
@@ -204,11 +205,25 @@ function Header() {
                                   style={{
                                     display: "flex",
                                     alignItems: "flex-start",
+                                    marginLeft:"5px",
                                     paddingTop: "5.3px",
                                   }}
                                 >
                                   {" "}
                                   {v.basicInfo.email}
+                                </span>
+                                <span
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "flex-start",
+                                    marginLeft:"5px",
+                                    paddingTop: "5.3px",
+                                    color:"green",
+                                    marginRight:"-20rem"
+                                  }}
+                                >
+                                  {" "}
+                                  {v.currentStatus}
                                 </span>
                               </div>
                             ) : null}
@@ -327,10 +342,24 @@ function Header() {
                                   style={{
                                     display: "flex",
                                     alignItems: "flex-start",
+                                    marginLeft:"5px",
                                     paddingTop: "5.3px",
                                   }}
                                 >
                                   {v.basicInfo.email}
+                                </span>
+                                <span
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "flex-start",
+                                    marginLeft:"5px",
+                                    paddingTop: "5.3px",
+                                    color:"green",
+                                    marginRight:"-20rem"
+                                  }}
+                                >
+                                  {" "}
+                                  {v.currentStatus}
                                 </span>
                               </div>
                             </div>

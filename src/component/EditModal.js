@@ -22,7 +22,10 @@ import { GridCloseIcon } from "@mui/x-data-grid";
 
 import "./Fields.css";
 import { useNavigate } from "react-router-dom";
-import { validateContactNumber, validateEmail } from "../constant/ValidationConstant";
+import {
+  validateContactNumber,
+  validateEmail,
+} from "../constant/ValidationConstant";
 
 const fieldStyle = { margin: "20px" };
 
@@ -56,13 +59,14 @@ const EditModal = ({ open, handleClose, rowData }) => {
   });
 
   const [usnCheck, setUsnCheck] = React.useState("");
-  const [traineeNameCheck, setTraineeNameCheck] = React.useState("")
-  const [alternativeNumberCheck, setAlternativeNumberCheck] = React.useState("");
+  const [traineeNameCheck, setTraineeNameCheck] = React.useState("");
+  const [alternativeNumberCheck, setAlternativeNumberCheck] =
+    React.useState("");
   const [referalContactNumber, setReferalContactNumber] = React.useState("");
   const [referalNameCheck, setReferalNameCheck] = React.useState("");
   const [comments, setComments] = React.useState("");
-  const [xworkzemailCheck,setXworkzEmailCheck]= React.useState("");
-  const [isConfirmed,setIsConfirmed]=React.useState(false);
+  const [xworkzemailCheck, setXworkzEmailCheck] = React.useState("");
+  const [isConfirmed, setIsConfirmed] = React.useState(false);
   React.useEffect(() => {
     setEditedData(rowData);
     setUsnCheck("");
@@ -90,7 +94,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
       .then((response) => {
         setDropDown(response.data);
       })
-      .catch((error) => { });
+      .catch((error) => {});
     axios
       .get(Urlconstant.url + "api/getCourseName?status=Active", {
         headers: {
@@ -104,7 +108,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
           fetchData(selectedValue); // Call fetchData with the selectedValue
         }
       })
-      .catch((e) => { });
+      .catch((e) => {});
   }, []);
   React.useEffect(() => {
     if (rowData && rowData.courseInfo) {
@@ -136,11 +140,10 @@ const EditModal = ({ open, handleClose, rowData }) => {
           startDate: data.startDate,
         });
       })
-      .catch((error) => { });
+      .catch((error) => {});
   };
 
   const handleInputChange = (event) => {
-
     const { name, value } = event.target;
     const [section, field] = name.split(".");
 
@@ -156,7 +159,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
         setReferalNameCheck("Referal name should not be Empty");
         setDisable(true);
       } else {
-        setReferalNameCheck("")
+        setReferalNameCheck("");
         setDisable(false);
       }
     }
@@ -177,11 +180,11 @@ const EditModal = ({ open, handleClose, rowData }) => {
         setEmailError("");
       }
     }
-    if(name === "othersDto.xworkzEmail"){
-      if(!validateEmail(value)){
+    if (name === "othersDto.xworkzEmail") {
+      if (!validateEmail(value)) {
         setXworkzEmailCheck("Enter the correct E-mail ID");
         setDisable(true);
-      }else{
+      } else {
         setXworkzEmailCheck("");
         setDisable(false);
       }
@@ -194,7 +197,6 @@ const EditModal = ({ open, handleClose, rowData }) => {
         setReferalContactNumber("");
         setDisable(false);
       }
-
     }
     if (name === "csrDto.alternateContactNumber") {
       if (!validateContactNumber(value)) {
@@ -206,7 +208,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
       }
     }
     if (name === "basicInfo.contactNumber") {
-      setNumberCheck("")
+      setNumberCheck("");
       if (!validateContactNumber(value)) {
         setPhoneNumberError("Enter the Correct Number");
         setDisable(true);
@@ -223,7 +225,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
         setTraineeNameCheck("Trainee name should not be Empty");
         setDisable(true);
       } else {
-        setTraineeNameCheck("")
+        setTraineeNameCheck("");
         setDisable(false);
       }
     }
@@ -241,7 +243,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
     }
     if (name === "othersDto.comments") {
       if (value.length <= 0) {
-        setComments("Comment should not be empty")
+        setComments("Comment should not be empty");
         setDisable(true);
       } else {
         setComments("");
@@ -307,7 +309,6 @@ const EditModal = ({ open, handleClose, rowData }) => {
     verifyEmail(event.target.value);
   };
 
-
   const handleNumberChange = (e) => {
     const contactNumber = e.target.value;
     if (contactNumber == rowData.basicInfo.contactNumber) {
@@ -319,7 +320,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
       axios
         .get(
           Urlconstant.url +
-          `api/contactNumberCheck?contactNumber=${contactNumber}`,
+            `api/contactNumberCheck?contactNumber=${contactNumber}`,
           {
             headers: {
               spreadsheetId: Urlconstant.spreadsheetId,
@@ -336,7 +337,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
             setDisable(false);
           }
         })
-        .catch((error) => { });
+        .catch((error) => {});
     }
   };
   const handleEditClick = () => {
@@ -348,7 +349,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
     if (!isConfirming || loading) {
       setIsConfirming(false);
     }
-    setIsConfirmed(true)
+    setIsConfirmed(true);
     const updatedData = {
       ...editedData,
       adminDto: {
@@ -422,23 +423,22 @@ const EditModal = ({ open, handleClose, rowData }) => {
     handleClose();
   };
   const handleVerifyXworkzEmail = (event) => {
-    let xworkzemail=event.target.value;
-    if(xworkzemail.includes(".xworkz")){
-      if(!validateEmail(xworkzemail)){
+    let xworkzemail = event.target.value;
+    if (xworkzemail.includes(".xworkz")) {
+      if (!validateEmail(xworkzemail)) {
         setXworkzEmailCheck("Enter the Valid Email");
         setDisable(true);
-      }else{
+      } else {
         setXworkzEmailCheck("");
         setDisable(false);
       }
-    }else if(xworkzemail === "rowData.othersDto.xworkzEmail"){
+    } else if (xworkzemail === "rowData.othersDto.xworkzEmail") {
       setXworkzEmailCheck("");
-        setDisable(false);
-    }else{
+      setDisable(false);
+    } else {
       setXworkzEmailCheck("Email should contains xworkz");
-        setDisable(true);
+      setDisable(true);
     }
-
   };
 
   const handleUsnNumber = (event) => {
@@ -449,15 +449,11 @@ const EditModal = ({ open, handleClose, rowData }) => {
       return;
     } else {
       axios
-        .get(
-          Urlconstant.url +
-          `api/csr/checkUsn?usnNumber=${usn}`,
-          {
-            headers: {
-              spreadsheetId: Urlconstant.spreadsheetId,
-            },
-          }
-        )
+        .get(Urlconstant.url + `api/csr/checkUsn?usnNumber=${usn}`, {
+          headers: {
+            spreadsheetId: Urlconstant.spreadsheetId,
+          },
+        })
         .then((response) => {
           if (response.data === "Usn Number Already Exists") {
             setUsnCheck(response.data);
@@ -467,9 +463,9 @@ const EditModal = ({ open, handleClose, rowData }) => {
             setDisable(false);
           }
         })
-        .catch((error) => { });
+        .catch((error) => {});
     }
-  }
+  };
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="lg">
       <DialogTitle>Edit Details</DialogTitle>
@@ -522,8 +518,11 @@ const EditModal = ({ open, handleClose, rowData }) => {
               onChange={handleInputChange}
               required
             />
-            {traineeNameCheck ? <Alert severity="error">{traineeNameCheck} </Alert> : " "}
-
+            {traineeNameCheck ? (
+              <Alert severity="error">{traineeNameCheck} </Alert>
+            ) : (
+              " "
+            )}
           </Grid>
           <Grid item xs={4}>
             <TextField
@@ -535,7 +534,11 @@ const EditModal = ({ open, handleClose, rowData }) => {
               onBlur={handleNumberChange}
               required
             />
-            {phoneNumberError ? <Alert severity="error">{phoneNumberError}</Alert> : " "}
+            {phoneNumberError ? (
+              <Alert severity="error">{phoneNumberError}</Alert>
+            ) : (
+              " "
+            )}
             {numberCheck ? <Alert severity="error">{numberCheck}</Alert> : " "}
           </Grid>
           <Grid item xs={4}>
@@ -558,7 +561,9 @@ const EditModal = ({ open, handleClose, rowData }) => {
           </Grid>
           <Grid item xs={4}>
             <FormControl>
-              <InputLabel id="demo-simple-select-label">Qualification</InputLabel>
+              <InputLabel id="demo-simple-select-label">
+                Qualification
+              </InputLabel>
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
@@ -608,7 +613,9 @@ const EditModal = ({ open, handleClose, rowData }) => {
           </Grid>
           <Grid item xs={4}>
             <FormControl>
-              <InputLabel id="demo-simple-select-label">Year Of Passout</InputLabel>
+              <InputLabel id="demo-simple-select-label">
+                Year Of Passout
+              </InputLabel>
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
@@ -668,11 +675,17 @@ const EditModal = ({ open, handleClose, rowData }) => {
               style={fieldStyle}
               required
             />
-            {alternativeNumberCheck ? <Alert severity="error">{alternativeNumberCheck}</Alert> : " "}
+            {alternativeNumberCheck ? (
+              <Alert severity="error">{alternativeNumberCheck}</Alert>
+            ) : (
+              " "
+            )}
           </Grid>
           <Grid item xs={4}>
             <FormControl>
-              <InputLabel id="demo-simple-select-label">College Name</InputLabel>
+              <InputLabel id="demo-simple-select-label">
+                College Name
+              </InputLabel>
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
@@ -805,7 +818,11 @@ const EditModal = ({ open, handleClose, rowData }) => {
               style={fieldStyle}
               required
             />
-            {referalNameCheck ? <Alert severity="error">{referalNameCheck}</Alert> : " "}
+            {referalNameCheck ? (
+              <Alert severity="error">{referalNameCheck}</Alert>
+            ) : (
+              " "
+            )}
           </Grid>
           <Grid item xs={4}>
             <TextField
@@ -816,8 +833,11 @@ const EditModal = ({ open, handleClose, rowData }) => {
               style={fieldStyle}
               required
             />
-            {referalContactNumber ? <Alert severity="error">{referalContactNumber}</Alert> : " "}
-
+            {referalContactNumber ? (
+              <Alert severity="error">{referalContactNumber}</Alert>
+            ) : (
+              " "
+            )}
           </Grid>
           <Grid item xs={4}>
             <TextField
@@ -829,8 +849,11 @@ const EditModal = ({ open, handleClose, rowData }) => {
               onBlur={handleVerifyXworkzEmail}
               required
             />
-            {xworkzemailCheck ? <Alert severity="error">{xworkzemailCheck} </Alert> : " "}
-            
+            {xworkzemailCheck ? (
+              <Alert severity="error">{xworkzemailCheck} </Alert>
+            ) : (
+              " "
+            )}
           </Grid>
 
           <Grid item xs={4}>
@@ -908,7 +931,6 @@ const EditModal = ({ open, handleClose, rowData }) => {
             {comments ? <Alert severity="error">{comments} </Alert> : " "}
           </Grid>
         </Grid>
-
       </DialogContent>
 
       <DialogActions>
@@ -943,7 +965,11 @@ const EditModal = ({ open, handleClose, rowData }) => {
           >
             <GridCloseIcon />
           </IconButton>
-          <Button onClick={handleSaveClick} color="primary" disabled={isConfirmed}>
+          <Button
+            onClick={handleSaveClick}
+            color="primary"
+            disabled={isConfirmed}
+          >
             Confirm
           </Button>
         </DialogActions>
