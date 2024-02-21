@@ -263,6 +263,7 @@ export default function FollowUp() {
             }}
           >
             <MenuItem value={null}> Select status </MenuItem>
+            {}
             {statusLists.map((item, index) => (
               <MenuItem value={item} key={index}>
                 {item}

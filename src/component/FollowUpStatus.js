@@ -23,9 +23,8 @@ import "dayjs/locale/de";
 import "dayjs/locale/en-gb";
 const fieldStyle = { margin: "20px" };
 
-
-const FollowUpStatus = ({ open, handleClose, rowData }) => {
-  const [joinedError ,setJoinedError] = useState("")
+const FollowUpStatus = ({ open, handleClose, rowData, followUpdata }) => {
+  const [joinedError, setJoinedError] = useState("");
   const [isConfirming, setIsConfirming] = React.useState(false);
   const [editedData, setEditedData] = React.useState({ ...rowData });
   const [loading, setLoading] = React.useState(false);
@@ -34,8 +33,12 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
   const [dropdownData, setDropdownData] = React.useState([]);
   const [isDisabled, setIdDisabled] = React.useState(false);
   const [feesData, setFeesData] = useState({});
-  const [isConfirmed,setIsConfirmed]=React.useState(false);
-
+  const [isConfirmed, setIsConfirmed] = React.useState(false);
+  const reminingStatus = [
+    "Higher Studies",
+    "Drop after free course",
+    "Drop after placement",
+  ];
   const fieldsToCheck = [
     "attemptStatus",
     "joiningDate",
@@ -58,7 +61,6 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
   };
 
   useEffect(() => {
- 
     axios
       .get(Urlconstant.url + "utils/dropdown", {
         headers: {
@@ -78,8 +80,8 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
 
   React.useEffect(() => {
     setEditedData(rowData);
-    setIdDisabled(false)
-    setJoinedError(null)
+    setIdDisabled(false);
+    setJoinedError(null);
   }, [rowData]);
 
   if (!rowData) {
@@ -103,12 +105,14 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
       setAttemptStatus(updatedValue);
       if (value == "Joined" && rowData.courseInfo.course === "NA") {
         setIdDisabled(true);
-        setJoinedError("Please Update Batch in edit modal")
-        
+        setJoinedError("Please Update Batch After Join Trainee");
       } else {
-        setJoinedError("")
+        setJoinedError("");
         setIdDisabled(false);
       }
+      if (value === "Joined" && editedData.joiningDate === "NA") {
+        setIdDisabled(true);
+      } 
     }
   };
 
@@ -221,7 +225,10 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
           <GridCloseIcon />
         </IconButton>
       </DialogTitle>
-      <div style={{marginLeft:'19rem'}} > <span style={{color:'red' ,}}>{joinedError}</span></div>
+      <div style={{ marginLeft: "19rem" }}>
+        {" "}
+        <span style={{ color: "red" }}>{joinedError}</span>
+      </div>
       <DialogContent>
         <TextField
           label="Email"
@@ -247,7 +254,6 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
           label="Attempted By"
           name="attemptedBy"
           defaultValue={attemtedUser}
-          //defaultValue={rowData.attemptedBy||'NA'}
           onChange={handleInputChange}
           style={fieldStyle}
           InputProps={{
@@ -262,7 +268,6 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
             label="Attempt Status"
             name="attemptStatus"
             onChange={handleInputChange}
-            // defaultValue={attemptStatus}
             variant="outlined"
             sx={{
               marginRight: "20px",
@@ -270,13 +275,24 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
               fontSize: "20px",
             }}
           >
-            {dropdownData.status
-              .filter((item) => item !== "Enquiry" && item !== "New")
-              .map((item, index) => (
-                <MenuItem value={item} key={index}>
-                  {item}
-                </MenuItem>
-              ))}
+            {followUpdata.currentStatus
+              ? followUpdata.currentStatus === "Joined" ||
+                followUpdata.currentStatus === "Drop after placement" ||
+                followUpdata.currentStatus === "Higher Studies" ||
+                followUpdata.currentStatus === "Drop after free course"
+                ? reminingStatus.map((item, key) => (
+                    <MenuItem value={item} key={key}>
+                      {item}
+                    </MenuItem>
+                  ))
+                : dropdownData.status
+                    .filter((item) => item !== "Enquiry" && item !== "New")
+                    .map((item, index) => (
+                      <MenuItem value={item} key={index}>
+                        {item}
+                      </MenuItem>
+                    ))
+              : ""}
           </Select>
         </FormControl>
 
@@ -417,7 +433,11 @@ const FollowUpStatus = ({ open, handleClose, rowData }) => {
           >
             <GridCloseIcon />
           </IconButton>
-          <Button onClick={handleSaveClick} color="primary" disabled={isConfirmed}>
+          <Button
+            onClick={handleSaveClick}
+            color="primary"
+            disabled={isConfirmed}
+          >
             Confirm
           </Button>
         </DialogActions>

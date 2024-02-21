@@ -38,14 +38,14 @@ export const FeesHistory = ({ isOpen, handleClose, row }) => {
       valueGetter: (parm) => parm.row.email,
     },
     {
-      field: "Callback Date",
-      headerName: "Call back date",
+      field: "LastFeesPaidDate",
+      headerName: "LastFeesPaidDate",
       width: 150,
       valueGetter: (param) => param.row.lastFeesPaidDate,
     },
     {
-      field: "Transection Id",
-      headerName: "Transection id",
+      field: "Transaction Id",
+      headerName: "Transaction id",
       width: 120,
       valueGetter: (param) => param.row.transectionId,
     },
@@ -69,8 +69,8 @@ export const FeesHistory = ({ isOpen, handleClose, row }) => {
     },
 
     {
-      field: "LastFeesPaidDate",
-      headerName: "LastFeesPaidDate",
+      field: "Callback Date",
+      headerName: "Callback Date",
       width: 120,
       valueGetter: (param) => param.row.followupCallbackDate,
     },
