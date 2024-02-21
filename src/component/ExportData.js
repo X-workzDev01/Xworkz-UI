@@ -108,16 +108,16 @@ const ExportData = ({ open, handleClose }) => {
         setCollegeName(collegeName);
     }
     const handleYearOfPass = (event) => {
-        const yearOFPass = event.target.value;
-        setYearOfPassout(yearOfPassout);
+        const yearOfPass = event.target.value;
+        setYearOfPassout(yearOfPass);
     }
     const handleOfferedAs = (event) => {
-        const offeredAs = event.target.value;
+        const offeredAs = event.target.svalue;   
         setOfferedAs(offeredAs)
     }
     const handleCourseChange = (event) => {
         const courseName = event.target.value;
-        setCollegeName(courseName);
+        setCourseName(courseName);
     }
     return (
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">

@@ -39,6 +39,21 @@ const AddHr = ({ open, handleClose, rowData }) => {
   const [verifyEmail, setVerifyEmail] = React.useState("");
   const [validateName, setValidateName] = React.useState("");
   const [validateDesignation, setValidateDesignation] = React.useState("");
+  const [dropdown, setDropDown] = React.useState({
+    clientType: [],
+    sourceOfConnection: [],
+    sourceOfLocation: [],
+    hrDesignation: [],
+    callingStatus: []
+  });
+  React.useEffect(() => {
+    getDropdown();
+  }, [])
+  const getDropdown = () => {
+    axios.get(Urlconstant.url + `utils/clientdropdown`).then((response) => {
+      setDropDown(response.data);
+    })
+  }
 
   const [charCount, setCharCount] = React.useState("");
   const handleInputChange = (event) => {
@@ -313,9 +328,9 @@ const AddHr = ({ open, handleClose, rowData }) => {
               fullWidth
               margin="normal"
             >
-              {ClientDropDown.hrDesignation.map((option) => (
-                <MenuItem key={option} value={option}>
-                  {option}
+              {dropdown.hrDesignation.map((item, index) => (
+                <MenuItem key={index} value={item}>
+                  {item}
                 </MenuItem>
               ))}
             </TextField>

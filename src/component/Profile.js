@@ -188,7 +188,15 @@ const Profile = (courseName, searchValue) => {
   const handleFeesHistory = () => {
     setOpenFeesHistory(true);
   };
-
+  setTimeout(() => {
+    if (
+      followUpData.currentStatus === "Drop after free course" ||
+      followUpData.currentStatus === "Higher Studies" ||
+      followUpData.currentStatus === "Drop after placement"
+    ) {
+      setPayFeesDisabled(true);
+    }
+  }, 300);
   return (
     <div>
       <Header />
@@ -281,7 +289,10 @@ const Profile = (courseName, searchValue) => {
 
             {followUpData.currentStatus ? (
               feesData ? (
-                followUpData.currentStatus === "Joined" ? (
+                followUpData.currentStatus === "Joined" ||
+                followUpData.currentStatus === "Drop after free course" ||
+                followUpData.currentStatus === "Higher Studies" ||
+                followUpData.currentStatus === "Drop after placement" ? (
                   <Button
                     style={{ marginRight: "0.5rem" }}
                     variant="outlined"
@@ -302,7 +313,10 @@ const Profile = (courseName, searchValue) => {
             )}
 
             {followUpData.currentStatus && feesData ? (
-              followUpData.currentStatus === "Joined" ? (
+              followUpData.currentStatus === "Joined" ||
+              followUpData.currentStatus === "Drop after free course" ||
+              followUpData.currentStatus === "Higher Studies" ||
+              followUpData.currentStatus === "Drop after placement" ? (
                 feesHistory && feesHistory.length > 0 ? (
                   <Button
                     style={{ marginRight: "0.5rem" }}

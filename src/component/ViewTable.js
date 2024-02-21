@@ -510,7 +510,7 @@ export default function ControlledSelectionServerPaginationGrid() {
             Clear
           </Button>
         </div>
-        <div style={{ display: 'flex', paddingLeft: "700px" }}>
+        <div style={{ marginLeft:"35%" }}>
           <Button variant="contained" color="primary" onClick={handleExportClick}>Export Data</Button>
         </div>
         

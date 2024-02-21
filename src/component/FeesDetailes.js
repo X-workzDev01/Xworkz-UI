@@ -1,21 +1,20 @@
-import React, { useEffect, useState } from "react";
-import SyncLoader from "react-spinners/SyncLoader";
-import "./FeesDetailes";
 import {
   Button,
-  Container,
   FormControl,
   InputLabel,
   MenuItem,
   Modal,
   Select,
-  TextField,
+  TextField
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import axios from "axios";
-import { Urlconstant } from "../constant/Urlconstant";
-import { render } from "@testing-library/react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import SyncLoader from "react-spinners/SyncLoader";
+import { Urlconstant } from "../constant/Urlconstant";
+import "./FeesDetailes";
+import { PersonOutline } from "@mui/icons-material";
 export const FeesDetailes = () => {
   const [batch, setBatch] = useState(null);
   const [date, setDate] = useState(null);
@@ -62,9 +61,11 @@ export const FeesDetailes = () => {
   };
 
   const fetchingGridData = (minIndex, maxIndex, date, batch, paymentMode) => {
+    const startingIndex = minIndex * maxIndex;
+    const maxRows = maxIndex;
     const response = axios.get(
       Urlconstant.url +
-        `api/getFeesDetilesBySelectedOption/${minIndex}/${maxIndex}/${date}/${batch}/${paymentMode}`
+        `api/getFeesDetilesBySelectedOption/${startingIndex}/${maxRows}/${date}/${batch}/${paymentMode}`
     );
     response.then((res) => {
       console.log(res.data.listOfFeesDto);
@@ -119,9 +120,9 @@ export const FeesDetailes = () => {
       valueGetter: (params) => params.row.feesHistoryDto.lastFeesPaidDate,
     },
     {
-      field: "Fees Followup date",
+      field: "Call Back Date",
       flex: 1,
-      headerName: "Fees Followup date",
+      headerName: "Call Back Date",
       valueGetter: (params) => params.row.feesHistoryDto.feesfollowupDate,
     },
     {
@@ -233,6 +234,8 @@ export const FeesDetailes = () => {
         <div>
           <Button
             color="secondary"
+            startIcon={<PersonOutline />}
+            variant="outlined"
             LinkComponent={Link}
             to={
               Urlconstant.navigate +
@@ -328,7 +331,7 @@ export const FeesDetailes = () => {
           type="date"
           name="date"
           onChange={handleSetData}
-          label="Fees Followup date"
+          label="Call Back Date"
           id="outlined-size-small"
           size="small"
           value={date ? date : " "}
@@ -372,9 +375,8 @@ export const FeesDetailes = () => {
         columns={columns}
         rows={gridData.rows}
         pagination
-        autoHeight
         paginationModel={paginationModel}
-        pageSizeOptions={[5, 10, 15, 20]}
+        pageSizeOptions={[25, 50, 75, 100]}
         rowCount={gridData.rowCount}
         paginationMode="server"
         onPaginationModelChange={setPaginationModel}
