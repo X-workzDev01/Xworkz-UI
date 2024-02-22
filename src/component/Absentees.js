@@ -68,8 +68,8 @@ const Absentees = () => {
   }
 
   const handleStudentChange = (event, value) => {
-    setSuccessMessage("");
     setErrorMessage("");
+    setSuccessMessage("")
     if (value && !selectedStudents.some((student) => student.id === value.id)) {
       setSelectedStudents([...selectedStudents, value]);
       setReasons({ ...reasons, [value.id]: "" });
@@ -86,6 +86,8 @@ const Absentees = () => {
     setErrors({});
     setSelectedStudents([]);
     setSubmitDisabled(true);
+    setSuccessMessage("")
+
 
     axios
       .get(
@@ -93,7 +95,6 @@ const Absentees = () => {
       )
       .then((response) => {
         const fetchedStudents = response.data;
-        setSuccessMessage("");
         setErrorMessage("");
         setStudents(fetchedStudents);
         // Update the student options for Autocomplete component
@@ -190,13 +191,12 @@ const Absentees = () => {
         )
         .then((response) => {
           console.log("API Response:", response.data);
-          setSuccessMessage("Attendance submitted successfully!");
-
           setSelectedStudents([]);
           setReasons({});
           setErrors({});
           getBatchAttendanceCount();
           handleBatchChange({ target: { value: selectedBatch } });
+          setSuccessMessage("Attendance submitted successfully!");
         })
         .catch((error) => {
           console.error("API Error:", error);
@@ -267,9 +267,9 @@ const Absentees = () => {
       <div style={styles.form}>
         <div style={styles.formFields}>
           <h1> Absentees Form </h1>{" "}
-          {successMessage && (
+          {successMessage ?  (
             <div style={styles.successMessage}> {successMessage} </div>
-          )}{" "}
+          ):""}
           {errorMessage && (
             <div style={styles.errorMessage}> {errorMessage} </div>
           )}

@@ -39,8 +39,6 @@ async function loadServerRows(page, pageSize, courseName) {
   });
 }
 
-
-
 function searchServerRows(searchValue, courseName) {
   const apiUrl =
     Urlconstant.url +
@@ -124,7 +122,7 @@ export default function ControlledSelectionServerPaginationGrid() {
 
       const response = await axios.get(apiUrl);
       const suggestions = response.data.map((option) => ({
-        traineeName: option.traineeName
+        traineeName: option.traineeName,
       }));
       setAutocompleteOptions(suggestions);
       return suggestions;
@@ -193,7 +191,7 @@ export default function ControlledSelectionServerPaginationGrid() {
       .then((response) => {
         setCourseDropdown(response.data);
       })
-      .catch((error) => { });
+      .catch((error) => {});
   };
   const handleSearchClick = () => {
     searchServerRows(searchValue, courseName).then((newGridData) => {
@@ -213,14 +211,12 @@ export default function ControlledSelectionServerPaginationGrid() {
     setCourseName("null");
     setTotalClass(0);
     setSearchValue("");
-    setSelectedOption({ traineeName: '' });
-
+    setSelectedOption({ traineeName: "" });
   };
   const handleAutocompleteChange = (event, newValue) => {
     setSelectedOption(isClearClicked ? null : newValue);
     sessionStorage.setItem("searchName", newValue?.traineeName);
     setIsClearClicked(false);
-   
   };
   React.useEffect(() => {
     refreshPageEveryTime();
@@ -267,27 +263,7 @@ export default function ControlledSelectionServerPaginationGrid() {
     },
   ];
 
-  const styles = {
-    display: "flex",
-    totalClassContainer: {
-      marginLeft: "740px",
-      marginTop: "-1.7rem",
-
-    },
-    totalClassCircle: {
-      display: "inline-block",
-      marginRight: "600px",
-      width: "45px",
-      height: "45px",
-      borderRadius: "50%",
-      backgroundColor: "#e0e0e0",
-      alignItems: "center",
-      justifyContent: "center",
-      textAlign: "center",
-      marginTop: "-5px",
-    },
-  };
-
+ 
   return (
     <div>
       <Header />
@@ -316,23 +292,21 @@ export default function ControlledSelectionServerPaginationGrid() {
               onChange={(e) => {
                 const value = e.target.value;
                 if (value.length >= 3) {
-                setSearchValue(value);
-                setPaginationModel({
-                  page: 0,
-                  pageSize: initialPageSize,
-                });
-              }
-              if (value.length >= 1 && value.length <= 3) {
-                setPaginationModel({ page: 0, pageSize: initialPageSize });
-              }
+                  setSearchValue(value);
+                  setPaginationModel({
+                    page: 0,
+                    pageSize: initialPageSize,
+                  });
+                }
+                if (value.length >= 1 && value.length <= 3) {
+                  setPaginationModel({ page: 0, pageSize: initialPageSize });
+                }
               }}
               placeholder="Search..."
             />
           )}
           renderOption={(props, option) => (
-            <li {...props}>
-              {option.traineeName}
-            </li>
+            <li {...props}>{option.traineeName}</li>
           )}
         />
         <FormControl>
@@ -354,10 +328,10 @@ export default function ControlledSelectionServerPaginationGrid() {
           >
             {Array.isArray(courseDropdown)
               ? courseDropdown.map((item, k) => (
-                <MenuItem value={item} key={k}>
-                  {item}
-                </MenuItem>
-              ))
+                  <MenuItem value={item} key={k}>
+                    {item}
+                  </MenuItem>
+                ))
               : null}
           </Select>
         </FormControl>
@@ -375,15 +349,17 @@ export default function ControlledSelectionServerPaginationGrid() {
             Clear
           </Button>
         </div>
-      </div>
-
-      <div style={{ marginTop: "-35px" }}>TotalClass :
-        <div style={styles.totalClassContainer}>
-          <div style={styles.totalClassCircle}>
-            <p>{totalClass}</p>
-          </div>
+        <div>
+          <span style={{ paddingLeft: "15px",marginRight:'8px'}}>Total Class  <span style={{marginRight:'5px'}}>:</span>
+          <span style={{backgroundColor:"darkgray", borderRadius:"15px", paddingTop:"5px",paddingLeft:"12px",paddingRight:"12px", padding:"4px"}} >{totalClass}</span></span>
         </div>
       </div>
+
+      {/* <div style={{ marginTop: "-35px" }}>TotalClass :
+        <div style={styles.totalClassContainer}>
+         
+        </div>
+      </div> */}
       <div style={{ height: "650px", width: "100%" }}>
         <DataGrid
           style={{ width: "100%" }}
