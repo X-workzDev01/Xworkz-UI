@@ -35,7 +35,6 @@ const FollowUpStatus = ({ open, handleClose, rowData, followUpdata }) => {
   const [feesData, setFeesData] = useState({});
   const [isConfirmed, setIsConfirmed] = React.useState(false);
   const reminingStatus = [
-    "Higher Studies",
     "Drop after free course",
     "Drop after placement",
   ];
@@ -82,6 +81,8 @@ const FollowUpStatus = ({ open, handleClose, rowData, followUpdata }) => {
     setEditedData(rowData);
     setIdDisabled(false);
     setJoinedError(null);
+    setIdDisabled(true)
+
   }, [rowData]);
 
   if (!rowData) {
@@ -100,6 +101,9 @@ const FollowUpStatus = ({ open, handleClose, rowData, followUpdata }) => {
       ...prevData,
       [name]: updatedValue,
     }));
+    if (name === "joiningDate" && value !== "NA") {
+      setIdDisabled(false);
+    }
 
     if (name === "attemptStatus") {
       setAttemptStatus(updatedValue);
@@ -110,9 +114,9 @@ const FollowUpStatus = ({ open, handleClose, rowData, followUpdata }) => {
         setJoinedError("");
         setIdDisabled(false);
       }
-      if (value === "Joined" && editedData.joiningDate === "NA") {
+      if (value === "Joined" && editedData.joiningDate !== "NA") {
         setIdDisabled(true);
-      } 
+      }
     }
   };
 
@@ -278,7 +282,6 @@ const FollowUpStatus = ({ open, handleClose, rowData, followUpdata }) => {
             {followUpdata.currentStatus
               ? followUpdata.currentStatus === "Joined" ||
                 followUpdata.currentStatus === "Drop after placement" ||
-                followUpdata.currentStatus === "Higher Studies" ||
                 followUpdata.currentStatus === "Drop after free course"
                 ? reminingStatus.map((item, key) => (
                     <MenuItem value={item} key={key}>
@@ -286,7 +289,13 @@ const FollowUpStatus = ({ open, handleClose, rowData, followUpdata }) => {
                     </MenuItem>
                   ))
                 : dropdownData.status
-                    .filter((item) => item !== "Enquiry" && item !== "New")
+                    .filter(
+                      (item) =>
+                        item !== "Enquiry" &&
+                        item !== "New" &&
+                        item !== "Drop after placement" &&
+                        item !== "Drop after free course"
+                    )
                     .map((item, index) => (
                       <MenuItem value={item} key={index}>
                         {item}

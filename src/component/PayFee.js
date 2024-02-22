@@ -153,6 +153,7 @@ export const PayFee = ({
   let isDisabled;
   if (updateFeesData.selectlateFees === "Yes") {
     isDisabled =
+      !updateFeesData.lateFees ||
       !updateFeesData.transectionId ||
       !updateFeesData.lastFeesPaidDate ||
       !updateFeesData.paidAmount ||

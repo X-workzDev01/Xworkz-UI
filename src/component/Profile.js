@@ -273,7 +273,6 @@ const Profile = (courseName, searchValue) => {
             {followUpData.currentStatus ? (
               followUpData.currentStatus === "Joined" ||
               followUpData.currentStatus === "Drop after free course" ||
-              followUpData.currentStatus === "Higher Studies" ||
               followUpData.currentStatus === "Drop after placement" ? (
                 <Button
                   style={{ marginRight: "0.5rem" }}
@@ -294,7 +293,6 @@ const Profile = (courseName, searchValue) => {
               feesData ? (
                 followUpData.currentStatus === "Joined" ||
                 followUpData.currentStatus === "Drop after free course" ||
-                followUpData.currentStatus === "Higher Studies" ||
                 followUpData.currentStatus === "Drop after placement" ? (
                   <Button
                     style={{ marginRight: "0.5rem" }}
@@ -318,7 +316,6 @@ const Profile = (courseName, searchValue) => {
             {followUpData.currentStatus && feesData ? (
               followUpData.currentStatus === "Joined" ||
               followUpData.currentStatus === "Drop after free course" ||
-              followUpData.currentStatus === "Higher Studies" ||
               followUpData.currentStatus === "Drop after placement" ? (
                 feesHistory && feesHistory.length > 0 ? (
                   <Button
