@@ -61,8 +61,11 @@ const EditModal = ({ open, handleClose, rowData }) => {
   const [referalContactNumber, setReferalContactNumber] = React.useState("");
   const [referalNameCheck, setReferalNameCheck] = React.useState("");
   const [comments, setComments] = React.useState("");
-  const [xworkzemailCheck,setXworkzEmailCheck]= React.useState("");
-  const [isConfirmed,setIsConfirmed]=React.useState(false);
+  const [xworkzemailCheck, setXworkzEmailCheck] = React.useState("");
+  const [isConfirmed, setIsConfirmed] = React.useState(false);
+  const [sslcError, setSslcError] = useState("");
+  const [pucError, setPucError] = useState("");
+  const [degreeError, setDegreeError] = useState("");
   React.useEffect(() => {
     setEditedData(rowData);
     setUsnCheck("");
@@ -177,11 +180,11 @@ const EditModal = ({ open, handleClose, rowData }) => {
         setEmailError("");
       }
     }
-    if(name === "othersDto.xworkzEmail"){
-      if(!validateEmail(value)){
+    if (name === "othersDto.xworkzEmail") {
+      if (!validateEmail(value)) {
         setXworkzEmailCheck("Enter the correct E-mail ID");
         setDisable(true);
-      }else{
+      } else {
         setXworkzEmailCheck("");
         setDisable(false);
       }
@@ -239,6 +242,42 @@ const EditModal = ({ open, handleClose, rowData }) => {
         setDisable(false);
       }
     }
+    if (name === "percentageDto.sslcPercentage") {
+      if (!value) {
+        setSslcError("SSLC (10th) Percentage is required");
+      } else if (value < 1 || value > 99.99) {
+        setSslcError("Enter proper percentage");
+      } else if (!/^[0-9]*(\.[0-9]{0,2})?$/.test(value)) {
+        setSslcError("Only two decimals are allowed");
+      } else {
+        setSslcError("");
+      }
+    }
+
+    if (name === "percentageDto.pucPercentage") {
+      if (!value) {
+        setPucError("PUC Percentage is required");
+      } else if (value < 1 || value > 99.99) {
+        setPucError("Enter proper percentage");
+      } else if (!/^[0-9]*(\.[0-9]{0,2})?$/.test(value)) {
+        setPucError("Only two decimals are allowed");
+      } else {
+        setPucError("");
+      }
+    }
+
+    if (name === "percentageDto.degreePercentage") {
+      if (!value) {
+        setDegreeError("Degree Percentage  is required");
+      } else if (value < 1 || value > 99.99) {
+        setDegreeError("Enter proper percentage");
+      } else if (!/^[0-9]*(\.[0-9]{0,2})?$/.test(value)) {
+        setDegreeError("Only two decimals are allowed");
+      } else {
+        setDegreeError("");
+      }
+    }
+   
     if (name === "othersDto.comments") {
       if (value.length <= 0) {
         setComments("Comment should not be empty")
@@ -256,6 +295,9 @@ const EditModal = ({ open, handleClose, rowData }) => {
       },
     }));
   };
+
+  //  const perDisabled = sslcError || pucError || degreeError;
+  //   setDisable(perDisabled);
   const handleEmail = (email) => {
     if (rowData.basicInfo.email === email) {
       setDisable(false);
@@ -422,21 +464,21 @@ const EditModal = ({ open, handleClose, rowData }) => {
     handleClose();
   };
   const handleVerifyXworkzEmail = (event) => {
-    let xworkzemail=event.target.value;
-    if(xworkzemail.includes(".xworkz")){
-      if(!validateEmail(xworkzemail)){
+    let xworkzemail = event.target.value;
+    if (xworkzemail.includes(".xworkz")) {
+      if (!validateEmail(xworkzemail)) {
         setXworkzEmailCheck("Enter the Valid Email");
         setDisable(true);
-      }else{
+      } else {
         setXworkzEmailCheck("");
         setDisable(false);
       }
-    }else if(xworkzemail === "rowData.othersDto.xworkzEmail"){
+    } else if (xworkzemail === "rowData.othersDto.xworkzEmail") {
       setXworkzEmailCheck("");
-        setDisable(false);
-    }else{
+      setDisable(false);
+    } else {
       setXworkzEmailCheck("Email should contains xworkz");
-        setDisable(true);
+      setDisable(true);
     }
 
   };
@@ -830,7 +872,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
               required
             />
             {xworkzemailCheck ? <Alert severity="error">{xworkzemailCheck} </Alert> : " "}
-            
+
           </Grid>
 
           <Grid item xs={4}>
@@ -888,6 +930,44 @@ const EditModal = ({ open, handleClose, rowData }) => {
                 ))}
               </Select>
             </FormControl>
+          </Grid>
+
+          <Grid item xs={4}>
+            <TextField
+              type="number"
+              label="SSLC or 10th Percentage"
+              name="percentageDto.sslcPercentage"
+              defaultValue={rowData.percentageDto.sslcPercentage}
+              onChange={handleInputChange}
+              style={fieldStyle}
+              required
+            />
+            {sslcError ? (<Alert severity="error">{sslcError}</Alert>) : " "}
+          </Grid>
+          <Grid item xs={4}>
+            <TextField
+              type="number"
+              label="PUC or Diploma Percentage"
+              name="percentageDto.pucPercentage"
+              defaultValue={rowData.percentageDto.pucPercentage}
+              onChange={handleInputChange}
+              style={fieldStyle}
+              required
+            />
+            {pucError ? (<Alert severity="error">{pucError}</Alert>) : " "}
+          </Grid>
+
+          <Grid item xs={4}>
+            <TextField
+              type="number"
+              label="Degree Percentage or CGPA"
+              name="percentageDto.degreePercentage"
+              defaultValue={rowData.percentageDto.degreePercentage}
+              onChange={handleInputChange}
+              style={fieldStyle}
+              required
+            />
+            {degreeError ? (<Alert severity="error">{degreeError}</Alert>) : " "}
           </Grid>
           <Grid item xs={4}>
             <TextField
