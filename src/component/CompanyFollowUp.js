@@ -59,6 +59,7 @@ const CompanyFollowUp = ({ open, handleClose, rowData }) => {
   useEffect(() => {
     getdetailsbyCompanyId();
     getDropdown();
+    setIsConfirmed(false);
   }, [rowData]);
 
   const handleInputChange = (event) => {
