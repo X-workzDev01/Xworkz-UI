@@ -165,8 +165,8 @@ export default function ViewClient() {
     })
   }
 
-  const columns = [
-    //  { headerName: 'ID', field: 'id' },
+  const columns  = [
+
     {
       field: "companyName",
       headerName: "Company Name",
@@ -250,16 +250,9 @@ export default function ViewClient() {
     setSearchValue(newValue.companyName);
     sessionStorage.setItem("Search", newValue.companyName);
   }
-  const [visibleColumns, setVisibleColumns] = React.useState(columns.map(column => column.field));
-  const [hiddenColumns, setHiddenColumns] = React.useState(['State']);
-  const handleColumnsChange = (newColumns) => {
-    console.log(newColumns)
-    setVisibleColumns(newColumns.map(column => column.field));
-  };
 
-  const handleToggleHiddenColumns = () => {
-    setHiddenColumns([]); // Show all hidden columns
-  };
+  
+  
   return (
     <div style={gridStyle}>
       <div
@@ -361,7 +354,7 @@ export default function ViewClient() {
       <div style={gridStyle}>
         <DataGrid
           style={{ width: "100%" }}
-          columns={columns.filter(column => visibleColumns.includes(column.field) || hiddenColumns.includes(column.field))}
+          columns={columns}      
           rows={gridData.rows}
           pagination
           paginationModel={paginationModel}
@@ -372,13 +365,11 @@ export default function ViewClient() {
           onRowSelectionModelChange={(newRowSelectionModel) => {
             setRowSelectionModel(newRowSelectionModel);
           }}
+
           slots={{
             toolbar: () => (
               <GridToolbarContainer>
-                <GridToolbarColumnsButton onColumnsChange={handleColumnsChange} />
-                {hiddenColumns.length > 0 && (
-                  <button onClick={handleToggleHiddenColumns}>Show Hidden Columns</button>
-                )}
+                <GridToolbarColumnsButton/>
                 <GridToolbarFilterButton />
                 <GridToolbarDensitySelector />
                 <GridToolbarExport />
