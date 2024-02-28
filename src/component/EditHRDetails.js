@@ -80,7 +80,7 @@ const EditHRDetails = ({ open, handleClose, rowData }) => {
 
   const handleInput = (event) => {
     const { name, value } = event.target;
-    if (name === "hrScopName") {
+    if (name === "hrSpocName") {
       if (value === " " || (value.length === 0 && value.length <= 2)) {
         setValidateName("Enter the valid name");
       } else {
@@ -257,9 +257,9 @@ const EditHRDetails = ({ open, handleClose, rowData }) => {
           <Grid item xs={12} sm={4}>
             <TextField
               label="Hr Spoc Name"
-              name="hrScopName"
+              name="hrSpocName"
               style={fieldStyle}
-              defaultValue={rowData.hrScopName}
+              defaultValue={rowData.hrSpocName}
               onChange={handleInput}
             />
             {validateName ? (

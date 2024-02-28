@@ -14,10 +14,10 @@ import {
 } from "@mui/material";
 import { GridCloseIcon } from "@mui/x-data-grid";
 import axios from "axios";
-import React, { useState } from "react";
+import React from "react";
 import { Urlconstant } from "../constant/Urlconstant";
 import { fieldStyle, style } from "../constant/FormStyle";
-import { ClientDropDown } from "../constant/ClientDropDown";
+import { getCurrentDate } from "../constant/ValidationConstant";
 
 const HrFollowUp = ({ open, handleClose, rowData }) => {
   const [isConfirmed, setIsConfirmed] = React.useState(false);
@@ -42,8 +42,18 @@ const HrFollowUp = ({ open, handleClose, rowData }) => {
   }
 
   React.useEffect(() => {
-    getDropdown();
-  }, [])
+    if (open) {
+      setFormData({
+        attemptBy: attemtedUser,
+        attemptStatus: "",
+        callDuration: "",
+        callBackDate: "",
+        callBackTime: "",
+        comments: "",
+      });
+      getDropdown();
+    }
+  }, [open]);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -91,6 +101,7 @@ const HrFollowUp = ({ open, handleClose, rowData }) => {
                 handleCloseForm();
               }, 1000);
             }
+            setFormData("");
           });
       } catch (response) {
         setResponseMessage("Not added to follow up");
@@ -152,6 +163,7 @@ const HrFollowUp = ({ open, handleClose, rowData }) => {
             <TextField
               label="Call Duration"
               name="callDuration"
+              placeholder="mm:ss"
               onChange={handleInputChange}
               style={fieldStyle}
               value={formData.callDuration}
@@ -169,15 +181,34 @@ const HrFollowUp = ({ open, handleClose, rowData }) => {
               InputLabelProps={{
                 shrink: true,
               }}
+              inputProps={{
+                min: getCurrentDate(),
+              }}
+              sx={{
+                marginRight: "10px",
+                width: "200px",
+                marginLeft: "30px",
+                fontSize: "14px",
+              }}
             />
           </Grid>
           <Grid item xs={12} sm={4}>
             <TextField
+              type="time"
               label="call Back Time"
               name="callBackTime"
               onChange={handleInputChange}
               style={fieldStyle}
               value={formData.callBackTime}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              sx={{
+                marginRight: "10px",
+                width: "200px",
+                marginLeft: "30px",
+                fontSize: "14px",
+              }}
             />
           </Grid>
           <Grid item xs={12} sm={4}>

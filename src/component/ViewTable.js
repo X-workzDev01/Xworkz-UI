@@ -457,7 +457,8 @@ export default function ControlledSelectionServerPaginationGrid() {
             sx={{
               marginRight: "10px",
               width: "200px",
-              fontSize: "12px",
+              marginLeft: "10px",
+              fontSize: "14px",
             }}
             onChange={handleCourseChange}
           >
@@ -484,7 +485,8 @@ export default function ControlledSelectionServerPaginationGrid() {
             sx={{
               marginRight: "10px",
               width: "200px",
-              fontSize: "12px",
+              marginLeft: "10px",
+              fontSize: "14px",
             }}
             onChange={handleCollegeChange}
           >
@@ -496,7 +498,7 @@ export default function ControlledSelectionServerPaginationGrid() {
             ))}
           </Select>
         </FormControl>
-        <div>
+       <div style={{ marginLeft: "10px" }}>
           <Button
             variant="contained"
             color="primary"
@@ -505,7 +507,7 @@ export default function ControlledSelectionServerPaginationGrid() {
             Search
           </Button>
         </div>
-        <div style={{ paddingLeft: "10px" }}>
+        <div style={{ marginLeft: "10px" }}>
           <Button variant="contained" color="primary" onClick={handleClear}>
             Clear
           </Button>

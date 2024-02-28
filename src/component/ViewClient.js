@@ -1,18 +1,15 @@
 import { DataGrid, GridToolbarDensitySelector } from "@mui/x-data-grid";
 import React from "react";
 import { Urlconstant } from "../constant/Urlconstant";
-import { PersonOutline } from "@mui/icons-material";
+import { MoreVert, PersonOutline } from "@mui/icons-material";
 import { Link } from "react-router-dom";
-import { Autocomplete, Button, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import { Autocomplete, Button, Checkbox, FormControl, FormControlLabel, InputLabel, MenuItem, Popover, Select, TextField } from "@mui/material";
 import axios from "axios";
 import { gridStyle } from "../constant/FormStyle";
-import { GridToolbar } from "@mui/x-data-grid";
-import { selectedGridRowsSelector } from "@mui/x-data-grid";
-import { gridFilteredSortedRowIdsSelector } from "@mui/x-data-grid";
 import { GridToolbarContainer } from "@mui/x-data-grid";
-import { GridToolbarColumnsButton } from "@mui/x-data-grid";
 import { GridToolbarFilterButton } from "@mui/x-data-grid";
 import { GridToolbarExport } from "@mui/x-data-grid";
+import "./Company.css"
 
 function loadServerRows(page, pageSize, callBackDate, clientType) {
   const startingIndex = page * pageSize;
@@ -100,6 +97,9 @@ export default function ViewClient() {
     hrDesignation: [],
     callingStatus: []
   });
+  const initiallySelectedFields = ['companyName', 'companyEmail', 'companyLandLineNumber', 'actions'];
+  const [displayColumn, setDisplayColumn] = React.useState(initiallySelectedFields);
+  const [anchorEl, setAnchorEl] = React.useState(null);
   const refreshPageEveryTime = () => {
     let active = true;
     setLoading(true);
@@ -165,12 +165,12 @@ export default function ViewClient() {
     })
   }
 
-  const columns  = [
-
+  const column = [
     {
       field: "companyName",
-      headerName: "Company Name",
+      headerName: "Name",
       flex: 1,
+      headerClassName: 'bold-header',
       valueGetter: (params) => params.row.companyName,
     },
     {
@@ -178,6 +178,12 @@ export default function ViewClient() {
       headerName: " E-mail",
       flex: 1,
       valueGetter: (params) => params.row.companyEmail,
+    },
+    {
+      field: "companyLandLineNumber",
+      headerName: "Contact Number",
+      flex: 1,
+      valueGetter: (params) => params.row.companyLandLineNumber,
     },
     {
       field: "companyWebsite",
@@ -190,6 +196,18 @@ export default function ViewClient() {
       headerName: "Company Type",
       flex: 1,
       valueGetter: (params) => params.row.companyType,
+    },
+    {
+      field: "companyFounder",
+      headerName: "Company Founder",
+      flex: 1,
+      valueGetter: (params) => params.row.companyFounder,
+    },
+    {
+      field: "sourceOfConnection",
+      headerName: "Source Of Connection",
+      flex: 1,
+      valueGetter: (params) => params.row.sourceOfConnection,
     },
     {
       field: "companyAddress",
@@ -209,7 +227,30 @@ export default function ViewClient() {
       flex: 1,
       valueGetter: (params) => params.row.status,
     },
-
+    {
+      field: "adminDto.createdBy",
+      headerName: "Created By",
+      flex: 1,
+      valueGetter: (params) => params.row.adminDto.createdBy,
+    },
+    {
+      field: "adminDto.createdOn",
+      headerName: "Created On",
+      flex: 1,
+      valueGetter: (params) => params.row.adminDto.createdOn,
+    },
+    {
+      field: "adminDto.updatedBy",
+      headerName: "Updated By",
+      flex: 1,
+      valueGetter: (params) => params.row.adminDto.updatedBy,
+    },
+    {
+      field: "adminDto.updatedOn",
+      headerName: "Updated On",
+      flex: 1,
+      valueGetter: (params) => params.row.adminDto.updatedOn,
+    },
     {
       field: "actions",
       headerName: "Actions",
@@ -222,7 +263,7 @@ export default function ViewClient() {
             color="secondary"
             startIcon={<PersonOutline />}
             component={Link}
-            to={Urlconstant.navigate + `companylist/${params.row.id}`}
+            to={Urlconstant.navigate + `companies/${params.row.id}`}
           >
             View
           </Button>
@@ -239,7 +280,7 @@ export default function ViewClient() {
     setClientType(event.target.value);
   }
   const handleClear = () => {
-    setSearchValue(""); // Clear the search value
+    setSearchValue("");
     setCallBackDate("null");
     setClientType("null");
     setSelectedOption(null);
@@ -251,8 +292,29 @@ export default function ViewClient() {
     sessionStorage.setItem("Search", newValue.companyName);
   }
 
-  
-  
+  const handleColumnChange = (event) => {
+    setAnchorEl(event.currentTarget);
+  }
+
+  const handleClosePopover = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+
+  const handleChangeColumnVisibility = (field) => {
+    let updatedDisplayColumn;
+    if (displayColumn.includes(field)) {
+      updatedDisplayColumn = displayColumn.filter(col => col !== field);
+    } else {
+      updatedDisplayColumn = [...displayColumn, field];
+    }
+    setDisplayColumn(updatedDisplayColumn);
+  };
+  React.useEffect(() => {
+    setDisplayColumn(initiallySelectedFields);
+  }, []);
+
   return (
     <div style={gridStyle}>
       <div
@@ -354,7 +416,7 @@ export default function ViewClient() {
       <div style={gridStyle}>
         <DataGrid
           style={{ width: "100%" }}
-          columns={columns}      
+          columns={column.filter(col => displayColumn.includes(col.field))}
           rows={gridData.rows}
           pagination
           paginationModel={paginationModel}
@@ -369,7 +431,7 @@ export default function ViewClient() {
           slots={{
             toolbar: () => (
               <GridToolbarContainer>
-                <GridToolbarColumnsButton/>
+                <Button onClick={handleColumnChange}> <MoreVert/> Columns</Button>
                 <GridToolbarFilterButton />
                 <GridToolbarDensitySelector />
                 <GridToolbarExport />
@@ -379,8 +441,42 @@ export default function ViewClient() {
           rowSelectionModel={rowSelectionModel}
           loading={loading}
           keepNonExistentRowsSelected
-
         />
+
+        <Popover
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handleClosePopover}
+          anchorOrigin={{
+            vertical: "center",
+            horizontal: "center",
+          }}
+          transformOrigin={{
+            vertical: "center",
+            horizontal: "center",
+          }}
+          sx={{
+            position: 'absolute',
+            marginTop: '10%',
+            marginLeft: '15%',
+            marginRight: '10%',
+            width: '10%',
+          }}
+        >
+          <h4>COLUMNS</h4>
+            {column.map(column => (
+              <FormControlLabel
+                key={column.field}
+                control={
+                  <Checkbox
+                    checked={displayColumn.includes(column.field)}
+                    onChange={() => handleChangeColumnVisibility(column.field)}
+                  />
+                }
+                label={column.headerName}
+              />
+            ))}
+        </Popover>
       </div>
     </div>
   );
