@@ -23,6 +23,7 @@ import { GridCloseIcon } from "@mui/x-data-grid";
 import "./Fields.css";
 import { useNavigate } from "react-router-dom";
 import { validateContactNumber, validateEmail } from "../constant/ValidationConstant";
+import { useEffect } from "react";
 
 const fieldStyle = { margin: "20px" };
 
@@ -82,6 +83,12 @@ const EditModal = ({ open, handleClose, rowData }) => {
     setComments("");
     setXworkzEmailCheck("");
   }, [rowData]);
+
+  useEffect(() => {
+    const percDisabled = sslcError || pucError || degreeError;
+    setDisable(percDisabled);
+
+  }, [sslcError, pucError, degreeError]);
 
   React.useEffect(() => {
     axios
@@ -277,7 +284,7 @@ const EditModal = ({ open, handleClose, rowData }) => {
         setDegreeError("");
       }
     }
-   
+
     if (name === "othersDto.comments") {
       if (value.length <= 0) {
         setComments("Comment should not be empty")
@@ -296,8 +303,6 @@ const EditModal = ({ open, handleClose, rowData }) => {
     }));
   };
 
-  //  const perDisabled = sslcError || pucError || degreeError;
-  //   setDisable(perDisabled);
   const handleEmail = (email) => {
     if (rowData.basicInfo.email === email) {
       setDisable(false);
