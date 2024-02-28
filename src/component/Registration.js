@@ -10,7 +10,7 @@ import axios from "axios";
 import Header from "./Header";
 import { Urlconstant } from "../constant/Urlconstant";
 import { Navigate, Route, Router } from "react-router-dom";
-import { Percentage } from "./Percentage";
+import { Percentage } from "./percentage";
 
 export default function Registration() {
   const email = sessionStorage.getItem("userId");
@@ -175,9 +175,10 @@ export default function Registration() {
         <Step>
           <StepLabel>Education</StepLabel>
         </Step>
-        {/* <Step>
+
+        <Step>
           <StepLabel>Percentage</StepLabel>
-        </Step> */}
+        </Step> 
         <Step>
           <StepLabel>Course</StepLabel>
         </Step>
