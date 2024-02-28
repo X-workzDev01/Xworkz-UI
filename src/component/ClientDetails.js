@@ -1,5 +1,6 @@
 import {
   Alert,
+  Autocomplete,
   Button,
   Grid,
   MenuItem,
@@ -45,6 +46,37 @@ export default function ClientDetails() {
   const [checkPhoneNumberExist, setCheckPhoneNumberExist] = React.useState("");
   const [checkCompanyWebsite, setCheckCompanyWebsite] = React.useState("");
   const [catchErrors, setCatchErrors] = React.useState("");
+  const [dropdownState, setDropdownState] = React.useState({
+    college: [],
+  });
+
+  const getCollegeDropDown = () => {
+    axios
+      .get(Urlconstant.url + "utils/dropdown", {
+        headers: {
+          spreadsheetId: Urlconstant.spreadsheetId,
+        },
+      })
+      .then((response) => {
+        setDropdownState({ college: response.data.college });
+      })
+      .catch((error) => { });
+  };
+  const [dropdown, setDropDown] = React.useState({
+    clientType: [],
+    sourceOfConnection: [],
+    sourceOfLocation: [],
+    hrDesignation: [],
+    callingStatus: []
+  });
+  React.useEffect(() => {
+    getDropdown();
+  }, [])
+  const getDropdown = () => {
+    axios.get(Urlconstant.url + `utils/clientdropdown`).then((response) => {
+      setDropDown(response.data);
+    })
+  }
 
   const handleClose = (reason) => {
     if (reason === "clickaway") {
@@ -52,15 +84,31 @@ export default function ClientDetails() {
     }
     setOpen(false);
   };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
+    if (name === "companyType") {
+      if(value.length>=2){
+        getCollegeDropDown();
+      }
+      setFormData((prevData) => ({
+        ...prevData,
+        companyName: "", // Clear the companyName field
+        [name]: value,
+      }));
+      setCompanyNameCheck("");
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
     switch (name) {
       case "companyName":
         if (value.length <= 2) {
           setCompanyNameCheck("Name should not be empty");
         } else {
           setCompanyNameCheck("");
+          handleCompanyName(value);
         }
         break;
       case "companyEmail":
@@ -78,6 +126,7 @@ export default function ClientDetails() {
           setPhoneNumberCheck("Enter valid contact number");
         } else {
           setPhoneNumberCheck("");
+          handleCompanyContactNumber(value);
         }
         break;
       case "companyWebsite":
@@ -97,8 +146,8 @@ export default function ClientDetails() {
   };
 
   const handleSubmit = (e) => {
-    setIsSubmitting(true)
     e.preventDefault();
+    setIsSubmitting(true)
     try {
       const clientData = {
         ...formData,
@@ -127,13 +176,12 @@ export default function ClientDetails() {
     }
   };
 
-  const handleCompanyName = (event) => {
-    const companyname = event.target.value;
+  const handleCompanyName = (companyname) => {
     axios
       .get(Urlconstant.url + `/api/companynamecheck?companyName=${companyname}`)
       .then((res) => {
         if (res.data === "Company Already Exists") {
-          setCompanyNameCheck(res.data);
+          setCompanyNameCheck("Already Exists");
         } else {
           setCompanyNameCheck("");
         }
@@ -155,7 +203,7 @@ export default function ClientDetails() {
       .then((res) => {
         if (res.data === "Company Email Already Exists") {
           setEmailCheck("");
-          setCompanyEmailCheck(res.data);
+          setCompanyEmailCheck("Email Already Exists");
         } else {
           setCompanyEmailCheck("");
           verifyEmail(companyEmail)
@@ -200,8 +248,8 @@ export default function ClientDetails() {
       });
   };
 
-  const handleCompanyContactNumber = (event) => {
-    const companyContactNumber = event.target.value;
+  const handleCompanyContactNumber = (companyContactNumber) => {
+   // const companyContactNumber = event.target.value;
     axios
       .get(
         Urlconstant.url +
@@ -209,7 +257,8 @@ export default function ClientDetails() {
       )
       .then((res) => {
         if (res.data === "Company ContactNumber Already Exists") {
-          setCheckPhoneNumberExist(res.data);
+          setCheckPhoneNumberExist("ContactNumber Already Exists");
+          setIsSubmitting(false);
           setPhoneNumberCheck("");
         } else {
           setCheckPhoneNumberExist("");
@@ -232,7 +281,7 @@ export default function ClientDetails() {
       )
       .then((res) => {
         if (res.data === "CompanyWebsite Already Exists") {
-          setCheckCompanyWebsite(res.data);
+          setCheckCompanyWebsite("Website Already Exists");
         } else {
           setCheckCompanyWebsite("");
         }
@@ -270,31 +319,72 @@ export default function ClientDetails() {
   return (
     <div>
       <h1>Register Client</h1>
-      
+
       <div className="container border mt-4 p-4">
         <div className="form-container">
           <Typography variant="h5" className="bold-text">
             Register Company
           </Typography>
+
           <Grid container spacing={3}>
             <Grid item xs={12} sm={4}>
               <TextField
-                label="Company Name"
-                name="companyName"
-                value={formData.companyName}
+                label="Type"
+                name="companyType"
+                value={formData.companyType}
                 onChange={handleChange}
                 fullWidth
                 margin="normal"
-                onBlur={handleCompanyName}
+                select
                 sx={textFieldStyles}
-              />
+              >
+                {dropdown.clientType.map((item, option) => (
+                  <MenuItem value={item} key={option}>
+                    {item}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              {formData.companyType === 'College' ? (
+                <Autocomplete
+                  freeSolo
+                  disableClearable
+                  options={dropdownState.college}
+                  value={formData.companyName}
+                  onChange={(event, newValue) => {
+                    handleChange({ target: { name: 'companyName', value: newValue } });
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Name"
+                      name="companyName"
+                      fullWidth
+                      margin="normal"
+                      sx={textFieldStyles}
+                    />
+                  )}
+                />
+              ) : (
+                <TextField
+                  label="Name"
+                  name="companyName"
+                  value={formData.companyName}
+                  onChange={handleChange}
+                  fullWidth
+                  margin="normal"
+                  sx={textFieldStyles}
+                />
+              )}
               {companyNameCheck && (
                 <Alert severity="error">{companyNameCheck}</Alert>
               )}
             </Grid>
+
             <Grid item xs={12} sm={4}>
               <TextField
-                label="Company Email"
+                label="E-mail"
                 name="companyEmail"
                 value={formData.companyEmail}
                 onChange={handleChange}
@@ -311,13 +401,12 @@ export default function ClientDetails() {
             </Grid>
             <Grid item xs={12} sm={4}>
               <TextField
-                label="Company Contact Number"
+                label="Contact Number"
                 name="companyLandLineNumber"
                 value={formData.companyLandLineNumber}
                 onChange={handleChange}
                 fullWidth
                 margin="normal"
-                onBlur={handleCompanyContactNumber}
                 sx={textFieldStyles}
               />
               {phoneNumberCheck && (
@@ -329,7 +418,7 @@ export default function ClientDetails() {
             </Grid>
             <Grid item xs={12} sm={4}>
               <TextField
-                label="Company Founder"
+                label="Founder"
                 name="companyFounder"
                 value={formData.companyFounder}
                 onChange={handleChange}
@@ -340,7 +429,7 @@ export default function ClientDetails() {
             </Grid>
             <Grid item xs={12} sm={4}>
               <TextField
-                label="Company Website"
+                label="Website"
                 name="companyWebsite"
                 value={formData.companyWebsite}
                 onChange={handleChange}
@@ -356,7 +445,7 @@ export default function ClientDetails() {
             </Grid>
             <Grid item xs={12} sm={4}>
               <TextField
-                label="Company Location"
+                label="Location"
                 name="companyLocation"
                 value={formData.companyLocation}
                 onChange={handleChange}
@@ -365,52 +454,35 @@ export default function ClientDetails() {
                 select
                 sx={textFieldStyles}
               >
-                {ClientDropDown.sourceOfLocation.map((option) => (
-                  <MenuItem key={option} value={option}>
-                    {option}
+                {dropdown.sourceOfLocation.map((item, option) => (
+                  <MenuItem value={item} key={option}>
+                    {item}
                   </MenuItem>
                 ))}
               </TextField>
             </Grid>
             <Grid item xs={12} sm={4}>
               <TextField
-                label="Source Of Connetion"
-                name="sourceOfConnetion"
-                value={formData.sourceOfConnetion}
+                label="Source Of Connection"
+                name="sourceOfConnection"
+                value={formData.sourceOfConnection}
                 onChange={handleChange}
                 fullWidth
                 margin="normal"
                 select
                 sx={textFieldStyles}
               >
-                {ClientDropDown.sourceOfConnection.map((option) => (
-                  <MenuItem key={option} value={option}>
-                    {option}
+                {dropdown.sourceOfConnection.map((item, option) => (
+                  <MenuItem value={item} key={option}>
+                    {item}
                   </MenuItem>
                 ))}
               </TextField>
             </Grid>
+
             <Grid item xs={12} sm={4}>
               <TextField
-                label="Company Type"
-                name="companyType"
-                value={formData.companyType}
-                onChange={handleChange}
-                fullWidth
-                margin="normal"
-                select
-                sx={textFieldStyles}
-              >
-                {ClientDropDown.clientType.map((option) => (
-                  <MenuItem key={option} value={option}>
-                    {option}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <TextField
-                label="Company Status"
+                label="Status"
                 name="status"
                 value={formData.status}
                 onChange={handleChange}
@@ -431,7 +503,7 @@ export default function ClientDetails() {
               <TextField
                 id="standard-multiline-static"
                 rows={3}
-                label="Company Address"
+                label="Address"
                 name="companyAddress"
                 value={formData.companyAddress}
                 onChange={handleChange}
@@ -449,7 +521,7 @@ export default function ClientDetails() {
                   variant="contained"
                   color="primary"
                   disabled={
-                    isSubmitting||
+                    isSubmitting ||
                     !formData.companyName ||
                     !formData.companyEmail ||
                     !formData.companyLandLineNumber ||

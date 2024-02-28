@@ -11,10 +11,11 @@ import { Urlconstant } from "../constant/Urlconstant";
 import { gridStyle, style } from "../constant/FormStyle";
 import { DataGrid } from "@mui/x-data-grid";
 import { PersonOutline } from "@mui/icons-material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { GridToolbar } from "@mui/x-data-grid";
 
 const HRDetails = ({ open, handleClose, id }) => {
+ 
   const initialPageSize = 25;
   const [paginationModel, setPaginationModel] = React.useState({
     page: 0,
@@ -35,7 +36,7 @@ const HRDetails = ({ open, handleClose, id }) => {
 
   // ... (existing code)
 
-  function searchServerRows(page, pageSize, id) {
+  function searchServerRows(page, pageSize, companyId) {
     const startingIndex = page * pageSize;
     var apiUrl =
       Urlconstant.url +
@@ -72,10 +73,10 @@ const HRDetails = ({ open, handleClose, id }) => {
 
   const columns = [
     {
-      field: "hrScopName",
+      field: "hrSpocName",
       headerName: "HR Spoc Name",
       flex: 1,
-      valueGetter: (params) => params.row.hrScopName,
+      valueGetter: (params) => params.row.hrSpocName,
     },
     {
       field: "hrEmail",
@@ -120,7 +121,7 @@ const HRDetails = ({ open, handleClose, id }) => {
       ),
     },
   ];
-
+  
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle>
@@ -147,7 +148,7 @@ const HRDetails = ({ open, handleClose, id }) => {
             paginationModel={paginationModel}
             onPaginationModelChange={setPaginationModel}
             keepNonExistentRowsSelected
-            slots={{ toolbar: GridToolbar}}
+            slots={{ toolbar: GridToolbar }}
           />
         </div>
       </DialogContent>

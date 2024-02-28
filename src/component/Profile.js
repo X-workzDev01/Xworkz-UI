@@ -50,9 +50,9 @@ function stringAvatar(name) {
 
   return {
     sx: {
-      bgcolor: stringToColor(name),
+      bgcolor: stringToColor(name)
     },
-    children: avatarText,
+    children: avatarText
   };
 }
 const Profile = (courseName, searchValue) => {
@@ -69,40 +69,48 @@ const Profile = (courseName, searchValue) => {
   const [feesHistory, setFeesHistory] = useState({});
   const [payFeesDisabled, setPayFeesDisabled] = useState(false);
   const [isFollowUpModalOpen, setFollowUpModalOpen] = React.useState(false);
-  const [editedFollowUpRowData, setEditedFollowUpRowData] =
-    React.useState(null);
+  const [editedFollowUpRowData, setEditedFollowUpRowData] = React.useState(
+    null
+  );
 
-  const [isFollowUpStatusModalOpen, setFollowUpStatusModalOpen] =
-    React.useState(false);
-  const [editedFollowUpStatusRowData, setEditedFollowUpStatusRowData] =
-    React.useState(null);
+  const [
+    isFollowUpStatusModalOpen,
+    setFollowUpStatusModalOpen
+  ] = React.useState(false);
+  const [
+    editedFollowUpStatusRowData,
+    setEditedFollowUpStatusRowData
+  ] = React.useState(null);
   const [showAttendence, setShowAttendence] = useState(false);
 
   const [isAttendanceModalOpen, setAttendanceModalOpen] = useState(false);
   const [attendanceId, setAttendanceId] = useState(null);
   const [batch, setbatch] = useState(null);
 
-  const handleAttendanceModalOpen = (rowData) => {
+  const handleAttendanceModalOpen = rowData => {
     setAttendanceModalOpen(true);
   };
 
-  React.useEffect(() => {
-    fetchData(
-      email,
-      isFollowUpStatusModalOpen,
-      isModalOpen,
-      setProfileData,
-      setFollowUpData,
-      setStatusData,
-      setDataLoadingError
-    );
-  }, [email, isFollowUpStatusModalOpen, isModalOpen]);
+  React.useEffect(
+    () => {
+      fetchData(
+        email,
+        isFollowUpStatusModalOpen,
+        isModalOpen,
+        setProfileData,
+        setFollowUpData,
+        setStatusData,
+        setDataLoadingError
+      );
+    },
+    [email, isFollowUpStatusModalOpen, isModalOpen]
+  );
   const getFeesDetiles = () => {
     setFeesData("");
     const response = axios.get(
       Urlconstant.url + `api/getFeesDetilesByEmail/${email}`
     );
-    response.then((res) => {
+    response.then(res => {
       setFeesData(res.data.feesDto[0]);
       setFeesHistory(res.data.feesHistoryDto);
       if (res.data.feesDto.length !== 0 && res.data.feesDto[0].balance === 0) {
@@ -129,21 +137,21 @@ const Profile = (courseName, searchValue) => {
         axios.get(traineeApi, {
           headers: {
             "Content-Type": "application/json",
-            spreadsheetId: Urlconstant.spreadsheetId,
-          },
+            spreadsheetId: Urlconstant.spreadsheetId
+          }
         }),
         axios.get(followUpApi, {
           headers: {
             "Content-Type": "application/json",
-            spreadsheetId: Urlconstant.spreadsheetId,
-          },
+            spreadsheetId: Urlconstant.spreadsheetId
+          }
         }),
         axios.get(statusApi, {
           headers: {
             "Content-Type": "application/json",
-            spreadsheetId: Urlconstant.spreadsheetId,
-          },
-        }),
+            spreadsheetId: Urlconstant.spreadsheetId
+          }
+        })
       ])
       .then(
         axios.spread((profileResponse, followUpResponse, statusResponse) => {
@@ -152,7 +160,7 @@ const Profile = (courseName, searchValue) => {
           setStatusData(statusResponse.data);
         })
       )
-      .catch((error) => {
+      .catch(error => {
         setDataLoadingError("Check the data loading...");
       });
   };
@@ -161,7 +169,7 @@ const Profile = (courseName, searchValue) => {
     return <div>Loading...</div>;
   }
 
-  const handleEditClick = (row) => {
+  const handleEditClick = row => {
     setEditedRowData(row);
     setModalOpen(true);
   };
@@ -169,7 +177,7 @@ const Profile = (courseName, searchValue) => {
     setModalOpen(false);
   };
 
-  const handleFollowUp = (row) => {
+  const handleFollowUp = row => {
     setEditedFollowUpStatusRowData(row);
     setFollowUpStatusModalOpen(true);
   };
@@ -178,7 +186,7 @@ const Profile = (courseName, searchValue) => {
     setFollowUpStatusModalOpen(false);
   };
 
-  const handleAttendence = (row) => {
+  const handleAttendence = row => {
     console.log(row);
     setShowAttendence(true);
   };
@@ -204,7 +212,9 @@ const Profile = (courseName, searchValue) => {
         <div className="infos">
           <Avatar {...stringAvatar(profileData.basicInfo.traineeName)} />
           <div className="name">
-            <h1>{profileData.basicInfo.traineeName}</h1>
+            <h1>
+              {profileData.basicInfo.traineeName}
+            </h1>
             <h3>
               <EmailIcon sx={{ color: "#1277B2" }} />{" "}
               {profileData.basicInfo.email}
@@ -216,38 +226,54 @@ const Profile = (courseName, searchValue) => {
           </div>
           <ul className="stats">
             <li>
-              <h3>{profileData.educationInfo.qualification}</h3>
+              <h3>
+                {profileData.educationInfo.qualification}
+              </h3>
               <h4>qualification</h4>
             </li>
             <li>
-              <h3>{profileData.educationInfo.yearOfPassout}</h3>
+              <h3>
+                {profileData.educationInfo.yearOfPassout}
+              </h3>
               <h4>Passout</h4>
             </li>
 
             <li>
-              <h3>{profileData.othersDto.preferredLocation}</h3>
+              <h3>
+                {profileData.othersDto.preferredLocation}
+              </h3>
               <h4>Preferred Location</h4>
             </li>
             <li>
-              <h3>{profileData.othersDto.preferredClassType}</h3>
+              <h3>
+                {profileData.othersDto.preferredClassType}
+              </h3>
               <h4>Preferred Class TYpe</h4>
             </li>
           </ul>
           <ul className="stats">
             <li>
-              <h3>{followUpData.registrationDate}</h3>
+              <h3>
+                {followUpData.registrationDate}
+              </h3>
               <h4>Registration Date and Time</h4>
             </li>
             <li>
-              <h3>{followUpData.joiningDate}</h3>
+              <h3>
+                {followUpData.joiningDate}
+              </h3>
               <h4>Joining Date</h4>
             </li>
             <li>
-              <h3>{followUpData.currentlyFollowedBy}</h3>
+              <h3>
+                {followUpData.currentlyFollowedBy}
+              </h3>
               <h4>Currently Followed By</h4>
             </li>
             <li>
-              <h3>{followUpData.currentStatus}</h3>
+              <h3>
+                {followUpData.currentStatus}
+              </h3>
               <h4>Current Status</h4>
             </li>
           </ul>
@@ -270,71 +296,55 @@ const Profile = (courseName, searchValue) => {
             >
               Edit Profile
             </Button>
-            {followUpData.currentStatus ? (
-              followUpData.currentStatus === "Joined" ? (
-                <Button
-                  style={{ marginRight: "0.5rem" }}
-                  variant="outlined"
-                  startIcon={<ModeEditIcon />}
-                  onClick={() => handleAttendanceModalOpen(profileData)} // Pass profileData or appropriate rowData
-                >
-                  View Attendance
-                </Button>
-              ) : (
-                ""
-              )
-            ) : (
-              ""
-            )}
-
-            {followUpData.currentStatus ? (
-              feesData ? (
-                followUpData.currentStatus === "Joined" ||
+            {followUpData.currentStatus
+              ? followUpData.currentStatus === "Joined" ||
                 followUpData.currentStatus === "Drop after free course" ||
-                followUpData.currentStatus === "Higher Studies" ||
-                followUpData.currentStatus === "Drop after placement" ? (
-                  <Button
+                followUpData.currentStatus === "Drop after placement"
+                ? <Button
                     style={{ marginRight: "0.5rem" }}
                     variant="outlined"
-                    startIcon={<SiContactlesspayment />}
-                    onClick={handleFees}
-                    disabled={payFeesDisabled}
+                    startIcon={<ModeEditIcon />}
+                    onClick={() => handleAttendanceModalOpen(profileData)} // Pass profileData or appropriate rowData
                   >
-                    Pay Fees
+                    View Attendance
                   </Button>
-                ) : (
-                  ""
-                )
-              ) : (
-                ""
-              )
-            ) : (
-              ""
-            )}
+                : ""
+              : ""}
 
-            {followUpData.currentStatus && feesData ? (
-              followUpData.currentStatus === "Joined" ||
-              followUpData.currentStatus === "Drop after free course" ||
-              followUpData.currentStatus === "Higher Studies" ||
-              followUpData.currentStatus === "Drop after placement" ? (
-                feesHistory && feesHistory.length > 0 ? (
-                  <Button
-                    style={{ marginRight: "0.5rem" }}
-                    variant="outlined"
-                    startIcon={<MdWorkHistory />}
-                    onClick={handleFeesHistory}
-                  >
-                    Fees History
-                  </Button>
-                ) : (
-                  ""
-                )
-              ) : (
-                ""
-              )
-            ) : (
-              ""
-            )}
+            {followUpData.currentStatus
+              ? feesData
+                ? followUpData.currentStatus === "Joined" ||
+                  followUpData.currentStatus === "Drop after free course" ||
+                  followUpData.currentStatus === "Drop after placement"
+                  ? <Button
+                      style={{ marginRight: "0.5rem" }}
+                      variant="outlined"
+                      startIcon={<SiContactlesspayment />}
+                      onClick={handleFees}
+                      disabled={payFeesDisabled}
+                    >
+                      Pay Fees
+                    </Button>
+                  : ""
+                : ""
+              : ""}
+
+            {followUpData.currentStatus && feesData
+              ? followUpData.currentStatus === "Joined" ||
+                followUpData.currentStatus === "Drop after free course" ||
+                followUpData.currentStatus === "Drop after placement"
+                ? feesHistory && feesHistory.length > 0
+                  ? <Button
+                      style={{ marginRight: "0.5rem" }}
+                      variant="outlined"
+                      startIcon={<MdWorkHistory />}
+                      onClick={handleFeesHistory}
+                    >
+                      Fees History
+                    </Button>
+                  : ""
+                : ""
+              : ""}
           </div>
         </div>
       </div>
@@ -345,6 +355,7 @@ const Profile = (courseName, searchValue) => {
         rowData={editedRowData}
         setRowData={setEditedRowData}
         handleSaveClick={handleSaveClick}
+        feeConcession={feesData ? feesData.feeConcession : 0}
       />
 
       <FollowUpStatus
@@ -352,23 +363,20 @@ const Profile = (courseName, searchValue) => {
         handleClose={() => setFollowUpStatusModalOpen(false)}
         rowData={editedFollowUpStatusRowData}
         setRowData={setEditedFollowUpStatusRowData}
+        followUpdata={followUpData}
         handleSaveClick={handleFollowUpStatusSave}
         FollowUp={handleFollowUp}
       />
 
-      {followUpData.currentStatus ? (
-        followUpData.currentStatus === "Joined" && feesHistory ? (
-          <FeesHistory
-            isOpen={openFeesHistory}
-            handleClose={() => setOpenFeesHistory(false)}
-            row={feesHistory}
-          />
-        ) : (
-          ""
-        )
-      ) : (
-        ""
-      )}
+      {followUpData.currentStatus
+        ? followUpData.currentStatus === "Joined" && feesHistory
+          ? <FeesHistory
+              isOpen={openFeesHistory}
+              handleClose={() => setOpenFeesHistory(false)}
+              row={feesHistory}
+            />
+          : ""
+        : ""}
       <AttendanceModal
         open={isAttendanceModalOpen}
         handleClose={() => setAttendanceModalOpen(false)}
@@ -382,22 +390,18 @@ const Profile = (courseName, searchValue) => {
         row={feesHistory}
       />
 
-      {followUpData.currentStatus ? (
-        followUpData.currentStatus === "Joined" && feesData ? (
-          <PayFee
-            open={open}
-            handleClose={() => setOpen(false)}
-            traineeEmail={profileData.basicInfo.email}
-            name={profileData.basicInfo.tr}
-            feesData={feesData}
-            feesDetils={getFeesDetiles}
-          />
-        ) : (
-          ""
-        )
-      ) : (
-        ""
-      )}
+      {followUpData.currentStatus
+        ? followUpData.currentStatus === "Joined" && feesData
+          ? <PayFee
+              open={open}
+              handleClose={() => setOpen(false)}
+              traineeEmail={profileData.basicInfo.email}
+              name={profileData.basicInfo.tr}
+              feesData={feesData}
+              feesDetils={getFeesDetiles}
+            />
+          : ""
+        : ""}
 
       {statusData ? <FollowStatusGrid rows={statusData} /> : null}
     </div>

@@ -42,7 +42,21 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
   const [phoneNumberCheck, setPhoneNumberCheck] = React.useState("");
   const [checkEmailExist, setCheckEmailExist] = React.useState("");
 
+  const [dropdown, setDropDown] = React.useState({
+    clientType: [],
+    sourceOfConnection: [],
+    sourceOfLocation: [],
+    hrDesignation: [],
+    callingStatus: []
+  });
+ 
+  const getDropdown = () => {
+    axios.get(Urlconstant.url + `utils/clientdropdown`).then((response) => {
+      setDropDown(response.data);
+    })
+  }
   React.useEffect(() => {
+    getDropdown();
     setEditedData(rowData);
     setNameCheck("");
     setCompanyNameCheck("");
@@ -414,12 +428,11 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
               fullWidth
               margin="normal"
               select
-            >
-              {ClientDropDown.sourceOfLocation.map((option) => (
-                <MenuItem key={option} value={option}>
-                  {option}
-                </MenuItem>
-              ))}
+            >{dropdown.sourceOfLocation.map((item, index) => (
+              <MenuItem key={index} value={item}>
+                {item}
+              </MenuItem>
+            ))}
             </TextField>
           </Grid>
           <Grid item xs={12} sm={4}>
@@ -439,17 +452,17 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
           </Grid>
           <Grid item xs={12} sm={4}>
             <TextField
-              label="Source Of Connetion"
-              name="sourceOfConnetion"
-              defaultValue={rowData.sourceOfConnetion}
+              label="Source Of Connection"
+              name="sourceOfConnection"
+              defaultValue={rowData.sourceOfConnection}
               onChange={handleChange}
               fullWidth
               margin="normal"
               select
             >
-              {ClientDropDown.sourceOfConnection.map((option) => (
-                <MenuItem key={option} value={option}>
-                  {option}
+              {dropdown.sourceOfConnection.map((item, index) => (
+                <MenuItem key={index} value={item}>
+                  {item}
                 </MenuItem>
               ))}
             </TextField>
@@ -464,9 +477,9 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
               margin="normal"
               select
             >
-              {ClientDropDown.clientType.map((option) => (
-                <MenuItem key={option} value={option}>
-                  {option}
+              {dropdown.clientType.map((item, index) => (
+                <MenuItem key={index} value={item}>
+                  {item}
                 </MenuItem>
               ))}
             </TextField>

@@ -80,11 +80,8 @@ const CompanyProfile = () => {
     fetchData(id);
     fetchHRFollowUp(id);
   }, [id, isEditCompanyDetailsModalOpen, isHrFollowUpModalOpen]);
-
-  React.useEffect(() => { }, [id, isAddHrModalOpen, isHrFollowupModalOpen]);
-
+  
   const fetchHRFollowUp = (id) => {
-    console.log(id);
     const companyId = id;
     axios
       .get(

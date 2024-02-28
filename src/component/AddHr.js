@@ -21,7 +21,6 @@ import {
   validateContactNumber,
   validateEmail,
 } from "../constant/ValidationConstant";
-import { ClientDropDown } from "../constant/ClientDropDown";
 
 const AddHr = ({ open, handleClose, rowData }) => {
 
@@ -39,12 +38,42 @@ const AddHr = ({ open, handleClose, rowData }) => {
   const [verifyEmail, setVerifyEmail] = React.useState("");
   const [validateName, setValidateName] = React.useState("");
   const [validateDesignation, setValidateDesignation] = React.useState("");
+  const [dropdown, setDropDown] = React.useState({
+    clientType: [],
+    sourceOfConnection: [],
+    sourceOfLocation: [],
+    hrDesignation: [],
+    callingStatus: []
+  });
+  React.useEffect(() => {
+    getDropdown();
+    if (open) {
+      setFormData({
+        hrSpocName: "",
+        hrEmail: "",
+        hrContactNumber: "",
+        designation: "",
+        status: "",
+      });
+      setPhoneNumberCheck("");
+      setEmailCheck("");
+      setCheckEmailExist("");
+      setCheckPhoneNumberExist("");
+      setVerifyEmail("");
+      setValidateName("");
+    }
+  }, [open]);
+  const getDropdown = () => {
+    axios.get(Urlconstant.url + `utils/clientdropdown`).then((response) => {
+      setDropDown(response.data);
+    })
+  }
 
   const [charCount, setCharCount] = React.useState("");
   const handleInputChange = (event) => {
     const { name, value } = event.target;
 
-    if (name === "hrScopName") {
+    if (name === "hrSpocName") {
       if (value && value.length <= 2) {
         setValidateName("Enter the valid name");
       } else {
@@ -55,7 +84,7 @@ const AddHr = ({ open, handleClose, rowData }) => {
       if (validateEmail(value)) {
         setEmailCheck("");
       } else {
-        setEmailCheck("invalid email");
+        setEmailCheck("Invalid email");
         setCheckEmailExist("");
       }
     }
@@ -130,7 +159,7 @@ const AddHr = ({ open, handleClose, rowData }) => {
                 handleCloseForm();
               }, 1000);
               setFormData({
-                hrScopName: "",
+                hrSpocName: "",
                 hrEmail: "",
                 hrContactNumber: "",
                 designation: "",
@@ -236,7 +265,7 @@ const AddHr = ({ open, handleClose, rowData }) => {
     checkPhoneNumberExist ||
     checkEmailExist ||
     emailCheck ||
-    !formData.hrScopName ||
+    !formData.hrSpocName ||
     !formData.hrContactNumber ||
     !formData.designation;
   return (
@@ -258,10 +287,10 @@ const AddHr = ({ open, handleClose, rowData }) => {
           <Grid item xs={12} sm={4}>
             <TextField
               label="Hr Spoc Name"
-              name="hrScopName"
+              name="hrSpocName"
               onChange={handleInputChange}
               style={fieldStyle}
-              value={formData.hrScopName}
+              value={formData.hrSpocName}
             />
             {validateName ? (
               <Alert severity="error">{validateName}</Alert>
@@ -313,9 +342,9 @@ const AddHr = ({ open, handleClose, rowData }) => {
               fullWidth
               margin="normal"
             >
-              {ClientDropDown.hrDesignation.map((option) => (
-                <MenuItem key={option} value={option}>
-                  {option}
+              {dropdown.hrDesignation.map((item, index) => (
+                <MenuItem key={index} value={item}>
+                  {item}
                 </MenuItem>
               ))}
             </TextField>

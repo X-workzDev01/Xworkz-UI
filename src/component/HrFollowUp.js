@@ -14,19 +14,46 @@ import {
 } from "@mui/material";
 import { GridCloseIcon } from "@mui/x-data-grid";
 import axios from "axios";
-import React, { useState } from "react";
+import React from "react";
 import { Urlconstant } from "../constant/Urlconstant";
 import { fieldStyle, style } from "../constant/FormStyle";
-import { ClientDropDown } from "../constant/ClientDropDown";
+import { getCurrentDate } from "../constant/ValidationConstant";
 
 const HrFollowUp = ({ open, handleClose, rowData }) => {
-  const [isConfirmed,setIsConfirmed]=React.useState(false);
+  const [isConfirmed, setIsConfirmed] = React.useState(false);
   const [responseMessage, setResponseMessage] = React.useState("");
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [isConfirming, setIsConfirming] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [formData, setFormData] = React.useState("");
   const attemtedUser = sessionStorage.getItem("userId");
+  const [dropdown, setDropDown] = React.useState({
+    clientType: [],
+    sourceOfConnection: [],
+    sourceOfLocation: [],
+    hrDesignation: [],
+    callingStatus: []
+  });
+
+  const getDropdown = () => {
+    axios.get(Urlconstant.url + `utils/clientdropdown`).then((response) => {
+      setDropDown(response.data);
+    })
+  }
+
+  React.useEffect(() => {
+    if (open) {
+      setFormData({
+        attemptBy: attemtedUser,
+        attemptStatus: "",
+        callDuration: "",
+        callBackDate: "",
+        callBackTime: "",
+        comments: "",
+      });
+      getDropdown();
+    }
+  }, [open]);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -74,6 +101,7 @@ const HrFollowUp = ({ open, handleClose, rowData }) => {
                 handleCloseForm();
               }, 1000);
             }
+            setFormData("");
           });
       } catch (response) {
         setResponseMessage("Not added to follow up");
@@ -123,8 +151,8 @@ const HrFollowUp = ({ open, handleClose, rowData }) => {
               select
               margin="normal"
             >
-              {ClientDropDown.callingStatus.map((item) => (
-                <MenuItem key={item} value={item}>
+              {dropdown.callingStatus.map((item, index) => (
+                <MenuItem key={index} value={item}>
                   {item}
                 </MenuItem>
               ))}
@@ -135,6 +163,7 @@ const HrFollowUp = ({ open, handleClose, rowData }) => {
             <TextField
               label="Call Duration"
               name="callDuration"
+              placeholder="mm:ss"
               onChange={handleInputChange}
               style={fieldStyle}
               value={formData.callDuration}
@@ -152,15 +181,34 @@ const HrFollowUp = ({ open, handleClose, rowData }) => {
               InputLabelProps={{
                 shrink: true,
               }}
+              inputProps={{
+                min: getCurrentDate(),
+              }}
+              sx={{
+                marginRight: "10px",
+                width: "200px",
+                marginLeft: "30px",
+                fontSize: "14px",
+              }}
             />
           </Grid>
           <Grid item xs={12} sm={4}>
             <TextField
+              type="time"
               label="call Back Time"
               name="callBackTime"
               onChange={handleInputChange}
               style={fieldStyle}
               value={formData.callBackTime}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              sx={{
+                marginRight: "10px",
+                width: "200px",
+                marginLeft: "30px",
+                fontSize: "14px",
+              }}
             />
           </Grid>
           <Grid item xs={12} sm={4}>

@@ -1,13 +1,13 @@
 import axios from "axios";
 import React, { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Urlconstant } from "../constant/Urlconstant";
 import { Avatar, Button } from "@mui/material";
 import {
   AddCircleOutline,
   EmailOutlined,
-  ModeEditOutline,
   ModeEditOutlined,
+  PersonOutline,
   PhoneAndroid,
   WorkOutlineOutlined,
 } from "@mui/icons-material";
@@ -50,28 +50,29 @@ function stringAvatar(name) {
 }
 const ViewHrProfile = () => {
   const { id } = useParams();
-  const [HrScopName, setHrScopName] = React.useState("");
+  const [HrSpocName, setHrSpocName] = React.useState("");
   const [HrDetails, setHrDetails] = React.useState("");
   const [HrFollowUpStatus, setHrFollowUpStatus] = React.useState("");
   const [isEditHRDetailsModalOpen, setEditHRDetailsModalOpen] =
     React.useState(false);
   const [isHrFollowUpModalOpen, setHrFollowUpModalOpen] = React.useState("");
+  const [companyId,setCompanyId] = React.useState("");
 
   const fetchHrDetails = (id) => {
     axios
       .get(Urlconstant.url + `api/getdetailsbyhrid?hrId=${id}`)
       .then((response) => {
-        setHrScopName(response.data.hrScopName);
+        setHrSpocName(response.data.hrSpocName);
         setHrDetails(response.data);
+        setCompanyId(response.data.companyId);
       })
       .catch((error) => {
         if (error.response && error.response.status === 500) {
-          setHrScopName("");
+          setHrSpocName("");
           setHrDetails("");
         }
       });
   };
-
   const fetchHRFollowUp = (id) => {
     axios
       .get(Urlconstant.url + `api/gethrfollowupdetails?hrId=${id}`)
@@ -86,11 +87,11 @@ const ViewHrProfile = () => {
   };
   useEffect(() => {
     fetchHrDetails(id);
-  }, [isEditHRDetailsModalOpen]);
+  }, [id,isEditHRDetailsModalOpen]);
 
   useEffect(() => {
     fetchHRFollowUp(id);
-  }, [isHrFollowUpModalOpen]);
+  }, [id,isHrFollowUpModalOpen]);
 
   const handleEditHRDetails = () => {
     setEditHRDetailsModalOpen(true);
@@ -111,9 +112,9 @@ const ViewHrProfile = () => {
     <div>
       <h1>HR Details</h1>
       <div className="card">
-        <Avatar {...stringAvatar(HrScopName)} />
+        <Avatar {...stringAvatar(HrSpocName)} />
         <div className="name">
-          <h1>{HrScopName}</h1>
+          <h1>{HrSpocName}</h1>
           <h3>
             <EmailOutlined sx={{ color: "#1277B2" }} /> {HrDetails.hrEmail}
           </h3>
@@ -131,6 +132,7 @@ const ViewHrProfile = () => {
             onClick={() => {
               handleEditHRDetails(HrDetails);
             }}
+            sx={{ marginRight: "10px" }}
           >
             Edit Details
           </Button>
@@ -140,8 +142,18 @@ const ViewHrProfile = () => {
             onClick={() => {
               handleHRFollowUp(HrDetails);
             }}
+            sx={{ marginRight: "10px" }}
           >
             Follow Up
+          </Button>
+          <Button
+            variant="outlined"
+            color="primary"
+            startIcon={<PersonOutline />}
+            component={Link}
+            to={Urlconstant.navigate + `companies/${companyId}`}
+          >
+            Back
           </Button>
         </div>
         <EditHRDetails

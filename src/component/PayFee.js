@@ -19,6 +19,7 @@ import { Container } from "react-bootstrap";
 import { TfiClose } from "react-icons/tfi";
 import { Urlconstant } from "../constant/Urlconstant";
 import "./PayFee.css";
+import { toHaveStyle } from "@testing-library/jest-dom/matchers";
 
 export const PayFee = ({
   open,
@@ -27,12 +28,14 @@ export const PayFee = ({
   feesData,
   feesDetils,
 }) => {
+  const [finalUpdateBalence, setFinalUpdateBalence] = useState("");
   const [updateFeesData, setUpdateFeesData] = useState({});
   const [amountError, setAmountError] = useState("");
   const paidTo = ["Mamatha", "Akshara", "Amulya", "Omkar"];
   const [loading, setLoading] = useState(false);
   const paymentMode = ["Online", "Upi", "Cash"];
   var selectlateFee = ["Yes", "No"];
+  const [lateFeesValue, setLateFeesValue] = useState("");
   const [isConfirm, setIsConfirm] = useState(false);
   const [paidAmountError, setPaidAmountError] = useState("");
   const [lateFeesError, setLateFeesError] = useState("");
@@ -52,13 +55,18 @@ export const PayFee = ({
   };
 
   useEffect(() => {
+    if (feesData.lateFees > 0) {
+      setLateFeesValue("Yes");
+    } else {
+      setLateFeesValue("");
+    }
     setUpdateFeesData("");
     setPaidAmountError("");
     setAmountError("");
     setLateFeesError("");
     setTotalBalance(feesData.totalAmount);
     setupdatedTotalAmount(totalBalance);
-    setUpdatedBalance(feesData.balance);
+    setUpdatedBalance(balance);
     setBalance(feesData.balance);
   }, [open, traineeEmail, handleClose, feesData]);
 
@@ -110,7 +118,7 @@ export const PayFee = ({
     if (name === "lateFees") {
       setLateFeesError("");
       setupdatedTotalAmount(totalBalance + Number(value));
-      setUpdatedBalance(balance + Number(value));
+      setUpdatedBalance(finalUpdateBalence + Number(value));
       setUpdateFeesData({ ...updateFeesData, [name]: value });
     }
     if (name === "lateFees" && value <= 0) {
@@ -119,8 +127,8 @@ export const PayFee = ({
     }
 
     if (name === "paidAmount") {
-      setUpdatedBalance(updatedTotalAmount - value);
-      setBalance(updatedTotalAmount - value);
+      setUpdatedBalance(Number(balance) - Number(value));
+      setFinalUpdateBalence(Number(balance) - Number(value));
     }
   };
 
@@ -144,7 +152,6 @@ export const PayFee = ({
 
   let isDisabled;
   if (updateFeesData.selectlateFees === "Yes") {
-    console.log("Running Is diesable");
     isDisabled =
       !updateFeesData.lateFees ||
       !updateFeesData.transectionId ||
@@ -162,7 +169,6 @@ export const PayFee = ({
       !updateFeesData.followupCallbackDate ||
       !updateFeesData.paymentMode ||
       !updateFeesData.paidTo ||
-      !updateFeesData.selectlateFees ||
       amountError;
   }
 
@@ -406,6 +412,7 @@ export const PayFee = ({
                     id="demo-simple-select"
                     label="Select Late Fees"
                     required
+                    defaultValue={lateFeesValue}
                     name="selectlateFees"
                     onChange={handleSetData}
                     variant="outlined"
