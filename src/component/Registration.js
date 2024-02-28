@@ -119,18 +119,18 @@ export default function Registration() {
             dropdown={dropdown}
           />
         );
-      // case 3:
-      //   return (
-      //     <Percentage
-      //       formData={formData.percentageDto}
-      //       setFormData={(data) =>
-      //         setFormData({ ...formData, percentageDto: data })
-      //       }
-      //       onNext={handleNext}
-      //       onPrevious={handlePrevious}
-      //     />
-      //   );
-        case 3:
+      case 3:
+        return (
+          <Percentage
+            formData={formData.percentageDto}
+            setFormData={(data) =>
+              setFormData({ ...formData, percentageDto: data })
+            }
+            onNext={handleNext}
+            onPrevious={handlePrevious}
+          />
+        );
+        case 4:
         return (
           <Course
             formData={formData.courseInfo}
@@ -143,7 +143,7 @@ export default function Registration() {
             batchDetiles={batchDetiles}
           />
         );
-      case 4:
+      case 5:
         return (
           <Referral
             formData={formData.othersDto}

@@ -349,7 +349,7 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
       .catch({});
   };
 
-  const verifyEmail = email => {
+  const verifyEmail = (email) => {
     handleEmail(email);
     if (emailCheck === "Email does not exist") {
       axios
@@ -369,11 +369,11 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
         });
     }
   };
-  const handleVerifyEmail = event => {
+  const handleVerifyEmail = (event) => {
     verifyEmail(event.target.value);
   };
 
-  const handleNumberChange = e => {
+  const handleNumberChange =(e)=> {
     const contactNumber = e.target.value;
     if (contactNumber == rowData.basicInfo.contactNumber) {
       setDisable(false);
@@ -518,7 +518,7 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
     }
   };
 
-  const handleUsnNumber = event => {
+  const handleUsnNumber = (event) => {
     const usn = event.target.value;
     if (usn === rowData.csrDto.usnNumber) {
       setUsnCheck("");
