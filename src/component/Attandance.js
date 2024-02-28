@@ -226,14 +226,20 @@ export default function ControlledSelectionServerPaginationGrid() {
     {
       field: "traineeName",
       headerName: "Trainee Name",
-      width: 450,
-      valueGetter: (params) => params.row.traineeName,
+      width: 350,
+      valueGetter: (params) => params.row.name,
+    },
+    {
+      field: "email",
+      headerName: "Email",
+      width: 350,
+      valueGetter: (params) => params.row.email,
     },
     {
       field: "course",
       headerNam1e: "Course",
-      width: 550,
-      valueGetter: (params) => params.row.course,
+      width: 450,
+      valueGetter: (params) => params.row.courseName,
     },
 
     {
@@ -252,9 +258,8 @@ export default function ControlledSelectionServerPaginationGrid() {
             variant="outlined"
             color="secondary"
             startIcon={<PersonOutline />}
-            onClick={() => {
-              handleModelOpen(params.row.course, params.row.id);
-            }}
+            component={Link}
+            to={Urlconstant.navigate + `profile/${params.row.email}`}
           >
             View
           </Button>
