@@ -4,12 +4,10 @@ export const Urlconstant = {
 
   url: "http://localhost:8081/",
 
+  // spreadsheetId: "1p3G4et36vkzSDs3W63cj6qnUFEWljLos2HHXIZd78Gg",
+  //spreadsheetId: '1HI3nKYRbXNl2cu9rKwqKp3tznOZ7ziOupokU_daFZ8E',
+  spreadsheetId: "1BBvpbYuTvqaXQ2ooVItm0MGqB5XMnNgpHc0ZUW4zqLg",
 
-    spreadsheetId: "1p3G4et36vkzSDs3W63cj6qnUFEWljLos2HHXIZd78Gg",
-
-    //spreadsheetId: '1HI3nKYRbXNl2cu9rKwqKp3tznOZ7ziOupokU_daFZ8E',
-
-  navigate: "/x-workz-dev/",
+  navigate: "/x-workz-dev/"
   //navigate:  '/x-workz/',
 };
-
