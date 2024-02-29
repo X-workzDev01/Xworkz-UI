@@ -452,9 +452,9 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
           </Grid>
           <Grid item xs={12} sm={4}>
             <TextField
-              label="Source Of Connetion"
-              name="sourceOfConnetion"
-              defaultValue={rowData.sourceOfConnetion}
+              label="Source Of Connection"
+              name="sourceOfConnection"
+              defaultValue={rowData.sourceOfConnection}
               onChange={handleChange}
               fullWidth
               margin="normal"

@@ -22,6 +22,7 @@ import { GridCloseIcon } from "@mui/x-data-grid";
 
 import "./Fields.css";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import {
   validateContactNumber,
   validateEmail
@@ -30,9 +31,16 @@ import { set } from "date-fns";
 
 const fieldStyle = { margin: "20px" };
 
-const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
+const EditModal = ({
+  open,
+  handleClose,
+  rowData,
+  feeConcession,
+  attemptStatus
+}) => {
+  console.log(attemptStatus);
   const navigate = useNavigate();
-  const [feesConcession, setFeesConcession] = useState(0);
+  const [feesConcession, setFeesConcession] = useState(feeConcession);
   const email = sessionStorage.getItem("userId");
   const [isConfirming, setIsConfirming] = React.useState(false);
   const [selectedValue, setSelectedValue] = React.useState(" ");
@@ -71,12 +79,15 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
   const [comments, setComments] = React.useState("");
   const [xworkzemailCheck, setXworkzEmailCheck] = React.useState("");
   const [isConfirmed, setIsConfirmed] = React.useState(false);
+  const [sslcError, setSslcError] = useState("");
+  const [pucError, setPucError] = useState("");
+  const [degreeError, setDegreeError] = useState("");
+
   React.useEffect(
     () => {
       setEditedData(rowData);
       setUsnCheck("");
       setEmailError("");
-      setFeesConcession(0);
       setverifyHandleEmail("");
       setEmailCheck("");
       setPhoneNumberError("");
@@ -91,6 +102,13 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
     },
     [rowData]
   );
+
+
+  useEffect(() => {
+    const percDisabled = sslcError || pucError || degreeError;
+    setDisable(percDisabled);
+
+  }, [sslcError, pucError, degreeError]);
 
   React.useEffect(() => {
     axios
@@ -256,6 +274,42 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
         setDisable(false);
       }
     }
+    if (name === "percentageDto.sslcPercentage") {
+      if (!value) {
+        setSslcError("SSLC (10th) Percentage is required");
+      } else if (value < 1 || value > 99.99) {
+        setSslcError("Enter proper percentage");
+      } else if (!/^[0-9]*(\.[0-9]{0,2})?$/.test(value)) {
+        setSslcError("Only two decimals are allowed");
+      } else {
+        setSslcError("");
+      }
+    }
+
+    if (name === "percentageDto.pucPercentage") {
+      if (!value) {
+        setPucError("PUC Percentage is required");
+      } else if (value < 1 || value > 99.99) {
+        setPucError("Enter proper percentage");
+      } else if (!/^[0-9]*(\.[0-9]{0,2})?$/.test(value)) {
+        setPucError("Only two decimals are allowed");
+      } else {
+        setPucError("");
+      }
+    }
+
+    if (name === "percentageDto.degreePercentage") {
+      if (!value) {
+        setDegreeError("Degree Percentage  is required");
+      } else if (value < 1 || value > 99.99) {
+        setDegreeError("Enter proper percentage");
+      } else if (!/^[0-9]*(\.[0-9]{0,2})?$/.test(value)) {
+        setDegreeError("Only two decimals are allowed");
+      } else {
+        setDegreeError("");
+      }
+    }
+
     if (name === "othersDto.comments") {
       if (value.length <= 0) {
         setComments("Comment should not be empty");
@@ -273,7 +327,8 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
       }
     }));
   };
-  const handleEmail = email => {
+
+  const handleEmail = (email) => {
     if (rowData.basicInfo.email === email) {
       setDisable(false);
       setEmailCheck(null);
@@ -300,7 +355,7 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
       .catch({});
   };
 
-  const verifyEmail = email => {
+  const verifyEmail = (email) => {
     handleEmail(email);
     if (emailCheck === "Email does not exist") {
       axios
@@ -320,11 +375,11 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
         });
     }
   };
-  const handleVerifyEmail = event => {
+  const handleVerifyEmail = (event) => {
     verifyEmail(event.target.value);
   };
 
-  const handleNumberChange = e => {
+  const handleNumberChange =(e)=> {
     const contactNumber = e.target.value;
     if (contactNumber == rowData.basicInfo.contactNumber) {
       setDisable(false);
@@ -449,7 +504,8 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
     setDisable(false);
     handleClose();
   };
-  const handleVerifyXworkzEmail = event => {
+
+  const handleVerifyXworkzEmail = (event) => {
     let xworkzemail = event.target.value;
     if (xworkzemail.includes(".xworkz")) {
       if (!validateEmail(xworkzemail)) {
@@ -468,7 +524,7 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
     }
   };
 
-  const handleUsnNumber = event => {
+  const handleUsnNumber = (event) => {
     const usn = event.target.value;
     if (usn === rowData.csrDto.usnNumber) {
       setUsnCheck("");
@@ -955,33 +1011,75 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
               </Select>
             </FormControl>
           </Grid>
+          {attemptStatus
+            ? attemptStatus === "Joined"
+              ? <Grid item xs={4}>
+                  <FormControl>
+                    <InputLabel id="demo-simple-select-label">
+                      Fees Concession
+                    </InputLabel>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      label="Concession"
+                      name="feeConcession"
+                      onChange={handleInputChange}
+                      defaultValue={feeConcession}
+                      variant="outlined"
+                      sx={{
+                        marginRight: "20px",
+                        width: "225px"
+                      }}
+                      style={fieldStyle}
+                      required
+                    >
+                      {[...Array(26).keys()].map((item, index) =>
+                        <MenuItem value={item} key={index}>
+                          {item}
+                        </MenuItem>
+                      )}
+                    </Select>
+                  </FormControl>
+                </Grid>
+              : ""
+            : ""}
+   
           <Grid item xs={4}>
-            <FormControl>
-              <InputLabel id="demo-simple-select-label">
-                Fees Concession
-              </InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                label="Concession"
-                name="feeConcession"
-                onChange={handleInputChange}
-                defaultValue={feeConcession}
-                variant="outlined"
-                sx={{
-                  marginRight: "20px",
-                  width: "225px"
-                }}
-                style={fieldStyle}
-                required
-              >
-                {[...Array(26).keys()].map((item, index) =>
-                  <MenuItem value={item} key={index}>
-                    {item}
-                  </MenuItem>
-                )}
-              </Select>
-            </FormControl>
+            <TextField
+              type="number"
+              label="SSLC or 10th Percentage"
+              name="percentageDto.sslcPercentage"
+              defaultValue={rowData.percentageDto.sslcPercentage}
+              onChange={handleInputChange}
+              style={fieldStyle}
+              required
+            />
+            {sslcError ? (<Alert severity="error">{sslcError}</Alert>) : " "}
+          </Grid>
+          <Grid item xs={4}>
+            <TextField
+              type="number"
+              label="PUC or Diploma Percentage"
+              name="percentageDto.pucPercentage"
+              defaultValue={rowData.percentageDto.pucPercentage}
+              onChange={handleInputChange}
+              style={fieldStyle}
+              required
+            />
+            {pucError ? (<Alert severity="error">{pucError}</Alert>) : " "}
+          </Grid>
+
+          <Grid item xs={4}>
+            <TextField
+              type="number"
+              label="Degree Percentage or CGPA"
+              name="percentageDto.degreePercentage"
+              defaultValue={rowData.percentageDto.degreePercentage}
+              onChange={handleInputChange}
+              style={fieldStyle}
+              required
+            />
+            {degreeError ? (<Alert severity="error">{degreeError}</Alert>) : " "}
           </Grid>
           <Grid item xs={4}>
             <TextField

@@ -17,6 +17,7 @@ import axios from "axios";
 import React, { useEffect } from "react";
 import { fieldStyle, style } from "../constant/FormStyle";
 import { Urlconstant } from "../constant/Urlconstant";
+import { getCurrentDate } from "../constant/ValidationConstant";
 
 
 const CompanyFollowUp = ({ open, handleClose, rowData }) => {
@@ -29,7 +30,7 @@ const CompanyFollowUp = ({ open, handleClose, rowData }) => {
   const attemtedUser = sessionStorage.getItem("userId");
   const [hrNameList, setHrNameList] = React.useState([]);
   const [hrDetails, setHrDetails] = React.useState("");
-  
+
   const [dropdown, setDropDown] = React.useState({
     clientType: [],
     sourceOfConnection: [],
@@ -37,13 +38,13 @@ const CompanyFollowUp = ({ open, handleClose, rowData }) => {
     hrDesignation: [],
     callingStatus: []
   });
- 
+
   const getDropdown = () => {
     axios.get(Urlconstant.url + `utils/clientdropdown`).then((response) => {
       setDropDown(response.data);
     })
   }
- 
+
   const getdetailsbyCompanyId = () => {
     const companyId = rowData.id;
     axios
@@ -60,14 +61,24 @@ const CompanyFollowUp = ({ open, handleClose, rowData }) => {
     getdetailsbyCompanyId();
     getDropdown();
     setIsConfirmed(false);
-  }, [rowData]);
+    if (open) {
+      setFormData({
+        hrSpocName: "",
+        attemptStatus: "",
+        callDuration: "",
+        callBackTime: "",
+        callBackTime: "",
+        comments: "",
+      });
+    }
+  }, [rowData, open]);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
 
-    if (name === "hrScopName") {
+    if (name === "hrSpocName") {
       hrNameList.forEach((hrItem) => {
-        if (hrItem.hrScopName === value) {
+        if (hrItem.hrSpocName === value) {
           setHrDetails(hrItem);
         }
       });
@@ -124,7 +135,7 @@ const CompanyFollowUp = ({ open, handleClose, rowData }) => {
       }
     }
   };
-  const isDisabled = !formData.attemptStatus||!hrDetails;
+  const isDisabled = !formData.attemptStatus || !hrDetails;
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle>
@@ -144,22 +155,22 @@ const CompanyFollowUp = ({ open, handleClose, rowData }) => {
           <Grid item xs={12} sm={4}>
             <TextField
               label="HR Name"
-              name="hrScopName"
+              name="hrSpocName"
               onChange={handleInputChange}
-              style={fieldStyle}
+             // style={fieldStyle}
               fullWidth
               select
               margin="normal"
             >
               {hrNameList.map((hrItem) => (
-                <MenuItem key={hrItem.id} value={hrItem.hrScopName}>
-                  {hrItem.hrScopName}{" "}
+                <MenuItem key={hrItem.id} value={hrItem.hrSpocName}>
+                  {hrItem.hrSpocName}{" "}
                   {/* Assuming that 'name' is the property containing HR names */}
                 </MenuItem>
               ))}
             </TextField>
           </Grid>
-      
+
           <Grid item xs={12} sm={4}>
             <TextField
               label="attemptBy"
@@ -196,6 +207,7 @@ const CompanyFollowUp = ({ open, handleClose, rowData }) => {
             <TextField
               label="Call Duration"
               name="callDuration"
+              placeholder="mm:ss"
               onChange={handleInputChange}
               style={fieldStyle}
               value={formData.callDuration}
@@ -213,15 +225,34 @@ const CompanyFollowUp = ({ open, handleClose, rowData }) => {
               InputLabelProps={{
                 shrink: true,
               }}
+              inputProps={{
+                min: getCurrentDate(),
+              }}
+              sx={{
+                marginRight: "10px",
+                width: "200px",
+                marginLeft: "30px",
+                fontSize: "14px",
+              }}
             />
           </Grid>
           <Grid item xs={12} sm={4}>
             <TextField
+              type="time"
               label="call Back Time"
               name="callBackTime"
               onChange={handleInputChange}
               style={fieldStyle}
               value={formData.callBackTime}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              sx={{
+                marginRight: "10px",
+                width: "200px",
+                marginLeft: "30px",
+                fontSize: "14px",
+              }}
             />
           </Grid>
           <Grid item xs={12} sm={4}>
@@ -275,7 +306,7 @@ const CompanyFollowUp = ({ open, handleClose, rowData }) => {
           >
             <GridCloseIcon />
           </IconButton>
-          <Button onClick={handleSaveClick} color="primary"disabled={isConfirmed} >
+          <Button onClick={handleSaveClick} color="primary" disabled={isConfirmed} >
             Confirm
           </Button>
         </DialogActions>

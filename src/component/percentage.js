@@ -26,7 +26,7 @@ export const Percentage = ({
             if (!value) {
                 setSslcError("SSLC (10th) Percentage is required");
             } else if (value < 1 || value > 99.99) {
-                setSslcError("Percentage must be greater than 1 and less than 99.9");
+                setSslcError("Enter proper percentage");
             }else if (!/^[0-9]*(\.[0-9]{0,2})?$/.test(value)) {
                 setSslcError("Only two decimals are allowed");
             } else {
@@ -38,9 +38,7 @@ export const Percentage = ({
             if (!value) {
                 setPucError("PUC Percentage is required");
             } else if (value < 1 || value > 99.99) {
-                setPucError("Percentage must be greater than 1 and less than 99.9");
-            }else if (value.length >5) {
-                setPucError("Only two decimals are allowed");
+                setPucError("Enter proper percentage");
             } else if (!/^[0-9]*(\.[0-9]{0,2})?$/.test(value)) {
                 setPucError("Only two decimals are allowed");
             }else {
@@ -52,10 +50,8 @@ export const Percentage = ({
             if (!value) {
                 setDegreeError("Degree Percentage  is required");
             } else if (value < 1 || value > 99.99) {
-                setDegreeError("Percentage must be greater than 1 and less than 99.9");
-            }else if (value.length >5) {
-                setDegreeError("Only two decimals are allowed");
-            } else if (!/^[0-9]*(\.[0-9]{0,2})?$/.test(value)) {
+                setDegreeError("Enter proper percentage");
+            }else if (!/^[0-9]*(\.[0-9]{0,2})?$/.test(value)) {
                 setDegreeError("Only two decimals are allowed");
             }else {
                 setDegreeError("");    
