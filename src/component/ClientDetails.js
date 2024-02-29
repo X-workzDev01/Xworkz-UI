@@ -206,7 +206,6 @@ export default function ClientDetails() {
           setCompanyEmailCheck("Email Already Exists");
         } else {
           setCompanyEmailCheck("");
-          verifyEmail(companyEmail)
         }
       })
       .catch((error) => {
@@ -316,6 +315,9 @@ export default function ClientDetails() {
     setCompanyNameCheck("")
     setEmailCheck("")
   }
+  const handleEmailCheck=(event)=>{
+    verifyEmail(event.target.value)
+  }
   return (
     <div>
       <h1>Register Client</h1>
@@ -391,6 +393,7 @@ export default function ClientDetails() {
                 fullWidth
                 margin="normal"
                 sx={textFieldStyles}
+                onBlur={handleEmailCheck}
               />
               {emailCheck && (
                 <Alert severity="error">{emailCheck}</Alert>
