@@ -355,7 +355,10 @@ const Profile = (courseName, searchValue) => {
         rowData={editedRowData}
         setRowData={setEditedRowData}
         handleSaveClick={handleSaveClick}
-        feeConcession={feesData ? feesData.feeConcession : 0}
+        attemptStatus={followUpData.currentStatus}
+        feeConcession={
+          feesData && feesData.feeConcession ? feesData.feeConcession : 0
+        }
       />
 
       <FollowUpStatus

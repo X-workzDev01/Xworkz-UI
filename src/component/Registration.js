@@ -10,7 +10,7 @@ import axios from "axios";
 import Header from "./Header";
 import { Urlconstant } from "../constant/Urlconstant";
 import { Navigate, Route, Router } from "react-router-dom";
-import { Percentage } from "./Percentage";
+import { Percentage } from "./percentage";
 
 export default function Registration() {
   const email = sessionStorage.getItem("userId");
@@ -119,18 +119,18 @@ export default function Registration() {
             dropdown={dropdown}
           />
         );
-      // case 3:
-      //   return (
-      //     <Percentage
-      //       formData={formData.percentageDto}
-      //       setFormData={(data) =>
-      //         setFormData({ ...formData, percentageDto: data })
-      //       }
-      //       onNext={handleNext}
-      //       onPrevious={handlePrevious}
-      //     />
-      //   );
-        case 3:
+      case 3:
+        return (
+          <Percentage
+            formData={formData.percentageDto}
+            setFormData={(data) =>
+              setFormData({ ...formData, percentageDto: data })
+            }
+            onNext={handleNext}
+            onPrevious={handlePrevious}
+          />
+        );
+        case 4:
         return (
           <Course
             formData={formData.courseInfo}
@@ -143,7 +143,7 @@ export default function Registration() {
             batchDetiles={batchDetiles}
           />
         );
-      case 4:
+      case 5:
         return (
           <Referral
             formData={formData.othersDto}
@@ -175,9 +175,10 @@ export default function Registration() {
         <Step>
           <StepLabel>Education</StepLabel>
         </Step>
-        {/* <Step>
+
+        <Step>
           <StepLabel>Percentage</StepLabel>
-        </Step> */}
+        </Step> 
         <Step>
           <StepLabel>Course</StepLabel>
         </Step>
