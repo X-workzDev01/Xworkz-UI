@@ -37,7 +37,7 @@ export default function ClientDetails() {
     companyWebsite: "",
     companyLocation: "",
     companyFounder: "",
-    sourceOfConnetion: "",
+    sourceOfConnection: "",
     companyType: "",
     companyAddress: "",
     status: "Active", // Default value set to "Active"
@@ -304,7 +304,7 @@ export default function ClientDetails() {
       companyWebsite: "",
       companyLocation: "",
       companyFounder: "",
-      sourceOfConnetion: "",
+      sourceOfConnection: "",
       companyType: "",
       companyAddress: "",
       status: "Active",
