@@ -207,7 +207,7 @@ export default function ViewClient() {
       field: "sourceOfConnection",
       headerName: "Source Of Connection",
       flex: 1,
-      valueGetter: (params) => params.row.sourceOfConnetion,
+      valueGetter: (params) => params.row.sourceOfConnection,
     },
     {
       field: "companyAddress",

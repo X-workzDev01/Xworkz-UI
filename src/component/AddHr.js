@@ -196,7 +196,7 @@ const AddHr = ({ open, handleClose, rowData }) => {
       .then((response) => {
         if (response.status === 200) {
           if (response.data === "accepted_email") {
-            setVerifyEmail(response.data);
+            setVerifyEmail("");
           } else if (response.data === "rejected_email") {
             setVerifyEmail(response.data);
           } else {
