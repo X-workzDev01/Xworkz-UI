@@ -1044,7 +1044,7 @@ const EditModal = ({
               : ""
             : ""}
    
-          <Grid item xs={4}>
+          {/* <Grid item xs={4}>
             <TextField
               type="number"
               label="SSLC or 10th Percentage"
@@ -1080,7 +1080,7 @@ const EditModal = ({
               required
             />
             {degreeError ? (<Alert severity="error">{degreeError}</Alert>) : " "}
-          </Grid>
+          </Grid> */}
           <Grid item xs={4}>
             <TextField
               label="Comments"

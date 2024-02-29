@@ -16,7 +16,7 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
   const [verifyHandaleEmail, setverifyHandleEmail] = useState("");
   const [verifyHandaleEmailerror, setverifyHandleEmailError] = useState("");
 
-  const handleInputChange = (e) => {
+  const handleInputChange = e => {
     const { name, value } = e.target;
 
     if (name === "traineeName") {
@@ -54,21 +54,20 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const verifyEmail = (email) => {
+  const verifyEmail = email => {
     axios
       .get(`${Urlconstant.url}api/verify-email?email=${email}`)
-      .then((response) => {
+      .then(response => {
         if (response.status === 200) {
           if (response.data === "accepted_email") {
             setverifyHandleEmail(response.data);
+            setverifyHandleEmailError("");
             console.log(response.data);
-          } else if (response.data === "rejected_email") {
+          } else {
             setverifyHandleEmailError(response.data);
             setverifyHandleEmail("");
             setEmailError("");
             setEmailCheck("");
-          } else {
-            setverifyHandleEmailError("");
           }
         } else {
           if (response.status === 500) {
@@ -78,20 +77,20 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
           }
         }
       })
-      .catch((error) => {
+      .catch(error => {
         console.log("check emailable credentils");
       });
   };
 
-  const handleEmail = (email) => {
+  const handleEmail = email => {
     validateEmail(email);
     axios
       .get(Urlconstant.url + `api/emailCheck?email=${email}`, {
         headers: {
-          spreadsheetId: Urlconstant.spreadsheetId,
-        },
+          spreadsheetId: Urlconstant.spreadsheetId
+        }
       })
-      .then((response) => {
+      .then(response => {
         if (response.status === 201) {
           setEmailCheck(response.data);
         } else {
@@ -102,11 +101,11 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
     console.log(error);
   };
 
-  const validEmail = (email) => {
+  const validEmail = email => {
     handleEmail(email);
   };
 
-  const handleNumberChange = (e) => {
+  const handleNumberChange = e => {
     if (!formData.contactNumber) {
       console.log("Contact number is blank. Cannot make the API call.");
       return;
@@ -118,23 +117,23 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
           `api/contactNumberCheck?contactNumber=${formData.contactNumber}`,
         {
           headers: {
-            spreadsheetId: Urlconstant.spreadsheetId,
-          },
+            spreadsheetId: Urlconstant.spreadsheetId
+          }
         }
       )
-      .then((response) => {
+      .then(response => {
         if (response.status === 201) {
           setNumberCheck(response.data);
         } else {
           setNumberCheck(null);
         }
       })
-      .catch((error) => {
+      .catch(error => {
         console.log(error);
       });
   };
 
-  const validateEmail = (value) => {
+  const validateEmail = value => {
     if (!value) {
       setEmailError("Email is required");
       setEmailCheck("");
@@ -149,7 +148,7 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
     }
   };
 
-  const handleEmailVeryfy = (e) => {
+  const handleEmailVeryfy = e => {
     verifyEmail(e.target.value);
   };
 
@@ -170,7 +169,10 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
         <Typography component="div" style={{ height: "50vh" }}>
           <h2>Trainee</h2>
           <Form>
-            {error && <Alert severity="error">{error}</Alert>}
+            {error &&
+              <Alert severity="error">
+                {error}
+              </Alert>}
             <TextField
               type="text"
               label="User Name"
@@ -184,7 +186,10 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
               value={formData.traineeName || ""}
               onChange={handleInputChange}
             />
-            {nameError && <Alert severity="error">{nameError}</Alert>}
+            {nameError &&
+              <Alert severity="error">
+                {nameError}
+              </Alert>}
 
             <TextField
               type="email"
@@ -199,18 +204,26 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
               onBlur={handleEmailVeryfy}
               onChange={handleInputChange}
             />
-            {verifyHandaleEmail ? (
-              <Alert severity="success">{verifyHandaleEmail}</Alert>
-            ) : (
-              " "
-            )}
-            {verifyHandaleEmailerror ? (
-              <Alert severity="error">{verifyHandaleEmailerror}</Alert>
-            ) : (
-              " "
-            )}
-            {emailError ? <Alert severity="error">{emailError} </Alert> : " "}
-            {emailCheck ? <Alert severity="error">{emailCheck}</Alert> : " "}
+            {verifyHandaleEmail
+              ? <Alert severity="success">
+                  {verifyHandaleEmail}
+                </Alert>
+              : " "}
+            {verifyHandaleEmailerror
+              ? <Alert severity="error">
+                  {verifyHandaleEmailerror}
+                </Alert>
+              : " "}
+            {emailError
+              ? <Alert severity="error">
+                  {emailError}{" "}
+                </Alert>
+              : " "}
+            {emailCheck
+              ? <Alert severity="error">
+                  {emailCheck}
+                </Alert>
+              : " "}
             <TextField
               type="number"
               label="Contact Number"
@@ -224,10 +237,14 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
               onChange={handleInputChange}
               onBlur={handleNumberChange}
             />
-            {phoneNumberError && (
-              <Alert severity="error">{phoneNumberError}</Alert>
-            )}
-            {numberCheck && <Alert severity="error">{numberCheck}</Alert>}
+            {phoneNumberError &&
+              <Alert severity="error">
+                {phoneNumberError}
+              </Alert>}
+            {numberCheck &&
+              <Alert severity="error">
+                {numberCheck}
+              </Alert>}
             <TextField
               type="date"
               name="dateOfBirth"
@@ -240,10 +257,10 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
               id="outlined-basic"
               variant="outlined"
               InputLabelProps={{
-                shrink: true,
+                shrink: true
               }}
               inputProps={{
-                max: maxDate,
+                max: maxDate
               }}
             />
           </Form>

@@ -444,24 +444,24 @@ export default function ControlledSelectionServerPaginationGrid() {
       flex: 1,
       valueGetter: (params) => params.row.othersDto.sendWhatsAppLink,
     },
-    {
-      field: "percentageDto.sslcPercentage",
-      headerName: "SSLC Percentage",
-      flex: 1,
-      valueGetter: (params) => params.row.percentageDto.sslcPercentage,
-    },
-    {
-      field: "percentageDto.pucPercentage",
-      headerName: "PUC Percentage",
-      flex: 1,
-      valueGetter: (params) => params.row.percentageDto.pucPercentage,
-    },
-    {
-      field: "percentageDto.degreePercentage",
-      headerName: "Degree Percentage",
-      flex: 1,
-      valueGetter: (params) => params.row.percentageDto.degreePercentage,
-    },
+    // {
+    //   field: "percentageDto.sslcPercentage",
+    //   headerName: "SSLC Percentage",
+    //   flex: 1,
+    //   valueGetter: (params) => params.row.percentageDto.sslcPercentage,
+    // },
+    // {
+    //   field: "percentageDto.pucPercentage",
+    //   headerName: "PUC Percentage",
+    //   flex: 1,
+    //   valueGetter: (params) => params.row.percentageDto.pucPercentage,
+    // },
+    // {
+    //   field: "percentageDto.degreePercentage",
+    //   headerName: "Degree Percentage",
+    //   flex: 1,
+    //   valueGetter: (params) => params.row.percentageDto.degreePercentage,
+    // },
     {
       field: "adminDto.createdOn",
       headerName: "Created On",
