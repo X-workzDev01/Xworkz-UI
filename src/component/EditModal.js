@@ -38,7 +38,7 @@ const EditModal = ({
   feeConcession,
   attemptStatus
 }) => {
-  console.log(attemptStatus);
+
   const navigate = useNavigate();
   const [feesConcession, setFeesConcession] = useState(feeConcession);
   const email = sessionStorage.getItem("userId");
@@ -120,7 +120,7 @@ const EditModal = ({
       .then(response => {
         setDropDown(response.data);
       })
-      .catch(error => {});
+      .catch(error => { });
     axios
       .get(Urlconstant.url + "api/getCourseName?status=Active", {
         headers: {
@@ -133,7 +133,7 @@ const EditModal = ({
           fetchData(selectedValue); // Call fetchData with the selectedValue
         }
       })
-      .catch(e => {});
+      .catch(e => { });
   }, []);
   React.useEffect(
     () => {
@@ -168,7 +168,7 @@ const EditModal = ({
           startDate: data.startDate
         });
       })
-      .catch(error => {});
+      .catch(error => { });
   };
 
   const handleInputChange = event => {
@@ -334,7 +334,6 @@ const EditModal = ({
       setEmailCheck(null);
       return;
     }
-
     axios
       .get(Urlconstant.url + `api/emailCheck?email=${email}`, {
         headers: {
@@ -342,12 +341,13 @@ const EditModal = ({
         }
       })
       .then(response => {
-        if (response.status === 200) {
+        if (response.data === "Email does not exist") {
           setDisable(false);
-          setEmailCheck(null);
-        } else if (response.status === 201) {
-          setDisable(true);
           setEmailCheck(response.data);
+          if (validateEmail(email)) {
+            verifyEmail(email);
+            setEmailCheck("")
+          }
         } else {
           setEmailCheck(null);
         }
@@ -356,30 +356,42 @@ const EditModal = ({
   };
 
   const verifyEmail = (email) => {
-    handleEmail(email);
-    if (emailCheck === "Email does not exist") {
-      axios
-        .get(Urlconstant.url + `api/verify-email?email=${email}`)
-        .then(response => {
-          if (response.data === "accepted_email") {
-            setverifyHandleEmail(response.data);
-          }
-          if (response.data === "rejected_email") {
-            setverifyHandleEmailError(response.data);
-            setverifyHandleEmail("");
-            setEmailError("");
-            setEmailCheck("");
-          } else {
+    //   handleEmail(email);
+    // console.log("checking email");
+    //if (emailCheck === "Email does not exist" && validateEmail(email)) {
+    axios
+      .get(Urlconstant.url + `api/verify-email?email=${email}`)
+      .then(response => {
+        if (response.data === "accepted_email") {
+          setverifyHandleEmail(response.data);
+        }
+        if (response.data === "rejected_email") {
+          setverifyHandleEmailError(response.data);
+          setverifyHandleEmail("");
+          setEmailError("");
+          setEmailCheck("");
+        } else {
+          if (response.status === 500) {
             setverifyHandleEmailError("");
+          } else {
+            setverifyHandleEmailError("Unexpected Error:");
           }
-        });
-    }
+        }
+      })
+      .catch((error) => {
+        console.log("check emailable credentils");
+      });
+    //}
   };
   const handleVerifyEmail = (event) => {
-    verifyEmail(event.target.value);
+    //  verifyEmail(event.target.value);
+    const email = event.target.value;
+    if (email.trim() != "") {
+      handleEmail(event.target.value);
+    }
   };
 
-  const handleNumberChange =(e)=> {
+  const handleNumberChange = (e) => {
     const contactNumber = e.target.value;
     if (contactNumber == rowData.basicInfo.contactNumber) {
       setDisable(false);
@@ -387,27 +399,29 @@ const EditModal = ({
       setPhoneNumberError("");
       return;
     } else {
-      axios
-        .get(
-          Urlconstant.url +
+      if (contactNumber.trim() != "") {
+        axios
+          .get(
+            Urlconstant.url +
             `api/contactNumberCheck?contactNumber=${contactNumber}`,
-          {
-            headers: {
-              spreadsheetId: Urlconstant.spreadsheetId
+            {
+              headers: {
+                spreadsheetId: Urlconstant.spreadsheetId
+              }
             }
-          }
-        )
-        .then(response => {
-          if (response.status === 201) {
-            setNumberCheck(response.data);
-            setPhoneNumberError("");
-            setDisable(true);
-          } else {
-            setNumberCheck("");
-            setDisable(false);
-          }
-        })
-        .catch(error => {});
+          )
+          .then(response => {
+            if (response.status === 201) {
+              setNumberCheck(response.data);
+              setPhoneNumberError("");
+              setDisable(true);
+            } else {
+              setNumberCheck("");
+              setDisable(false);
+            }
+          })
+          .catch(error => { });
+      }
     }
   };
   const handleEditClick = () => {
@@ -444,8 +458,8 @@ const EditModal = ({
     setLoading(true);
     axios.put(
       Urlconstant.url +
-        `api/updateFeesDetailsChangeEmailAndFeeConcession/${feesConcession}/${updatedData
-          .basicInfo.traineeName}/${rowData.basicInfo
+      `api/updateFeesDetailsChangeEmailAndFeeConcession/${feesConcession}/${updatedData
+        .basicInfo.traineeName}/${rowData.basicInfo
           .email}/${newEmail}/${updatedData.adminDto.updatedBy}`
     );
     axios
@@ -505,22 +519,49 @@ const EditModal = ({
     handleClose();
   };
 
+  const handleEmailCheck = (email) => {
+    axios
+      .get(Urlconstant.url + `api/verify-email?email=${email}`)
+      .then(response => {
+        if (response.data === "accepted_email") {
+          setverifyHandleEmail(response.data);
+        }
+        if (response.data === "rejected_email") {
+          setverifyHandleEmailError(response.data);
+          setverifyHandleEmail("");
+        } else {
+          if (response.status === 500) {
+            setverifyHandleEmailError("");
+          } else {
+            setverifyHandleEmailError("Unexpected Error:");
+          }
+        }
+      })
+      .catch((error) => {
+        console.log("check emailable credentils");
+      });
+    //}
+  };
+
   const handleVerifyXworkzEmail = (event) => {
     let xworkzemail = event.target.value;
-    if (xworkzemail.includes(".xworkz")) {
-      if (!validateEmail(xworkzemail)) {
-        setXworkzEmailCheck("Enter the Valid Email");
-        setDisable(true);
-      } else {
+    if (xworkzemail.trim() !== "") {
+      if (xworkzemail.includes(".xworkz")) {
+        if (!validateEmail(xworkzemail)) {
+          setXworkzEmailCheck("Enter the Valid Email");
+          setDisable(true);
+        } else {
+          setXworkzEmailCheck("");
+          setDisable(false);
+          handleEmailCheck(xworkzemail);
+        }
+      } else if (xworkzemail === "rowData.othersDto.xworkzEmail") {
         setXworkzEmailCheck("");
         setDisable(false);
+      } else {
+        setXworkzEmailCheck("Email should contains xworkz");
+        setDisable(true);
       }
-    } else if (xworkzemail === "rowData.othersDto.xworkzEmail") {
-      setXworkzEmailCheck("");
-      setDisable(false);
-    } else {
-      setXworkzEmailCheck("Email should contains xworkz");
-      setDisable(true);
     }
   };
 
@@ -531,22 +572,24 @@ const EditModal = ({
       setDisable(false);
       return;
     } else {
-      axios
-        .get(Urlconstant.url + `api/csr/checkUsn?usnNumber=${usn}`, {
-          headers: {
-            spreadsheetId: Urlconstant.spreadsheetId
-          }
-        })
-        .then(response => {
-          if (response.data === "Usn Number Already Exists") {
-            setUsnCheck(response.data);
-            setDisable(true);
-          } else {
-            setUsnCheck("");
-            setDisable(false);
-          }
-        })
-        .catch(error => {});
+      if (usn.trim() !== "") {
+        axios
+          .get(Urlconstant.url + `api/csr/checkUsn?usnNumber=${usn}`, {
+            headers: {
+              spreadsheetId: Urlconstant.spreadsheetId
+            }
+          })
+          .then(response => {
+            if (response.data === "Usn Number Already Exists") {
+              setUsnCheck(response.data);
+              setDisable(true);
+            } else {
+              setUsnCheck("");
+              setDisable(false);
+            }
+          })
+          .catch(error => { });
+      }
     }
   };
   return (
@@ -575,29 +618,29 @@ const EditModal = ({
             />
             {verifyHandaleEmailerror
               ? <Alert severity="success">
-                  {verifyHandaleEmailerror}
-                </Alert>
+                {verifyHandaleEmailerror}
+              </Alert>
               : " "}
             {verifyHandaleEmailerror
               ? <Alert severity="error">
-                  {verifyHandaleEmailerror}
-                </Alert>
+                {verifyHandaleEmailerror}
+              </Alert>
               : " "}
             {emailError
               ? <Alert severity="error">
-                  {emailError}{" "}
-                </Alert>
+                {emailError}{" "}
+              </Alert>
               : " "}
             {emailCheck
               ? <Alert severity="error">
-                  {emailCheck}
-                </Alert>
+                {emailCheck}
+              </Alert>
               : " "}
 
             {verifyHandaleEmail
               ? <Alert severity="success">
-                  {verifyHandaleEmail}
-                </Alert>
+                {verifyHandaleEmail}
+              </Alert>
               : " "}
           </Grid>
           <Grid item xs={4}>
@@ -611,8 +654,8 @@ const EditModal = ({
             />
             {traineeNameCheck
               ? <Alert severity="error">
-                  {traineeNameCheck}{" "}
-                </Alert>
+                {traineeNameCheck}{" "}
+              </Alert>
               : " "}
           </Grid>
           <Grid item xs={4}>
@@ -627,13 +670,13 @@ const EditModal = ({
             />
             {phoneNumberError
               ? <Alert severity="error">
-                  {phoneNumberError}
-                </Alert>
+                {phoneNumberError}
+              </Alert>
               : " "}
             {numberCheck
               ? <Alert severity="error">
-                  {numberCheck}
-                </Alert>
+                {numberCheck}
+              </Alert>
               : " "}
           </Grid>
           <Grid item xs={4}>
@@ -759,8 +802,8 @@ const EditModal = ({
             />
             {usnCheck
               ? <Alert severity="error">
-                  {usnCheck}
-                </Alert>
+                {usnCheck}
+              </Alert>
               : " "}
           </Grid>
 
@@ -776,8 +819,8 @@ const EditModal = ({
             />
             {alternativeNumberCheck
               ? <Alert severity="error">
-                  {alternativeNumberCheck}
-                </Alert>
+                {alternativeNumberCheck}
+              </Alert>
               : " "}
           </Grid>
           <Grid item xs={4}>
@@ -919,8 +962,8 @@ const EditModal = ({
             />
             {referalNameCheck
               ? <Alert severity="error">
-                  {referalNameCheck}
-                </Alert>
+                {referalNameCheck}
+              </Alert>
               : " "}
           </Grid>
           <Grid item xs={4}>
@@ -934,8 +977,8 @@ const EditModal = ({
             />
             {referalContactNumber
               ? <Alert severity="error">
-                  {referalContactNumber}
-                </Alert>
+                {referalContactNumber}
+              </Alert>
               : " "}
           </Grid>
           <Grid item xs={4}>
@@ -950,11 +993,25 @@ const EditModal = ({
             />
             {xworkzemailCheck
               ? <Alert severity="error">
-                  {xworkzemailCheck}{" "}
-                </Alert>
+                {xworkzemailCheck}{" "}
+              </Alert>
+              : " "}
+            {verifyHandaleEmailerror
+              ? <Alert severity="success">
+                {verifyHandaleEmailerror}
+              </Alert>
+              : " "}
+            {verifyHandaleEmailerror
+              ? <Alert severity="error">
+                {verifyHandaleEmailerror}
+              </Alert>
+              : " "}
+            {verifyHandaleEmail
+              ? <Alert severity="success">
+                {verifyHandaleEmail}
+              </Alert>
               : " "}
           </Grid>
-
           <Grid item xs={4}>
             <FormControl>
               <InputLabel id="demo-simple-select-label">
@@ -1014,36 +1071,36 @@ const EditModal = ({
           {attemptStatus
             ? attemptStatus === "Joined"
               ? <Grid item xs={4}>
-                  <FormControl>
-                    <InputLabel id="demo-simple-select-label">
-                      Fees Concession
-                    </InputLabel>
-                    <Select
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
-                      label="Concession"
-                      name="feeConcession"
-                      onChange={handleInputChange}
-                      defaultValue={feeConcession}
-                      variant="outlined"
-                      sx={{
-                        marginRight: "20px",
-                        width: "225px"
-                      }}
-                      style={fieldStyle}
-                      required
-                    >
-                      {[...Array(26).keys()].map((item, index) =>
-                        <MenuItem value={item} key={index}>
-                          {item}
-                        </MenuItem>
-                      )}
-                    </Select>
-                  </FormControl>
-                </Grid>
+                <FormControl>
+                  <InputLabel id="demo-simple-select-label">
+                    Fees Concession
+                  </InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    label="Concession"
+                    name="feeConcession"
+                    onChange={handleInputChange}
+                    defaultValue={feeConcession}
+                    variant="outlined"
+                    sx={{
+                      marginRight: "20px",
+                      width: "225px"
+                    }}
+                    style={fieldStyle}
+                    required
+                  >
+                    {[...Array(26).keys()].map((item, index) =>
+                      <MenuItem value={item} key={index}>
+                        {item}
+                      </MenuItem>
+                    )}
+                  </Select>
+                </FormControl>
+              </Grid>
               : ""
             : ""}
-   
+
           {/* <Grid item xs={4}>
             <TextField
               type="number"
@@ -1099,8 +1156,8 @@ const EditModal = ({
             />
             {comments
               ? <Alert severity="error">
-                  {comments}{" "}
-                </Alert>
+                {comments}{" "}
+              </Alert>
               : " "}
           </Grid>
         </Grid>
@@ -1110,8 +1167,8 @@ const EditModal = ({
         {loading
           ? <CircularProgress size={20} /> // Show loading spinner
           : <Button disabled={disble} onClick={handleEditClick} color="primary">
-              Edit
-            </Button>}
+            Edit
+          </Button>}
       </DialogActions>
 
       {/* Snackbar for response message */}
