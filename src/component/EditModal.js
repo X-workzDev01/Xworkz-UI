@@ -76,6 +76,10 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
   const [pucError, setPucError] = useState("");
   const [degreeError, setDegreeError] = useState("");
 
+  const [sslcToPerc, setSslcToPerc] = useState("");
+  const [pucToPerc, setPucToPerc] = useState("");
+  const [degreeToPerc, setDegreeToPerc] = useState("");
+
   React.useEffect(
     () => {
       setEditedData(rowData);
@@ -114,7 +118,7 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
       .then(response => {
         setDropDown(response.data);
       })
-      .catch(error => {});
+      .catch(error => { });
     axios
       .get(Urlconstant.url + "api/getCourseName?status=Active", {
         headers: {
@@ -127,7 +131,7 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
           fetchData(selectedValue); // Call fetchData with the selectedValue
         }
       })
-      .catch(e => {});
+      .catch(e => { });
   }, []);
   React.useEffect(
     () => {
@@ -162,7 +166,7 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
           startDate: data.startDate
         });
       })
-      .catch(error => {});
+      .catch(error => { });
   };
 
   const handleInputChange = event => {
@@ -271,36 +275,52 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
     if (name === "percentageDto.sslcPercentage") {
       if (!value) {
         setSslcError("SSLC (10th) Percentage is required");
-      } else if (value < 1 || value > 99.99) {
+        setSslcToPerc("");
+      }
+      else if (value < 1 || value > 99.99) {
         setSslcError("Enter proper percentage");
       } else if (!/^[0-9]*(\.[0-9]{0,2})?$/.test(value)) {
         setSslcError("Only two decimals are allowed");
       } else {
+        setSslcToPerc("");
         setSslcError("");
+      }
+      if (/^\d{1}\.\d{1,2}$/.test(value) || value.length == 1) {
+        setSslcToPerc(((value - .7) * 10).toFixed(2) + "%");
       }
     }
 
     if (name === "percentageDto.pucPercentage") {
       if (!value) {
         setPucError("PUC Percentage is required");
+        setPucToPerc("");
       } else if (value < 1 || value > 99.99) {
         setPucError("Enter proper percentage");
       } else if (!/^[0-9]*(\.[0-9]{0,2})?$/.test(value)) {
         setPucError("Only two decimals are allowed");
       } else {
+        setPucToPerc("");
         setPucError("");
+      }
+      if (/^\d{1}\.\d{1,2}$/.test(value) || value.length == 1) {
+        setPucToPerc(((value - .7) * 10).toFixed(2) + "%");
       }
     }
 
     if (name === "percentageDto.degreePercentage") {
       if (!value) {
         setDegreeError("Degree Percentage  is required");
+        setDegreeToPerc("");
       } else if (value < 1 || value > 99.99) {
         setDegreeError("Enter proper percentage");
       } else if (!/^[0-9]*(\.[0-9]{0,2})?$/.test(value)) {
         setDegreeError("Only two decimals are allowed");
       } else {
+        setDegreeToPerc("");
         setDegreeError("");
+      }
+      if (/^\d{1}\.\d{1,2}$/.test(value) || value.length == 1) {
+        setDegreeToPerc(((value - .7) * 10).toFixed(2) + "%");
       }
     }
 
@@ -321,6 +341,48 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
       }
     }));
   };
+
+  const handlePercentBlur = (e) => {
+    const { name, value } = e.target;
+    const [section, field] = name.split(".");
+
+    if (name === "percentageDto.sslcPercentage") {
+      if (/^\d{1}\.\d{1,2}$/.test(value) || value.length == 1) {
+        setEditedData(prevData => ({
+          ...prevData,
+          [section]: {
+            ...prevData[section],
+            [field]: ((value - .7) * 10).toFixed(2)
+          }
+        }));
+      }
+    }
+
+    if (name === "percentageDto.pucPercentage") {
+      if (/^\d{1}\.\d{1,2}$/.test(value) || value.length == 1) {
+        setEditedData(prevData => ({
+          ...prevData,
+          [section]: {
+            ...prevData[section],
+            [field]: ((value - .7) * 10).toFixed(2)
+          }
+        }));
+      }
+    }
+
+    if (name === "percentageDto.degreePercentage") {
+      if (/^\d{1}\.\d{1,2}$/.test(value) || value.length == 1) {
+        setEditedData(prevData => ({
+          ...prevData,
+          [section]: {
+            ...prevData[section],
+            [field]: ((value - .7) * 10).toFixed(2)
+          }
+        }));
+      }
+    }
+  };
+
 
   const handleEmail = (email) => {
     if (rowData.basicInfo.email === email) {
@@ -349,7 +411,7 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
       .catch({});
   };
 
-  const verifyEmail = email => {
+  const verifyEmail = (email) => {
     handleEmail(email);
     if (emailCheck === "Email does not exist") {
       axios
@@ -369,11 +431,11 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
         });
     }
   };
-  const handleVerifyEmail = event => {
+  const handleVerifyEmail = (event) => {
     verifyEmail(event.target.value);
   };
 
-  const handleNumberChange = e => {
+  const handleNumberChange = (e) => {
     const contactNumber = e.target.value;
     if (contactNumber == rowData.basicInfo.contactNumber) {
       setDisable(false);
@@ -384,7 +446,7 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
       axios
         .get(
           Urlconstant.url +
-            `api/contactNumberCheck?contactNumber=${contactNumber}`,
+          `api/contactNumberCheck?contactNumber=${contactNumber}`,
           {
             headers: {
               spreadsheetId: Urlconstant.spreadsheetId
@@ -401,7 +463,7 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
             setDisable(false);
           }
         })
-        .catch(error => {});
+        .catch(error => { });
     }
   };
   const handleEditClick = () => {
@@ -438,8 +500,8 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
     setLoading(true);
     axios.put(
       Urlconstant.url +
-        `api/updateFeesDetailsChangeEmailAndFeeConcession/${feesConcession}/${updatedData
-          .basicInfo.traineeName}/${rowData.basicInfo
+      `api/updateFeesDetailsChangeEmailAndFeeConcession/${feesConcession}/${updatedData
+        .basicInfo.traineeName}/${rowData.basicInfo
           .email}/${newEmail}/${updatedData.adminDto.updatedBy}`
     );
     axios
@@ -518,7 +580,7 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
     }
   };
 
-  const handleUsnNumber = event => {
+  const handleUsnNumber = (event) => {
     const usn = event.target.value;
     if (usn === rowData.csrDto.usnNumber) {
       setUsnCheck("");
@@ -540,7 +602,7 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
             setDisable(false);
           }
         })
-        .catch(error => {});
+        .catch(error => { });
     }
   };
   return (
@@ -569,29 +631,29 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
             />
             {verifyHandaleEmailerror
               ? <Alert severity="success">
-                  {verifyHandaleEmailerror}
-                </Alert>
+                {verifyHandaleEmailerror}
+              </Alert>
               : " "}
             {verifyHandaleEmailerror
               ? <Alert severity="error">
-                  {verifyHandaleEmailerror}
-                </Alert>
+                {verifyHandaleEmailerror}
+              </Alert>
               : " "}
             {emailError
               ? <Alert severity="error">
-                  {emailError}{" "}
-                </Alert>
+                {emailError}{" "}
+              </Alert>
               : " "}
             {emailCheck
               ? <Alert severity="error">
-                  {emailCheck}
-                </Alert>
+                {emailCheck}
+              </Alert>
               : " "}
 
             {verifyHandaleEmail
               ? <Alert severity="success">
-                  {verifyHandaleEmail}
-                </Alert>
+                {verifyHandaleEmail}
+              </Alert>
               : " "}
           </Grid>
           <Grid item xs={4}>
@@ -605,8 +667,8 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
             />
             {traineeNameCheck
               ? <Alert severity="error">
-                  {traineeNameCheck}{" "}
-                </Alert>
+                {traineeNameCheck}{" "}
+              </Alert>
               : " "}
           </Grid>
           <Grid item xs={4}>
@@ -621,13 +683,13 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
             />
             {phoneNumberError
               ? <Alert severity="error">
-                  {phoneNumberError}
-                </Alert>
+                {phoneNumberError}
+              </Alert>
               : " "}
             {numberCheck
               ? <Alert severity="error">
-                  {numberCheck}
-                </Alert>
+                {numberCheck}
+              </Alert>
               : " "}
           </Grid>
           <Grid item xs={4}>
@@ -753,8 +815,8 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
             />
             {usnCheck
               ? <Alert severity="error">
-                  {usnCheck}
-                </Alert>
+                {usnCheck}
+              </Alert>
               : " "}
           </Grid>
 
@@ -770,8 +832,8 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
             />
             {alternativeNumberCheck
               ? <Alert severity="error">
-                  {alternativeNumberCheck}
-                </Alert>
+                {alternativeNumberCheck}
+              </Alert>
               : " "}
           </Grid>
           <Grid item xs={4}>
@@ -913,8 +975,8 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
             />
             {referalNameCheck
               ? <Alert severity="error">
-                  {referalNameCheck}
-                </Alert>
+                {referalNameCheck}
+              </Alert>
               : " "}
           </Grid>
           <Grid item xs={4}>
@@ -928,8 +990,8 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
             />
             {referalContactNumber
               ? <Alert severity="error">
-                  {referalContactNumber}
-                </Alert>
+                {referalContactNumber}
+              </Alert>
               : " "}
           </Grid>
           <Grid item xs={4}>
@@ -944,8 +1006,8 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
             />
             {xworkzemailCheck
               ? <Alert severity="error">
-                  {xworkzemailCheck}{" "}
-                </Alert>
+                {xworkzemailCheck}{" "}
+              </Alert>
               : " "}
           </Grid>
 
@@ -1041,10 +1103,16 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
               name="percentageDto.sslcPercentage"
               defaultValue={rowData.percentageDto.sslcPercentage}
               onChange={handleInputChange}
+              onBlur={handlePercentBlur}
               style={fieldStyle}
               required
             />
+            <div style={{ marginTop: "-57px", marginLeft: "250px" }}>
+              {sslcToPerc ? <span>{sslcToPerc}</span> : ""}
+            </div>
+            <div style={{ marginTop: "45px" }}>
             {sslcError ? (<Alert severity="error">{sslcError}</Alert>) : " "}
+            </div>
           </Grid>
           <Grid item xs={4}>
             <TextField
@@ -1053,10 +1121,17 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
               name="percentageDto.pucPercentage"
               defaultValue={rowData.percentageDto.pucPercentage}
               onChange={handleInputChange}
+              onBlur={handlePercentBlur}
               style={fieldStyle}
               required
             />
-            {pucError ? (<Alert severity="error">{pucError}</Alert>) : " "}
+            <div style={{ marginTop: "-57px", marginLeft: "250px" }}>
+              {pucToPerc ? <span>{pucToPerc}</span> : ""}
+            </div>
+            <div style={{ marginTop: "45px" }}>
+              {pucError ? (<Alert severity="error">{pucError}</Alert>) : " "}
+            </div>
+
           </Grid>
 
           <Grid item xs={4}>
@@ -1066,10 +1141,16 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
               name="percentageDto.degreePercentage"
               defaultValue={rowData.percentageDto.degreePercentage}
               onChange={handleInputChange}
+              onBlur={handlePercentBlur}
               style={fieldStyle}
               required
             />
-            {degreeError ? (<Alert severity="error">{degreeError}</Alert>) : " "}
+            <div style={{ marginTop: "-57px", marginLeft: "250px" }}>
+              {degreeToPerc ? <span>{degreeToPerc}</span> : ""}
+            </div>
+            <div style={{ marginTop: "45px" }}>
+              {degreeError ? (<Alert severity="error">{degreeError}</Alert>) : " "}
+            </div>
           </Grid>
           <Grid item xs={4}>
             <TextField
@@ -1089,8 +1170,8 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
             />
             {comments
               ? <Alert severity="error">
-                  {comments}{" "}
-                </Alert>
+                {comments}{" "}
+              </Alert>
               : " "}
           </Grid>
         </Grid>
@@ -1100,8 +1181,8 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
         {loading
           ? <CircularProgress size={20} /> // Show loading spinner
           : <Button disabled={disble} onClick={handleEditClick} color="primary">
-              Edit
-            </Button>}
+            Edit
+          </Button>}
       </DialogActions>
 
       {/* Snackbar for response message */}
