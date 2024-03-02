@@ -185,13 +185,7 @@ export default function ClientDetails() {
             setCompanyNameCheck("");
           }
         })
-        .catch((error) => {
-          if (error.response.status === 500) {
-            setCompanyNameCheck("");
-          } else {
-            setCompanyNameCheck("An error occurred. Please try again.");
-          }
-        });
+        .catch((error) => {});
     }
   };
 
@@ -213,13 +207,7 @@ export default function ClientDetails() {
             }
           }
         })
-        .catch((error) => {
-          if (error.response.status === 500) {
-            setCompanyEmailCheck("");
-          } else {
-            setCompanyEmailCheck("An error occurred. Please try again.");
-          }
-        });
+        .catch((error) => {});
     }
   };
   const verifyEmail = (email) => {
@@ -269,13 +257,7 @@ export default function ClientDetails() {
             setCheckPhoneNumberExist("");
           }
         })
-        .catch((error) => {
-          if (error.response.status === 500) {
-            setCheckPhoneNumberExist("");
-          } else {
-            setCheckPhoneNumberExist("An error occurred. Please try again.");
-          }
-        });
+        .catch((error) => {});
     }
   };
 
@@ -294,13 +276,7 @@ export default function ClientDetails() {
             setCheckCompanyWebsite("");
           }
         })
-        .catch((error) => {
-          if (error.response.status === 500) {
-            setCheckCompanyWebsite("");
-          } else {
-            setCheckCompanyWebsite("An error occurred. Please try again.");
-          }
-        });
+        .catch((error) => {});
     }
   };
 

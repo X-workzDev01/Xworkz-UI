@@ -232,13 +232,7 @@ const AddHr = ({ open, handleClose, rowData }) => {
             setCheckEmailExist(response.data);
           }
         })
-        .catch((error) => {
-          if (error.response && error.response.status === 500) {
-            setCheckEmailExist("");
-          } else {
-            setCheckEmailExist("Error  while checking email");
-          }
-        });
+        .catch((error) => {});
     }
   };
 
@@ -258,13 +252,7 @@ const AddHr = ({ open, handleClose, rowData }) => {
             setPhoneNumberCheck("");
           }
         })
-        .catch((error) => {
-          if (error.response && error.response.status === 500) {
-            setCheckPhoneNumberExist("");
-          } else {
-            setCheckPhoneNumberExist("Error loading data");
-          }
-        });
+        .catch((error) => {});
     }
   };
 
