@@ -87,7 +87,7 @@ export default function ClientDetails() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "companyType") {
-      if(value.length>=2){
+      if (value === "College") {
         getCollegeDropDown();
       }
       setFormData((prevData) => ({
@@ -108,7 +108,6 @@ export default function ClientDetails() {
           setCompanyNameCheck("Name should not be empty");
         } else {
           setCompanyNameCheck("");
-          handleCompanyName(value);
         }
         break;
       case "companyEmail":
@@ -117,7 +116,6 @@ export default function ClientDetails() {
           setEmailCheck("Enter the valid Email");
         } else {
           setEmailCheck("");
-          handleCompanyEmail(value)
         }
         break;
       case "companyLandLineNumber":
@@ -126,14 +124,13 @@ export default function ClientDetails() {
           setPhoneNumberCheck("Enter valid contact number");
         } else {
           setPhoneNumberCheck("");
-          handleCompanyContactNumber(value);
         }
         break;
       case "companyWebsite":
         if (!validateWebsite(value)) {
           setCheckCompanyWebsite("Enter valid website")
         } else {
-          handleCompanyWebsite(value);
+          setCheckCompanyWebsite("");
         }
         break;
       default:
@@ -176,49 +173,44 @@ export default function ClientDetails() {
     }
   };
 
-  const handleCompanyName = (companyname) => {
-    axios
-      .get(Urlconstant.url + `/api/companynamecheck?companyName=${companyname}`)
-      .then((res) => {
-        if (res.data === "Company Already Exists") {
-          setCompanyNameCheck("Already Exists");
-        } else {
-          setCompanyNameCheck("");
-        }
-      })
-      .catch((error) => {
-        if (error.response.status === 500) {
-          setCompanyNameCheck("");
-        } else {
-          setCompanyNameCheck("An error occurred. Please try again.");
-        }
-      });
+  const handleCompanyName = (event) => {
+    const companyName = event.target.value;
+    if (companyName.trim() !== "") {
+      axios
+        .get(Urlconstant.url + `/api/companynamecheck?companyName=${companyName}`)
+        .then((res) => {
+          if (res.data === "Company Already Exists") {
+            setCompanyNameCheck("Already Exists");
+          } else {
+            setCompanyNameCheck("");
+          }
+        })
+        .catch((error) => {});
+    }
   };
 
-  const handleCompanyEmail = (companyEmail) => {
-    axios
-      .get(
-        Urlconstant.url + `/api/checkcompanyemail?companyEmail=${companyEmail}`
-      )
-      .then((res) => {
-        if (res.data === "Company Email Already Exists") {
-          setEmailCheck("");
-          setCompanyEmailCheck("Email Already Exists");
-        } else {
-          setCompanyEmailCheck("");
-          verifyEmail(companyEmail)
-        }
-      })
-      .catch((error) => {
-        if (error.response.status === 500) {
-          setCompanyEmailCheck("");
-        } else {
-          setCompanyEmailCheck("An error occurred. Please try again.");
-        }
-      });
+  const handleCompanyEmail = (event) => {
+    const companyEmail = event.target.value;
+    if (companyEmail.trim() !== "") {
+      axios
+        .get(
+          Urlconstant.url + `/api/checkcompanyemail?companyEmail=${companyEmail}`
+        )
+        .then((res) => {
+          if (res.data === "Company Email Already Exists") {
+            setEmailCheck("");
+            setCompanyEmailCheck("Email Already Exists");
+          } else {
+            setCompanyEmailCheck("");
+            if (validateEmail(companyEmail)) {
+              verifyEmail(companyEmail);
+            }
+          }
+        })
+        .catch((error) => {});
+    }
   };
   const verifyEmail = (email) => {
-    console.log("calling verifyEmail")
     axios
       .get(`${Urlconstant.url}api/verify-email?email=${email}`)
       .then((response) => {
@@ -248,51 +240,44 @@ export default function ClientDetails() {
       });
   };
 
-  const handleCompanyContactNumber = (companyContactNumber) => {
-   // const companyContactNumber = event.target.value;
-    axios
-      .get(
-        Urlconstant.url +
-        `/api/checkContactNumber?contactNumber=${companyContactNumber}`
-      )
-      .then((res) => {
-        if (res.data === "Company ContactNumber Already Exists") {
-          setCheckPhoneNumberExist("ContactNumber Already Exists");
-          setIsSubmitting(false);
-          setPhoneNumberCheck("");
-        } else {
-          setCheckPhoneNumberExist("");
-        }
-      })
-      .catch((error) => {
-        if (error.response.status === 500) {
-          setCheckPhoneNumberExist("");
-        } else {
-          setCheckPhoneNumberExist("An error occurred. Please try again.");
-        }
-      });
+  const handleCompanyContactNumber = (event) => {
+    const companyContactNumber = event.target.value;
+    if (companyContactNumber.trim() !== "") {
+      axios
+        .get(
+          Urlconstant.url +
+          `/api/checkContactNumber?contactNumber=${companyContactNumber}`
+        )
+        .then((res) => {
+          if (res.data === "Company ContactNumber Already Exists") {
+            setCheckPhoneNumberExist("ContactNumber Already Exists");
+            setIsSubmitting(false);
+            setPhoneNumberCheck("");
+          } else {
+            setCheckPhoneNumberExist("");
+          }
+        })
+        .catch((error) => {});
+    }
   };
 
-  const handleCompanyWebsite = (website) => {
-    axios
-      .get(
-        Urlconstant.url +
-        `/api/checkCompanyWebsite?companyWebsite=${website}`
-      )
-      .then((res) => {
-        if (res.data === "CompanyWebsite Already Exists") {
-          setCheckCompanyWebsite("Website Already Exists");
-        } else {
-          setCheckCompanyWebsite("");
-        }
-      })
-      .catch((error) => {
-        if (error.response.status === 500) {
-          setCheckCompanyWebsite("");
-        } else {
-          setCheckCompanyWebsite("An error occurred. Please try again.");
-        }
-      });
+  const handleCompanyWebsite = (event) => {
+    const website=event.target.value;
+    if (website.trim() !== "") {
+      axios
+        .get(
+          Urlconstant.url +
+          `/api/checkCompanyWebsite?companyWebsite=${website}`
+        )
+        .then((res) => {
+          if (res.data === "CompanyWebsite Already Exists") {
+            setCheckCompanyWebsite("Website Already Exists");
+          } else {
+            setCheckCompanyWebsite("");
+          }
+        })
+        .catch((error) => {});
+    }
   };
 
 
@@ -316,6 +301,7 @@ export default function ClientDetails() {
     setCompanyNameCheck("")
     setEmailCheck("")
   }
+
   return (
     <div>
       <h1>Register Client</h1>
@@ -375,6 +361,7 @@ export default function ClientDetails() {
                   fullWidth
                   margin="normal"
                   sx={textFieldStyles}
+                  onBlur={handleCompanyName}
                 />
               )}
               {companyNameCheck && (
@@ -391,6 +378,7 @@ export default function ClientDetails() {
                 fullWidth
                 margin="normal"
                 sx={textFieldStyles}
+                onBlur={handleCompanyEmail}
               />
               {emailCheck && (
                 <Alert severity="error">{emailCheck}</Alert>
@@ -408,6 +396,7 @@ export default function ClientDetails() {
                 fullWidth
                 margin="normal"
                 sx={textFieldStyles}
+                onBlur={handleCompanyContactNumber}
               />
               {phoneNumberCheck && (
                 <Alert severity="error">{phoneNumberCheck}</Alert>
@@ -436,6 +425,7 @@ export default function ClientDetails() {
                 fullWidth
                 margin="normal"
                 sx={textFieldStyles}
+                onBlur={handleCompanyWebsite}
               />
               {checkCompanyWebsite ? (
                 <Alert severity="error">{checkCompanyWebsite}</Alert>
@@ -530,7 +520,9 @@ export default function ClientDetails() {
                     emailCheck ||
                     phoneNumberCheck ||
                     checkPhoneNumberExist ||
-                    checkCompanyWebsite
+                    checkCompanyWebsite ||
+                    !formData.companyType
+
                   }
                   onClick={handleSubmit}
                   className="dark-button"

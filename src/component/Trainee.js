@@ -43,10 +43,13 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
     } else if (name === "contactNumber") {
       if (!value) {
         setPhoneNumberError("Phone number is required");
+        setNumberCheck("");
       } else if (!/^\d+$/.test(value)) {
         setPhoneNumberError("Phone number must contain only digits");
+        setNumberCheck("");
       } else if (value.length !== 10) {
         setPhoneNumberError("Phone number must contain exactly 10 digits");
+        setNumberCheck("");
       } else {
         setPhoneNumberError("");
       }
@@ -123,6 +126,7 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
       )
       .then(response => {
         if (response.status === 201) {
+          setPhoneNumberError("");
           setNumberCheck(response.data);
         } else {
           setNumberCheck(null);

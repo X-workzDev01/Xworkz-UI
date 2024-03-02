@@ -217,48 +217,43 @@ const AddHr = ({ open, handleClose, rowData }) => {
 
   const handleEmailCheck = (event) => {
     let email = event.target.value;
-    axios
-      .get(Urlconstant.url + `api/hremailcheck?hrEmail=${email}`)
-      .then((response) => {
-        if (response.data === "Email already exists.") {
-          setEmailCheck("");
-          setCheckEmailExist(response.data);
-        } else {
-          validatingEmail(email);
-          setCheckEmailExist("");
-        }
-      })
-      .catch((error) => {
-        if (error.response && error.response.status === 500) {
-          setCheckEmailExist("");
-        } else {
-          setCheckEmailExist("Error in API call");
-        }
-      });
+    if (email.trim() !== "") {
+      axios
+        .get(Urlconstant.url + `api/hremailcheck?hrEmail=${email}`)
+        .then((response) => {
+          if (response.data === "Email does not exist.") {
+            setEmailCheck("");
+            setCheckEmailExist("");
+            if (validateEmail(email)) {
+              validatingEmail(email);
+            }
+          } else {
+            setEmailCheck("");
+            setCheckEmailExist(response.data);
+          }
+        })
+        .catch((error) => {});
+    }
   };
 
   const handleNumberCheck = (event) => {
     let contactNumber = event.target.value;
-    axios
-      .get(
-        Urlconstant.url +
-        `api/hrcontactnumbercheck?contactNumber=${contactNumber}`
-      )
-      .then((response) => {
-        if (response.data === "Contact Number Already exist.") {
-          setCheckPhoneNumberExist(response.data);
-        } else {
-          setCheckPhoneNumberExist("");
-          setPhoneNumberCheck("");
-        }
-      })
-      .catch((error) => {
-        if (error.response && error.response.status === 500) {
-          setCheckPhoneNumberExist("");
-        } else {
-          setCheckPhoneNumberExist("Error in API call");
-        }
-      });
+    if (contactNumber.trim() !== "") {
+      axios
+        .get(
+          Urlconstant.url +
+          `api/hrcontactnumbercheck?contactNumber=${contactNumber}`
+        )
+        .then((response) => {
+          if (response.data === "Contact Number Already exist.") {
+            setCheckPhoneNumberExist(response.data);
+          } else {
+            setCheckPhoneNumberExist("");
+            setPhoneNumberCheck("");
+          }
+        })
+        .catch((error) => {});
+    }
   };
 
   const isDisabled =
