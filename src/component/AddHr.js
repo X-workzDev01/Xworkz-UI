@@ -21,7 +21,6 @@ import {
   validateContactNumber,
   validateEmail,
 } from "../constant/ValidationConstant";
-import { ClientDropDown } from "../constant/ClientDropDown";
 
 const AddHr = ({ open, handleClose, rowData }) => {
 
@@ -48,7 +47,22 @@ const AddHr = ({ open, handleClose, rowData }) => {
   });
   React.useEffect(() => {
     getDropdown();
-  }, [])
+    if (open) {
+      setFormData({
+        hrSpocName: "",
+        hrEmail: "",
+        hrContactNumber: "",
+        designation: "",
+        status: "",
+      });
+      setPhoneNumberCheck("");
+      setEmailCheck("");
+      setCheckEmailExist("");
+      setCheckPhoneNumberExist("");
+      setVerifyEmail("");
+      setValidateName("");
+    }
+  }, [open]);
   const getDropdown = () => {
     axios.get(Urlconstant.url + `utils/clientdropdown`).then((response) => {
       setDropDown(response.data);
@@ -59,7 +73,7 @@ const AddHr = ({ open, handleClose, rowData }) => {
   const handleInputChange = (event) => {
     const { name, value } = event.target;
 
-    if (name === "hrScopName") {
+    if (name === "hrSpocName") {
       if (value && value.length <= 2) {
         setValidateName("Enter the valid name");
       } else {
@@ -70,7 +84,7 @@ const AddHr = ({ open, handleClose, rowData }) => {
       if (validateEmail(value)) {
         setEmailCheck("");
       } else {
-        setEmailCheck("invalid email");
+        setEmailCheck("Invalid email");
         setCheckEmailExist("");
       }
     }
@@ -145,7 +159,7 @@ const AddHr = ({ open, handleClose, rowData }) => {
                 handleCloseForm();
               }, 1000);
               setFormData({
-                hrScopName: "",
+                hrSpocName: "",
                 hrEmail: "",
                 hrContactNumber: "",
                 designation: "",
@@ -182,7 +196,7 @@ const AddHr = ({ open, handleClose, rowData }) => {
       .then((response) => {
         if (response.status === 200) {
           if (response.data === "accepted_email") {
-            setVerifyEmail(response.data);
+            setVerifyEmail("");
           } else if (response.data === "rejected_email") {
             setVerifyEmail(response.data);
           } else {
@@ -203,55 +217,50 @@ const AddHr = ({ open, handleClose, rowData }) => {
 
   const handleEmailCheck = (event) => {
     let email = event.target.value;
-    axios
-      .get(Urlconstant.url + `api/hremailcheck?hrEmail=${email}`)
-      .then((response) => {
-        if (response.data === "Email already exists.") {
-          setEmailCheck("");
-          setCheckEmailExist(response.data);
-        } else {
-          validatingEmail(email);
-          setCheckEmailExist("");
-        }
-      })
-      .catch((error) => {
-        if (error.response && error.response.status === 500) {
-          setCheckEmailExist("");
-        } else {
-          setCheckEmailExist("Error in API call");
-        }
-      });
+    if (email.trim() !== "") {
+      axios
+        .get(Urlconstant.url + `api/hremailcheck?hrEmail=${email}`)
+        .then((response) => {
+          if (response.data === "Email does not exist.") {
+            setEmailCheck("");
+            setCheckEmailExist("");
+            if (validateEmail(email)) {
+              validatingEmail(email);
+            }
+          } else {
+            setEmailCheck("");
+            setCheckEmailExist(response.data);
+          }
+        })
+        .catch((error) => {});
+    }
   };
 
   const handleNumberCheck = (event) => {
     let contactNumber = event.target.value;
-    axios
-      .get(
-        Urlconstant.url +
-        `api/hrcontactnumbercheck?contactNumber=${contactNumber}`
-      )
-      .then((response) => {
-        if (response.data === "Contact Number Already exist.") {
-          setCheckPhoneNumberExist(response.data);
-        } else {
-          setCheckPhoneNumberExist("");
-          setPhoneNumberCheck("");
-        }
-      })
-      .catch((error) => {
-        if (error.response && error.response.status === 500) {
-          setCheckPhoneNumberExist("");
-        } else {
-          setCheckPhoneNumberExist("Error in API call");
-        }
-      });
+    if (contactNumber.trim() !== "") {
+      axios
+        .get(
+          Urlconstant.url +
+          `api/hrcontactnumbercheck?contactNumber=${contactNumber}`
+        )
+        .then((response) => {
+          if (response.data === "Contact Number Already exist.") {
+            setCheckPhoneNumberExist(response.data);
+          } else {
+            setCheckPhoneNumberExist("");
+            setPhoneNumberCheck("");
+          }
+        })
+        .catch((error) => {});
+    }
   };
 
   const isDisabled =
     checkPhoneNumberExist ||
     checkEmailExist ||
     emailCheck ||
-    !formData.hrScopName ||
+    !formData.hrSpocName ||
     !formData.hrContactNumber ||
     !formData.designation;
   return (
@@ -273,10 +282,10 @@ const AddHr = ({ open, handleClose, rowData }) => {
           <Grid item xs={12} sm={4}>
             <TextField
               label="Hr Spoc Name"
-              name="hrScopName"
+              name="hrSpocName"
               onChange={handleInputChange}
               style={fieldStyle}
-              value={formData.hrScopName}
+              value={formData.hrSpocName}
             />
             {validateName ? (
               <Alert severity="error">{validateName}</Alert>

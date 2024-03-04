@@ -9,7 +9,7 @@ import {
   Select,
   Snackbar,
   TextField,
-  Typography,
+  Typography
 } from "@mui/material";
 
 import { Textarea } from "@mui/joy";
@@ -26,7 +26,7 @@ export const PayFee = ({
   handleClose,
   traineeEmail,
   feesData,
-  feesDetils,
+  feesDetils
 }) => {
   const [finalUpdateBalence, setFinalUpdateBalence] = useState("");
   const [updateFeesData, setUpdateFeesData] = useState({});
@@ -35,7 +35,10 @@ export const PayFee = ({
   const [loading, setLoading] = useState(false);
   const paymentMode = ["Online", "Upi", "Cash"];
   var selectlateFee = ["Yes", "No"];
+
   const [lateFeesValue, setLateFeesValue] = useState("");
+  const [transactionErr, setTransactionErr] = useState("");
+
   const [isConfirm, setIsConfirm] = useState(false);
   const [paidAmountError, setPaidAmountError] = useState("");
   const [lateFeesError, setLateFeesError] = useState("");
@@ -54,21 +57,24 @@ export const PayFee = ({
     return `${year}-${month}-${day}`;
   };
 
-  useEffect(() => {
-    if (feesData.lateFees > 0) {
-      setLateFeesValue("Yes");
-    } else {
-      setLateFeesValue("");
-    }
-    setUpdateFeesData("");
-    setPaidAmountError("");
-    setAmountError("");
-    setLateFeesError("");
-    setTotalBalance(feesData.totalAmount);
-    setupdatedTotalAmount(totalBalance);
-    setUpdatedBalance(balance);
-    setBalance(feesData.balance);
-  }, [open, traineeEmail, handleClose, feesData]);
+  useEffect(
+    () => {
+      if (feesData.lateFees > 0) {
+        setLateFeesValue("Yes");
+      } else {
+        setLateFeesValue("");
+      }
+      setUpdateFeesData("");
+      setPaidAmountError("");
+      setAmountError("");
+      setLateFeesError("");
+      setTotalBalance(feesData.totalAmount);
+      setupdatedTotalAmount(totalBalance);
+      setUpdatedBalance(balance);
+      setBalance(feesData.balance);
+    },
+    [open, traineeEmail, handleClose, feesData]
+  );
 
   const handlePay = () => {
     setIsConfirm(true);
@@ -77,7 +83,7 @@ export const PayFee = ({
     setConfirmIsDisabled(true);
     const feesDto = {
       admin: {
-        updatedBy: sessionStorage.getItem("userId"),
+        updatedBy: sessionStorage.getItem("userId")
       },
       feesHistoryDto: {
         email: traineeEmail,
@@ -86,15 +92,15 @@ export const PayFee = ({
         paidAmount: updateFeesData.paidAmount,
         followupCallbackDate: updateFeesData.followupCallbackDate,
         paymentMode: updateFeesData.paymentMode,
-        paidTo: updateFeesData.paidTo,
+        paidTo: updateFeesData.paidTo
       },
       lateFees: updateFeesData.lateFees,
       name: feesData.name,
-      comments: updateFeesData.comments,
+      comments: updateFeesData.comments
     };
     updateFees(feesDto);
   };
-  const handleSetData = (e) => {
+  const handleSetData = e => {
     const { name, value } = e.target;
     setUpdateFeesData({ ...updateFeesData, [name]: value });
 
@@ -130,13 +136,24 @@ export const PayFee = ({
       setUpdatedBalance(Number(balance) - Number(value));
       setFinalUpdateBalence(Number(balance) - Number(value));
     }
+    if (
+      (name === "transectionId" && value !== "" && value.length < 5) ||
+      (name === "transectionId" && value !== "" && value.length > 14)
+    ) {
+      setTransactionErr("Please Enter Valid Transaction ID");
+    } else if (
+      (name === "transectionId" && value !== "" && value.length > 5) ||
+      (name === "transectionId" && value !== "" && value.length < 14)
+    ) {
+      setTransactionErr("");
+    }
   };
 
-  const updateFees = (feesDto) => {
+  const updateFees = feesDto => {
     setLoading(true);
     axios
       .put(Urlconstant.url + "api/updateFeesDeties", feesDto)
-      .then((response) => {
+      .then(response => {
         setResponse(response.data);
         if (response.status === 200) {
           setIsConfirm(false);
@@ -160,7 +177,8 @@ export const PayFee = ({
       !updateFeesData.followupCallbackDate ||
       !updateFeesData.paymentMode ||
       !updateFeesData.paidTo ||
-      amountError;
+      amountError ||
+      transactionErr;
   } else {
     isDisabled =
       !updateFeesData.transectionId ||
@@ -169,7 +187,8 @@ export const PayFee = ({
       !updateFeesData.followupCallbackDate ||
       !updateFeesData.paymentMode ||
       !updateFeesData.paidTo ||
-      amountError;
+      amountError ||
+      transactionErr;
   }
 
   return (
@@ -181,14 +200,14 @@ export const PayFee = ({
               style={{
                 display: "flex",
                 justifyItems: "center",
-                justifyContent: "center",
+                justifyContent: "center"
               }}
             >
               <div
                 style={{
                   marginLeft: "18rem",
                   marginTop: "1rem",
-                  marginBottom: "1.5rem",
+                  marginBottom: "1.5rem"
                 }}
               >
                 <span className="text">Pay fees</span>
@@ -197,11 +216,10 @@ export const PayFee = ({
                 style={{
                   marginLeft: "21rem",
                   marginTop: "1rem",
-                  marginBottom: "1.5rem",
+                  marginBottom: "1.5rem"
                 }}
               >
-                {" "}
-                <TfiClose
+                {" "}<TfiClose
                   color="inherit"
                   onClick={() => {
                     handleClose();
@@ -210,11 +228,30 @@ export const PayFee = ({
               </div>
             </div>
             <div className="error">
-              <span>{paidAmountError}</span>
-              <span>{amountError}</span>
+              <span>
+                {paidAmountError}
+              </span>
+              <span>
+                {amountError}
+              </span>
             </div>
             <div className="late-error error">
-              <span>{lateFeesError}</span>
+              <span>
+                {lateFeesError}
+              </span>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                fontSize: "0.7rem",
+                paddingBottom: "8px",
+                marginRight: "4rem"
+              }}
+            >
+              <span style={{ color: "red", padding: "2px" }}>
+                {transactionErr}
+              </span>
             </div>
 
             <Box>
@@ -228,12 +265,12 @@ export const PayFee = ({
                   justifyContent: "space-between",
                   alignItems: "center",
                   justifySelf: "center",
-                  marginBottom: "2rem",
+                  marginBottom: "2rem"
                 }}
               >
                 <TextField
                   InputProps={{
-                    readOnly: true,
+                    readOnly: true
                   }}
                   label="trainee Name"
                   name="traineeName"
@@ -246,7 +283,7 @@ export const PayFee = ({
 
                 <TextField
                   InputProps={{
-                    readOnly: true,
+                    readOnly: true
                   }}
                   label="Email"
                   id="outlined-size-small"
@@ -256,6 +293,7 @@ export const PayFee = ({
                   color="primary"
                   focused
                 />
+
                 <TextField
                   required
                   label="Transaction id "
@@ -282,13 +320,13 @@ export const PayFee = ({
                   focused
                   sx={{ width: "28.5%" }}
                   inputProps={{
-                    max: getCurrentDate(),
+                    max: getCurrentDate()
                   }}
                 />
                 <TextField
                   sx={{ backgroundColor: "lightcyan" }}
                   InputProps={{
-                    readOnly: true,
+                    readOnly: true
                   }}
                   name="totalAmount"
                   label="Total Amount *"
@@ -339,14 +377,14 @@ export const PayFee = ({
                     sx={{
                       marginRight: "10px",
                       width: "200px",
-                      fontSize: "12px",
+                      fontSize: "12px"
                     }}
                   >
-                    {paidTo.map((item, index) => (
+                    {paidTo.map((item, index) =>
                       <MenuItem value={item} key={index}>
                         {item}
                       </MenuItem>
-                    ))}
+                    )}
                   </Select>
                 </FormControl>
                 <FormControl>
@@ -363,14 +401,14 @@ export const PayFee = ({
                     sx={{
                       marginRight: "10px",
                       width: "200px",
-                      fontSize: "12px",
+                      fontSize: "12px"
                     }}
                   >
-                    {paymentMode.map((item, index) => (
+                    {paymentMode.map((item, index) =>
                       <MenuItem value={item} key={index}>
                         {item}
                       </MenuItem>
-                    ))}
+                    )}
                   </Select>
                 </FormControl>
               </div>
@@ -380,7 +418,7 @@ export const PayFee = ({
                   display: "flex",
                   alignItems: "center",
                   marginLeft: "2.1rem",
-                  marginBottom: "2rem",
+                  marginBottom: "2rem"
                 }}
               >
                 <TextField
@@ -395,10 +433,10 @@ export const PayFee = ({
                   focused
                   sx={{ width: "27.5%", marginRight: "6.5%" }}
                   InputLabelProps={{
-                    shrink: true,
+                    shrink: true
                   }}
                   inputProps={{
-                    min: getCurrentDate(),
+                    min: getCurrentDate()
                   }}
                 />
                 <FormControl>
@@ -419,38 +457,36 @@ export const PayFee = ({
                     sx={{
                       marginRight: "3.9rem",
                       width: "200px",
-                      fontSize: "12px",
+                      fontSize: "12px"
                     }}
                   >
-                    {selectlateFee.map((item, index) => (
+                    {selectlateFee.map((item, index) =>
                       <MenuItem value={item} key={index}>
                         {item}
                       </MenuItem>
-                    ))}
+                    )}
                   </Select>
                 </FormControl>
-                {updateFeesData || feesData.lateFees > 0 ? (
-                  updateFeesData.selectlateFees === "Yes" ||
-                  feesData.lateFees > 0 ? (
-                    <TextField
-                      required
-                      name="lateFees"
-                      defaultValue={feesData.lateFees ? feesData.lateFees : ""}
-                      sx={{ backgroundColor: "lightcyan" }}
-                      label="Select Late Fees"
-                      placeholder="Enter Late Fees Amount"
-                      onChange={handleSetData}
-                      id="outlined-size-small"
-                      size="small"
-                      color="primary"
-                      focused
-                    />
-                  ) : (
-                    ""
-                  )
-                ) : (
-                  ""
-                )}
+                {updateFeesData || feesData.lateFees > 0
+                  ? updateFeesData.selectlateFees === "Yes" ||
+                    feesData.lateFees > 0
+                    ? <TextField
+                        required
+                        name="lateFees"
+                        defaultValue={
+                          feesData.lateFees ? feesData.lateFees : ""
+                        }
+                        sx={{ backgroundColor: "lightcyan" }}
+                        label="Select Late Fees"
+                        placeholder="Enter Late Fees Amount"
+                        onChange={handleSetData}
+                        id="outlined-size-small"
+                        size="small"
+                        color="primary"
+                        focused
+                      />
+                    : ""
+                  : ""}
               </div>
 
               <div className="field">
@@ -458,7 +494,7 @@ export const PayFee = ({
                   sx={{
                     outlineOffset: "2rem",
                     width: "25rem",
-                    marginBottom: "-2.8rem",
+                    marginBottom: "-2.8rem"
                   }}
                   placeholder="Type in here…"
                   minRows={2}
@@ -472,18 +508,16 @@ export const PayFee = ({
               </div>
 
               <div className="success">
-                {loading ? (
-                  <CircularProgress size={20} />
-                ) : (
-                  <Button
-                    disabled={isDisabled}
-                    type="submit"
-                    size="large"
-                    onClick={handlePay}
-                  >
-                    Pay
-                  </Button>
-                )}
+                {loading
+                  ? <CircularProgress size={20} />
+                  : <Button
+                      disabled={isDisabled}
+                      type="submit"
+                      size="large"
+                      onClick={handlePay}
+                    >
+                      Pay
+                    </Button>}
               </div>
             </Box>
           </div>
@@ -502,7 +536,7 @@ export const PayFee = ({
                 paddingRight: "3.5rem",
                 alignItems: "center",
                 justifyContent: "center",
-                marginRight: "5rem",
+                marginRight: "5rem"
               }}
             >
               <span style={{ fontSize: "15px", fontWeight: "bolder" }}>
@@ -513,7 +547,7 @@ export const PayFee = ({
                   fontSize: "15px",
                   color: "green",
                   fontWeight: "bolder",
-                  paddingLeft: "1rem",
+                  paddingLeft: "1rem"
                 }}
               >
                 {updateFeesData.paidAmount}
@@ -524,7 +558,7 @@ export const PayFee = ({
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                marginRight: "8rem",
+                marginRight: "8rem"
               }}
             >
               <span style={{ fontSize: "15px", fontWeight: "bolder" }}>
@@ -533,7 +567,7 @@ export const PayFee = ({
                   style={{
                     fontSize: "15px",
                     color: "red",
-                    marginLeft: "0.2rem",
+                    marginLeft: "0.2rem"
                   }}
                 >
                   {updatedBalance}
@@ -544,14 +578,14 @@ export const PayFee = ({
               style={{
                 display: "flex",
                 marginTop: "-0.2rem",
-                justifyContent: "center",
+                justifyContent: "center"
               }}
             >
               <h6
                 style={{
                   fontSize: "15px",
                   display: "flex",
-                  alignItems: "center",
+                  alignItems: "center"
                 }}
               >
                 <span style={{ color: "red" }}>
@@ -580,7 +614,7 @@ export const PayFee = ({
         autoHideDuration={2000} // Adjust as needed
         onClose={() => setSnackbar(false)}
         message={response}
-      ></Snackbar>
+      />
     </Container>
   );
 };

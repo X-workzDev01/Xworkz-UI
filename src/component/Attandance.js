@@ -106,10 +106,14 @@ export default function ControlledSelectionServerPaginationGrid() {
 
   function getTotalClass() {
     axios
-      .get(Urlconstant.url + `api/getTotalClass?courseName=${courseName}`)
-      .then((response) => {
-        setTotalClass(response.data);
-      })
+    .get(
+      Urlconstant.url + `api/attendance/getBatchAttendanceCount?courseName=${courseName}`
+    )
+    .then((response) => {
+      const batchAttendanceData = response.data;
+      const key = Object.keys(batchAttendanceData)[0];
+      setTotalClass(key)
+    })
       .catch((error) => {
         console.error("Error fetching total class data:", error);
       });

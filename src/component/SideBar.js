@@ -69,7 +69,7 @@ const Sidebar = ({ children }) => {
       icon: <FaTh />,
     },
     {
-      path: "companylist",
+      path: "companies",
       name: "Company Details",
       icon: <FaUserAlt />,
     },

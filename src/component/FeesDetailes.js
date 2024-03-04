@@ -5,7 +5,7 @@ import {
   MenuItem,
   Modal,
   Select,
-  TextField,
+  TextField
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import axios from "axios";
@@ -30,39 +30,41 @@ export const FeesDetailes = () => {
   const [status, setStatus] = useState(sessionStorage.getItem("feesStatus"));
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
-    pageSize: initialPageSize,
+    pageSize: initialPageSize
   });
   const [gridData, setGridData] = useState({
     rows: [],
-    rowCount: 0,
+    rowCount: 0
   });
 
-  useEffect(() => {
-    setOpenSyncLoader(true);
-    setIsOpen(true);
-    fetchingGridData(
-      paginationModel.page,
-      paginationModel.pageSize,
-      date,
-      batch,
-      paymentMode,
-      status
-    );
-    getBatch();
-  }, [batch, paymentMode, date, paginationModel, status]);
+  useEffect(
+    () => {
+      setOpenSyncLoader(true);
+      setIsOpen(true);
+      fetchingGridData(
+        paginationModel.page,
+        paginationModel.pageSize,
+        date,
+        batch,
+        paymentMode,
+        status
+      );
+      getBatch();
+    },
+    [batch, paymentMode, date, paginationModel, status]
+  );
 
   const getBatch = () => {
     axios
       .get(Urlconstant.url + "api/getCourseName?status=Active", {
         headers: {
-          spreadsheetId: Urlconstant.spreadsheetId,
-        },
+          spreadsheetId: Urlconstant.spreadsheetId
+        }
       })
-
-      .then((response) => {
+      .then(response => {
         setBatchDetiles(response.data);
       })
-      .catch((error) => {});
+      .catch(error => {});
   };
 
   const fetchingGridData = (
@@ -79,15 +81,15 @@ export const FeesDetailes = () => {
       Urlconstant.url +
         `api/getFeesDetilesBySelectedOption/${startingIndex}/${maxRows}/${date}/${batch}/${paymentMode}/${status}`
     );
-    response.then((res) => {
+    response.then(res => {
       console.log(res.data.listOfFeesDto);
       setGridData({
         rows: res.data.listOfFeesDto
-          ? res.data.listOfFeesDto.map((row) => ({
-              ...row,
+          ? res.data.listOfFeesDto.map(row => ({
+              ...row
             }))
           : "",
-        rowCount: res.data.size,
+        rowCount: res.data.size
       });
       setOpenSyncLoader(false);
       setIsOpen(false);
@@ -98,147 +100,152 @@ export const FeesDetailes = () => {
     {
       field: "name",
       headerName: "Trainee Name",
-      valueGetter: (params) => params.row.name,
-      flex: 1,
+      valueGetter: params => params.row.name,
+      flex: 1
     },
     {
       field: "email",
       headerName: "Email",
       flex: 1,
-      valueGetter: (params) => params.row.feesHistoryDto.email,
+      valueGetter: params => params.row.feesHistoryDto.email
     },
     {
       field: "Batch",
       headerName: "Batch",
       flex: 1,
-      valueGetter: (params) => params.row.courseName,
+      valueGetter: params => params.row.courseName
     },
     {
       field: "TransectionId",
       flex: 1,
       headerName: "Transaction Id",
-      valueGetter: (params) => params.row.feesHistoryDto.transectionId,
+      valueGetter: params => params.row.feesHistoryDto.transectionId
     },
     {
       field: "paymentMode",
       flex: 1,
       headerName: "Payment Mode",
-      valueGetter: (params) => params.row.feesHistoryDto.paymentMode,
+      valueGetter: params => params.row.feesHistoryDto.paymentMode
     },
     {
       field: "paymentpaidDate",
       flex: 1,
       headerName: "Payment paid date",
-      valueGetter: (params) => params.row.feesHistoryDto.lastFeesPaidDate,
+      valueGetter: params => params.row.feesHistoryDto.lastFeesPaidDate
     },
     {
       field: "Call Back Date",
       flex: 1,
       headerName: "Call Back Date",
-      valueGetter: (params) => params.row.feesHistoryDto.followupCallbackDate,
+      valueGetter: params => params.row.feesHistoryDto.followupCallbackDate
     },
     {
       headerName: "Paid To",
       field: "paidTo",
       flex: 1,
-      valueGetter: (params) => params.row.feesHistoryDto.paidTo,
+      valueGetter: params => params.row.feesHistoryDto.paidTo
     },
     {
       field: "totalAmount",
       flex: 1,
       headerName: "Total Amount",
-      valueGetter: (params) => params.row.totalAmount,
+      valueGetter: params => params.row.totalAmount
     },
     {
       field: "balance",
       flex: 1,
       headerName: "Balance",
-      valueGetter: (params) => params.row.balance,
+      valueGetter: params => params.row.balance
     },
     {
       field: "lateFees",
       flex: 1,
       headerName: "Late Fees",
-      valueGetter: (params) => params.row.lateFees,
+      valueGetter: params => params.row.lateFees
+    },
+    {
+      field: "Fee Concession",
+      flex: 1,
+      headerName: "Fee Concession",
+      valueGetter: params => params.row.feeConcession + " %"
+    },
+    {
+      field: "Paid Amount",
+      flex: 1,
+      headerName: "Paid Amount",
+      valueGetter: params => params.row.feesHistoryDto.paidAmount
     },
     {
       flex: 1,
       headerName: "FeesStatus",
-      valueGetter: (params) => params.row.feesStatus,
-      renderCell: (params) => (
+      valueGetter: params => params.row.feesStatus,
+      renderCell: params =>
         <div>
-          {params.row.balance === 0 ? (
-            <div
-              style={{
-                padding: "0.4rem",
-                borderRadius: "0.5rem",
-                color: "black",
-                textTransform: "uppercase",
-              }}
-            >
-              Completed
-            </div>
-          ) : (
-            <div
-              style={{
-                padding: "0.4rem",
-                borderRadius: "0.5rem",
-                color: "blue",
-              }}
-            >
-              {params.row.feesStatus === "FEES_DUE" ? (
-                <div
-                  style={{
-                    color: "red",
-                    paddingRight: "0.9rem",
-                    paddingLeft: "0.9rem",
-                    borderRadius: "0.5rem",
-                    textTransform: "uppercase",
-                    padding: "0.4rem",
-                  }}
-                >
-                  {params.row.feesStatus}
-                </div>
-              ) : (
-                <div>
-                  {params.row.feesStatus === "FREE" ? (
-                    <span
+          {params.row.balance === 0
+            ? <div
+                style={{
+                  padding: "0.4rem",
+                  borderRadius: "0.5rem",
+                  color: "black",
+                  textTransform: "uppercase"
+                }}
+              >
+                Completed
+              </div>
+            : <div
+                style={{
+                  padding: "0.4rem",
+                  borderRadius: "0.5rem",
+                  color: "blue"
+                }}
+              >
+                {params.row.feesStatus === "FEES_DUE"
+                  ? <div
                       style={{
-                        color: "green",
-                        paddingRight: "2rem",
-                        paddingLeft: "2rem",
-                        padding: "0.4rem",
-                        borderRadius: "0.5rem",
-                      }}
-                    >
-                      {params.row.feesStatus}
-                    </span>
-                  ) : (
-                    <span
-                      style={{
-                        color: "blue",
-                        paddingRight: "1.1rem",
-                        paddingLeft: "1.1rem",
+                        color: "red",
+                        paddingRight: "0.9rem",
+                        paddingLeft: "0.9rem",
                         borderRadius: "0.5rem",
                         textTransform: "uppercase",
-                        padding: "0.4rem",
+                        padding: "0.4rem"
                       }}
                     >
                       {params.row.feesStatus}
-                    </span>
-                  )}
-                </div>
-              )}
-            </div>
-          )}
+                    </div>
+                  : <div>
+                      {params.row.feesStatus === "FREE"
+                        ? <span
+                            style={{
+                              color: "green",
+                              paddingRight: "2rem",
+                              paddingLeft: "2rem",
+                              padding: "0.4rem",
+                              borderRadius: "0.5rem"
+                            }}
+                          >
+                            {params.row.feesStatus}
+                          </span>
+                        : <span
+                            style={{
+                              color: "blue",
+                              paddingRight: "1.1rem",
+                              paddingLeft: "1.1rem",
+                              borderRadius: "0.5rem",
+                              textTransform: "uppercase",
+                              padding: "0.4rem"
+                            }}
+                          >
+                            {params.row.feesStatus}
+                          </span>}
+                    </div>}
+              </div>}
         </div>
-      ),
     },
     {
       flex: 1,
       headerName: "Action",
       field: "Action",
-      renderCell: (params) => (
+      renderCell: params =>
         <div>
           <Button
             color="secondary"
@@ -250,14 +257,12 @@ export const FeesDetailes = () => {
               `profile/${params.row.feesHistoryDto.email}`
             }
           >
-            {" "}
-            View
+            {" "}View
           </Button>
         </div>
-      ),
-    },
+    }
   ];
-  const handleSetData = (event) => {
+  const handleSetData = event => {
     const { name, value } = event.target;
     if (name === "paymentMode") {
       setPaymentMode(value);
@@ -293,7 +298,7 @@ export const FeesDetailes = () => {
           display: "flex",
           justifyContent: "flex-start",
           alignItems: "center",
-          marginBottom: "1%",
+          marginBottom: "1%"
         }}
       >
         <FormControl>
@@ -311,17 +316,16 @@ export const FeesDetailes = () => {
             sx={{
               marginRight: "10px",
               width: "200px",
-              fontSize: "12px",
+              fontSize: "12px"
             }}
             size="medium"
           >
-            {" "}
-            <MenuItem value={"null"}> Select status </MenuItem>
-            {feesDropdownStatus.map((item, index) => (
+            {" "}<MenuItem value={"null"}> Select status </MenuItem>
+            {feesDropdownStatus.map((item, index) =>
               <MenuItem value={item} key={index}>
                 {item}
               </MenuItem>
-            ))}
+            )}
           </Select>
         </FormControl>
         <FormControl>
@@ -339,16 +343,16 @@ export const FeesDetailes = () => {
             sx={{
               marginRight: "10px",
               width: "200px",
-              fontSize: "12px",
+              fontSize: "12px"
             }}
             size="medium"
           >
             <MenuItem value={"null"}> Select course </MenuItem>
-            {batchDetiles.map((item, index) => (
+            {batchDetiles.map((item, index) =>
               <MenuItem value={item} key={index}>
                 {item}
               </MenuItem>
-            ))}
+            )}
           </Select>
         </FormControl>
         <FormControl>
@@ -366,15 +370,15 @@ export const FeesDetailes = () => {
             sx={{
               marginRight: "10px",
               width: "200px",
-              fontSize: "12px",
+              fontSize: "12px"
             }}
           >
             <MenuItem value={"null"}>Select payment mode </MenuItem>
-            {selectPaymentMode.map((item, index) => (
+            {selectPaymentMode.map((item, index) =>
               <MenuItem value={item} key={index}>
                 {item}
               </MenuItem>
-            ))}
+            )}
           </Select>
         </FormControl>
         <TextField
@@ -395,7 +399,7 @@ export const FeesDetailes = () => {
           sx={{
             marginRight: "10px",
             width: "200px",
-            fontSize: "12px",
+            fontSize: "12px"
           }}
           focused
         />
@@ -404,27 +408,25 @@ export const FeesDetailes = () => {
         </Button>
       </div>
 
-      {openSyncLoader ? (
-        <Modal
-          open={isOpen}
-          onClose={() => setIsOpen(false)}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            opacity: "50%",
-          }}
-        >
-          <SyncLoader
-            color="#4000ff"
-            margin={8}
-            size={12}
-            speedMultiplier={1}
-          />
-        </Modal>
-      ) : (
-        ""
-      )}
+      {openSyncLoader
+        ? <Modal
+            open={isOpen}
+            onClose={() => setIsOpen(false)}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              opacity: "50%"
+            }}
+          >
+            <SyncLoader
+              color="#4000ff"
+              margin={8}
+              size={12}
+              speedMultiplier={1}
+            />
+          </Modal>
+        : ""}
 
       <DataGrid
         style={{ height: "42rem", width: "100%" }}

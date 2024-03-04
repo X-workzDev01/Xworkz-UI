@@ -10,7 +10,7 @@ import axios from "axios";
 import Header from "./Header";
 import { Urlconstant } from "../constant/Urlconstant";
 import { Navigate, Route, Router } from "react-router-dom";
-import { Percentage } from "./Percentage";
+import { Percentage } from "./percentage";
 
 export default function Registration() {
   const email = sessionStorage.getItem("userId");
@@ -21,17 +21,17 @@ export default function Registration() {
   const [formData, setFormData] = useState({
     basicInfo: [],
     educationInfo: [],
-    percentageDto:[],
+    // percentageDto: [],
     courseInfo: [],
     othersDto: [],
-    adminDto: { createdBy: email },
+    adminDto: { createdBy: email }
   });
   const [dropdown, setDropDown] = useState({
     course: [],
     qualification: [],
     batch: [],
     stream: [],
-    college: [],
+    college: []
   });
 
   useEffect(() => {
@@ -42,25 +42,24 @@ export default function Registration() {
     axios
       .get(Urlconstant.url + "utils/dropdown", {
         headers: {
-          spreadsheetId: Urlconstant.spreadsheetId,
-        },
+          spreadsheetId: Urlconstant.spreadsheetId
+        }
       })
-      .then((response) => {
+      .then(response => {
         setDropDown(response.data);
       })
-      .catch((error) => {});
+      .catch(error => {});
 
     axios
       .get(Urlconstant.url + "api/getCourseName?status=Active", {
         headers: {
-          spreadsheetId: Urlconstant.spreadsheetId,
-        },
+          spreadsheetId: Urlconstant.spreadsheetId
+        }
       })
-
-      .then((res) => {
+      .then(res => {
         setBatchDetiles(res.data);
       })
-      .catch((e) => {});
+      .catch(e => {});
   };
   const handleNext = () => {
     setCurrentSection(currentSection + 1);
@@ -70,15 +69,15 @@ export default function Registration() {
     setCurrentSection(currentSection - 1);
   };
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = e => {
     setIsLoading(true);
     axios
       .post(Urlconstant.url + "api/register", formData, {
         headers: {
-          spreadsheetId: Urlconstant.spreadsheetId,
-        },
+          spreadsheetId: Urlconstant.spreadsheetId
+        }
       })
-      .then((response) => {
+      .then(response => {
         setMessages("Registration done successfully!!!");
         setIsLoading(false);
         setFormData({
@@ -86,12 +85,12 @@ export default function Registration() {
           educationInfo: [],
           courseInfo: [],
           othersDto: [],
-          adminDto: { createdBy: email },
+          adminDto: { createdBy: email }
         });
         setCurrentSection(1);
         Navigate(Urlconstant.navigate + "register");
       })
-      .catch((error) => {});
+      .catch(error => {});
   };
 
   const renderSection = () => {
@@ -100,7 +99,7 @@ export default function Registration() {
         return (
           <Trainee
             formData={formData.basicInfo}
-            setFormData={(data) => {
+            setFormData={data => {
               setMessages("");
               setFormData({ ...formData, basicInfo: data });
             }}
@@ -111,9 +110,8 @@ export default function Registration() {
         return (
           <Education
             formData={formData.educationInfo}
-            setFormData={(data) =>
-              setFormData({ ...formData, educationInfo: data })
-            }
+            setFormData={data =>
+              setFormData({ ...formData, educationInfo: data })}
             onNext={handleNext}
             onPrevious={handlePrevious}
             dropdown={dropdown}
@@ -130,13 +128,11 @@ export default function Registration() {
       //       onPrevious={handlePrevious}
       //     />
       //   );
-        case 3:
+      case 3:
         return (
           <Course
             formData={formData.courseInfo}
-            setFormData={(data) =>
-              setFormData({ ...formData, courseInfo: data })
-            }
+            setFormData={data => setFormData({ ...formData, courseInfo: data })}
             onNext={handleNext}
             onPrevious={handlePrevious}
             dropdown={dropdown}
@@ -147,7 +143,7 @@ export default function Registration() {
         return (
           <Referral
             formData={formData.othersDto}
-            setFormData={(data) => {
+            setFormData={data => {
               setFormData({ ...formData, othersDto: data });
             }}
             onNext={handleFormSubmit}
@@ -166,15 +162,18 @@ export default function Registration() {
       <h2>Registration Form</h2>
 
       <div key={messages} style={{ color: "Green" }}>
-        <h4> {messages}</h4>
+        <h4>
+          {" "}{messages}
+        </h4>
       </div>
-      <Stepper activeStep={currentSection-1}>
+      <Stepper activeStep={currentSection - 1}>
         <Step>
           <StepLabel>Trainee</StepLabel>
         </Step>
         <Step>
           <StepLabel>Education</StepLabel>
         </Step>
+
         {/* <Step>
           <StepLabel>Percentage</StepLabel>
         </Step> */}

@@ -48,8 +48,8 @@ const Dashboard = ({ isLoggedIn }) => {
           <Route path="/whatsapp" element={<WhatsAppLinkSender />} />
           <Route path="/feesDetails" element={<FeesDetailes />} />
           <Route path="/company" element={<ClientDetails />} />
-          <Route path="/companylist" element={<ViewClient />} />
-          <Route path="/companylist/:id" element={<CompanyProfile />} />
+          <Route path="/companies" element={<ViewClient />} />
+          <Route path="/companies/:id" element={<CompanyProfile />} />
           <Route path="/company/hr/:id" element={<ViewHrProfile />} />
           <Route path="/exportdata" element={<ExportData />} />
         </Routes>

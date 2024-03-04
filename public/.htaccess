@@ -1,0 +1,10 @@
+Options -MultiViews
+RewriteEngine On
+
+# Serve files from the "static" directory directly
+RewriteCond %{REQUEST_URI} ^/static/
+RewriteRule ^static/(.*)$ build/static/$1 [L]
+
+# Handle client-side routing
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ build/index.html [QSA,L]

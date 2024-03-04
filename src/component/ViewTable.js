@@ -1,9 +1,9 @@
-import { PersonOutline } from "@mui/icons-material";
-import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import { MoreVert, PersonOutline } from "@mui/icons-material";
+import { Checkbox, FormControl, FormControlLabel, InputLabel, MenuItem, Popover, Select } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, GridToolbarContainer } from "@mui/x-data-grid";
 import axios from "axios";
 import * as React from "react";
 import { useState } from "react";
@@ -12,6 +12,9 @@ import { Urlconstant } from "../constant/Urlconstant";
 import Header from "./Header";
 import { GridToolbar } from "@mui/x-data-grid";
 import ExportData from "./ExportData";
+import { GridToolbarFilterButton } from "@mui/x-data-grid";
+import { GridToolbarDensitySelector } from "@mui/x-data-grid";
+import { GridToolbarExport } from "@mui/x-data-grid";
 
 function loadServerRows(page, pageSize, courseName, collegeName) {
   const startingIndex = page * pageSize;
@@ -146,6 +149,10 @@ export default function ControlledSelectionServerPaginationGrid() {
   const [isExportModalOpen, setExportModalOpen] = React.useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
   const [isClearClicked, setIsClearClicked] = useState(false);
+
+  const initiallySelectedFields = ['traineeName', 'email', 'contactNumber','course', 'actions'];
+  const [displayColumn, setDisplayColumn] = React.useState(initiallySelectedFields);
+  const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleSearchClick = () => {
     searchServerRows(searchValue, courseName, collegeName).then((newGridData) => {
@@ -293,8 +300,14 @@ export default function ControlledSelectionServerPaginationGrid() {
       valueGetter: (params) => params.row.basicInfo.contactNumber,
     },
     {
+      field: "dateOfBirth",
+      headerName: "Date Of Birth",
+      flex: 1,
+      valueGetter: (params) => params.row.basicInfo.dateOfBirth,
+    },
+    {
       field: "registrationDate",
-      headerName: "RegistrationDate",
+      headerName: "Registration Date",
       flex: 1,
       valueGetter: (params) => params.row.othersDto.registrationDate,
     },
@@ -341,6 +354,30 @@ export default function ControlledSelectionServerPaginationGrid() {
       valueGetter: (params) => params.row.courseInfo.batchType,
     },
     {
+      field: "trainerName",
+      headerName: "Trainer Name",
+      flex: 1,
+      valueGetter: (params) => params.row.courseInfo.trainerName,
+    },
+    {
+      field: "startDate",
+      headerName: "Start Date",
+      flex: 1,
+      valueGetter: (params) => params.row.courseInfo.startDate,
+    },
+    {
+      field: "batchTiming",
+      headerName: "Batch Timing",
+      flex: 1,
+      valueGetter: (params) => params.row.courseInfo.batchTiming,
+    },
+    {
+      field: "offeredAs",
+      headerName: "Offered As",
+      flex: 1,
+      valueGetter: (params) => params.row.courseInfo.offeredAs,
+    },
+    {
       field: "usnNumber",
       headerName: "USN number",
       flex: 1,
@@ -358,6 +395,92 @@ export default function ControlledSelectionServerPaginationGrid() {
       flex: 1,
       valueGetter: (params) => params.row.csrDto.uniqueId,
     },
+    {
+      field: "othersDto.referalName",
+      headerName: "Referal Name",
+      flex: 1,
+      valueGetter: (params) => params.row.othersDto.referalName,
+    },
+    {
+      field: "othersDto.referalContactNumber",
+      headerName: "Referal Contact Number",
+      flex: 1,
+      valueGetter: (params) => params.row.othersDto.referalContactNumber,
+    },
+    {
+      field: "othersDto.comments",
+      headerName: "Comments",
+      flex: 1,
+      valueGetter: (params) => params.row.othersDto.comments,
+    },
+    {
+      field: "othersDto.xworkzEmail",
+      headerName: "X-workz Email",
+      flex: 1,
+      valueGetter: (params) => params.row.othersDto.xworkzEmail,
+    },
+    {
+      field: "othersDto.working",
+      headerName: "Working",
+      flex: 1,
+      valueGetter: (params) => params.row.othersDto.working,
+    },
+    {
+      field: "othersDto.preferredLocation",
+      headerName: "Preferred Location",
+      flex: 1,
+      valueGetter: (params) => params.row.othersDto.preferredLocation,
+    },
+    {
+      field: "othersDto.preferredClassType",
+      headerName: "Preferred Class Type",
+      flex: 1,
+      valueGetter: (params) => params.row.othersDto.preferredClassType,
+    },
+
+    {
+      field: "othersDto.sendWhatsAppLink",
+      headerName: "Send WhatsAppLink",
+      flex: 1,
+      valueGetter: (params) => params.row.othersDto.sendWhatsAppLink,
+    },
+    // {
+    //   field: "percentageDto.sslcPercentage",
+    //   headerName: "SSLC Percentage",
+    //   flex: 1,
+    //   valueGetter: (params) => params.row.percentageDto.sslcPercentage,
+    // },
+    // {
+    //   field: "percentageDto.pucPercentage",
+    //   headerName: "PUC Percentage",
+    //   flex: 1,
+    //   valueGetter: (params) => params.row.percentageDto.pucPercentage,
+    // },
+    // {
+    //   field: "percentageDto.degreePercentage",
+    //   headerName: "Degree Percentage",
+    //   flex: 1,
+    //   valueGetter: (params) => params.row.percentageDto.degreePercentage,
+    // },
+    {
+      field: "adminDto.createdOn",
+      headerName: "Created On",
+      flex: 1,
+      valueGetter: (params) => params.row.adminDto.createdOn,
+    },
+    {
+      field: "adminDto.updatedBy",
+      headerName: "Updated By",
+      flex: 1,
+      valueGetter: (params) => params.row.adminDto.updatedBy,
+    },
+    {
+      field: "adminDto.updatedOn",
+      headerName: "Updated On",
+      flex: 1,
+      valueGetter: (params) => params.row.adminDto.updatedOn,
+    },
+
     {
       field: "actions",
       headerName: "Actions",
@@ -403,6 +526,28 @@ export default function ControlledSelectionServerPaginationGrid() {
     const collegeName = event.target.value;
     setCollegeName(collegeName);
   }
+
+  const open = Boolean(anchorEl);
+
+  const handleChangeColumnVisibility = (field) => {
+    let updatedDisplayColumn;
+    if (displayColumn.includes(field)) {
+      updatedDisplayColumn = displayColumn.filter(col => col !== field);
+    } else {
+      updatedDisplayColumn = [...displayColumn, field];
+    }
+    setDisplayColumn(updatedDisplayColumn);
+  };
+  React.useEffect(() => {
+    setDisplayColumn(initiallySelectedFields);
+  }, []);
+  const handleColumnChange = (event) => {
+    setAnchorEl(event.currentTarget);
+  }
+  const handleClosePopover = () => {
+    setAnchorEl(null);
+  };
+
   return (
     <div>
       <Header />
@@ -457,7 +602,8 @@ export default function ControlledSelectionServerPaginationGrid() {
             sx={{
               marginRight: "10px",
               width: "200px",
-              fontSize: "12px",
+              marginLeft: "10px",
+              fontSize: "14px",
             }}
             onChange={handleCourseChange}
           >
@@ -484,7 +630,8 @@ export default function ControlledSelectionServerPaginationGrid() {
             sx={{
               marginRight: "10px",
               width: "200px",
-              fontSize: "12px",
+              marginLeft: "10px",
+              fontSize: "14px",
             }}
             onChange={handleCollegeChange}
           >
@@ -496,7 +643,7 @@ export default function ControlledSelectionServerPaginationGrid() {
             ))}
           </Select>
         </FormControl>
-        <div>
+        <div style={{ marginLeft: "10px" }}>
           <Button
             variant="contained"
             color="primary"
@@ -505,20 +652,20 @@ export default function ControlledSelectionServerPaginationGrid() {
             Search
           </Button>
         </div>
-        <div style={{ paddingLeft: "10px" }}>
+        <div style={{ marginLeft: "10px" }}>
           <Button variant="contained" color="primary" onClick={handleClear}>
             Clear
           </Button>
         </div>
-        <div style={{ marginLeft:"35%" }}>
+        <div style={{ marginLeft: "35%" }}>
           <Button variant="contained" color="primary" onClick={handleExportClick}>Export Data</Button>
         </div>
-        
+
       </div>
       <div style={{ height: "650px", width: "100%" }}>
         <DataGrid
           style={{ width: "100%" }}
-          columns={columns}
+          columns={columns.filter(col => displayColumn.includes(col.field))}
           rows={gridData.rows}
           pagination
           paginationModel={paginationModel}
@@ -532,9 +679,52 @@ export default function ControlledSelectionServerPaginationGrid() {
           rowSelectionModel={rowSelectionModel}
           loading={loading}
           keepNonExistentRowsSelected
-          slots={{ toolbar: GridToolbar }}
+          slots={{
+            toolbar: () => (
+              <GridToolbarContainer>
+                <Button onClick={handleColumnChange}> <MoreVert /> Columns</Button>
+                <GridToolbarFilterButton />
+                <GridToolbarDensitySelector />
+                <GridToolbarExport />
+              </GridToolbarContainer>
+            )
+          }}
         >
         </DataGrid>
+        <Popover
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handleClosePopover}
+          anchorOrigin={{
+            vertical: "center",
+            horizontal: "center",
+          }}
+          transformOrigin={{
+            vertical: "center",
+            horizontal: "center",
+          }}
+          sx={{
+            position: 'absolute',
+            marginTop: '10%',
+            marginLeft: '15%',
+            marginRight: '10%',
+            width: '11%',
+          }}
+        >
+          <h4>COLUMNS</h4>
+          {columns.map(column => (
+            <FormControlLabel
+              key={column.field}
+              control={
+                <Checkbox
+                  checked={displayColumn.includes(column.field)}
+                  onChange={() => handleChangeColumnVisibility(column.field)}
+                />
+              }
+              label={column.headerName}
+            />
+          ))}
+        </Popover>
       </div>
       <ExportData
         open={isExportModalOpen}
