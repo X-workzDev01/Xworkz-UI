@@ -97,7 +97,7 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
         if (response.status === 201) {
           setEmailCheck(response.data);
         } else {
-          setEmailCheck(null);
+          setEmailCheck("");
         }
       })
       .catch();
@@ -153,7 +153,10 @@ export const Trainee = ({ formData, setFormData, onNext }) => {
   };
 
   const handleEmailVeryfy = e => {
-    verifyEmail(e.target.value);
+    const email = e.target.value;
+    if (email !== "" && emailError === "" && emailCheck === "") {
+      verifyEmail(email);
+    }
   };
 
   const today = new Date();

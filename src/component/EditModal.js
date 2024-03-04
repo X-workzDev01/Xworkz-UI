@@ -38,7 +38,6 @@ const EditModal = ({
   feeConcession,
   attemptStatus
 }) => {
-
   const navigate = useNavigate();
   const [feesConcession, setFeesConcession] = useState(feeConcession);
   const email = sessionStorage.getItem("userId");
@@ -103,12 +102,13 @@ const EditModal = ({
     [rowData]
   );
 
-
-  useEffect(() => {
-    const percDisabled = sslcError || pucError || degreeError;
-    setDisable(percDisabled);
-
-  }, [sslcError, pucError, degreeError]);
+  useEffect(
+    () => {
+      const percDisabled = sslcError || pucError || degreeError;
+      setDisable(percDisabled);
+    },
+    [sslcError, pucError, degreeError]
+  );
 
   React.useEffect(() => {
     axios
@@ -120,7 +120,7 @@ const EditModal = ({
       .then(response => {
         setDropDown(response.data);
       })
-      .catch(error => { });
+      .catch(error => {});
     axios
       .get(Urlconstant.url + "api/getCourseName?status=Active", {
         headers: {
@@ -133,7 +133,7 @@ const EditModal = ({
           fetchData(selectedValue); // Call fetchData with the selectedValue
         }
       })
-      .catch(e => { });
+      .catch(e => {});
   }, []);
   React.useEffect(
     () => {
@@ -168,7 +168,7 @@ const EditModal = ({
           startDate: data.startDate
         });
       })
-      .catch(error => { });
+      .catch(error => {});
   };
 
   const handleInputChange = event => {
@@ -328,7 +328,7 @@ const EditModal = ({
     }));
   };
 
-  const handleEmail = (email) => {
+  const handleEmail = email => {
     if (rowData.basicInfo.email === email) {
       setDisable(false);
       setEmailCheck(null);
@@ -346,7 +346,7 @@ const EditModal = ({
           setEmailCheck(response.data);
           if (validateEmail(email)) {
             verifyEmail(email);
-            setEmailCheck("")
+            setEmailCheck("");
           }
         } else {
           setEmailCheck(null);
@@ -355,10 +355,7 @@ const EditModal = ({
       .catch({});
   };
 
-  const verifyEmail = (email) => {
-    //   handleEmail(email);
-    // console.log("checking email");
-    //if (emailCheck === "Email does not exist" && validateEmail(email)) {
+  const verifyEmail = email => {
     axios
       .get(Urlconstant.url + `api/verify-email?email=${email}`)
       .then(response => {
@@ -378,20 +375,19 @@ const EditModal = ({
           }
         }
       })
-      .catch((error) => {
+      .catch(error => {
         console.log("check emailable credentils");
       });
     //}
   };
-  const handleVerifyEmail = (event) => {
-    //  verifyEmail(event.target.value);
+  const handleVerifyEmail = event => {
     const email = event.target.value;
     if (email.trim() != "") {
       handleEmail(event.target.value);
     }
   };
 
-  const handleNumberChange = (e) => {
+  const handleNumberChange = e => {
     const contactNumber = e.target.value;
     if (contactNumber == rowData.basicInfo.contactNumber) {
       setDisable(false);
@@ -403,7 +399,7 @@ const EditModal = ({
         axios
           .get(
             Urlconstant.url +
-            `api/contactNumberCheck?contactNumber=${contactNumber}`,
+              `api/contactNumberCheck?contactNumber=${contactNumber}`,
             {
               headers: {
                 spreadsheetId: Urlconstant.spreadsheetId
@@ -420,7 +416,7 @@ const EditModal = ({
               setDisable(false);
             }
           })
-          .catch(error => { });
+          .catch(error => {});
       }
     }
   };
@@ -458,8 +454,8 @@ const EditModal = ({
     setLoading(true);
     axios.put(
       Urlconstant.url +
-      `api/updateFeesDetailsChangeEmailAndFeeConcession/${feesConcession}/${updatedData
-        .basicInfo.traineeName}/${rowData.basicInfo
+        `api/updateFeesDetailsChangeEmailAndFeeConcession/${feesConcession}/${updatedData
+          .basicInfo.traineeName}/${rowData.basicInfo
           .email}/${newEmail}/${updatedData.adminDto.updatedBy}`
     );
     axios
@@ -519,7 +515,7 @@ const EditModal = ({
     handleClose();
   };
 
-  const handleEmailCheck = (email) => {
+  const handleEmailCheck = email => {
     axios
       .get(Urlconstant.url + `api/verify-email?email=${email}`)
       .then(response => {
@@ -537,13 +533,13 @@ const EditModal = ({
           }
         }
       })
-      .catch((error) => {
+      .catch(error => {
         console.log("check emailable credentils");
       });
     //}
   };
 
-  const handleVerifyXworkzEmail = (event) => {
+  const handleVerifyXworkzEmail = event => {
     let xworkzemail = event.target.value;
     if (xworkzemail.trim() !== "") {
       if (xworkzemail.includes(".xworkz")) {
@@ -565,7 +561,7 @@ const EditModal = ({
     }
   };
 
-  const handleUsnNumber = (event) => {
+  const handleUsnNumber = event => {
     const usn = event.target.value;
     if (usn === rowData.csrDto.usnNumber) {
       setUsnCheck("");
@@ -588,7 +584,7 @@ const EditModal = ({
               setDisable(false);
             }
           })
-          .catch(error => { });
+          .catch(error => {});
       }
     }
   };
@@ -618,29 +614,29 @@ const EditModal = ({
             />
             {verifyHandaleEmailerror
               ? <Alert severity="success">
-                {verifyHandaleEmailerror}
-              </Alert>
+                  {verifyHandaleEmailerror}
+                </Alert>
               : " "}
             {verifyHandaleEmailerror
               ? <Alert severity="error">
-                {verifyHandaleEmailerror}
-              </Alert>
+                  {verifyHandaleEmailerror}
+                </Alert>
               : " "}
             {emailError
               ? <Alert severity="error">
-                {emailError}{" "}
-              </Alert>
+                  {emailError}{" "}
+                </Alert>
               : " "}
             {emailCheck
               ? <Alert severity="error">
-                {emailCheck}
-              </Alert>
+                  {emailCheck}
+                </Alert>
               : " "}
 
             {verifyHandaleEmail
               ? <Alert severity="success">
-                {verifyHandaleEmail}
-              </Alert>
+                  {verifyHandaleEmail}
+                </Alert>
               : " "}
           </Grid>
           <Grid item xs={4}>
@@ -654,8 +650,8 @@ const EditModal = ({
             />
             {traineeNameCheck
               ? <Alert severity="error">
-                {traineeNameCheck}{" "}
-              </Alert>
+                  {traineeNameCheck}{" "}
+                </Alert>
               : " "}
           </Grid>
           <Grid item xs={4}>
@@ -670,13 +666,13 @@ const EditModal = ({
             />
             {phoneNumberError
               ? <Alert severity="error">
-                {phoneNumberError}
-              </Alert>
+                  {phoneNumberError}
+                </Alert>
               : " "}
             {numberCheck
               ? <Alert severity="error">
-                {numberCheck}
-              </Alert>
+                  {numberCheck}
+                </Alert>
               : " "}
           </Grid>
           <Grid item xs={4}>
@@ -802,8 +798,8 @@ const EditModal = ({
             />
             {usnCheck
               ? <Alert severity="error">
-                {usnCheck}
-              </Alert>
+                  {usnCheck}
+                </Alert>
               : " "}
           </Grid>
 
@@ -819,8 +815,8 @@ const EditModal = ({
             />
             {alternativeNumberCheck
               ? <Alert severity="error">
-                {alternativeNumberCheck}
-              </Alert>
+                  {alternativeNumberCheck}
+                </Alert>
               : " "}
           </Grid>
           <Grid item xs={4}>
@@ -962,8 +958,8 @@ const EditModal = ({
             />
             {referalNameCheck
               ? <Alert severity="error">
-                {referalNameCheck}
-              </Alert>
+                  {referalNameCheck}
+                </Alert>
               : " "}
           </Grid>
           <Grid item xs={4}>
@@ -977,8 +973,8 @@ const EditModal = ({
             />
             {referalContactNumber
               ? <Alert severity="error">
-                {referalContactNumber}
-              </Alert>
+                  {referalContactNumber}
+                </Alert>
               : " "}
           </Grid>
           <Grid item xs={4}>
@@ -993,23 +989,23 @@ const EditModal = ({
             />
             {xworkzemailCheck
               ? <Alert severity="error">
-                {xworkzemailCheck}{" "}
-              </Alert>
+                  {xworkzemailCheck}{" "}
+                </Alert>
               : " "}
             {verifyHandaleEmailerror
               ? <Alert severity="success">
-                {verifyHandaleEmailerror}
-              </Alert>
+                  {verifyHandaleEmailerror}
+                </Alert>
               : " "}
             {verifyHandaleEmailerror
               ? <Alert severity="error">
-                {verifyHandaleEmailerror}
-              </Alert>
+                  {verifyHandaleEmailerror}
+                </Alert>
               : " "}
             {verifyHandaleEmail
               ? <Alert severity="success">
-                {verifyHandaleEmail}
-              </Alert>
+                  {verifyHandaleEmail}
+                </Alert>
               : " "}
           </Grid>
           <Grid item xs={4}>
@@ -1071,33 +1067,33 @@ const EditModal = ({
           {attemptStatus
             ? attemptStatus === "Joined"
               ? <Grid item xs={4}>
-                <FormControl>
-                  <InputLabel id="demo-simple-select-label">
-                    Fees Concession
-                  </InputLabel>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    label="Concession"
-                    name="feeConcession"
-                    onChange={handleInputChange}
-                    defaultValue={feeConcession}
-                    variant="outlined"
-                    sx={{
-                      marginRight: "20px",
-                      width: "225px"
-                    }}
-                    style={fieldStyle}
-                    required
-                  >
-                    {[...Array(26).keys()].map((item, index) =>
-                      <MenuItem value={item} key={index}>
-                        {item}
-                      </MenuItem>
-                    )}
-                  </Select>
-                </FormControl>
-              </Grid>
+                  <FormControl>
+                    <InputLabel id="demo-simple-select-label">
+                      Fees Concession
+                    </InputLabel>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      label="Concession"
+                      name="feeConcession"
+                      onChange={handleInputChange}
+                      defaultValue={feeConcession}
+                      variant="outlined"
+                      sx={{
+                        marginRight: "20px",
+                        width: "225px"
+                      }}
+                      style={fieldStyle}
+                      required
+                    >
+                      {[...Array(26).keys()].map((item, index) =>
+                        <MenuItem value={item} key={index}>
+                          {item}
+                        </MenuItem>
+                      )}
+                    </Select>
+                  </FormControl>
+                </Grid>
               : ""
             : ""}
 
@@ -1156,8 +1152,8 @@ const EditModal = ({
             />
             {comments
               ? <Alert severity="error">
-                {comments}{" "}
-              </Alert>
+                  {comments}{" "}
+                </Alert>
               : " "}
           </Grid>
         </Grid>
@@ -1167,8 +1163,8 @@ const EditModal = ({
         {loading
           ? <CircularProgress size={20} /> // Show loading spinner
           : <Button disabled={disble} onClick={handleEditClick} color="primary">
-            Edit
-          </Button>}
+              Edit
+            </Button>}
       </DialogActions>
 
       {/* Snackbar for response message */}
