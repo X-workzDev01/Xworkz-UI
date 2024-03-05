@@ -20,7 +20,7 @@ import { Urlconstant } from "../constant/Urlconstant";
 import { getCurrentDate } from "../constant/ValidationConstant";
 
 
-const CompanyFollowUp = ({ open, handleClose, rowData }) => {
+const CompanyFollowUp = ({ open, handleClose, rowData, dropdown }) => {
   const [isConfirmed, setIsConfirmed] = React.useState(false);
   const [responseMessage, setResponseMessage] = React.useState("");
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
@@ -30,38 +30,22 @@ const CompanyFollowUp = ({ open, handleClose, rowData }) => {
   const attemtedUser = sessionStorage.getItem("userId");
   const [hrNameList, setHrNameList] = React.useState([]);
   const [hrDetails, setHrDetails] = React.useState("");
-
-  const [dropdown, setDropDown] = React.useState({
-    clientType: [],
-    sourceOfConnection: [],
-    sourceOfLocation: [],
-    hrDesignation: [],
-    callingStatus: []
-  });
-
-  const getDropdown = () => {
-    axios.get(Urlconstant.url + `utils/clientdropdown`).then((response) => {
-      setDropDown(response.data);
-    })
-  }
-
   const getdetailsbyCompanyId = () => {
-    const companyId = rowData.id;
-    axios
-      .get(Urlconstant.url + `api/gethrdetails?companyId=${companyId}`)
-      .then((response) => {
-        setHrNameList(response.data);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+    if (rowData && rowData.id) {
+      const companyId = rowData.id;
+      axios
+        .get(Urlconstant.url + `api/gethrdetails?companyId=${companyId}`)
+        .then((response) => {
+          setHrNameList(response.data);
+        })
+        .catch((e) => {});
+    }
   };
 
   useEffect(() => {
-    getdetailsbyCompanyId();
-    getDropdown();
     setIsConfirmed(false);
     if (open) {
+      getdetailsbyCompanyId();
       setFormData({
         hrSpocName: "",
         attemptStatus: "",
@@ -72,6 +56,10 @@ const CompanyFollowUp = ({ open, handleClose, rowData }) => {
       });
     }
   }, [rowData, open]);
+
+  React.useEffect(() => {
+    getdetailsbyCompanyId();
+  }, []);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -103,7 +91,6 @@ const CompanyFollowUp = ({ open, handleClose, rowData }) => {
     setSnackbarOpen(false);
     handleClose();
   };
-
   const handleSaveClick = () => {
     if (setIsConfirming) {
       setLoading(true);
@@ -114,7 +101,6 @@ const CompanyFollowUp = ({ open, handleClose, rowData }) => {
           hrId: hrDetails.id,
           attemptBy: attemtedUser,
         };
-        console.log(hrFollowUpData);
         axios
           .post(Urlconstant.url + `api/hrfollowup`, hrFollowUpData)
           .then((response) => {
@@ -135,7 +121,7 @@ const CompanyFollowUp = ({ open, handleClose, rowData }) => {
       }
     }
   };
-  const isDisabled = !formData.attemptStatus || !hrDetails;
+  const isDisabled = !formData.attemptStatus || !hrDetails
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle>
@@ -157,7 +143,7 @@ const CompanyFollowUp = ({ open, handleClose, rowData }) => {
               label="HR Name"
               name="hrSpocName"
               onChange={handleInputChange}
-             // style={fieldStyle}
+              // style={fieldStyle}
               fullWidth
               select
               margin="normal"

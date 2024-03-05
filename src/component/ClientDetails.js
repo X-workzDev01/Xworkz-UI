@@ -30,6 +30,7 @@ export default function ClientDetails() {
   const [companyEmailCheck, setCompanyEmailCheck] = React.useState("");
   const [emailCheck, setEmailCheck] = React.useState("");
   const [phoneNumberCheck, setPhoneNumberCheck] = React.useState("");
+  const [isDisabled, setDisable] = React.useState(true);
   const [formData, setFormData] = React.useState({
     companyName: "",
     companyEmail: "",
@@ -42,9 +43,9 @@ export default function ClientDetails() {
     companyAddress: "",
     status: "Active", // Default value set to "Active"
   });
-
   const [checkPhoneNumberExist, setCheckPhoneNumberExist] = React.useState("");
   const [checkCompanyWebsite, setCheckCompanyWebsite] = React.useState("");
+  const [checkCompanyWebsiteExist, setCheckCompanyWebsiteExist] = React.useState("");
   const [catchErrors, setCatchErrors] = React.useState("");
   const [dropdownState, setDropdownState] = React.useState({
     college: [],
@@ -84,7 +85,21 @@ export default function ClientDetails() {
     }
     setOpen(false);
   };
+
+  let valueDisabled = isSubmitting ||
+    !formData.companyName ||
+    !formData.companyEmail ||
+    !formData.companyLandLineNumber ||
+    companyNameCheck ||
+    companyEmailCheck ||
+    emailCheck ||
+    phoneNumberCheck ||
+    checkPhoneNumberExist ||
+    checkCompanyWebsite ||
+    !formData.companyType
+
   const handleChange = (e) => {
+    setDisable(valueDisabled);
     const { name, value } = e.target;
     if (name === "companyType") {
       if (value === "College") {
@@ -128,7 +143,8 @@ export default function ClientDetails() {
         break;
       case "companyWebsite":
         if (!validateWebsite(value)) {
-          setCheckCompanyWebsite("Enter valid website")
+          setCheckCompanyWebsiteExist("");
+          setCheckCompanyWebsite("Enter valid website");
         } else {
           setCheckCompanyWebsite("");
         }
@@ -143,7 +159,7 @@ export default function ClientDetails() {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+    setDisable(true)
     setIsSubmitting(true)
     try {
       const clientData = {
@@ -185,13 +201,13 @@ export default function ClientDetails() {
             setCompanyNameCheck("");
           }
         })
-        .catch((error) => {});
+        .catch((error) => { });
     }
   };
 
   const handleCompanyEmail = (event) => {
     const companyEmail = event.target.value;
-    if (companyEmail.trim() !== "") {
+    if (companyEmail.trim() !== "" && validateEmail(companyEmail)) {
       axios
         .get(
           Urlconstant.url + `/api/checkcompanyemail?companyEmail=${companyEmail}`
@@ -207,7 +223,7 @@ export default function ClientDetails() {
             }
           }
         })
-        .catch((error) => {});
+        .catch((error) => { });
     }
   };
   const verifyEmail = (email) => {
@@ -242,7 +258,7 @@ export default function ClientDetails() {
 
   const handleCompanyContactNumber = (event) => {
     const companyContactNumber = event.target.value;
-    if (companyContactNumber.trim() !== "") {
+    if (companyContactNumber.trim() !== "" && companyContactNumber.length === 10) {
       axios
         .get(
           Urlconstant.url +
@@ -257,13 +273,13 @@ export default function ClientDetails() {
             setCheckPhoneNumberExist("");
           }
         })
-        .catch((error) => {});
+        .catch((error) => { });
     }
   };
 
   const handleCompanyWebsite = (event) => {
-    const website=event.target.value;
-    if (website.trim() !== "") {
+    const website = event.target.value;
+    if (website.trim() !== "" && validateWebsite(website)) {
       axios
         .get(
           Urlconstant.url +
@@ -271,12 +287,17 @@ export default function ClientDetails() {
         )
         .then((res) => {
           if (res.data === "CompanyWebsite Already Exists") {
-            setCheckCompanyWebsite("Website Already Exists");
-          } else {
             setCheckCompanyWebsite("");
+            setCheckCompanyWebsiteExist(res.data);
+          } else {
+            if (validateWebsite(website)) {
+              setCheckCompanyWebsiteExist("");
+            } else {
+              setCheckCompanyWebsite("Enter the valid website")
+            }
           }
         })
-        .catch((error) => {});
+        .catch((error) => { });
     }
   };
 
@@ -301,7 +322,6 @@ export default function ClientDetails() {
     setCompanyNameCheck("")
     setEmailCheck("")
   }
-
   return (
     <div>
       <h1>Register Client</h1>
@@ -349,6 +369,7 @@ export default function ClientDetails() {
                       fullWidth
                       margin="normal"
                       sx={textFieldStyles}
+                      onBlur={handleCompanyName}
                     />
                   )}
                 />
@@ -432,6 +453,12 @@ export default function ClientDetails() {
               ) : (
                 " "
               )}
+              {checkCompanyWebsiteExist ? (
+                <Alert severity="error">{checkCompanyWebsiteExist}</Alert>
+              ) : (
+                " "
+              )}
+
             </Grid>
             <Grid item xs={12} sm={4}>
               <TextField
@@ -510,20 +537,7 @@ export default function ClientDetails() {
                   type="submit"
                   variant="contained"
                   color="primary"
-                  disabled={
-                    isSubmitting ||
-                    !formData.companyName ||
-                    !formData.companyEmail ||
-                    !formData.companyLandLineNumber ||
-                    companyNameCheck ||
-                    companyEmailCheck ||
-                    emailCheck ||
-                    phoneNumberCheck ||
-                    checkPhoneNumberExist ||
-                    checkCompanyWebsite ||
-                    !formData.companyType
-
-                  }
+                  disabled={isDisabled}
                   onClick={handleSubmit}
                   className="dark-button"
                   sx={{ marginRight: 1 }}

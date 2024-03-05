@@ -20,17 +20,18 @@ import { style } from "../constant/FormStyle";
 import {
   validateContactNumber,
   validateEmail,
+  validateWebsite,
 } from "../constant/ValidationConstant";
 import { ClientDropDown } from "../constant/ClientDropDown";
 
-const EditCompanyDetails = ({ open, handleClose, rowData }) => {
+const EditCompanyDetails = ({ open, handleClose, rowData, dropdown}) => {
   const [isConfirming, setIsConfirming] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [responseMessage, setResponseMessage] = React.useState("");
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const attemptedEmail = sessionStorage.getItem("userId");
   const [editedData, setEditedData] = React.useState([]);
-  const [isConfirmed,setIsConfirmed]=React.useState(false);
+  const [isConfirmed, setIsConfirmed] = React.useState(false);
   const [companyNameCheck, setCompanyNameCheck] = React.useState("");
   const [nameCheck, setNameCheck] = React.useState("");
   const [verifyEmail, setVerifyEmail] = React.useState("");
@@ -42,32 +43,21 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
   const [phoneNumberCheck, setPhoneNumberCheck] = React.useState("");
   const [checkEmailExist, setCheckEmailExist] = React.useState("");
 
-  const [dropdown, setDropDown] = React.useState({
-    clientType: [],
-    sourceOfConnection: [],
-    sourceOfLocation: [],
-    hrDesignation: [],
-    callingStatus: []
-  });
- 
-  const getDropdown = () => {
-    axios.get(Urlconstant.url + `utils/clientdropdown`).then((response) => {
-      setDropDown(response.data);
-    })
-  }
+
   React.useEffect(() => {
-    getDropdown();
-    setEditedData(rowData);
-    setNameCheck("");
-    setCompanyNameCheck("");
-    setCheckEmailExist("");
-    setEmailCheck("");
-    setCheckCompanyWebsite("");
-    setPhoneNumberCheck("");
-    setCheckPhoneNumberExist("");
-    setVerifyEmail("");
-    setError("");
-  }, [rowData]);
+    if (open) {
+      setEditedData(rowData);
+      setNameCheck("");
+      setCompanyNameCheck("");
+      setCheckEmailExist("");
+      setEmailCheck("");
+      setPhoneNumberCheck("");
+      setCheckPhoneNumberExist("");
+      setVerifyEmail("");
+      setCheckCompanyWebsite("");
+      setError("");
+    }
+  }, [open]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -84,7 +74,6 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
         setEmailCheck("");
       } else {
         setCheckEmailExist("");
-        setVerifyEmail("");
         setEmailCheck("Enter the correct Email");
       }
     }
@@ -97,7 +86,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
       }
     }
     if (name === "companyWebsite") {
-      if (value.length <= 1) {
+      if (value.length <= 1 && !validateWebsite(value)) {
         setCheckCompanyWebsite("");
         setError("Enter the valid website");
       } else {
@@ -129,7 +118,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
   };
   const handleCloseForm = () => {
     setResponseMessage("");
-    setSnackbarOpen(false);
+    setSnackbarOpen(true);
     handleClose();
   };
 
@@ -137,43 +126,47 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
     if (companyName === "NA") {
       setCompanyNameCheck("");
     } else {
-      axios
-        .get(
-          Urlconstant.url + `/api/companynamecheck?companyName=${companyName}`
-        )
-        .then((response) => {
-          if (response.data === "Company Already Exists") {
-            setCompanyNameCheck(response.data);
-          } else {
-            setCompanyNameCheck("");
-          }
-        })
-        .catch((err) => {
-          if (err.response.status === 500) {
-            setCompanyNameCheck("Error occured please wait for some time");
-          } else {
-            setCompanyNameCheck("");
-          }
-        });
+      if (companyName.trim() != "") {
+        axios
+          .get(
+            Urlconstant.url + `/api/companynamecheck?companyName=${companyName}`
+          )
+          .then((response) => {
+            if (response.data === "Company Already Exists") {
+              setCompanyNameCheck(response.data);
+            } else {
+              setCompanyNameCheck("");
+            }
+          })
+          .catch((err) => { });
+      }
     }
   };
   const handleCompanyEmail = (companyEmail) => {
     if (companyEmail === "NA") {
       setCheckEmailExist("");
     } else {
-      axios
-        .get(
-          Urlconstant.url +
+      if (companyEmail.trim() != "" && validateEmail(companyEmail)) {
+        axios
+          .get(
+            Urlconstant.url +
             `/api/checkcompanyemail?companyEmail=${companyEmail}`
-        )
-        .then((res) => {
-          if (res.data === "Company Email Already Exists") {
-            setCheckEmailExist(res.data);
-          } else {
-            setCheckEmailExist("");
-            validatingEmail(companyEmail);
-          }
-        });
+          )
+          .then((res) => {
+            if (res.data === "Company Email Already Exists") {
+              setCheckEmailExist(res.data);
+              setEmailCheck("");
+            } else {
+              setCheckEmailExist("");
+              if (validateEmail(companyEmail)) {
+                validatingEmail(companyEmail);
+              }
+            }
+          });
+      } else {
+        setEmailCheck("");
+        setCheckEmailExist("Enter the valid E-mail");
+      }
     }
   };
 
@@ -206,19 +199,24 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
     if (companyWebsite === "NA") {
       setCheckCompanyWebsite("");
     } else {
-      axios
-        .get(
-          Urlconstant.url +
+      if (companyWebsite.trim() != "" && validateWebsite(companyWebsite)) {
+        axios
+          .get(
+            Urlconstant.url +
             `/api/checkCompanyWebsite?companyWebsite=${companyWebsite}`
-        )
-        .then((res) => {
-          if (res.data === "CompanyWebsite Already Exists") {
-            setCheckCompanyWebsite(res.data);
-            setError("");
-          } else {
-            setCheckCompanyWebsite("");
-          }
-        });
+          )
+          .then((res) => {
+            if (res.data === "CompanyWebsite Already Exists") {
+              setCheckCompanyWebsite(res.data);
+              setError("");
+            } else {
+              setCheckCompanyWebsite("");
+            }
+          });
+      } else {
+        setError("");
+        setCheckCompanyWebsite("Enter the valid website");
+      }
     }
   };
 
@@ -226,39 +224,35 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
     if (companyContactNumber == "0") {
       setCheckPhoneNumberExist("");
     } else {
-      axios
-        .get(
-          Urlconstant.url +
+      if (companyContactNumber.trim() != "" && validateContactNumber(companyContactNumber)) {
+        axios
+          .get(
+            Urlconstant.url +
             `/api/checkContactNumber?contactNumber=${companyContactNumber}`
-        )
-        .then((res) => {
-          if (res.data === "Company ContactNumber Already Exists") {
-            setPhoneNumberCheck("");
-            setCheckPhoneNumberExist(res.data);
-          } else {
-            setCheckPhoneNumberExist("");
-          }
-        })
-        .catch((error) => {
-          if (error.response.status === 500) {
-            setCheckPhoneNumberExist("Contact number not found.");
-          } else {
-            setCheckPhoneNumberExist("An error occurred. Please try again.");
-          }
-        });
+          )
+          .then((res) => {
+            if (res.data === "Company ContactNumber Already Exists") {
+              setPhoneNumberCheck("");
+              setCheckPhoneNumberExist(res.data);
+            } else {
+              setCheckPhoneNumberExist("");
+            }
+          })
+          .catch((error) => { });
+      }
     }
   };
 
   const handleEmail = (event) => {
     const email = event.target.value;
-    if (email != rowData.companyEmail) {
+    if (email !== rowData.companyEmail) {
       handleCompanyEmail(email);
     }
   };
 
   const handleCompanyName = (event) => {
     const companyName = event.target.value;
-    if (companyName != rowData.companyName) {
+    if (companyName !== rowData.companyName) {
       handleCompanyNameCheck(companyName);
     }
   };
@@ -273,7 +267,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
 
   const handleWebsite = (event) => {
     const companyWebsite = event.target.value;
-    if (companyWebsite != rowData.companyWebsite) {
+    if (companyWebsite !== rowData.companyWebsite) {
       handleCompanyWebsite(companyWebsite);
     }
   };
@@ -536,7 +530,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData }) => {
           {responseMessage}
         </Alert>
       </Snackbar>
-      <Dialog open={isConfirming} onClose={handleClose} fullWidth maxWidth="xs">
+      <Dialog open={isConfirming} onClose={handleClose} fullWidth maxWidth="xs" >
         <DialogTitle>Confirm Edit</DialogTitle>
         <DialogContent>
           Are you sure want to Edit the Company Details?

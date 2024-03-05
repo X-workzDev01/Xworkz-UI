@@ -22,7 +22,7 @@ import {
   validateEmail,
 } from "../constant/ValidationConstant";
 
-const EditHRDetails = ({ open, handleClose, rowData }) => {
+const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
   const [editedData, setEditedData] = React.useState([]);
   const [isConfirming, setIsConfirming] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
@@ -37,31 +37,28 @@ const EditHRDetails = ({ open, handleClose, rowData }) => {
   const [validateName, setValidateName] = React.useState("");
   const [validateDesignation, setValidateDesignation] = React.useState("");
   const [isConfirmed, setIsConfirmed] = React.useState(false);
-  const [dropdown, setDropDown] = React.useState({
-    clientType: [],
-    sourceOfConnection: [],
-    sourceOfLocation: [],
-    hrDesignation: [],
-    callingStatus: []
-  });
-  
-  const getDropdown = () => {
-    axios.get(Urlconstant.url + `utils/clientdropdown`).then((response) => {
-      setDropDown(response.data);
-    })
-  }
-
-  React.useEffect(() => {
-    getDropdown();
+  const handleOpenForm = () => {
     setEditedData(rowData);
-    setValidateDesignation("");
+    setIsConfirming(false);
+    setLoading(false);
+    setResponseMessage("");
+    setSnackbarOpen(false);
     setEmailCheck("");
     setPhoneNumberCheck("");
     setCheckEmailExist("");
     setCheckPhoneNumberExist("");
-    setValidateName("");
     setVerifyEmail("");
-  }, [rowData]);
+    setValidateName("");
+    setValidateDesignation("");
+    setIsConfirmed(false);
+
+  };
+  React.useEffect(() => {
+    if (open) {
+      handleOpenForm();
+    }
+  }, [open, rowData]);
+
 
   const handleEditClick = () => {
     setIsConfirming(true);
@@ -77,6 +74,7 @@ const EditHRDetails = ({ open, handleClose, rowData }) => {
     setSnackbarOpen(false);
     handleClose();
   };
+  
 
   const handleInput = (event) => {
     const { name, value } = event.target;
@@ -91,7 +89,7 @@ const EditHRDetails = ({ open, handleClose, rowData }) => {
       if (validateEmail(value)) {
         setEmailCheck("");
       } else {
-        setEmailCheck("invalid email");
+        setEmailCheck("Enter the valid E-mail");
         setCheckEmailExist("");
       }
     }
@@ -182,23 +180,29 @@ const EditHRDetails = ({ open, handleClose, rowData }) => {
     if (email === "NA") {
       setCheckEmailExist("");
     } else {
-      axios
-        .get(Urlconstant.url + `api/hremailcheck?hrEmail=${email}`)
-        .then((response) => {
-          if (response.data === "Email already exists.") {
-            setEmailCheck("");
-            setCheckEmailExist(response.data);
-          } else {
-            validatingEmail(email);
-            setCheckEmailExist("");
-          }
-        });
+      if (email.trim() != "" && validateEmail(email)) {
+        axios
+          .get(Urlconstant.url + `api/hremailcheck?hrEmail=${email}`)
+          .then((response) => {
+            if (response.data === "Email already exists.") {
+              setEmailCheck("");
+              setCheckEmailExist(response.data);
+            } else {
+              validatingEmail(email);
+              setCheckEmailExist("");
+            }
+          });
+      } else {
+        setEmailCheck("")
+        setCheckEmailExist("Enter the valid E-mail")
+      }
     }
   };
   const handleNumberCheck = (contactNumber) => {
     if (contactNumber === "0") {
       setCheckPhoneNumberExist("");
     } else {
+      if(contactNumber.trim()!=""&&validateContactNumber(contactNumber)){
       axios
         .get(
           Urlconstant.url +
@@ -212,12 +216,16 @@ const EditHRDetails = ({ open, handleClose, rowData }) => {
             setPhoneNumberCheck("");
           }
         });
+      }else{
+        setCheckPhoneNumberExist("Enter the valid contact Number");
+        setPhoneNumberCheck("");
+      }
     }
   };
 
   const handleEmail = (event) => {
     let email = event.target.value;
-    if (email != rowData.hrEmail) {
+    if (email !== rowData.hrEmail) {
       handleEmailCheck(email);
     }
   };
@@ -312,7 +320,7 @@ const EditHRDetails = ({ open, handleClose, rowData }) => {
               fullWidth
               margin="normal"
             >
-             {dropdown.hrDesignation.map((item, index) => (
+              {dropdown.hrDesignation.map((item, index) => (
                 <MenuItem key={index} value={item}>
                   {item}
                 </MenuItem>

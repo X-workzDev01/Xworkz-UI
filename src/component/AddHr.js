@@ -22,8 +22,7 @@ import {
   validateEmail,
 } from "../constant/ValidationConstant";
 
-const AddHr = ({ open, handleClose, rowData }) => {
-
+const AddHr = ({ open, handleClose, rowData, dropdown }) => {
   const [loading, setLoading] = React.useState(false);
   const [isConfirming, setIsConfirming] = React.useState(false);
   const [isConfirmed, setIsConfirmed] = React.useState(false);
@@ -38,15 +37,7 @@ const AddHr = ({ open, handleClose, rowData }) => {
   const [verifyEmail, setVerifyEmail] = React.useState("");
   const [validateName, setValidateName] = React.useState("");
   const [validateDesignation, setValidateDesignation] = React.useState("");
-  const [dropdown, setDropDown] = React.useState({
-    clientType: [],
-    sourceOfConnection: [],
-    sourceOfLocation: [],
-    hrDesignation: [],
-    callingStatus: []
-  });
   React.useEffect(() => {
-    getDropdown();
     if (open) {
       setFormData({
         hrSpocName: "",
@@ -63,11 +54,6 @@ const AddHr = ({ open, handleClose, rowData }) => {
       setValidateName("");
     }
   }, [open]);
-  const getDropdown = () => {
-    axios.get(Urlconstant.url + `utils/clientdropdown`).then((response) => {
-      setDropDown(response.data);
-    })
-  }
 
   const [charCount, setCharCount] = React.useState("");
   const handleInputChange = (event) => {
@@ -217,22 +203,22 @@ const AddHr = ({ open, handleClose, rowData }) => {
 
   const handleEmailCheck = (event) => {
     let email = event.target.value;
-    if (email.trim() !== "") {
+    if (email.trim() !== "" && validateEmail(email)) {
       axios
         .get(Urlconstant.url + `api/hremailcheck?hrEmail=${email}`)
         .then((response) => {
-          if (response.data === "Email does not exist.") {
-            setEmailCheck("");
-            setCheckEmailExist("");
-            if (validateEmail(email)) {
-              validatingEmail(email);
-            }
-          } else {
+          if (response.data === "Email already exists.") {
             setEmailCheck("");
             setCheckEmailExist(response.data);
+          } else {
+            if (validateEmail(email)) {
+              setEmailCheck("");
+              setCheckEmailExist("");
+              validatingEmail(email)
+            }
           }
         })
-        .catch((error) => {});
+        .catch((error) => { });
     }
   };
 
@@ -252,7 +238,7 @@ const AddHr = ({ open, handleClose, rowData }) => {
             setPhoneNumberCheck("");
           }
         })
-        .catch((error) => {});
+        .catch((error) => { });
     }
   };
 

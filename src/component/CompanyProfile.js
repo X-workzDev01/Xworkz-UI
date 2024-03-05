@@ -53,7 +53,6 @@ const CompanyProfile = () => {
   const [companyDetails, setCompanyDetails] = React.useState("");
   const [companyName, setCompanyName] = React.useState("");
   const [isAddHrModalOpen, setAddHrModalOpen] = React.useState(false);
-  const [isHrFollowupModalOpen, setHrFollowupModalOpen] = React.useState(false);
   const [isGetHRDetailsModalOpen, setGetHRDetailsModalOpen] =
     React.useState(false);
   const [isEditCompanyDetailsModalOpen, setEditCompanyDetailsModalOpen] =
@@ -61,26 +60,14 @@ const CompanyProfile = () => {
   const [isHrFollowUpModalOpen, setHrFollowUpModalOpen] = React.useState("");
   const [HrFollowUpStatus, setHrFollowUpStatus] = React.useState("");
 
-  const fetchData = (id) => {
-    axios
-      .get(Urlconstant.url + `api/getdetailsbyid?companyId=${id}`)
-      .then((response) => {
-        setCompanyDetails(response.data);
-        setCompanyName(response.data.companyName);
-      })
-      .catch((error) => {
-        if (error.response && error.response.status === 500) {
-          setCompanyDetails("");
-          setCompanyName("");
-        }
-      });
-  };
+  const [dropdown, setDropDown] = React.useState({
+    clientType: [],
+    sourceOfConnection: [],
+    sourceOfLocation: [],
+    hrDesignation: [],
+    callingStatus: []
+  });
 
-  React.useEffect(() => {
-    fetchData(id);
-    fetchHRFollowUp(id);
-  }, [id, isEditCompanyDetailsModalOpen, isHrFollowUpModalOpen]);
-  
   const fetchHRFollowUp = (id) => {
     const companyId = id;
     axios
@@ -96,6 +83,35 @@ const CompanyProfile = () => {
         }
       });
   };
+
+  const fetchData = (id) => {
+    axios
+      .get(Urlconstant.url + `api/getdetailsbyid?companyId=${id}`)
+      .then((response) => {
+        setCompanyDetails(response.data);
+        setCompanyName(response.data.companyName);
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 500) {
+          setCompanyDetails("");
+          setCompanyName("");
+        }
+      });
+  };
+  React.useEffect(() => {
+    fetchHRFollowUp(id);
+  }, [id, isHrFollowUpModalOpen]);
+
+  React.useEffect(() => {
+    fetchData(id);
+  }, [id, isEditCompanyDetailsModalOpen]);
+
+  React.useEffect(() => {
+    axios.get(Urlconstant.url + `utils/clientdropdown`).then((response) => {
+      setDropDown(response.data);
+    });
+  }, []);
+
 
   const handleAddClientHr = () => {
     setAddHrModalOpen(true);
@@ -128,6 +144,7 @@ const CompanyProfile = () => {
   const handleHRFollowUpClick = () => {
     setHrFollowUpModalOpen(false);
   };
+
   return (
     <div>
       <h2>CompanyProfile</h2>
@@ -203,6 +220,7 @@ const CompanyProfile = () => {
             handleClose={() => setAddHrModalOpen(false)}
             rowData={companyDetails}
             handleSaveClick={handleSaveClick}
+            dropdown={dropdown}
           />
           <HRDetails
             open={isGetHRDetailsModalOpen}
@@ -215,13 +233,19 @@ const CompanyProfile = () => {
             open={isEditCompanyDetailsModalOpen}
             handleClose={() => setEditCompanyDetailsModalOpen(false)}
             rowData={companyDetails}
-            handleSaveClick={handleCompanyDetailsClick}
+            handleSaveClick={() => {
+              handleCompanyDetailsClick();
+            }}
+            dropdown={dropdown}
           />
           <CompanyFollowUp
             open={isHrFollowUpModalOpen}
             handleClose={() => setHrFollowUpModalOpen(false)}
             rowData={companyDetails}
-            handleSaveClick={handleHRFollowUpClick}
+            handleSaveClick={() => {
+              handleHRFollowUpClick();
+            }}
+            dropdown={dropdown}
           />
         </div>
       </div>
