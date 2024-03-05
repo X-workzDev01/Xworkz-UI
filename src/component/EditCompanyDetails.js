@@ -24,7 +24,7 @@ import {
 } from "../constant/ValidationConstant";
 import { ClientDropDown } from "../constant/ClientDropDown";
 
-const EditCompanyDetails = ({ open, handleClose, rowData, dropdown, fetchDataAndHRFollowUp }) => {
+const EditCompanyDetails = ({ open, handleClose, rowData, dropdown}) => {
   const [isConfirming, setIsConfirming] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [responseMessage, setResponseMessage] = React.useState("");
@@ -120,7 +120,6 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown, fetchDataAnd
     setResponseMessage("");
     setSnackbarOpen(true);
     handleClose();
-    fetchDataAndHRFollowUp();
   };
 
   const handleCompanyNameCheck = (companyName) => {

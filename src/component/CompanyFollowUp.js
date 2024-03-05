@@ -38,16 +38,14 @@ const CompanyFollowUp = ({ open, handleClose, rowData, dropdown }) => {
         .then((response) => {
           setHrNameList(response.data);
         })
-        .catch((e) => {
-          console.log(e);
-        });
+        .catch((e) => {});
     }
   };
 
   useEffect(() => {
-    getdetailsbyCompanyId();
     setIsConfirmed(false);
     if (open) {
+      getdetailsbyCompanyId();
       setFormData({
         hrSpocName: "",
         attemptStatus: "",
@@ -93,7 +91,6 @@ const CompanyFollowUp = ({ open, handleClose, rowData, dropdown }) => {
     setSnackbarOpen(false);
     handleClose();
   };
-
   const handleSaveClick = () => {
     if (setIsConfirming) {
       setLoading(true);
@@ -104,7 +101,6 @@ const CompanyFollowUp = ({ open, handleClose, rowData, dropdown }) => {
           hrId: hrDetails.id,
           attemptBy: attemtedUser,
         };
-        console.log(hrFollowUpData);
         axios
           .post(Urlconstant.url + `api/hrfollowup`, hrFollowUpData)
           .then((response) => {
@@ -125,8 +121,7 @@ const CompanyFollowUp = ({ open, handleClose, rowData, dropdown }) => {
       }
     }
   };
-  const isDisabled = !formData.attemptStatus || !hrDetails || !formData.callDuration ||
-    ["Busy", "Call Drop", "Call You Later", "Not Reachable", "RNR", "Switch Off"].includes(formData.attemptStatus);
+  const isDisabled = !formData.attemptStatus || !hrDetails
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle>

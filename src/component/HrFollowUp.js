@@ -96,8 +96,7 @@ const HrFollowUp = ({ open, handleClose, rowData, dropdown }) => {
       }
     }
   };
-  const isDisabled = !formData.attemptStatus || !formData.callDuration ||
-    ["Busy", "Call Drop", "Call You Later", "Not Reachable", "RNR", "Switch Off"].includes(formData.attemptStatus);
+  const isDisabled = !formData.attemptStatus 
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle>
