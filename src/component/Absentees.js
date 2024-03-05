@@ -87,14 +87,14 @@ const Absentees = () => {
     setErrors({});
     setSelectedStudents([]);
     setSubmitDisabled(true);
-
+    setSuccessMessage("")
     axios
       .get(
         Urlconstant.url + `api/attendance/trainee?batch=${selectedBatchValue}`
       )
       .then((response) => {
         const fetchedStudents = response.data;
-        setSuccessMessage("");
+
         setErrorMessage("");
         setStudents(fetchedStudents);
         setStudentOptions(fetchedStudents);
@@ -194,13 +194,13 @@ const Absentees = () => {
         )
         .then((response) => {
           console.log("API Response:", response.data);
-          setSuccessMessage("Attendance submitted successfully!");
-
           setSelectedStudents([]);
           setReasons({});
           setErrors({});
           getBatchAttendanceCount();
           handleBatchChange({ target: { value: selectedBatch } });
+          setSuccessMessage("Attendance submitted successfully!");
+
         })
         .catch((error) => {
           console.error("API Error:", error);
