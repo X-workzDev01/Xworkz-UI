@@ -23,7 +23,6 @@ import {
 } from "../constant/ValidationConstant";
 
 const AddHr = ({ open, handleClose, rowData, dropdown }) => {
-  console.log(dropdown)
   const [loading, setLoading] = React.useState(false);
   const [isConfirming, setIsConfirming] = React.useState(false);
   const [isConfirmed, setIsConfirmed] = React.useState(false);
