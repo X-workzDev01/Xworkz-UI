@@ -59,7 +59,7 @@ const CompanyProfile = () => {
     React.useState(false);
   const [isHrFollowUpModalOpen, setHrFollowUpModalOpen] = React.useState("");
   const [HrFollowUpStatus, setHrFollowUpStatus] = React.useState("");
-
+  const [hrDetails, setHrDetails] = React.useState("");
   const [dropdown, setDropDown] = React.useState({
     clientType: [],
     sourceOfConnection: [],
@@ -98,6 +98,23 @@ const CompanyProfile = () => {
         }
       });
   };
+
+  const getHrDetailsbyCompanyId = () => {
+    if (id !== 0) {
+      axios
+        .get(Urlconstant.url + `api/gethrdetails?companyId=${id}`)
+        .then((response) => {
+          setHrDetails(response.data);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    }
+  };
+  React.useEffect(() => {
+    getHrDetailsbyCompanyId();
+  }, []);
+
   React.useEffect(() => {
     fetchHRFollowUp(id);
   }, [id, isHrFollowUpModalOpen]);
@@ -195,25 +212,25 @@ const CompanyProfile = () => {
             >
               Edit Profile
             </Button>
-            <Button
-              variant="outlined"
-              startIcon={<AddCircleOutline />}
-              onClick={() => {
-                handlegetHRDetails(companyDetails);
-              }}
-              sx={{ marginRight: "10px" }}
-            >
-              Get HR Details
-            </Button>
-            <Button
-              variant="outlined"
-              startIcon={<AddCircleOutline />}
-              onClick={() => {
-                handleHRFollowUp();
-              }}
-            >
-              Add Follow up
-            </Button>
+            {hrDetails.length > 0 && (
+              <>
+                <Button
+                  variant="outlined"
+                  startIcon={<AddCircleOutline />}
+                  onClick={handlegetHRDetails}
+                  sx={{ marginRight: "10px" }}
+                >
+                  Get HR Details
+                </Button>
+                <Button
+                  variant="outlined"
+                  startIcon={<AddCircleOutline />}
+                  onClick={handleHRFollowUp}
+                >
+                  Add Follow up
+                </Button>
+              </>
+            )}
           </div>
           <AddHr
             open={isAddHrModalOpen}

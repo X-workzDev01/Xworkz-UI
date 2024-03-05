@@ -215,7 +215,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown}) => {
           });
       } else {
         setError("");
-        setCheckCompanyWebsite("Enter the valid website");
+        setCheckCompanyWebsite("");
       }
     }
   };

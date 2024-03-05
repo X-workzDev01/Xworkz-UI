@@ -37,6 +37,8 @@ const AddHr = ({ open, handleClose, rowData, dropdown }) => {
   const [verifyEmail, setVerifyEmail] = React.useState("");
   const [validateName, setValidateName] = React.useState("");
   const [validateDesignation, setValidateDesignation] = React.useState("");
+  const isDisable=checkEmailExist ||emailCheck||checkPhoneNumberExist||phoneNumber ||!formData.hrSpocName ||!formData.hrContactNumber ||!formData.designation
+ 
   React.useEffect(() => {
     if (open) {
       setFormData({
@@ -242,13 +244,6 @@ const AddHr = ({ open, handleClose, rowData, dropdown }) => {
     }
   };
 
-  const isDisabled =
-    checkPhoneNumberExist ||
-    checkEmailExist ||
-    emailCheck ||
-    !formData.hrSpocName ||
-    !formData.hrContactNumber ||
-    !formData.designation;
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle>
@@ -351,7 +346,7 @@ const AddHr = ({ open, handleClose, rowData, dropdown }) => {
           <CircularProgress size={20} />
         ) : (
           <Button
-            disabled={isDisabled}
+            disabled={isDisable}
             onClick={handleHrAddClick}
             color="primary"
           >
