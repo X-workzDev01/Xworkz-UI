@@ -49,10 +49,12 @@ export const FeesDetailes = () => {
         paymentMode,
         status
       );
-      getBatch();
     },
     [batch, paymentMode, date, paginationModel, status]
   );
+  useEffect(() => {
+    getBatch();
+  }, []);
 
   const getBatch = () => {
     axios
