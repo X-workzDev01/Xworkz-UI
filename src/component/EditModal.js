@@ -203,7 +203,7 @@ const EditModal = ({
         setverifyHandleEmail("");
         setEmailCheck("");
         setDisable(true);
-      } else if (!/\S+@\S+\.\S+/.test(value)) {
+      } else if (!validateEmail(value)) {
         setEmailError("Invalid email address");
         setverifyHandleEmail("");
         setEmailCheck("");
