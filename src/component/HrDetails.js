@@ -15,7 +15,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { GridToolbar } from "@mui/x-data-grid";
 
 const HRDetails = ({ open, handleClose, id }) => {
- 
+
   const initialPageSize = 25;
   const [paginationModel, setPaginationModel] = React.useState({
     page: 0,
@@ -27,20 +27,19 @@ const HRDetails = ({ open, handleClose, id }) => {
   });
 
   React.useEffect(() => {
-    searchServerRows(paginationModel.page, paginationModel.pageSize, id).then(
-      (newGridData) => {
-        setGridData(newGridData);
-      }
-    );
+    if (open) {
+      searchServerRows(paginationModel.page, paginationModel.pageSize, id).then(
+        (newGridData) => {
+          setGridData(newGridData);
+        }
+      );
+    }
   }, [open]);
-
-  // ... (existing code)
-
   function searchServerRows(page, pageSize, companyId) {
     const startingIndex = page * pageSize;
     var apiUrl =
       Urlconstant.url +
-      `api/hrdetails?startingIndex=${startingIndex}&maxRows=${25}&companyId=${id}`;
+      `api/hrdetails?startingIndex=${startingIndex}&maxRows=${25}&companyId=${companyId}`;
 
     return new Promise((resolve) => {
       fetch(apiUrl)
@@ -121,7 +120,7 @@ const HRDetails = ({ open, handleClose, id }) => {
       ),
     },
   ];
-  
+
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle>

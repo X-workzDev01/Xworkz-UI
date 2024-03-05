@@ -19,7 +19,7 @@ import { Urlconstant } from "../constant/Urlconstant";
 import { fieldStyle, style } from "../constant/FormStyle";
 import { getCurrentDate } from "../constant/ValidationConstant";
 
-const HrFollowUp = ({ open, handleClose, rowData }) => {
+const HrFollowUp = ({ open, handleClose, rowData, dropdown }) => {
   const [isConfirmed, setIsConfirmed] = React.useState(false);
   const [responseMessage, setResponseMessage] = React.useState("");
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
@@ -27,19 +27,6 @@ const HrFollowUp = ({ open, handleClose, rowData }) => {
   const [loading, setLoading] = React.useState(false);
   const [formData, setFormData] = React.useState("");
   const attemtedUser = sessionStorage.getItem("userId");
-  const [dropdown, setDropDown] = React.useState({
-    clientType: [],
-    sourceOfConnection: [],
-    sourceOfLocation: [],
-    hrDesignation: [],
-    callingStatus: []
-  });
-
-  const getDropdown = () => {
-    axios.get(Urlconstant.url + `utils/clientdropdown`).then((response) => {
-      setDropDown(response.data);
-    })
-  }
 
   React.useEffect(() => {
     if (open) {
@@ -51,7 +38,6 @@ const HrFollowUp = ({ open, handleClose, rowData }) => {
         callBackTime: "",
         comments: "",
       });
-      getDropdown();
     }
   }, [open]);
 
@@ -110,7 +96,8 @@ const HrFollowUp = ({ open, handleClose, rowData }) => {
       }
     }
   };
-  const isDisabled = !formData.attemptStatus;
+  const isDisabled = !formData.attemptStatus || !formData.callDuration ||
+    ["Busy", "Call Drop", "Call You Later", "Not Reachable", "RNR", "Switch Off"].includes(formData.attemptStatus);
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle>

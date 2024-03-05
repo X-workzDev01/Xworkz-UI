@@ -602,7 +602,6 @@ export default function ControlledSelectionServerPaginationGrid() {
             sx={{
               marginRight: "10px",
               width: "200px",
-              marginLeft: "10px",
               fontSize: "14px",
             }}
             onChange={handleCourseChange}
@@ -630,7 +629,6 @@ export default function ControlledSelectionServerPaginationGrid() {
             sx={{
               marginRight: "10px",
               width: "200px",
-              marginLeft: "10px",
               fontSize: "14px",
             }}
             onChange={handleCollegeChange}
@@ -657,9 +655,9 @@ export default function ControlledSelectionServerPaginationGrid() {
             Clear
           </Button>
         </div>
-        <div style={{ marginLeft: "35%" }}>
+        {/* <div style={{ marginLeft: "35%" }}>
           <Button variant="contained" color="primary" onClick={handleExportClick}>Export Data</Button>
-        </div>
+        </div> */}
 
       </div>
       <div style={{ height: "650px", width: "100%" }}>
@@ -726,11 +724,11 @@ export default function ControlledSelectionServerPaginationGrid() {
           ))}
         </Popover>
       </div>
-      <ExportData
+      {/* <ExportData
         open={isExportModalOpen}
         handleClose={() => setExportModalOpen(false)}
         handleSaveClick={handleExportClickModal}
-      />
+      /> */}
     </div>
   );
 }

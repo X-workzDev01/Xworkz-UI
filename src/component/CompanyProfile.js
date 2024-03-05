@@ -61,41 +61,40 @@ const CompanyProfile = () => {
   const [isHrFollowUpModalOpen, setHrFollowUpModalOpen] = React.useState("");
   const [HrFollowUpStatus, setHrFollowUpStatus] = React.useState("");
 
-  const fetchData = (id) => {
-    axios
-      .get(Urlconstant.url + `api/getdetailsbyid?companyId=${id}`)
-      .then((response) => {
-        setCompanyDetails(response.data);
-        setCompanyName(response.data.companyName);
-      })
-      .catch((error) => {
-        if (error.response && error.response.status === 500) {
-          setCompanyDetails("");
-          setCompanyName("");
-        }
-      });
+  const [dropdown, setDropDown] = React.useState({
+    clientType: [],
+    sourceOfConnection: [],
+    sourceOfLocation: [],
+    hrDesignation: [],
+    callingStatus: []
+  });
+  const fetchDataAndHRFollowUp = async () => {
+    try {
+      const companyDetailsResponse = await axios.get(Urlconstant.url + `api/getdetailsbyid?companyId=${id}`);
+      setCompanyDetails(companyDetailsResponse.data);
+      setCompanyName(companyDetailsResponse.data.companyName);
+      const hrFollowUpResponse = await axios.get(Urlconstant.url + `api/getFollowUpDetailsById?companyId=${id}`);
+      setHrFollowUpStatus(hrFollowUpResponse.data);
+    } catch (error) {
+      if (error.response && error.response.status === 500) {
+        setCompanyDetails("");
+        setCompanyName("");
+        setHrFollowUpStatus("");
+      }
+    }
   };
 
+
   React.useEffect(() => {
-    fetchData(id);
-    fetchHRFollowUp(id);
-  }, [id, isEditCompanyDetailsModalOpen, isHrFollowUpModalOpen]);
-  
-  const fetchHRFollowUp = (id) => {
-    const companyId = id;
-    axios
-      .get(
-        Urlconstant.url + `api/getFollowUpDetailsById?companyId=${companyId}`
-      )
-      .then((response) => {
-        setHrFollowUpStatus(response.data);
-      })
-      .catch((error) => {
-        if (error.response && error.response.status === 500) {
-          setHrFollowUpStatus("");
-        }
-      });
-  };
+    fetchDataAndHRFollowUp();
+  }, []);
+
+  React.useEffect(() => {
+    axios.get(Urlconstant.url + `utils/clientdropdown`).then((response) => {
+      setDropDown(response.data);
+    });
+  }, [id]);
+
 
   const handleAddClientHr = () => {
     setAddHrModalOpen(true);
@@ -120,6 +119,9 @@ const CompanyProfile = () => {
   const handleCompanyDetailsClick = () => {
     setEditCompanyDetailsModalOpen(false);
   };
+  const handleCompanyDetailsUpdate = () => {
+    fetchDataAndHRFollowUp();
+  };
 
   const handleHRFollowUp = () => {
     setHrFollowUpModalOpen(true);
@@ -128,6 +130,9 @@ const CompanyProfile = () => {
   const handleHRFollowUpClick = () => {
     setHrFollowUpModalOpen(false);
   };
+
+
+
   return (
     <div>
       <h2>CompanyProfile</h2>
@@ -203,6 +208,7 @@ const CompanyProfile = () => {
             handleClose={() => setAddHrModalOpen(false)}
             rowData={companyDetails}
             handleSaveClick={handleSaveClick}
+            dropdown={dropdown}
           />
           <HRDetails
             open={isGetHRDetailsModalOpen}
@@ -215,13 +221,21 @@ const CompanyProfile = () => {
             open={isEditCompanyDetailsModalOpen}
             handleClose={() => setEditCompanyDetailsModalOpen(false)}
             rowData={companyDetails}
-            handleSaveClick={handleCompanyDetailsClick}
+            handleSaveClick={() => {
+              handleCompanyDetailsClick();
+              handleCompanyDetailsUpdate();
+            }}
+            fetchDataAndHRFollowUp={fetchDataAndHRFollowUp}
+            dropdown={dropdown}
           />
           <CompanyFollowUp
             open={isHrFollowUpModalOpen}
             handleClose={() => setHrFollowUpModalOpen(false)}
             rowData={companyDetails}
-            handleSaveClick={handleHRFollowUpClick}
+            handleSaveClick={() => {
+              handleHRFollowUpClick();
+            }}
+            dropdown={dropdown}
           />
         </div>
       </div>
