@@ -106,14 +106,14 @@ export default function ControlledSelectionServerPaginationGrid() {
 
   function getTotalClass() {
     axios
-    .get(
-      Urlconstant.url + `api/attendance/getBatchAttendanceCount?courseName=${courseName}`
-    )
-    .then((response) => {
-      const batchAttendanceData = response.data;
-      const key = Object.keys(batchAttendanceData)[0];
-      setTotalClass(key)
-    })
+      .get(
+        Urlconstant.url + `api/attendance/getBatchAttendanceCount?courseName=${courseName}`
+      )
+      .then((response) => {
+        const batchAttendanceData = response.data;
+        const key = Object.keys(batchAttendanceData)[0];
+        setTotalClass(key)
+      })
       .catch((error) => {
         console.error("Error fetching total class data:", error);
       });
@@ -126,7 +126,9 @@ export default function ControlledSelectionServerPaginationGrid() {
 
       const response = await axios.get(apiUrl);
       const suggestions = response.data.map((option) => ({
-        traineeName: option.traineeName,
+        traineeName: option.name,
+        email: option.email,
+        label: `${option.name}-${option.email}`,
       }));
       setAutocompleteOptions(suggestions);
       return suggestions;
@@ -195,7 +197,7 @@ export default function ControlledSelectionServerPaginationGrid() {
       .then((response) => {
         setCourseDropdown(response.data);
       })
-      .catch((error) => {});
+      .catch((error) => { });
   };
   const handleSearchClick = () => {
     searchServerRows(searchValue, courseName).then((newGridData) => {
@@ -219,7 +221,7 @@ export default function ControlledSelectionServerPaginationGrid() {
   };
   const handleAutocompleteChange = (event, newValue) => {
     setSelectedOption(isClearClicked ? null : newValue);
-    sessionStorage.setItem("searchName", newValue?.traineeName);
+    sessionStorage.setItem("searchName", newValue?.name);
     setIsClearClicked(false);
   };
   React.useEffect(() => {
@@ -230,14 +232,20 @@ export default function ControlledSelectionServerPaginationGrid() {
     {
       field: "traineeName",
       headerName: "Trainee Name",
-      width: 450,
-      valueGetter: (params) => params.row.traineeName,
+      width: 350,
+      valueGetter: (params) => params.row.name,
+    },
+    {
+      field: "email",
+      headerName: "Email",
+      width: 350,
+      valueGetter: (params) => params.row.email,
     },
     {
       field: "course",
       headerNam1e: "Course",
-      width: 550,
-      valueGetter: (params) => params.row.course,
+      width: 450,
+      valueGetter: (params) => params.row.courseName,
     },
 
     {
@@ -256,9 +264,8 @@ export default function ControlledSelectionServerPaginationGrid() {
             variant="outlined"
             color="secondary"
             startIcon={<PersonOutline />}
-            onClick={() => {
-              handleModelOpen(params.row.course, params.row.id);
-            }}
+            component={Link}
+            to={Urlconstant.navigate + `profile/${params.row.email}`}
           >
             View
           </Button>
@@ -267,7 +274,7 @@ export default function ControlledSelectionServerPaginationGrid() {
     },
   ];
 
- 
+
   return (
     <div>
       <Header />
@@ -285,7 +292,7 @@ export default function ControlledSelectionServerPaginationGrid() {
           freeSolo
           id="free-solo-2-demo"
           disableClearable
-          getOptionLabel={(option) => option.traineeName}
+          getOptionLabel={(option) => option.label}
           style={{ width: "22rem", padding: "10px 20px" }}
           value={selectedOption}
           onChange={handleAutocompleteChange}
@@ -310,7 +317,7 @@ export default function ControlledSelectionServerPaginationGrid() {
             />
           )}
           renderOption={(props, option) => (
-            <li {...props}>{option.traineeName}</li>
+            <li {...props}>{option.label}</li>
           )}
         />
         <FormControl>
@@ -332,10 +339,10 @@ export default function ControlledSelectionServerPaginationGrid() {
           >
             {Array.isArray(courseDropdown)
               ? courseDropdown.map((item, k) => (
-                  <MenuItem value={item} key={k}>
-                    {item}
-                  </MenuItem>
-                ))
+                <MenuItem value={item} key={k}>
+                  {item}
+                </MenuItem>
+              ))
               : null}
           </Select>
         </FormControl>
@@ -354,16 +361,10 @@ export default function ControlledSelectionServerPaginationGrid() {
           </Button>
         </div>
         <div>
-          <span style={{ paddingLeft: "15px",marginRight:'8px'}}>Total Class  <span style={{marginRight:'5px'}}>:</span>
-          <span style={{backgroundColor:"darkgray", borderRadius:"15px", paddingTop:"5px",paddingLeft:"12px",paddingRight:"12px", padding:"4px"}} >{totalClass}</span></span>
+          <span style={{ paddingLeft: "15px", marginRight: '8px' }}>Total Class  <span style={{ marginRight: '5px' }}>:</span>
+            <span style={{ backgroundColor: "darkgray", borderRadius: "15px", paddingTop: "5px", paddingLeft: "12px", paddingRight: "12px", padding: "4px" }} >{totalClass}</span></span>
         </div>
       </div>
-
-      {/* <div style={{ marginTop: "-35px" }}>TotalClass :
-        <div style={styles.totalClassContainer}>
-         
-        </div>
-      </div> */}
       <div style={{ height: "650px", width: "100%" }}>
         <DataGrid
           style={{ width: "100%" }}
