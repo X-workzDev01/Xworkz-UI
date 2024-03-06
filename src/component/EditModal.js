@@ -97,11 +97,20 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
       setReferalNameCheck("");
       setComments("");
       setXworkzEmailCheck("");
+      setSslcError("");
+      setPucError("");
+      setDegreeError("");
     },
     [rowData]
   );
 
-
+  useEffect(() => {
+    if(open){
+    rowData.percentageDto.sslcPercentage ? setSslcToPerc(((rowData.percentageDto.sslcPercentage / 10) + 0.7).toFixed(2) + " CGPA") : setSslcToPerc(null);
+    rowData.percentageDto.pucPercentage ? setPucToPerc(((rowData.percentageDto.pucPercentage / 10) + 0.7).toFixed(2) + " CGPA") : setPucToPerc(null);
+    rowData.percentageDto.degreePercentage ? setDegreeToPerc(((rowData.percentageDto.degreePercentage / 10) + 0.7).toFixed(2) + " CGPA") : setDegreeToPerc(null);
+    }
+  }, [open]);
   useEffect(() => {
     const percDisabled = sslcError || pucError || degreeError;
     setDisable(percDisabled);
@@ -288,6 +297,9 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
       if (/^\d{1}\.\d{1,2}$/.test(value) || value.length == 1) {
         setSslcToPerc(((value - .7) * 10).toFixed(2) + "%");
       }
+      if (/^\d{2}\.\d{1,2}$/.test(value)) {
+        setSslcToPerc(((value / 10) + 0.7).toFixed(2) + " CGPA");
+      }
     }
 
     if (name === "percentageDto.pucPercentage") {
@@ -305,6 +317,9 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
       if (/^\d{1}\.\d{1,2}$/.test(value) || value.length == 1) {
         setPucToPerc(((value - .7) * 10).toFixed(2) + "%");
       }
+      if (/^\d{2}\.\d{1,2}$/.test(value)) {
+        setPucToPerc(((value / 10) + 0.7).toFixed(2) + " CGPA");
+      }
     }
 
     if (name === "percentageDto.degreePercentage") {
@@ -321,6 +336,9 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
       }
       if (/^\d{1}\.\d{1,2}$/.test(value) || value.length == 1) {
         setDegreeToPerc(((value - .7) * 10).toFixed(2) + "%");
+      }
+      if (/^\d{2}\.\d{1,2}$/.test(value)) {
+        setDegreeToPerc(((value / 10) + 0.7).toFixed(2) + " CGPA");
       }
     }
 
@@ -1111,7 +1129,7 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
               {sslcToPerc ? <span>{sslcToPerc}</span> : ""}
             </div>
             <div style={{ marginTop: "45px" }}>
-            {sslcError ? (<Alert severity="error">{sslcError}</Alert>) : " "}
+              {sslcError ? (<Alert severity="error">{sslcError}</Alert>) : " "}
             </div>
           </Grid>
           <Grid item xs={4}>

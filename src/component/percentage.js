@@ -17,14 +17,32 @@ export const Percentage = ({
 }) => {
 
     useEffect(() => {
-        setSslcValue((formData.sslcPercentage / 10 + 0.7).toFixed(2));
-        setPucValue((formData.pucPercentage / 10 + 0.7).toFixed(2));
-        setDegreeValue((formData.degreePercentage / 10 + 0.7).toFixed(2));
 
+        if (formData.sslcPercentage) {
+            if (/^\d{2}\.\d{1,2}$/.test(formData.sslcPercentage)) {
+                setSslcToPerc(((formData.sslcPercentage / 10) + 0.7).toFixed(2) + " CGPA");
+            }
+            if (/^\d{1}\.\d{1,2}$/.test(formData.sslcPercentage) || formData.sslcPercentage.length === 1) {
+                setSslcToPerc(((formData.sslcPercentage - .7) * 10).toFixed(2) + "%");
+            }
+        }
+        if (formData.pucPercentage) {
+            if (/^\d{2}\.\d{1,2}$/.test(formData.pucPercentage)) {
+                setPucToPerc(((formData.pucPercentage / 10) + 0.7).toFixed(2) + " CGPA");
+            }
+            if (/^\d{1}\.\d{1,2}$/.test(formData.pucPercentage) || formData.pucPercentage.length === 1) {
+                setPucToPerc(((formData.pucPercentage - .7) * 10).toFixed(2) + "%");
+            }
+        }
+        if (formData.degreePercentage) {
+            if (/^\d{2}\.\d{1,2}$/.test(formData.degreePercentage)) {
+                setDegreeToPerc(((formData.degreePercentage / 10) + 0.7).toFixed(2) + " CGPA");
+            }
+            if (/^\d{1}\.\d{1,2}$/.test(formData.degreePercentage) || formData.degreePercentage.length === 1) {
+                setDegreeToPerc(((formData.degreePercentage - .7) * 10).toFixed(2) + "%");
+            }
+        }
     }, []);
-    const [sslcValue, setSslcValue] = useState("");
-    const [pucValue, setPucValue] = useState("");
-    const [degreeValue, setDegreeValue] = useState("");
 
     const [sslcError, setSslcError] = useState("");
     const [pucError, setPucError] = useState("");
@@ -36,9 +54,7 @@ export const Percentage = ({
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
         if (name === "sslcPercentage") {
-            setSslcValue(value);
             if (!value) {
                 setSslcError("SSLC (10th) Percentage is required");
                 setSslcToPerc("");
@@ -51,13 +67,16 @@ export const Percentage = ({
                 setSslcToPerc("");
                 setSslcError("");
             }
-            if (/^\d{1}\.\d{1,2}$/.test(value) || value.length == 1) {
+            if (/^\d{2}\.\d{1,2}$/.test(value)) {
+                setSslcToPerc(((value / 10) + 0.7).toFixed(2) + " CGPA");
+            }
+            if (/^\d{1}\.\d{1,2}$/.test(value) || value.length === 1) {
                 setSslcToPerc(((value - .7) * 10).toFixed(2) + "%");
             }
+
         }
 
         if (name === "pucPercentage") {
-            setPucValue(value);
             if (!value) {
                 setPucError("PUC Percentage is required");
                 setPucToPerc("");
@@ -69,14 +88,15 @@ export const Percentage = ({
                 setPucToPerc("");
                 setPucError("");
             }
-
-            if (/^\d{1}\.\d{1,2}$/.test(value) || value.length == 1) {
+            if (/^\d{2}\.\d{1,2}$/.test(value)) {
+                setPucToPerc(((value / 10) + 0.7).toFixed(2) + " CGPA");
+            }
+            if (/^\d{1}\.\d{1,2}$/.test(value) || value.length === 1) {
                 setPucToPerc(((value - .7) * 10).toFixed(2) + "%");
             }
         }
 
         if (name === "degreePercentage") {
-            setDegreeValue(value);
             if (!value) {
                 setDegreeError("Degree Percentage  is required");
                 setDegreeToPerc("");
@@ -88,32 +108,15 @@ export const Percentage = ({
                 setDegreeToPerc("");
                 setDegreeError("");
             }
-            if (/^\d{1}\.\d{1,2}$/.test(value) || value.length == 1) {
+            if (/^\d{2}\.\d{1,2}$/.test(value)) {
+                setDegreeToPerc(((value / 10) + 0.7).toFixed(2) + " CGPA");
+            }
+            if (/^\d{1}\.\d{1,2}$/.test(value) || value.length === 1) {
                 setDegreeToPerc(((value - .7) * 10).toFixed(2) + "%");
             }
         }
-    };
+        setFormData({ ...formData, [name]: value });
 
-    const handleBlur = (e) => {
-        const { name, value } = e.target;
-
-        if (name === "sslcPercentage") {
-            if (/^\d{1}\.\d{1,2}$/.test(value) || value.length == 1) {
-                setFormData({ ...formData, [name]: ((value - .7) * 10).toFixed(2) });
-            }
-        }
-
-        if (name === "pucPercentage") {
-            if (/^\d{1}\.\d{1,2}$/.test(value) || value.length == 1) {
-                setFormData({ ...formData, [name]: ((value - .7) * 10).toFixed(2) });
-            }
-        }
-
-        if (name === "degreePercentage") {
-            if (/^\d{1}\.\d{1,2}$/.test(value) || value.length == 1) {
-                setFormData({ ...formData, [name]: ((value - .7) * 10).toFixed(2) });
-            }
-        }
     };
 
     const isDisabled =
@@ -130,9 +133,8 @@ export const Percentage = ({
                         type="number"
                         label="SSLC or 10th Percentage"
                         name="sslcPercentage"
-                        value={sslcValue?sslcValue:null}
+                        value={formData.sslcPercentage ? formData.sslcPercentage : null}
                         onChange={handleInputChange}
-                        onBlur={handleBlur}
                         fullWidth
                         margin="normal"
                         id="outlined-basic"
@@ -153,9 +155,8 @@ export const Percentage = ({
                         type="number"
                         label="PUC or Diploma Percentage"
                         name="pucPercentage"
-                        value={pucValue?pucValue:null}
+                        value={formData.pucPercentage ? formData.pucPercentage : null}
                         onChange={handleInputChange}
-                        onBlur={handleBlur}
                         fullWidth
                         margin="normal"
                         id="outlined-basic"
@@ -176,9 +177,8 @@ export const Percentage = ({
                         type="number"
                         label="Degree Percentage or CGPA"
                         name="degreePercentage"
-                        value={degreeValue?degreeValue:null}
+                        value={formData.degreePercentage ? formData.degreePercentage : null}
                         onChange={handleInputChange}
-                        onBlur={handleBlur}
                         fullWidth
                         margin="normal"
                         id="outlined-basic"
