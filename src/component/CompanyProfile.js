@@ -161,6 +161,9 @@ const CompanyProfile = () => {
   const handleHRFollowUpClick = () => {
     setHrFollowUpModalOpen(false);
   };
+  const handleAfterResponse = () => {
+    getHrDetailsbyCompanyId(); 
+  };
 
   return (
     <div>
@@ -238,6 +241,8 @@ const CompanyProfile = () => {
             rowData={companyDetails}
             handleSaveClick={handleSaveClick}
             dropdown={dropdown}
+            handleAfterResponse={handleAfterResponse} 
+            getHrDetailsbyCompanyId={getHrDetailsbyCompanyId} 
           />
           <HRDetails
             open={isGetHRDetailsModalOpen}
