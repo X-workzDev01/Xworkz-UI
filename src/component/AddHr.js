@@ -22,7 +22,7 @@ import {
   validateEmail,
 } from "../constant/ValidationConstant";
 
-const AddHr = ({ open, handleClose, rowData, dropdown }) => {
+const AddHr = ({ open, handleClose, rowData, dropdown, handleAfterResponse }) => {
   const [loading, setLoading] = React.useState(false);
   const [isConfirming, setIsConfirming] = React.useState(false);
   const [isConfirmed, setIsConfirmed] = React.useState(false);
@@ -37,7 +37,7 @@ const AddHr = ({ open, handleClose, rowData, dropdown }) => {
   const [verifyEmail, setVerifyEmail] = React.useState("");
   const [validateName, setValidateName] = React.useState("");
   const [validateDesignation, setValidateDesignation] = React.useState("");
-  const isDisable=checkEmailExist ||emailCheck||checkPhoneNumberExist||phoneNumber ||!formData.hrSpocName ||!formData.hrContactNumber ||!formData.designation
+  const isDisable=checkEmailExist ||validateName||emailCheck||checkPhoneNumberExist||phoneNumber ||!formData.hrSpocName ||!formData.hrContactNumber ||!formData.designation
  
   React.useEffect(() => {
     if (open) {
@@ -115,8 +115,9 @@ const AddHr = ({ open, handleClose, rowData, dropdown }) => {
     setResponseMessage("");
     setSnackbarOpen(false);
     handleClose();
+    handleAfterResponse();
   };
-
+ 
   const handleSaveClick = () => {
     if (isConfirming) {
       setIsConfirmed(true)
@@ -153,6 +154,7 @@ const AddHr = ({ open, handleClose, rowData, dropdown }) => {
                 designation: "",
                 status: "",
               });
+              handleAfterResponse();
             }
           })
           .catch((error) => {
@@ -166,7 +168,7 @@ const AddHr = ({ open, handleClose, rowData, dropdown }) => {
             } else {
               // Handle other errors
               setLoading(false);
-              setResponseMessage("HR information not saved");
+              setResponseMessage("HR information saved");
               setSnackbarOpen(true);
             }
           });
