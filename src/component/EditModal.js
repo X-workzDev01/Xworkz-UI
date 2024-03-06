@@ -297,7 +297,7 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
       if (/^\d{1}\.\d{1,2}$/.test(value) || value.length == 1) {
         setSslcToPerc(((value - .7) * 10).toFixed(2) + "%");
       }
-      if (/^\d{2}\.\d{1,2}$/.test(value)) {
+      if (/^\d{2}\.\d{1,2}$/.test(value)||/^\d{2}$/.test(value)) {
         setSslcToPerc(((value / 10) + 0.7).toFixed(2) + " CGPA");
       }
     }
@@ -317,7 +317,7 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
       if (/^\d{1}\.\d{1,2}$/.test(value) || value.length == 1) {
         setPucToPerc(((value - .7) * 10).toFixed(2) + "%");
       }
-      if (/^\d{2}\.\d{1,2}$/.test(value)) {
+      if (/^\d{2}\.\d{1,2}$/.test(value)||/^\d{2}$/.test(value)) {
         setPucToPerc(((value / 10) + 0.7).toFixed(2) + " CGPA");
       }
     }
@@ -337,7 +337,7 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
       if (/^\d{1}\.\d{1,2}$/.test(value) || value.length == 1) {
         setDegreeToPerc(((value - .7) * 10).toFixed(2) + "%");
       }
-      if (/^\d{2}\.\d{1,2}$/.test(value)) {
+      if (/^\d{2}\.\d{1,2}$/.test(value)||/^\d{2}$/.test(value)) {
         setDegreeToPerc(((value / 10) + 0.7).toFixed(2) + " CGPA");
       }
     }
@@ -359,48 +359,6 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
       }
     }));
   };
-
-  const handlePercentBlur = (e) => {
-    const { name, value } = e.target;
-    const [section, field] = name.split(".");
-
-    if (name === "percentageDto.sslcPercentage") {
-      if (/^\d{1}\.\d{1,2}$/.test(value) || value.length == 1) {
-        setEditedData(prevData => ({
-          ...prevData,
-          [section]: {
-            ...prevData[section],
-            [field]: ((value - .7) * 10).toFixed(2)
-          }
-        }));
-      }
-    }
-
-    if (name === "percentageDto.pucPercentage") {
-      if (/^\d{1}\.\d{1,2}$/.test(value) || value.length == 1) {
-        setEditedData(prevData => ({
-          ...prevData,
-          [section]: {
-            ...prevData[section],
-            [field]: ((value - .7) * 10).toFixed(2)
-          }
-        }));
-      }
-    }
-
-    if (name === "percentageDto.degreePercentage") {
-      if (/^\d{1}\.\d{1,2}$/.test(value) || value.length == 1) {
-        setEditedData(prevData => ({
-          ...prevData,
-          [section]: {
-            ...prevData[section],
-            [field]: ((value - .7) * 10).toFixed(2)
-          }
-        }));
-      }
-    }
-  };
-
 
   const handleEmail = (email) => {
     if (rowData.basicInfo.email === email) {
@@ -1121,7 +1079,6 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
               name="percentageDto.sslcPercentage"
               defaultValue={rowData.percentageDto.sslcPercentage}
               onChange={handleInputChange}
-              onBlur={handlePercentBlur}
               style={fieldStyle}
               required
             />
@@ -1139,7 +1096,6 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
               name="percentageDto.pucPercentage"
               defaultValue={rowData.percentageDto.pucPercentage}
               onChange={handleInputChange}
-              onBlur={handlePercentBlur}
               style={fieldStyle}
               required
             />
@@ -1159,7 +1115,6 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
               name="percentageDto.degreePercentage"
               defaultValue={rowData.percentageDto.degreePercentage}
               onChange={handleInputChange}
-              onBlur={handlePercentBlur}
               style={fieldStyle}
               required
             />

@@ -19,7 +19,7 @@ export const Percentage = ({
     useEffect(() => {
 
         if (formData.sslcPercentage) {
-            if (/^\d{2}\.\d{1,2}$/.test(formData.sslcPercentage)) {
+            if (/^\d{2}\.\d{1,2}$/.test(formData.sslcPercentage)||/^\d{2}$/.test(formData.sslcPercentage)) {
                 setSslcToPerc(((formData.sslcPercentage / 10) + 0.7).toFixed(2) + " CGPA");
             }
             if (/^\d{1}\.\d{1,2}$/.test(formData.sslcPercentage) || formData.sslcPercentage.length === 1) {
@@ -27,7 +27,7 @@ export const Percentage = ({
             }
         }
         if (formData.pucPercentage) {
-            if (/^\d{2}\.\d{1,2}$/.test(formData.pucPercentage)) {
+            if (/^\d{2}\.\d{1,2}$/.test(formData.pucPercentage)||/^\d{2}$/.test(formData.pucPercentage)) {
                 setPucToPerc(((formData.pucPercentage / 10) + 0.7).toFixed(2) + " CGPA");
             }
             if (/^\d{1}\.\d{1,2}$/.test(formData.pucPercentage) || formData.pucPercentage.length === 1) {
@@ -35,7 +35,7 @@ export const Percentage = ({
             }
         }
         if (formData.degreePercentage) {
-            if (/^\d{2}\.\d{1,2}$/.test(formData.degreePercentage)) {
+            if (/^\d{2}\.\d{1,2}$/.test(formData.degreePercentage)||/^\d{2}$/.test(formData.degreePercentage)) {
                 setDegreeToPerc(((formData.degreePercentage / 10) + 0.7).toFixed(2) + " CGPA");
             }
             if (/^\d{1}\.\d{1,2}$/.test(formData.degreePercentage) || formData.degreePercentage.length === 1) {
@@ -67,7 +67,7 @@ export const Percentage = ({
                 setSslcToPerc("");
                 setSslcError("");
             }
-            if (/^\d{2}\.\d{1,2}$/.test(value)) {
+            if (/^\d{2}\.\d{1,2}$/.test(value)||/^\d{2}$/.test(value)) {
                 setSslcToPerc(((value / 10) + 0.7).toFixed(2) + " CGPA");
             }
             if (/^\d{1}\.\d{1,2}$/.test(value) || value.length === 1) {
@@ -88,7 +88,7 @@ export const Percentage = ({
                 setPucToPerc("");
                 setPucError("");
             }
-            if (/^\d{2}\.\d{1,2}$/.test(value)) {
+            if (/^\d{2}\.\d{1,2}$/.test(value)||/^\d{2}$/.test(value)) {
                 setPucToPerc(((value / 10) + 0.7).toFixed(2) + " CGPA");
             }
             if (/^\d{1}\.\d{1,2}$/.test(value) || value.length === 1) {
@@ -108,7 +108,7 @@ export const Percentage = ({
                 setDegreeToPerc("");
                 setDegreeError("");
             }
-            if (/^\d{2}\.\d{1,2}$/.test(value)) {
+            if (/^\d{2}\.\d{1,2}$/.test(value)||/^\d{2}$/.test(value)) {
                 setDegreeToPerc(((value / 10) + 0.7).toFixed(2) + " CGPA");
             }
             if (/^\d{1}\.\d{1,2}$/.test(value) || value.length === 1) {
