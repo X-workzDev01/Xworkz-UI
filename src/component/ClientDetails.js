@@ -119,9 +119,11 @@ export default function ClientDetails() {
     }
     switch (name) {
       case "companyName":
-        if (value.length <= 2) {
+        if (value.length < 3) {
+          setDisable(true);
           setCompanyNameCheck("Name should not be empty");
         } else {
+          setDisable(false);
           setCompanyNameCheck("");
         }
         break;
@@ -134,15 +136,17 @@ export default function ClientDetails() {
         }
         break;
       case "companyLandLineNumber":
-        if (!validateContactNumber(value)) {
+        if (value.length <= 9 || value.length >= 10 && !validateContactNumber(value)) {
+          setDisable(true);
           setCheckPhoneNumberExist("");
           setPhoneNumberCheck("Enter valid contact number");
         } else {
+          setDisable(false);
           setPhoneNumberCheck("");
         }
         break;
       case "companyWebsite":
-        if (value.trim() != ""&&!validateWebsite(value)) {
+        if (value.trim() != "" && !validateWebsite(value)) {
           setCheckCompanyWebsiteExist("");
           setCheckCompanyWebsite("Enter valid website");
         } else {
@@ -191,7 +195,7 @@ export default function ClientDetails() {
 
   const handleCompanyName = (event) => {
     const companyName = event.target.value;
-    if (companyName.trim() !== "") {
+    if (companyName.trim() !== ""&&companyName.length>2) {
       axios
         .get(Urlconstant.url + `/api/companynamecheck?companyName=${companyName}`)
         .then((res) => {
@@ -258,7 +262,7 @@ export default function ClientDetails() {
 
   const handleCompanyContactNumber = (event) => {
     const companyContactNumber = event.target.value;
-    if (companyContactNumber.trim() !== "" && companyContactNumber.length === 10) {
+    if (companyContactNumber.trim() !== "" && validateContactNumber(companyContactNumber)) {
       axios
         .get(
           Urlconstant.url +
@@ -267,9 +271,9 @@ export default function ClientDetails() {
         .then((res) => {
           if (res.data === "Company ContactNumber Already Exists") {
             setCheckPhoneNumberExist("ContactNumber Already Exists");
-            setIsSubmitting(false);
             setPhoneNumberCheck("");
           } else {
+            setPhoneNumberCheck("")
             setCheckPhoneNumberExist("");
           }
         })
