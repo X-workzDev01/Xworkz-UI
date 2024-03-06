@@ -142,7 +142,7 @@ export default function ClientDetails() {
         }
         break;
       case "companyWebsite":
-        if (!validateWebsite(value)) {
+        if (value.trim() != ""&&!validateWebsite(value)) {
           setCheckCompanyWebsiteExist("");
           setCheckCompanyWebsite("Enter valid website");
         } else {
