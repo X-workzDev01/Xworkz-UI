@@ -123,7 +123,6 @@ export default function ClientDetails() {
           setDisable(true);
           setCompanyNameCheck("Name should not be empty");
         } else {
-          setDisable(false);
           setCompanyNameCheck("");
         }
         break;
@@ -141,12 +140,12 @@ export default function ClientDetails() {
           setCheckPhoneNumberExist("");
           setPhoneNumberCheck("Enter valid contact number");
         } else {
-          setDisable(false);
           setPhoneNumberCheck("");
         }
         break;
       case "companyWebsite":
         if (value.trim() != "" && !validateWebsite(value)) {
+          setDisable(true);
           setCheckCompanyWebsiteExist("");
           setCheckCompanyWebsite("Enter valid website");
         } else {
