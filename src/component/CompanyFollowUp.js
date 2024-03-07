@@ -19,7 +19,6 @@ import { fieldStyle, style } from "../constant/FormStyle";
 import { Urlconstant } from "../constant/Urlconstant";
 import { getCurrentDate } from "../constant/ValidationConstant";
 
-
 const CompanyFollowUp = ({ open, handleClose, rowData, dropdown }) => {
   const [isConfirmed, setIsConfirmed] = React.useState(false);
   const [responseMessage, setResponseMessage] = React.useState("");
@@ -38,7 +37,7 @@ const CompanyFollowUp = ({ open, handleClose, rowData, dropdown }) => {
         .then((response) => {
           setHrNameList(response.data);
         })
-        .catch((e) => {});
+        .catch((e) => { });
     }
   };
 
@@ -121,7 +120,7 @@ const CompanyFollowUp = ({ open, handleClose, rowData, dropdown }) => {
       }
     }
   };
-  const isDisabled = !formData.attemptStatus || !hrDetails
+  const isDisabled = !formData.attemptStatus || !hrDetails || !formData.hrSpocName
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle>
