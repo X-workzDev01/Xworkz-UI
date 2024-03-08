@@ -30,7 +30,9 @@ export default function ClientDetails() {
   const [companyEmailCheck, setCompanyEmailCheck] = React.useState("");
   const [emailCheck, setEmailCheck] = React.useState("");
   const [phoneNumberCheck, setPhoneNumberCheck] = React.useState("");
-  const [formData, setFormData] = React.useState({});
+  const [formData, setFormData] = React.useState({
+    status: "Active",
+  });
   const [checkPhoneNumberExist, setCheckPhoneNumberExist] = React.useState("");
   const [checkCompanyWebsite, setCheckCompanyWebsite] = React.useState("");
   const [checkCompanyWebsiteExist, setCheckCompanyWebsiteExist] = React.useState("");
@@ -474,7 +476,7 @@ export default function ClientDetails() {
               <TextField
                 label="Status"
                 name="status"
-                defaultValue="Active"
+                value={formData.status}
                 onChange={handleChange}
                 required
                 fullWidth
