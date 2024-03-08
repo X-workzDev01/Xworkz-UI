@@ -16,13 +16,13 @@ import { GridToolbarFilterButton } from "@mui/x-data-grid";
 import { GridToolbarDensitySelector } from "@mui/x-data-grid";
 import { GridToolbarExport } from "@mui/x-data-grid";
 
-function loadServerRows(page, pageSize, courseName, collegeName) {
+function loadServerRows(page, pageSize, courseName, collegeName,followupStatus) {
   const startingIndex = page * pageSize;
   const maxRows = pageSize;
   const spreadsheetId = Urlconstant.spreadsheetId;
   const apiUrl =
     Urlconstant.url +
-    `api/readData?startingIndex=${startingIndex}&maxRows=${maxRows}&courseName=${courseName}&collegeName=${collegeName}`;
+    `api/readData?startingIndex=${startingIndex}&maxRows=${maxRows}&courseName=${courseName}&collegeName=${collegeName}&followupStatus=${followupStatus}`;
   const requestOptions = {
     method: "GET",
     headers: {
@@ -60,9 +60,9 @@ function loadClientRows(page, pageSize, allData) {
   });
 }
 
-function searchServerRows(searchValue, courseName, collegeName) {
+function searchServerRows(searchValue, courseName, collegeName,followupStatus) {
   const apiUrl =
-    Urlconstant.url + `api/filterData/${courseName}?searchValue=${searchValue}&&collegeName=${collegeName}`;
+    Urlconstant.url + `api/filterData/${courseName}?searchValue=${searchValue}&&collegeName=${collegeName}&&followupStatus=${followupStatus}`;
   const requestOptions = {
     method: "GET",
     headers: {
@@ -86,11 +86,11 @@ function searchServerRows(searchValue, courseName, collegeName) {
       });
   });
 }
-async function fetchFilteredData(searchValue, courseName, collegeName) {
+async function fetchFilteredData(searchValue, courseName, collegeName,followupStatus) {
   try {
     const apiUrl =
       Urlconstant.url +
-      `api/register/suggestion/${courseName}?value=${searchValue}&&collegeName=${collegeName}`;
+      `api/register/suggestion/${courseName}?value=${searchValue}&&collegeName=${collegeName}&&followupStatus=${followupStatus}`;
     const requestOptions = {
       method: "GET",
       headers: {
@@ -153,9 +153,9 @@ export default function ControlledSelectionServerPaginationGrid() {
   const initiallySelectedFields = ['traineeName', 'email', 'contactNumber','course', 'actions'];
   const [displayColumn, setDisplayColumn] = React.useState(initiallySelectedFields);
   const [anchorEl, setAnchorEl] = React.useState(null);
-
+  const [followupStatus, setFollowupStatus] = useState(sessionStorage.getItem("followUpStatus"));
   const handleSearchClick = () => {
-    searchServerRows(searchValue, courseName, collegeName).then((newGridData) => {
+    searchServerRows(searchValue, courseName, collegeName,followupStatus).then((newGridData) => {
       setGridData(newGridData);
       setPaginationModel({ page: 0, pageSize: initialPageSize });
       setSearchInputValue("");
@@ -172,7 +172,8 @@ export default function ControlledSelectionServerPaginationGrid() {
             collegeName,
             paginationModel.page,
             paginationModel.pageSize,
-            setPaginationModel
+            setPaginationModel,
+            followupStatus
           )
             .then((suggestions) => {
               setAutocompleteOptions(suggestions);
@@ -203,7 +204,8 @@ export default function ControlledSelectionServerPaginationGrid() {
             paginationModel.page,
             paginationModel.pageSize,
             courseName,
-            collegeName
+            collegeName,
+            followupStatus,
           );
 
           if (active) {
@@ -216,9 +218,10 @@ export default function ControlledSelectionServerPaginationGrid() {
             searchValue,
             courseName,
             collegeName,
+            followupStatus,
             paginationModel.page,
             paginationModel.pageSize,
-            setPaginationModel
+            setPaginationModel,
           );
 
           if (active) {
@@ -272,14 +275,22 @@ export default function ControlledSelectionServerPaginationGrid() {
   };
 
   const handleCourseChange = (event) => {
+   if(event.target.name==="courseName")
+   {
     const courseValue = event.target.value;
     sessionStorage.setItem("courseValue", courseValue);
     setCourseName(courseValue);
+   }
+if(event.target.name==="followUpStatus"){
+  setFollowupStatus(event.target.value)
+}
+
+
   };
 
   React.useEffect(() => {
     refreshPageEveryTime();
-  }, [paginationModel.page, paginationModel.pageSize, searchValue, courseName, collegeName]);
+  }, [paginationModel.page, paginationModel.pageSize, searchValue, courseName, collegeName,followupStatus]);
   const columns = [
     {
       field: "traineeName",
@@ -444,6 +455,13 @@ export default function ControlledSelectionServerPaginationGrid() {
       flex: 1,
       valueGetter: (params) => params.row.othersDto.sendWhatsAppLink,
     },
+    
+    {
+      field: "othersDto.followupStatus",
+      headerName: "FollowupStatus",
+      flex: 1,
+      valueGetter: (params) => params.row.followupStatus,
+    },
     // {
     //   field: "percentageDto.sslcPercentage",
     //   headerName: "SSLC Percentage",
@@ -505,8 +523,10 @@ export default function ControlledSelectionServerPaginationGrid() {
     sessionStorage.setItem("courseValue", "null");
     sessionStorage.setItem("name", "null");
     sessionStorage.setItem("searchValue", "null");
+    sessionStorage.setItem("followUpStatus", "null");
     setCourseName(null);
     setCollegeName(null);
+    setFollowupStatus(null);
     setSearchValue("");
     setSelectedOption({ basicInfo: { traineeName: '' } });
   };
@@ -639,6 +659,33 @@ export default function ControlledSelectionServerPaginationGrid() {
                 {item}
               </MenuItem>
             ))}
+          </Select>
+        </FormControl>
+        <FormControl>
+          <InputLabel id="demo-simple-select-label">Select FollowUp Status</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            label="FollowUp Status"
+            name="followUpStatus"
+            value={followupStatus}
+            required
+            variant="outlined"
+            sx={{
+              marginRight: "10px",
+              width: "200px",
+              fontSize: "14px",
+            }}
+            onChange={handleCourseChange}
+          >
+            <MenuItem value={null} > Select course </MenuItem>
+            {dropdown && dropdown.status
+              ? dropdown.status.map((item, k) => (
+                <MenuItem value={item} key={k}>
+                  {item}
+                </MenuItem>
+              ))
+              : null}
           </Select>
         </FormControl>
         <div style={{ marginLeft: "10px" }}>

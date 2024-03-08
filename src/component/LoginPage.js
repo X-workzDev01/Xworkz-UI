@@ -81,6 +81,8 @@ const LoginPage = (props) => {
           sessionStorage.setItem("feesDate","null");
           sessionStorage.setItem("feesPaymentMode","null")
           sessionStorage.setItem("feesStatus","null")
+          sessionStorage.setItem("followUpStatus","null")
+
           console.log(response.data);
         } else {
           console.log("user not found:", response.status);
