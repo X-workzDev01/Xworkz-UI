@@ -8,6 +8,7 @@ import {
   DialogTitle,
   Grid,
   IconButton,
+  InputAdornment,
   MenuItem,
   Snackbar,
   TextField
@@ -37,8 +38,8 @@ const AddHr = ({ open, handleClose, rowData, dropdown, handleAfterResponse }) =>
   const [verifyEmail, setVerifyEmail] = React.useState("");
   const [validateName, setValidateName] = React.useState("");
   const [validateDesignation, setValidateDesignation] = React.useState("");
-  const isDisable=checkEmailExist ||validateName||emailCheck||checkPhoneNumberExist||phoneNumber ||!formData.hrSpocName ||!formData.hrContactNumber ||!formData.designation
- 
+  const isDisable = checkEmailExist || validateName || emailCheck || checkPhoneNumberExist || phoneNumber || !formData.hrSpocName || !formData.hrContactNumber || !formData.designation
+
   React.useEffect(() => {
     if (open) {
       setFormData({
@@ -54,6 +55,7 @@ const AddHr = ({ open, handleClose, rowData, dropdown, handleAfterResponse }) =>
       setCheckPhoneNumberExist("");
       setVerifyEmail("");
       setValidateName("");
+      setCharCount("");
     }
   }, [open]);
 
@@ -77,11 +79,11 @@ const AddHr = ({ open, handleClose, rowData, dropdown, handleAfterResponse }) =>
       }
     }
     if (name === "hrContactNumber") {
-      if (validateContactNumber(value)) {
-        setPhoneNumberCheck("");
-      } else {
+      if (value.length <= 9 || value.length > 10 && !validateContactNumber(value)) {
         setPhoneNumberCheck("Invalid Contact Number");
         setCheckPhoneNumberExist("");
+      } else {
+        setPhoneNumberCheck("");
       }
     }
     if (name === "designation") {
@@ -117,7 +119,7 @@ const AddHr = ({ open, handleClose, rowData, dropdown, handleAfterResponse }) =>
     handleClose();
     handleAfterResponse();
   };
- 
+
   const handleSaveClick = () => {
     if (isConfirming) {
       setIsConfirmed(true)
@@ -228,7 +230,7 @@ const AddHr = ({ open, handleClose, rowData, dropdown, handleAfterResponse }) =>
 
   const handleNumberCheck = (event) => {
     let contactNumber = event.target.value;
-    if (contactNumber.trim() !== "") {
+    if (contactNumber.trim() !== "" && validateContactNumber(contactNumber)) {
       axios
         .get(
           Urlconstant.url +
@@ -331,7 +333,6 @@ const AddHr = ({ open, handleClose, rowData, dropdown, handleAfterResponse }) =>
             <TextField
               label="Comments"
               name="status"
-              helperText={`${charCount}`}
               onChange={handleInputChange}
               style={fieldStyle}
               value={formData.status}
@@ -339,6 +340,14 @@ const AddHr = ({ open, handleClose, rowData, dropdown, handleAfterResponse }) =>
               margin="normal"
               multiline
               rows={4}
+              InputProps={{
+                style: {  right: 1, bottom: 1 },
+                endAdornment: (
+                  <InputAdornment position="end">
+                    {charCount} 
+                  </InputAdornment>
+                ),
+              }}
             />
           </Grid>
         </Grid>

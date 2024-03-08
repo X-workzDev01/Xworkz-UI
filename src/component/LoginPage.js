@@ -24,6 +24,7 @@ const LoginPage = (props) => {
   const [otpError, setOtpError] = useState();
   const [isSending, setIsSending] = useState(false);
   const [effect, setEffect] = useState(false);
+  const [loginProg, setLoginProg] = useState(false);
 
   const handleEmailChange = (event) => {
     //storing
@@ -41,6 +42,7 @@ const LoginPage = (props) => {
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
+    setLoginProg(true);
     if (!email || !password) {
       navigate(Urlconstant.navigate + "login");
     } else {
@@ -55,12 +57,14 @@ const LoginPage = (props) => {
           console.log(response.data);
           if (response.data === "OTP Wrong") {
             setOtpError("Wrong Otp entered");
+            setLoginProg(false);
           } else {
+            setLoginProg(false);
             navigate(Urlconstant.navigate + "display", { state: { email } });
           }
           setEffect(true);
         })
-        .catch((error) => {});
+        .catch((error) => { });
     }
   };
 
@@ -82,12 +86,11 @@ const LoginPage = (props) => {
           sessionStorage.setItem("feesPaymentMode","null")
           sessionStorage.setItem("feesStatus","null")
           sessionStorage.setItem("followUpStatus","null")
-
-          console.log(response.data);
         } else {
           console.log("user not found:", response.status);
         }
         setEnable(false);
+        setEmailError("");
         setDisplayMessage(
           "OTP has been sent to your mail ID it will Expire within 10 Minutes"
         );
@@ -177,6 +180,9 @@ const LoginPage = (props) => {
             >
               Login
             </Button>
+            <br></br>
+            <br></br>
+            {loginProg ? <CircularProgress size={40} color="info" /> : ""}
           </Form>
         </Typography>
       </Container>

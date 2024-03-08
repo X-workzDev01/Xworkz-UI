@@ -30,23 +30,13 @@ export default function ClientDetails() {
   const [companyEmailCheck, setCompanyEmailCheck] = React.useState("");
   const [emailCheck, setEmailCheck] = React.useState("");
   const [phoneNumberCheck, setPhoneNumberCheck] = React.useState("");
-  const [isDisabled, setDisable] = React.useState(true);
-  const [formData, setFormData] = React.useState({
-    companyName: "",
-    companyEmail: "",
-    companyLandLineNumber: "",
-    companyWebsite: "",
-    companyLocation: "",
-    companyFounder: "",
-    sourceOfConnection: "",
-    companyType: "",
-    companyAddress: "",
-    status: "Active", // Default value set to "Active"
-  });
+  const [formData, setFormData] = React.useState({});
   const [checkPhoneNumberExist, setCheckPhoneNumberExist] = React.useState("");
   const [checkCompanyWebsite, setCheckCompanyWebsite] = React.useState("");
   const [checkCompanyWebsiteExist, setCheckCompanyWebsiteExist] = React.useState("");
   const [catchErrors, setCatchErrors] = React.useState("");
+  const [checkCompanyNameExist, setCompanyNameCheckExist] = React.useState("");
+
   const [dropdownState, setDropdownState] = React.useState({
     college: [],
   });
@@ -86,83 +76,77 @@ export default function ClientDetails() {
     setOpen(false);
   };
 
-  let valueDisabled = isSubmitting ||
-    !formData.companyName ||
-    !formData.companyEmail ||
-    !formData.companyLandLineNumber ||
-    companyNameCheck ||
-    companyEmailCheck ||
-    emailCheck ||
-    phoneNumberCheck ||
-    checkPhoneNumberExist ||
-    checkCompanyWebsite ||
-    !formData.companyType
-
   const handleChange = (e) => {
-    setDisable(valueDisabled);
+    setIsSubmitting(false)
     const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+
     if (name === "companyType") {
       if (value === "College") {
         getCollegeDropDown();
       }
       setFormData((prevData) => ({
         ...prevData,
-        companyName: "", // Clear the companyName field
         [name]: value,
       }));
-      setCompanyNameCheck("");
     } else {
       setFormData((prevData) => ({
         ...prevData,
         [name]: value,
       }));
     }
-    switch (name) {
-      case "companyName":
-        if (value.length < 3) {
-          setDisable(true);
-          setCompanyNameCheck("Name should not be empty");
-        } else {
-          setCompanyNameCheck("");
-        }
-        break;
-      case "companyEmail":
-        if (!validateEmail(value)) {
-          setCompanyEmailCheck("");
-          setEmailCheck("Enter the valid Email");
-        } else {
-          setEmailCheck("");
-        }
-        break;
-      case "companyLandLineNumber":
-        if (value.length <= 9 || value.length >= 10 && !validateContactNumber(value)) {
-          setDisable(true);
-          setCheckPhoneNumberExist("");
-          setPhoneNumberCheck("Enter valid contact number");
-        } else {
-          setPhoneNumberCheck("");
-        }
-        break;
-      case "companyWebsite":
-        if (value.trim() != "" && !validateWebsite(value)) {
-          setDisable(true);
-          setCheckCompanyWebsiteExist("");
-          setCheckCompanyWebsite("Enter valid website");
-        } else {
-          setCheckCompanyWebsite("");
-        }
-        break;
-      default:
-        break;
+    if (name === "companyName" && value.length <= 3 && value.trim() === "") {
+      setCompanyNameCheck("Name should not be empty");
+      setCompanyNameCheckExist("");
     }
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    else if (value.length >= 3) {
+      setCompanyNameCheck("")
+    }
+    if (name === "companyLandLineNumber") {
+      if (!validateContactNumber(value) && value.trim() !== "") {
+        setPhoneNumberCheck("Enter valid contact Number")
+        setCheckPhoneNumberExist("");
+      } else if (validateContactNumber(value)) {
+        setPhoneNumberCheck("");
+      }
+    }
+    if (name === "companyEmail" && !validateEmail(value) && value.trim() !== "") {
+      setEmailCheck("Enter the valid E-mail");
+      setCompanyEmailCheck("");
+    } else if (validateEmail(value)) {
+      setEmailCheck("");
+    }
+    if (name === "companyWebsite" && !validateWebsite(value) && value.trim() !== "") {
+      setCheckCompanyWebsite("Enter the Valid Website");
+      setCheckCompanyWebsiteExist("");
+      valueDisabled = true;
+    } else if (validateWebsite(value)) {
+      setCheckCompanyWebsite("");
+    } else if (value.trim() === "") {
+      valueDisabled = false;
+      setCheckCompanyWebsite("");
+    }
+
   };
+  var valueDisabled =
+    !formData.companyName ||
+    !formData.companyEmail ||
+    !formData.companyLandLineNumber ||
+    !formData.companyType ||
+    companyNameCheck ||
+    companyEmailCheck ||
+    emailCheck ||
+    phoneNumberCheck ||
+    checkPhoneNumberExist ||
+    checkCompanyNameExist ||
+    checkCompanyWebsiteExist ||
+    checkCompanyWebsite
+
 
   const handleSubmit = (e) => {
-    setDisable(true)
     setIsSubmitting(true)
     try {
       const clientData = {
@@ -172,36 +156,27 @@ export default function ClientDetails() {
       axios.post(Urlconstant.url + "api/registerclient", clientData).then((response) => {
         setOpen(true);
         setSnackbarMessage(response.data);
-        setFormData({
-          companyName: "",
-          companyEmail: "",
-          companyLandLineNumber: "",
-          companyWebsite: "",
-          companyLocation: "",
-          companyFounder: "",
-          sourceOfConnetion: "",
-          companyType: "",
-          companyAddress: "",
-          status: "Active",
-        });
+        setFormData({});
       });
     } catch (error) {
       setCatchErrors("Wait for some time");
     } finally {
-      setIsSubmitting(false);
     }
   };
 
   const handleCompanyName = (event) => {
     const companyName = event.target.value;
-    if (companyName.trim() !== ""&&companyName.length>2) {
+    if (companyName.trim() !== "" && companyName.length > 2) {
       axios
         .get(Urlconstant.url + `/api/companynamecheck?companyName=${companyName}`)
         .then((res) => {
           if (res.data === "Company Already Exists") {
-            setCompanyNameCheck("Already Exists");
-          } else {
             setCompanyNameCheck("");
+            setCompanyNameCheckExist("Already Exists")
+          }
+          else {
+            setCompanyNameCheck("");
+            setCompanyNameCheckExist("");
           }
         })
         .catch((error) => { });
@@ -304,26 +279,18 @@ export default function ClientDetails() {
     }
   };
 
-
   const handleClearAction = () => {
-    setFormData({
-      companyName: "",
-      companyEmail: "",
-      companyLandLineNumber: "",
-      companyWebsite: "",
-      companyLocation: "",
-      companyFounder: "",
-      sourceOfConnection: "",
-      companyType: "",
-      companyAddress: "",
-      status: "Active",
-    });
-    setCheckCompanyWebsite("");
+    valueDisabled = true;
+    setFormData([])
+    setCheckCompanyWebsite("")
     setCheckPhoneNumberExist("")
     setPhoneNumberCheck("")
     setCompanyEmailCheck("")
     setCompanyNameCheck("")
     setEmailCheck("")
+    setCompanyNameCheckExist("")
+    setCheckCompanyWebsiteExist("")
+    setCheckCompanyWebsite("")
   }
   return (
     <div>
@@ -340,7 +307,7 @@ export default function ClientDetails() {
               <TextField
                 label="Type"
                 name="companyType"
-                value={formData.companyType}
+                value={formData.companyType ? formData.companyType : ""}
                 onChange={handleChange}
                 fullWidth
                 margin="normal"
@@ -380,7 +347,7 @@ export default function ClientDetails() {
                 <TextField
                   label="Name"
                   name="companyName"
-                  value={formData.companyName}
+                  value={formData.companyName ? formData.companyName : ""}
                   onChange={handleChange}
                   fullWidth
                   margin="normal"
@@ -391,13 +358,16 @@ export default function ClientDetails() {
               {companyNameCheck && (
                 <Alert severity="error">{companyNameCheck}</Alert>
               )}
+              {checkCompanyNameExist && (
+                <Alert severity="error">{checkCompanyNameExist}</Alert>
+              )}
             </Grid>
 
             <Grid item xs={12} sm={4}>
               <TextField
                 label="E-mail"
                 name="companyEmail"
-                value={formData.companyEmail}
+                value={formData.companyEmail ? formData.companyEmail : ""}
                 onChange={handleChange}
                 fullWidth
                 margin="normal"
@@ -415,7 +385,7 @@ export default function ClientDetails() {
               <TextField
                 label="Contact Number"
                 name="companyLandLineNumber"
-                value={formData.companyLandLineNumber}
+                value={formData.companyLandLineNumber ? formData.companyLandLineNumber : ""}
                 onChange={handleChange}
                 fullWidth
                 margin="normal"
@@ -433,7 +403,7 @@ export default function ClientDetails() {
               <TextField
                 label="Founder"
                 name="companyFounder"
-                value={formData.companyFounder}
+                value={formData.companyFounder ? formData.companyFounder : ""}
                 onChange={handleChange}
                 fullWidth
                 margin="normal"
@@ -444,7 +414,7 @@ export default function ClientDetails() {
               <TextField
                 label="Website"
                 name="companyWebsite"
-                value={formData.companyWebsite}
+                value={formData.companyWebsite ? formData.companyWebsite : ""}
                 onChange={handleChange}
                 fullWidth
                 margin="normal"
@@ -467,7 +437,7 @@ export default function ClientDetails() {
               <TextField
                 label="Location"
                 name="companyLocation"
-                value={formData.companyLocation}
+                value={formData.companyLocation ? formData.companyLocation : ""}
                 onChange={handleChange}
                 fullWidth
                 margin="normal"
@@ -485,7 +455,7 @@ export default function ClientDetails() {
               <TextField
                 label="Source Of Connection"
                 name="sourceOfConnection"
-                value={formData.sourceOfConnection}
+                value={formData.sourceOfConnection ? formData.sourceOfConnection : ""}
                 onChange={handleChange}
                 fullWidth
                 margin="normal"
@@ -504,7 +474,7 @@ export default function ClientDetails() {
               <TextField
                 label="Status"
                 name="status"
-                value={formData.status}
+                defaultValue="Active"
                 onChange={handleChange}
                 required
                 fullWidth
@@ -525,7 +495,7 @@ export default function ClientDetails() {
                 rows={3}
                 label="Address"
                 name="companyAddress"
-                value={formData.companyAddress}
+                value={formData.companyAddress ? formData.companyAddress : ""}
                 onChange={handleChange}
                 fullWidth
                 margin="normal"
@@ -540,7 +510,7 @@ export default function ClientDetails() {
                   type="submit"
                   variant="contained"
                   color="primary"
-                  disabled={isDisabled}
+                  disabled={valueDisabled || isSubmitting}
                   onClick={handleSubmit}
                   className="dark-button"
                   sx={{ marginRight: 1 }}
