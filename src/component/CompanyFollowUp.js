@@ -187,15 +187,24 @@ const CompanyFollowUp = ({ open, handleClose, rowData, dropdown }) => {
               ))}
             </TextField>
           </Grid>
-
           <Grid item xs={12} sm={4}>
             <TextField
+              type="time"
               label="Call Duration"
               name="callDuration"
-              placeholder="mm:ss"
+              placeholder="hh:mm:ss"
               onChange={handleInputChange}
               style={fieldStyle}
               value={formData.callDuration}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              sx={{
+                marginRight: "20px",
+                width: "200px",
+                marginLeft: "40px",
+                fontSize: "14px",
+              }}
             />
           </Grid>
           <Grid item xs={12} sm={4}>

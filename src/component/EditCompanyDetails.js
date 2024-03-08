@@ -24,7 +24,7 @@ import {
 } from "../constant/ValidationConstant";
 import { ClientDropDown } from "../constant/ClientDropDown";
 
-const EditCompanyDetails = ({ open, handleClose, rowData, dropdown}) => {
+const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
   const [isConfirming, setIsConfirming] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [responseMessage, setResponseMessage] = React.useState("");
@@ -56,13 +56,14 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown}) => {
       setVerifyEmail("");
       setCheckCompanyWebsite("");
       setError("");
+      setFounderNameCheck("");
     }
   }, [open]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
     if (name === "companyName") {
-      if (value === " " || (value.length === 0 && value.length <= 2)) {
+      if (value === " " || value.length <= 2) {
         setNameCheck("Enter the Correct Company Name");
         setCompanyNameCheck("");
       } else {
@@ -85,23 +86,23 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown}) => {
         setPhoneNumberCheck("Contact number should be 10 digit");
       }
     }
-    if (name === "companyWebsite") {
-      if (value.length <= 1 && !validateWebsite(value)) {
-        setCheckCompanyWebsite("");
-        setError("Enter the valid website");
-      } else {
-        setError("");
-      }
+    if (name === "companyWebsite" && value.length <= 1 && !validateWebsite(value)) {
+      setCheckCompanyWebsite("");
+      setError("Enter the valid website");
+    } else if (validateWebsite(value)) {
+      console.log(validateWebsite(value))
+      setError("");
     }
 
     if (name === "companyFounder") {
-      if (value.length <= 1) {
-        setFounderNameCheck("Enter the Correct Name");
-      } else {
+      if (value.trim() === "") {
+        setFounderNameCheck("");
+      } else if (value.length <= 2) {
+        setFounderNameCheck("Enter Correct Name")
+      } else if (value.length >= 2) {
         setFounderNameCheck("");
       }
     }
-
     setEditedData((prevData) => ({
       ...prevData,
       [name]: value,
@@ -215,7 +216,6 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown}) => {
           });
       } else {
         setError("");
-        setCheckCompanyWebsite("");
       }
     }
   };
