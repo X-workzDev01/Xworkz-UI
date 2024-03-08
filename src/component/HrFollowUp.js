@@ -45,10 +45,6 @@ const HrFollowUp = ({ open, handleClose, rowData, dropdown }) => {
   }, [open]);
 
   const handleInputChange = (event) => {
-    if (event && event.target) {
-      console.log(event.target.value)
-
-    }
     const { name, value } = event.target;
     setFormData((prevData) => ({
       ...prevData,
