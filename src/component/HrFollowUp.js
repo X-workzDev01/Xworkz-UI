@@ -18,6 +18,9 @@ import React from "react";
 import { Urlconstant } from "../constant/Urlconstant";
 import { fieldStyle, style } from "../constant/FormStyle";
 import { getCurrentDate } from "../constant/ValidationConstant";
+import { LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
+import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 const HrFollowUp = ({ open, handleClose, rowData, dropdown }) => {
   const [isConfirmed, setIsConfirmed] = React.useState(false);
@@ -96,7 +99,8 @@ const HrFollowUp = ({ open, handleClose, rowData, dropdown }) => {
       }
     }
   };
-  const isDisabled = !formData.attemptStatus 
+ 
+  const isDisabled = !formData.attemptStatus
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle>
@@ -144,17 +148,27 @@ const HrFollowUp = ({ open, handleClose, rowData, dropdown }) => {
               ))}
             </TextField>
           </Grid>
-
           <Grid item xs={12} sm={4}>
             <TextField
+              type="time"
               label="Call Duration"
               name="callDuration"
-              placeholder="mm:ss"
+              placeholder="hh:mm:ss"
               onChange={handleInputChange}
               style={fieldStyle}
               value={formData.callDuration}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              sx={{
+                marginRight: "20px",
+                width: "200px",
+                marginLeft: "40px",
+                fontSize: "14px",
+              }}
             />
           </Grid>
+         
           <Grid item xs={12} sm={4}>
             <TextField
               type="date"
@@ -211,6 +225,7 @@ const HrFollowUp = ({ open, handleClose, rowData, dropdown }) => {
             />
           </Grid>
         </Grid>
+
       </DialogContent>
       <DialogActions>
         {loading ? (
