@@ -31,9 +31,16 @@ import { set } from "date-fns";
 
 const fieldStyle = { margin: "20px" };
 
-const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
+const EditModal = ({
+  open,
+  handleClose,
+  rowData,
+  feeConcession,
+  attemptStatus
+}) => {
+  console.log(attemptStatus);
   const navigate = useNavigate();
-  const [feesConcession, setFeesConcession] = useState(0);
+  const [feesConcession, setFeesConcession] = useState(feeConcession);
   const email = sessionStorage.getItem("userId");
   const [isConfirming, setIsConfirming] = React.useState(false);
   const [selectedValue, setSelectedValue] = React.useState(" ");
@@ -85,7 +92,6 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
       setEditedData(rowData);
       setUsnCheck("");
       setEmailError("");
-      setFeesConcession(0);
       setverifyHandleEmail("");
       setEmailCheck("");
       setPhoneNumberError("");
@@ -1043,35 +1049,39 @@ const EditModal = ({ open, handleClose, rowData, feeConcession }) => {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={4}>
-            <FormControl>
-              <InputLabel id="demo-simple-select-label">
-                Fees Concession
-              </InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                label="Concession"
-                name="feeConcession"
-                onChange={handleInputChange}
-                defaultValue={feeConcession}
-                variant="outlined"
-                sx={{
-                  marginRight: "20px",
-                  width: "225px"
-                }}
-                style={fieldStyle}
-                required
-              >
-                {[...Array(26).keys()].map((item, index) =>
-                  <MenuItem value={item} key={index}>
-                    {item}
-                  </MenuItem>
-                )}
-              </Select>
-            </FormControl>
-          </Grid>
-
+          {attemptStatus
+            ? attemptStatus === "Joined"
+              ? <Grid item xs={4}>
+                  <FormControl>
+                    <InputLabel id="demo-simple-select-label">
+                      Fees Concession
+                    </InputLabel>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      label="Concession"
+                      name="feeConcession"
+                      onChange={handleInputChange}
+                      defaultValue={feeConcession}
+                      variant="outlined"
+                      sx={{
+                        marginRight: "20px",
+                        width: "225px"
+                      }}
+                      style={fieldStyle}
+                      required
+                    >
+                      {[...Array(26).keys()].map((item, index) =>
+                        <MenuItem value={item} key={index}>
+                          {item}
+                        </MenuItem>
+                      )}
+                    </Select>
+                  </FormControl>
+                </Grid>
+              : ""
+            : ""}
+   
           <Grid item xs={4}>
             <TextField
               type="number"

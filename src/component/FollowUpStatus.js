@@ -109,7 +109,7 @@ const FollowUpStatus = ({ open, handleClose, rowData, followUpdata }) => {
       setAttemptStatus(updatedValue);
       if (value == "Joined" && rowData.courseInfo.course === "NA") {
         setIdDisabled(true);
-        setJoinedError("Please Update Batch After Join Trainee");
+        setJoinedError("Please trainee update batch before select joined Trainee");
       } else {
         setJoinedError("");
         setIdDisabled(false);
