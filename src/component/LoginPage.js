@@ -43,9 +43,13 @@ const LoginPage = (props) => {
   const handleFormSubmit = async (event) => {
     event.preventDefault();
     setLoginProg(true);
-    if (!email || !password) {
+    setEnable(true);
+    if (!password) {
       navigate(Urlconstant.navigate + "login");
-    } else {
+      setOtpError("Enter Otp");
+      setLoginProg(false);
+      setEnable(false);
+    } else {  
       axios
         .post(Urlconstant.url + `otp?email=${email}&otp=${password}`, {
           headers: {
@@ -58,6 +62,7 @@ const LoginPage = (props) => {
           if (response.data === "OTP Wrong") {
             setOtpError("Wrong Otp entered");
             setLoginProg(false);
+            setEnable(false);
           } else {
             setLoginProg(false);
             navigate(Urlconstant.navigate + "display", { state: { email } });
@@ -178,11 +183,14 @@ const LoginPage = (props) => {
               color="primary"
               disabled={enable}
             >
-              Login
+
+              {loginProg ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : (
+                "Login"
+              )}
+
             </Button>
-            <br></br>
-            <br></br>
-            {loginProg ? <CircularProgress size={40} color="info" /> : ""}
           </Form>
         </Typography>
       </Container>
