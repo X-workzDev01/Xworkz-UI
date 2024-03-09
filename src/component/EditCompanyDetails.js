@@ -42,7 +42,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
   const [emailCheck, setEmailCheck] = React.useState("");
   const [phoneNumberCheck, setPhoneNumberCheck] = React.useState("");
   const [checkEmailExist, setCheckEmailExist] = React.useState("");
-
+  const [addressError, setAddressError] = React.useState("");
 
   React.useEffect(() => {
     if (open) {
@@ -57,6 +57,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
       setCheckCompanyWebsite("");
       setError("");
       setFounderNameCheck("");
+      setAddressError("");
     }
   }, [open]);
 
@@ -95,12 +96,21 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
     }
 
     if (name === "companyFounder") {
-      if (value.trim() === "") {
+      if (value === "") {
         setFounderNameCheck("");
       } else if (value.length <= 2) {
         setFounderNameCheck("Enter Correct Name")
       } else if (value.length >= 2) {
         setFounderNameCheck("");
+      }
+    }
+    if (name === "companyAddress") {
+      if (value === "") {
+        setAddressError("");
+      } else if (value.length <= 2) {
+        setAddressError("Comments should not be empty");
+      } else {
+        setAddressError("");
       }
     }
     setEditedData((prevData) => ({
@@ -283,6 +293,9 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
             ...editedData.adminDto,
             updatedBy: attemptedEmail,
           },
+          companyFounder: editedData.companyFounder === "" ? rowData.companyFounder : editedData.companyFounder,
+          companyWebsite: editedData.companyWebsite === "" ? rowData.companyWebsite : editedData.companyWebsite,
+          companyAddress: editedData.companyAddress === "" ? rowData.companyAddress : editedData.companyAddress,
         };
         axios
           .put(
@@ -320,6 +333,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
     checkPhoneNumberExist ||
     error ||
     founderNameCheck ||
+    addressError ||
     verifyEmail;
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
@@ -400,7 +414,8 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
             <TextField
               label="Company Website"
               name="companyWebsite"
-              defaultValue={rowData.companyWebsite}
+              defaultValue={rowData.companyWebsite != "NA" ? rowData.companyWebsite : ""}
+              placeholder={rowData.companyWebsite === "NA" ? "NA" : ""}
               onChange={handleChange}
               fullWidth
               margin="normal"
@@ -433,7 +448,8 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
             <TextField
               label="Company Founder"
               name="companyFounder"
-              defaultValue={rowData.companyFounder}
+              defaultValue={rowData.companyFounder != "NA" ? rowData.companyFounder : ""}
+              placeholder={rowData.companyFounder === "NA" ? "NA" : ""}
               onChange={handleChange}
               fullWidth
               margin="normal"
@@ -503,12 +519,19 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
               rows={4}
               label="Company Address"
               name="companyAddress"
-              defaultValue={rowData.companyAddress}
+              defaultValue={rowData.companyAddress != "NA" ? rowData.companyAddress : ""}
+              placeholder={rowData.companyAddress === "NA" ? "NA" : ""}
               onChange={handleChange}
               fullWidth
               margin="normal"
               multiline
             />
+            {addressError ? (
+              <Alert severity="error">{addressError}</Alert>
+            ) : (
+              " "
+            )}
+
           </Grid>
         </Grid>
       </DialogContent>

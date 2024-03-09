@@ -343,7 +343,7 @@ const AddHr = ({ open, handleClose, rowData, dropdown, handleAfterResponse }) =>
               InputProps={{
                 style: {  right: 1, bottom: 1 },
                 endAdornment: (
-                  <InputAdornment position="end">
+                  <InputAdornment position="left">
                     {charCount} 
                   </InputAdornment>
                 ),
