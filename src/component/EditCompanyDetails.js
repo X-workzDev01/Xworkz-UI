@@ -24,7 +24,7 @@ import {
 } from "../constant/ValidationConstant";
 import { ClientDropDown } from "../constant/ClientDropDown";
 
-const EditCompanyDetails = ({ open, handleClose, rowData, dropdown}) => {
+const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
   const [isConfirming, setIsConfirming] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [responseMessage, setResponseMessage] = React.useState("");
@@ -42,7 +42,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown}) => {
   const [emailCheck, setEmailCheck] = React.useState("");
   const [phoneNumberCheck, setPhoneNumberCheck] = React.useState("");
   const [checkEmailExist, setCheckEmailExist] = React.useState("");
-
+  const [addressError, setAddressError] = React.useState("");
 
   React.useEffect(() => {
     if (open) {
@@ -56,13 +56,15 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown}) => {
       setVerifyEmail("");
       setCheckCompanyWebsite("");
       setError("");
+      setFounderNameCheck("");
+      setAddressError("");
     }
   }, [open]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
     if (name === "companyName") {
-      if (value === " " || (value.length === 0 && value.length <= 2)) {
+      if (value === " " || value.length <= 2) {
         setNameCheck("Enter the Correct Company Name");
         setCompanyNameCheck("");
       } else {
@@ -85,23 +87,32 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown}) => {
         setPhoneNumberCheck("Contact number should be 10 digit");
       }
     }
-    if (name === "companyWebsite") {
-      if (value.length <= 1 && !validateWebsite(value)) {
-        setCheckCompanyWebsite("");
-        setError("Enter the valid website");
-      } else {
-        setError("");
-      }
+    if (name === "companyWebsite" && value.length <= 1 && !validateWebsite(value)) {
+      setCheckCompanyWebsite("");
+      setError("Enter the valid website");
+    } else if (validateWebsite(value)) {
+      console.log(validateWebsite(value))
+      setError("");
     }
 
     if (name === "companyFounder") {
-      if (value.length <= 1) {
-        setFounderNameCheck("Enter the Correct Name");
-      } else {
+      if (value === "") {
+        setFounderNameCheck("");
+      } else if (value.length <= 2) {
+        setFounderNameCheck("Enter Correct Name")
+      } else if (value.length >= 2) {
         setFounderNameCheck("");
       }
     }
-
+    if (name === "companyAddress") {
+      if (value === "") {
+        setAddressError("");
+      } else if (value.length <= 2) {
+        setAddressError("Comments should not be empty");
+      } else {
+        setAddressError("");
+      }
+    }
     setEditedData((prevData) => ({
       ...prevData,
       [name]: value,
@@ -215,7 +226,6 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown}) => {
           });
       } else {
         setError("");
-        setCheckCompanyWebsite("");
       }
     }
   };
@@ -283,6 +293,9 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown}) => {
             ...editedData.adminDto,
             updatedBy: attemptedEmail,
           },
+          companyFounder: editedData.companyFounder === "" ? rowData.companyFounder : editedData.companyFounder,
+          companyWebsite: editedData.companyWebsite === "" ? rowData.companyWebsite : editedData.companyWebsite,
+          companyAddress: editedData.companyAddress === "" ? rowData.companyAddress : editedData.companyAddress,
         };
         axios
           .put(
@@ -320,6 +333,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown}) => {
     checkPhoneNumberExist ||
     error ||
     founderNameCheck ||
+    addressError ||
     verifyEmail;
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
@@ -400,7 +414,8 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown}) => {
             <TextField
               label="Company Website"
               name="companyWebsite"
-              defaultValue={rowData.companyWebsite}
+              defaultValue={rowData.companyWebsite != "NA" ? rowData.companyWebsite : ""}
+              placeholder={rowData.companyWebsite === "NA" ? "NA" : ""}
               onChange={handleChange}
               fullWidth
               margin="normal"
@@ -433,7 +448,8 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown}) => {
             <TextField
               label="Company Founder"
               name="companyFounder"
-              defaultValue={rowData.companyFounder}
+              defaultValue={rowData.companyFounder != "NA" ? rowData.companyFounder : ""}
+              placeholder={rowData.companyFounder === "NA" ? "NA" : ""}
               onChange={handleChange}
               fullWidth
               margin="normal"
@@ -503,12 +519,19 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown}) => {
               rows={4}
               label="Company Address"
               name="companyAddress"
-              defaultValue={rowData.companyAddress}
+              defaultValue={rowData.companyAddress != "NA" ? rowData.companyAddress : ""}
+              placeholder={rowData.companyAddress === "NA" ? "NA" : ""}
               onChange={handleChange}
               fullWidth
               margin="normal"
               multiline
             />
+            {addressError ? (
+              <Alert severity="error">{addressError}</Alert>
+            ) : (
+              " "
+            )}
+
           </Grid>
         </Grid>
       </DialogContent>

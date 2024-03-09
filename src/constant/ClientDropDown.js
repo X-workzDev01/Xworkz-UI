@@ -1,3 +1,3 @@
 export const ClientDropDown = {
-  statusList: ["Active", "Inactive"].slice().sort(),
+  statusList: ["Active", "InActive"].slice().sort(),
 }
