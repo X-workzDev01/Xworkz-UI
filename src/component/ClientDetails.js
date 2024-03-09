@@ -158,7 +158,7 @@ export default function ClientDetails() {
       axios.post(Urlconstant.url + "api/registerclient", clientData).then((response) => {
         setOpen(true);
         setSnackbarMessage(response.data);
-        setFormData({});
+        setFormData({ status: "Active",});
       });
     } catch (error) {
       setCatchErrors("Wait for some time");
@@ -283,7 +283,7 @@ export default function ClientDetails() {
 
   const handleClearAction = () => {
     valueDisabled = true;
-    setFormData([])
+    setFormData({ status: "Active",})
     setCheckCompanyWebsite("")
     setCheckPhoneNumberExist("")
     setPhoneNumberCheck("")
