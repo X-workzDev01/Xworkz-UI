@@ -57,7 +57,7 @@ const EditModal = ({
   const [verifyHandaleEmailerror, setverifyHandleEmailError] = React.useState(
     ""
   );
-
+  const [xworkzEmailErrorVerify, setXworkzEmailErrorVerify] = useState("");
   const [disble, setDisable] = useState(false);
   const [emailValue, setEmailValue] = React.useState("");
   const [formData, setFormData] = React.useState({
@@ -78,6 +78,7 @@ const EditModal = ({
   const [referalNameCheck, setReferalNameCheck] = React.useState("");
   const [comments, setComments] = React.useState("");
   const [xworkzemailCheck, setXworkzEmailCheck] = React.useState("");
+  const [xworkzEmailCheckExists, setXworkzEmailCheckExists] = useState("");
   const [isConfirmed, setIsConfirmed] = React.useState(false);
   const [sslcError, setSslcError] = useState("");
   const [pucError, setPucError] = useState("");
@@ -85,6 +86,7 @@ const EditModal = ({
 
   React.useEffect(
     () => {
+      setXworkzEmailErrorVerify("")
       setEditedData(rowData);
       setUsnCheck("");
       setEmailError("");
@@ -209,11 +211,14 @@ const EditModal = ({
       }
     }
     if (name === "othersDto.xworkzEmail") {
-      if (value.trim() !== "" && !validateEmail(value)) {
-        setXworkzEmailCheck("Enter the valid E-mail ID");
-      } else if (value === "NA" || value.trim() === "") {
-        setXworkzEmailCheck("");
+      if (!validateEmail(value)) {
+        setXworkzEmailErrorVerify("");
+        setXworkzEmailCheck("Enter the correct E-mail ID");
+        setDisable(true);
+
       } else {
+        xworkzEmailExists(value);
+        setXworkzEmailErrorVerify("");
         setXworkzEmailCheck("");
       }
     }
@@ -342,9 +347,21 @@ const EditModal = ({
       .catch({});
   };
 
+  const xworkzEmailExists = email => {
+    const response = axios.get(
+      Urlconstant.url + `api/checkxworkzemail?email=${email}`
+    );
+    response.then(res => {
+      if (res.data === "Email Exist") {
+        setXworkzEmailCheckExists(res.data);
+      } else {
+        setXworkzEmailCheckExists("");
+      }
+    });
+  };
+
   const verifyEmail = email => {
-    axios
-      .get(Urlconstant.url + `api/verify-email?email=${email}`)
+    emailVerification(email)
       .then(response => {
         if (response.data === "accepted_email") {
           setverifyHandleEmail(response.data);
@@ -365,11 +382,12 @@ const EditModal = ({
       .catch(error => {
         console.log("check emailable credentils");
       });
+
     //}
   };
   const handleVerifyEmail = event => {
     const email = event.target.value;
-    if (email.trim() != "") {
+    if (email.trim() !== "") {
       handleEmail(event.target.value);
     }
   };
@@ -511,21 +529,18 @@ const EditModal = ({
   };
 
   const handleEmailCheck = email => {
-    axios
-      .get(Urlconstant.url + `api/verify-email?email=${email}`)
+    emailVerification(email)
       .then(response => {
         if (response.data === "accepted_email") {
-          setverifyHandleEmail(response.data);
+          setXworkzEmailErrorVerify(response.data);
         }
         if (response.data === "rejected_email") {
-          setverifyHandleEmailError(response.data);
-          setverifyHandleEmail("");
+          setXworkzEmailErrorVerify(response.data);
         } else {
-          if (response.status === 500) {
-            setverifyHandleEmailError("");
-          } else {
-            setverifyHandleEmailError("Unexpected Error:");
-          }
+          setXworkzEmailErrorVerify(response.data);
+        }
+        if (response.status === 500) {
+          setXworkzEmailErrorVerify("");
         }
       })
       .catch(error => {
@@ -539,14 +554,22 @@ const EditModal = ({
     if (xworkzemail.trim() !== "") {
       if (xworkzemail.includes(".xworkz")) {
         if (!validateEmail(xworkzemail)) {
+          setXworkzEmailErrorVerify("");
           setXworkzEmailCheck("Enter the Valid Email");
         } else {
           setXworkzEmailCheck("");
-          handleEmailCheck(xworkzemail);
+          setDisable(false);
+          if (xworkzEmailCheckExists === "") {
+            handleEmailCheck(xworkzemail);
+          }
         }
       } else if (xworkzemail === "rowData.othersDto.xworkzEmail") {
         setXworkzEmailCheck("");
+        setXworkzEmailErrorVerify("");
+        setDisable(false);
+
       } else {
+        setXworkzEmailErrorVerify("");
         setXworkzEmailCheck("Email should contains xworkz");
       }
     }
@@ -575,6 +598,9 @@ const EditModal = ({
           .catch(error => { });
       }
     }
+  };
+  const emailVerification = email => {
+    return axios.get(Urlconstant.url + `api/verify-email?email=${email}`);
   };
 
   const isValidate = usnCheck ||
@@ -801,7 +827,6 @@ const EditModal = ({
           </Grid>
 
           <Grid item xs={4}>
-            {/* need to add validation */}
             <TextField
               label="WhatsApp Number"
               name="csrDto.alternateContactNumber"
@@ -983,21 +1008,24 @@ const EditModal = ({
               style={fieldStyle}
               onBlur={handleVerifyXworkzEmail}
             />
-            {xworkzemailCheck
+            {xworkzemailCheck || xworkzEmailCheckExists
               ? <Alert severity="error">
-                {xworkzemailCheck}{" "}
-              </Alert>
-              : " "}
-            {verifyHandaleEmailerror
-              ? <Alert severity="error">
-                {verifyHandaleEmailerror}
-              </Alert>
-              : " "}
-            {verifyHandaleEmail
+                  {xworkzemailCheck}
+                  {xworkzEmailCheckExists}
+                </Alert>
+
+            {xworkzEmailErrorVerify &&
+            xworkzEmailErrorVerify === "accepted_email"
               ? <Alert severity="success">
-                {verifyHandaleEmail}
-              </Alert>
-              : " "}
+                  {xworkzEmailErrorVerify}
+                </Alert>
+              : xworkzEmailErrorVerify !== "accepted_email" &&
+                xworkzEmailErrorVerify !== ""
+                ? <Alert severity="error">
+                    {xworkzEmailErrorVerify}
+                  </Alert>
+                : ""}
+
           </Grid>
           <Grid item xs={4}>
             <FormControl>
