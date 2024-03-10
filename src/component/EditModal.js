@@ -57,6 +57,7 @@ const EditModal = ({
   const [verifyHandaleEmailerror, setverifyHandleEmailError] = React.useState(
     ""
   );
+  const [xworkzEmailErrorVerify, setXworkzEmailErrorVerify] = useState("");
   const [disble, setDisable] = useState(false);
   const [emailValue, setEmailValue] = React.useState("");
   const [formData, setFormData] = React.useState({
@@ -77,6 +78,7 @@ const EditModal = ({
   const [referalNameCheck, setReferalNameCheck] = React.useState("");
   const [comments, setComments] = React.useState("");
   const [xworkzemailCheck, setXworkzEmailCheck] = React.useState("");
+  const [xworkzEmailCheckExists, setXworkzEmailCheckExists] = useState("");
   const [isConfirmed, setIsConfirmed] = React.useState(false);
   const [sslcError, setSslcError] = useState("");
   const [pucError, setPucError] = useState("");
@@ -84,6 +86,7 @@ const EditModal = ({
 
   React.useEffect(
     () => {
+      setXworkzEmailErrorVerify("")
       setEditedData(rowData);
       setUsnCheck("");
       setEmailError("");
@@ -120,7 +123,7 @@ const EditModal = ({
       .then(response => {
         setDropDown(response.data);
       })
-      .catch(error => {});
+      .catch(error => { });
     axios
       .get(Urlconstant.url + "api/getCourseName?status=Active", {
         headers: {
@@ -133,7 +136,7 @@ const EditModal = ({
           fetchData(selectedValue); // Call fetchData with the selectedValue
         }
       })
-      .catch(e => {});
+      .catch(e => { });
   }, []);
   React.useEffect(
     () => {
@@ -168,7 +171,7 @@ const EditModal = ({
           startDate: data.startDate
         });
       })
-      .catch(error => {});
+      .catch(error => { });
   };
 
   const handleInputChange = event => {
@@ -185,15 +188,12 @@ const EditModal = ({
       fetchData(value);
     }
     if (name === "othersDto.referalName") {
-      if (!value) {
-        setReferalNameCheck("Referal Name is Required");
-        setDisable(true);
-      } else if (value.length <= 0) {
+      if (value === "") {
+        setReferalNameCheck("");
+      } else if (value.length <= 2) {
         setReferalNameCheck("Referal name should not be Empty");
-        setDisable(true);
       } else {
         setReferalNameCheck("");
-        setDisable(false);
       }
     }
     if (name === "email") {
@@ -202,76 +202,69 @@ const EditModal = ({
         setEmailError("Email is required");
         setverifyHandleEmail("");
         setEmailCheck("");
-        setDisable(true);
       } else if (!validateEmail(value)) {
         setEmailError("Invalid email address");
         setverifyHandleEmail("");
         setEmailCheck("");
-        setDisable(true);
       } else {
-        setDisable(false);
         setEmailError("");
       }
     }
     if (name === "othersDto.xworkzEmail") {
       if (!validateEmail(value)) {
+        setXworkzEmailErrorVerify("");
         setXworkzEmailCheck("Enter the correct E-mail ID");
         setDisable(true);
+
       } else {
+        xworkzEmailExists(value);
+        setXworkzEmailErrorVerify("");
         setXworkzEmailCheck("");
-        setDisable(false);
       }
     }
     if (name === "othersDto.referalContactNumber") {
-      if (!validateContactNumber(value)) {
-        setReferalContactNumber("Enter the correct Number");
-        setDisable(true);
-      } else {
+      if (value.trim() === "") {
         setReferalContactNumber("");
-        setDisable(false);
+      } if (value.trim() !== "" && !validateContactNumber(value)) {
+        setReferalContactNumber("Enter the valid Contact Number");
+      }
+      else {
+        setReferalContactNumber("");
       }
     }
     if (name === "csrDto.alternateContactNumber") {
-      if (!validateContactNumber(value)) {
-        setAlternativeNumberCheck("Enter the correct Number");
-        setDisable(true);
+      if (value === "") {
+        setAlternativeNumberCheck("");
+      } else if (value !== "" && !validateContactNumber(value)) {
+        setAlternativeNumberCheck("Enter the valid Number");
       } else {
         setAlternativeNumberCheck("");
-        setDisable(false);
       }
     }
     if (name === "basicInfo.contactNumber") {
       setNumberCheck("");
       if (!validateContactNumber(value)) {
         setPhoneNumberError("Enter the Correct Number");
-        setDisable(true);
       } else {
         setPhoneNumberError("");
-        setDisable(false);
       }
     }
     if (name === "basicInfo.traineeName") {
       if (!value) {
         setTraineeNameCheck("Trainee Name is Required");
-        setDisable(true);
-      } else if (value.length <= 0) {
+      } else if (value.length <= 2) {
         setTraineeNameCheck("Trainee name should not be Empty");
-        setDisable(true);
       } else {
         setTraineeNameCheck("");
-        setDisable(false);
       }
     }
     if (name === "csrDto.usnNumber") {
-      if (!value) {
-        setUsnCheck("Enter the USN number");
-        setDisable(true);
-      } else if (value.length <= 0) {
-        setUsnCheck("USN number should not be Empty");
-        setDisable(true);
-      } else {
+      if (value === "") {
         setUsnCheck("");
-        setDisable(false);
+      } else if (value !== "" && value.length === 10) {
+        setUsnCheck("");
+      } else {
+        setUsnCheck("Enter the valid USN number");
       }
     }
     if (name === "percentageDto.sslcPercentage") {
@@ -311,12 +304,12 @@ const EditModal = ({
     }
 
     if (name === "othersDto.comments") {
-      if (value.length <= 0) {
-        setComments("Comment should not be empty");
-        setDisable(true);
+      if (value === "") {
+        setComments("");
+      } else if (value.length <= 2) {
+        setComments("Comments should not be empty");
       } else {
         setComments("");
-        setDisable(false);
       }
     }
     setEditedData(prevData => ({
@@ -330,7 +323,6 @@ const EditModal = ({
 
   const handleEmail = email => {
     if (rowData.basicInfo.email === email) {
-      setDisable(false);
       setEmailCheck(null);
       return;
     }
@@ -342,11 +334,11 @@ const EditModal = ({
       })
       .then(response => {
         if (response.data === "Email does not exist") {
-          setDisable(false);
           setEmailCheck(response.data);
           if (validateEmail(email)) {
             verifyEmail(email);
             setEmailCheck("");
+            setEmailError("");
           }
         } else {
           setEmailCheck(null);
@@ -355,9 +347,21 @@ const EditModal = ({
       .catch({});
   };
 
+  const xworkzEmailExists = email => {
+    const response = axios.get(
+      Urlconstant.url + `api/checkxworkzemail?email=${email}`
+    );
+    response.then(res => {
+      if (res.data === "Email Exist") {
+        setXworkzEmailCheckExists(res.data);
+      } else {
+        setXworkzEmailCheckExists("");
+      }
+    });
+  };
+
   const verifyEmail = email => {
-    axios
-      .get(Urlconstant.url + `api/verify-email?email=${email}`)
+    emailVerification(email)
       .then(response => {
         if (response.data === "accepted_email") {
           setverifyHandleEmail(response.data);
@@ -378,11 +382,12 @@ const EditModal = ({
       .catch(error => {
         console.log("check emailable credentils");
       });
+
     //}
   };
   const handleVerifyEmail = event => {
     const email = event.target.value;
-    if (email.trim() != "") {
+    if (email.trim() !== "") {
       handleEmail(event.target.value);
     }
   };
@@ -390,7 +395,6 @@ const EditModal = ({
   const handleNumberChange = e => {
     const contactNumber = e.target.value;
     if (contactNumber == rowData.basicInfo.contactNumber) {
-      setDisable(false);
       setNumberCheck("");
       setPhoneNumberError("");
       return;
@@ -399,7 +403,7 @@ const EditModal = ({
         axios
           .get(
             Urlconstant.url +
-              `api/contactNumberCheck?contactNumber=${contactNumber}`,
+            `api/contactNumberCheck?contactNumber=${contactNumber}`,
             {
               headers: {
                 spreadsheetId: Urlconstant.spreadsheetId
@@ -410,13 +414,11 @@ const EditModal = ({
             if (response.status === 201) {
               setNumberCheck(response.data);
               setPhoneNumberError("");
-              setDisable(true);
             } else {
               setNumberCheck("");
-              setDisable(false);
             }
           })
-          .catch(error => {});
+          .catch(error => { });
       }
     }
   };
@@ -444,6 +446,18 @@ const EditModal = ({
       courseInfo: {
         ...editedData.courseInfo,
         ...formData
+      },
+      othersDto: {
+        ...editedData.othersDto,
+        xworkzEmail: editedData.othersDto.xworkzEmail === "" ? rowData.othersDto.xworkzEmail : editedData.othersDto.xworkzEmail,
+        referalContactNumber: editedData.othersDto.referalContactNumber === "" ? rowData.othersDto.referalContactNumber : editedData.othersDto.referalContactNumber,
+        referalName: editedData.othersDto.referalName === "" ? rowData.othersDto.referalName : editedData.othersDto.referalName,
+        comments: editedData.othersDto.comments === "" ? rowData.othersDto.comments : editedData.othersDto.comments
+      },
+      csrDto: {
+        ...editedData.csrDto,
+        usnNumber: editedData.csrDto.usnNumber === "" ? rowData.csrDto.usnNumber : editedData.csrDto.usnNumber,
+        alternateContactNumber: editedData.csrDto.alternateContactNumber === "" ? rowData.csrDto.alternateContactNumber : editedData.csrDto.alternateContactNumber,
       }
     };
     if (emailValue !== "") {
@@ -454,8 +468,8 @@ const EditModal = ({
     setLoading(true);
     axios.put(
       Urlconstant.url +
-        `api/updateFeesDetailsChangeEmailAndFeeConcession/${feesConcession}/${updatedData
-          .basicInfo.traineeName}/${rowData.basicInfo
+      `api/updateFeesDetailsChangeEmailAndFeeConcession/${feesConcession}/${updatedData
+        .basicInfo.traineeName}/${rowData.basicInfo
           .email}/${newEmail}/${updatedData.adminDto.updatedBy}`
     );
     axios
@@ -511,26 +525,22 @@ const EditModal = ({
   };
   const handlefunctionClose = () => {
     setEmailCheck("");
-    setDisable(false);
     handleClose();
   };
 
   const handleEmailCheck = email => {
-    axios
-      .get(Urlconstant.url + `api/verify-email?email=${email}`)
+    emailVerification(email)
       .then(response => {
         if (response.data === "accepted_email") {
-          setverifyHandleEmail(response.data);
+          setXworkzEmailErrorVerify(response.data);
         }
         if (response.data === "rejected_email") {
-          setverifyHandleEmailError(response.data);
-          setverifyHandleEmail("");
+          setXworkzEmailErrorVerify(response.data);
         } else {
-          if (response.status === 500) {
-            setverifyHandleEmailError("");
-          } else {
-            setverifyHandleEmailError("Unexpected Error:");
-          }
+          setXworkzEmailErrorVerify(response.data);
+        }
+        if (response.status === 500) {
+          setXworkzEmailErrorVerify("");
         }
       })
       .catch(error => {
@@ -544,19 +554,23 @@ const EditModal = ({
     if (xworkzemail.trim() !== "") {
       if (xworkzemail.includes(".xworkz")) {
         if (!validateEmail(xworkzemail)) {
+          setXworkzEmailErrorVerify("");
           setXworkzEmailCheck("Enter the Valid Email");
-          setDisable(true);
         } else {
           setXworkzEmailCheck("");
           setDisable(false);
-          handleEmailCheck(xworkzemail);
+          if (xworkzEmailCheckExists === "") {
+            handleEmailCheck(xworkzemail);
+          }
         }
       } else if (xworkzemail === "rowData.othersDto.xworkzEmail") {
         setXworkzEmailCheck("");
+        setXworkzEmailErrorVerify("");
         setDisable(false);
+
       } else {
+        setXworkzEmailErrorVerify("");
         setXworkzEmailCheck("Email should contains xworkz");
-        setDisable(true);
       }
     }
   };
@@ -565,10 +579,9 @@ const EditModal = ({
     const usn = event.target.value;
     if (usn === rowData.csrDto.usnNumber) {
       setUsnCheck("");
-      setDisable(false);
       return;
     } else {
-      if (usn.trim() !== "") {
+      if (usn.trim() !== "" && usn.length === 10) {
         axios
           .get(Urlconstant.url + `api/csr/checkUsn?usnNumber=${usn}`, {
             headers: {
@@ -578,16 +591,30 @@ const EditModal = ({
           .then(response => {
             if (response.data === "Usn Number Already Exists") {
               setUsnCheck(response.data);
-              setDisable(true);
             } else {
               setUsnCheck("");
-              setDisable(false);
             }
           })
-          .catch(error => {});
+          .catch(error => { });
       }
     }
   };
+  const emailVerification = email => {
+    return axios.get(Urlconstant.url + `api/verify-email?email=${email}`);
+  };
+
+  const isValidate = usnCheck ||
+    traineeNameCheck ||
+    referalNameCheck ||
+    referalContactNumber ||
+    xworkzemailCheck ||
+    emailCheck ||
+    verifyHandaleEmail ||
+    verifyHandaleEmailerror ||
+    phoneNumberError ||
+    numberCheck ||
+    emailError ||
+    comments;
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="lg">
       <DialogTitle>Edit Details</DialogTitle>
@@ -610,33 +637,32 @@ const EditModal = ({
               onChange={handleInputChange}
               onBlur={handleVerifyEmail}
               style={fieldStyle}
-              required
             />
             {verifyHandaleEmailerror
               ? <Alert severity="success">
-                  {verifyHandaleEmailerror}
-                </Alert>
+                {verifyHandaleEmailerror}
+              </Alert>
               : " "}
             {verifyHandaleEmailerror
               ? <Alert severity="error">
-                  {verifyHandaleEmailerror}
-                </Alert>
+                {verifyHandaleEmailerror}
+              </Alert>
               : " "}
             {emailError
               ? <Alert severity="error">
-                  {emailError}{" "}
-                </Alert>
+                {emailError}{" "}
+              </Alert>
               : " "}
             {emailCheck
               ? <Alert severity="error">
-                  {emailCheck}
-                </Alert>
+                {emailCheck}
+              </Alert>
               : " "}
 
             {verifyHandaleEmail
               ? <Alert severity="success">
-                  {verifyHandaleEmail}
-                </Alert>
+                {verifyHandaleEmail}
+              </Alert>
               : " "}
           </Grid>
           <Grid item xs={4}>
@@ -646,12 +672,11 @@ const EditModal = ({
               defaultValue={rowData.basicInfo.traineeName}
               style={fieldStyle}
               onChange={handleInputChange}
-              required
             />
             {traineeNameCheck
               ? <Alert severity="error">
-                  {traineeNameCheck}{" "}
-                </Alert>
+                {traineeNameCheck}{" "}
+              </Alert>
               : " "}
           </Grid>
           <Grid item xs={4}>
@@ -662,17 +687,16 @@ const EditModal = ({
               onChange={handleInputChange}
               style={fieldStyle}
               onBlur={handleNumberChange}
-              required
             />
             {phoneNumberError
               ? <Alert severity="error">
-                  {phoneNumberError}
-                </Alert>
+                {phoneNumberError}
+              </Alert>
               : " "}
             {numberCheck
               ? <Alert severity="error">
-                  {numberCheck}
-                </Alert>
+                {numberCheck}
+              </Alert>
               : " "}
           </Grid>
           <Grid item xs={4}>
@@ -683,7 +707,6 @@ const EditModal = ({
               style={fieldStyle}
               onChange={handleInputChange}
               type="date"
-              required
               InputLabelProps={{
                 shrink: true
               }}
@@ -710,7 +733,7 @@ const EditModal = ({
                   marginRight: "20px",
                   width: "225px"
                 }}
-                required
+
               >
                 {dropdown.qualification.map((item, index) =>
                   <MenuItem value={item} key={index}>
@@ -735,7 +758,7 @@ const EditModal = ({
                   marginRight: "20px",
                   width: "225px"
                 }}
-                required
+
               >
                 {dropdown.stream.map((item, index) =>
                   <MenuItem value={item} key={index}>
@@ -762,7 +785,7 @@ const EditModal = ({
                   marginRight: "20px",
                   width: "225px"
                 }}
-                required
+
               >
                 {dropdown.yearofpass.map((item, index) =>
                   <MenuItem value={item} key={index}>
@@ -783,40 +806,39 @@ const EditModal = ({
               InputProps={{
                 readOnly: true
               }}
-              required
+
             />
           </Grid>
           <Grid item xs={4}>
             <TextField
               label="USN Number"
               name="csrDto.usnNumber"
-              defaultValue={rowData.csrDto.usnNumber}
+              defaultValue={rowData.csrDto.usnNumber != "NA" ? rowData.csrDto.usnNumber : ""}
               onChange={handleInputChange}
               style={fieldStyle}
               onBlur={handleUsnNumber}
-              required
+              placeholder={rowData.csrDto.usnNumber === "NA" ? "NA" : ""}
             />
             {usnCheck
               ? <Alert severity="error">
-                  {usnCheck}
-                </Alert>
+                {usnCheck}
+              </Alert>
               : " "}
           </Grid>
 
           <Grid item xs={4}>
-            {/* need to add validation */}
             <TextField
               label="WhatsApp Number"
               name="csrDto.alternateContactNumber"
-              defaultValue={rowData.csrDto.alternateContactNumber}
+              defaultValue={rowData.csrDto.alternateContactNumber != 0 ? rowData.csrDto.alternateContactNumber : ""}
               onChange={handleInputChange}
               style={fieldStyle}
-              required
+              placeholder={rowData.csrDto.alternateContactNumber === 0 ? 0 : ""}
             />
             {alternativeNumberCheck
               ? <Alert severity="error">
-                  {alternativeNumberCheck}
-                </Alert>
+                {alternativeNumberCheck}
+              </Alert>
               : " "}
           </Grid>
           <Grid item xs={4}>
@@ -836,7 +858,7 @@ const EditModal = ({
                   marginRight: "20px",
                   width: "225px"
                 }}
-                required
+
               >
                 {dropdown.college.map((item, index) =>
                   <MenuItem value={item} key={index}>
@@ -861,7 +883,7 @@ const EditModal = ({
                   marginRight: "20px",
                   width: "225px"
                 }}
-                required
+
               >
                 {batchDetails.map((item, index) =>
                   <MenuItem value={item} key={index}>
@@ -878,7 +900,7 @@ const EditModal = ({
               value={formData.branch || ""}
               onChange={handleInputChange}
               style={fieldStyle}
-              required
+
             />
           </Grid>
           <Grid item xs={4}>
@@ -888,7 +910,7 @@ const EditModal = ({
               value={formData.batchType || ""}
               onChange={handleInputChange}
               style={fieldStyle}
-              required
+
             />
           </Grid>
           <Grid item xs={4}>
@@ -898,7 +920,7 @@ const EditModal = ({
               value={formData.trainerName || ""}
               onChange={handleInputChange}
               style={fieldStyle}
-              required
+
             />
           </Grid>
           <Grid item xs={4}>
@@ -908,7 +930,7 @@ const EditModal = ({
               value={formData.batchTiming || ""}
               onChange={handleInputChange}
               style={fieldStyle}
-              required
+
             />
           </Grid>
           <Grid item xs={4}>
@@ -918,7 +940,7 @@ const EditModal = ({
               value={formData.startDate || ""}
               onChange={handleInputChange}
               style={fieldStyle}
-              required
+
             />
           </Grid>
 
@@ -937,7 +959,6 @@ const EditModal = ({
                   marginRight: "20px",
                   width: "225px"
                 }}
-                required
               >
                 {dropdown.offered.map((item, index) =>
                   <MenuItem value={item} key={index}>
@@ -951,62 +972,60 @@ const EditModal = ({
             <TextField
               label="Referal Name"
               name="othersDto.referalName"
-              defaultValue={rowData.othersDto.referalName}
+              defaultValue={rowData.othersDto.referalName != "NA" ? rowData.othersDto.referalName : ""}
+              placeholder={rowData.othersDto.referalName === "NA" ? "NA" : ""}
               onChange={handleInputChange}
               style={fieldStyle}
-              required
             />
             {referalNameCheck
               ? <Alert severity="error">
-                  {referalNameCheck}
-                </Alert>
+                {referalNameCheck}
+              </Alert>
               : " "}
           </Grid>
           <Grid item xs={4}>
             <TextField
               label="Referal Contact Number"
               name="othersDto.referalContactNumber"
-              defaultValue={rowData.othersDto.referalContactNumber}
+              defaultValue={rowData.othersDto.referalContactNumber != 0 ? rowData.othersDto.referalContactNumber : ""}
+              placeholder={rowData.othersDto.referalContactNumber === 0 ? 0 : ""}
               onChange={handleInputChange}
               style={fieldStyle}
-              required
             />
             {referalContactNumber
               ? <Alert severity="error">
-                  {referalContactNumber}
-                </Alert>
+                {referalContactNumber}
+              </Alert>
               : " "}
           </Grid>
           <Grid item xs={4}>
             <TextField
               label="X-workz E-mail"
               name="othersDto.xworkzEmail"
-              defaultValue={rowData.othersDto.xworkzEmail}
+              defaultValue={rowData.othersDto.xworkzEmail != "NA" ? rowData.othersDto.xworkzEmail : ""}
+              placeholder={rowData.othersDto.xworkzEmail === "NA" ? "NA" : ""}
               onChange={handleInputChange}
               style={fieldStyle}
               onBlur={handleVerifyXworkzEmail}
-              required
             />
-            {xworkzemailCheck
+            {xworkzemailCheck || xworkzEmailCheckExists
               ? <Alert severity="error">
-                  {xworkzemailCheck}{" "}
+                  {xworkzemailCheck}
+                  {xworkzEmailCheckExists}
                 </Alert>
-              : " "}
-            {verifyHandaleEmailerror
+
+            {xworkzEmailErrorVerify &&
+            xworkzEmailErrorVerify === "accepted_email"
               ? <Alert severity="success">
-                  {verifyHandaleEmailerror}
+                  {xworkzEmailErrorVerify}
                 </Alert>
-              : " "}
-            {verifyHandaleEmailerror
-              ? <Alert severity="error">
-                  {verifyHandaleEmailerror}
-                </Alert>
-              : " "}
-            {verifyHandaleEmail
-              ? <Alert severity="success">
-                  {verifyHandaleEmail}
-                </Alert>
-              : " "}
+              : xworkzEmailErrorVerify !== "accepted_email" &&
+                xworkzEmailErrorVerify !== ""
+                ? <Alert severity="error">
+                    {xworkzEmailErrorVerify}
+                  </Alert>
+                : ""}
+
           </Grid>
           <Grid item xs={4}>
             <FormControl>
@@ -1026,7 +1045,7 @@ const EditModal = ({
                   width: "225px"
                 }}
                 style={fieldStyle}
-                required
+
               >
                 {dropdown.branchname.map((item, index) =>
                   <MenuItem value={item} key={index}>
@@ -1054,7 +1073,7 @@ const EditModal = ({
                   width: "225px"
                 }}
                 style={fieldStyle}
-                required
+
               >
                 {dropdown.batch.map((item, index) =>
                   <MenuItem value={item} key={index}>
@@ -1067,33 +1086,33 @@ const EditModal = ({
           {attemptStatus
             ? attemptStatus === "Joined"
               ? <Grid item xs={4}>
-                  <FormControl>
-                    <InputLabel id="demo-simple-select-label">
-                      Fees Concession
-                    </InputLabel>
-                    <Select
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
-                      label="Concession"
-                      name="feeConcession"
-                      onChange={handleInputChange}
-                      defaultValue={feeConcession}
-                      variant="outlined"
-                      sx={{
-                        marginRight: "20px",
-                        width: "225px"
-                      }}
-                      style={fieldStyle}
-                      required
-                    >
-                      {[...Array(26).keys()].map((item, index) =>
-                        <MenuItem value={item} key={index}>
-                          {item}
-                        </MenuItem>
-                      )}
-                    </Select>
-                  </FormControl>
-                </Grid>
+                <FormControl>
+                  <InputLabel id="demo-simple-select-label">
+                    Fees Concession
+                  </InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    label="Concession"
+                    name="feeConcession"
+                    onChange={handleInputChange}
+                    defaultValue={feeConcession}
+                    variant="outlined"
+                    sx={{
+                      marginRight: "20px",
+                      width: "225px"
+                    }}
+                    style={fieldStyle}
+
+                  >
+                    {[...Array(26).keys()].map((item, index) =>
+                      <MenuItem value={item} key={index}>
+                        {item}
+                      </MenuItem>
+                    )}
+                  </Select>
+                </FormControl>
+              </Grid>
               : ""
             : ""}
 
@@ -1105,7 +1124,7 @@ const EditModal = ({
               defaultValue={rowData.percentageDto.sslcPercentage}
               onChange={handleInputChange}
               style={fieldStyle}
-              required
+              
             />
             {sslcError ? (<Alert severity="error">{sslcError}</Alert>) : " "}
           </Grid>
@@ -1117,7 +1136,7 @@ const EditModal = ({
               defaultValue={rowData.percentageDto.pucPercentage}
               onChange={handleInputChange}
               style={fieldStyle}
-              required
+              
             />
             {pucError ? (<Alert severity="error">{pucError}</Alert>) : " "}
           </Grid>
@@ -1130,7 +1149,7 @@ const EditModal = ({
               defaultValue={rowData.percentageDto.degreePercentage}
               onChange={handleInputChange}
               style={fieldStyle}
-              required
+              
             />
             {degreeError ? (<Alert severity="error">{degreeError}</Alert>) : " "}
           </Grid> */}
@@ -1138,7 +1157,8 @@ const EditModal = ({
             <TextField
               label="Comments"
               name="othersDto.comments"
-              defaultValue={rowData.othersDto.comments}
+              defaultValue={rowData.othersDto.comments != "NA" ? rowData.othersDto.comments : ""}
+              placeholder={rowData.othersDto.comments === "NA" ? "NA" : ""}
               onChange={handleInputChange}
               style={fieldStyle}
               className="custom-textfield"
@@ -1148,12 +1168,11 @@ const EditModal = ({
                 marginRight: "20px",
                 width: "300px"
               }}
-              required
             />
             {comments
               ? <Alert severity="error">
-                  {comments}{" "}
-                </Alert>
+                {comments}{" "}
+              </Alert>
               : " "}
           </Grid>
         </Grid>
@@ -1162,9 +1181,9 @@ const EditModal = ({
       <DialogActions>
         {loading
           ? <CircularProgress size={20} /> // Show loading spinner
-          : <Button disabled={disble} onClick={handleEditClick} color="primary">
-              Edit
-            </Button>}
+          : <Button disabled={isValidate} onClick={handleEditClick} color="primary">
+            Edit
+          </Button>}
       </DialogActions>
 
       {/* Snackbar for response message */}

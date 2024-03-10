@@ -37,6 +37,7 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
   const [validateName, setValidateName] = React.useState("");
   const [validateDesignation, setValidateDesignation] = React.useState("");
   const [isConfirmed, setIsConfirmed] = React.useState(false);
+  const [commentError, setCommentError] = React.useState("");
   const handleOpenForm = () => {
     setEditedData(rowData);
     setIsConfirming(false);
@@ -51,7 +52,7 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
     setValidateName("");
     setValidateDesignation("");
     setIsConfirmed(false);
-
+    setCommentError("");
   };
   React.useEffect(() => {
     if (open) {
@@ -74,7 +75,7 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
     setSnackbarOpen(false);
     handleClose();
   };
-  
+
 
   const handleInput = (event) => {
     const { name, value } = event.target;
@@ -108,6 +109,15 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
         setValidateDesignation("");
       }
     }
+    if (name === "status") {
+      if (value === "") {
+        setCommentError("");
+      } else if (value <= 2) {
+        setCommentError("Comments should not be empty");
+      } else {
+        setCommentError("");
+      }
+    }
     setEditedData((prevData) => ({
       ...prevData,
       [name]: value,
@@ -124,6 +134,7 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
             ...editedData.adminDto,
             updatedBy: attemptedEmail,
           },
+          status: editedData.status === "" ? rowData.status : editedData.status,
         };
         axios
           .put(
@@ -202,21 +213,21 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
     if (contactNumber === "0") {
       setCheckPhoneNumberExist("");
     } else {
-      if(contactNumber.trim()!=""&&validateContactNumber(contactNumber)){
-      axios
-        .get(
-          Urlconstant.url +
-          `api/hrcontactnumbercheck?contactNumber=${contactNumber}`
-        )
-        .then((response) => {
-          if (response.data === "Contact Number Already exist.") {
-            setCheckPhoneNumberExist(response.data);
-          } else {
-            setCheckPhoneNumberExist("");
-            setPhoneNumberCheck("");
-          }
-        });
-      }else{
+      if (contactNumber.trim() != "" && validateContactNumber(contactNumber)) {
+        axios
+          .get(
+            Urlconstant.url +
+            `api/hrcontactnumbercheck?contactNumber=${contactNumber}`
+          )
+          .then((response) => {
+            if (response.data === "Contact Number Already exist.") {
+              setCheckPhoneNumberExist(response.data);
+            } else {
+              setCheckPhoneNumberExist("");
+              setPhoneNumberCheck("");
+            }
+          });
+      } else {
         setCheckPhoneNumberExist("Enter the valid contact Number");
         setPhoneNumberCheck("");
       }
@@ -245,7 +256,9 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
     checkPhoneNumberExist ||
     verifyEmail ||
     validateName ||
+    commentError ||
     validateDesignation;
+
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle>
@@ -333,13 +346,16 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
               label="Comments"
               name="status"
               style={fieldStyle}
-              defaultValue={rowData.status}
+              defaultValue={rowData.status != "NA" ? rowData.status : ""}
+              placeholder={rowData.status === "NA" ? "NA" : ""}
               onChange={handleInput}
               fullWidth
               margin="normal"
               multiline
               rows={4}
             />
+            {commentError ? <Alert severity="error">{commentError}</Alert> : " "}
+
           </Grid>
         </Grid>
       </DialogContent>
