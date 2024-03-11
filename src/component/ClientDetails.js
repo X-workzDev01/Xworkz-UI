@@ -120,6 +120,7 @@ export default function ClientDetails() {
       setEmailCheck("Enter the valid E-mail");
       setCompanyEmailCheck("");
       setEmailCheckError("");
+      setEmailCheckError("");
     } else if (validateEmail(value)) {
       setEmailCheck("");
     }
@@ -141,8 +142,8 @@ export default function ClientDetails() {
     !formData.companyLandLineNumber ||
     !formData.companyType ||
     companyNameCheck ||
-    (companyEmailCheck==="accepted_email")||
-    emailCheckError||
+    companyEmailCheck ||
+    (emailCheckError === "accepted_email") ||
     emailCheck ||
     phoneNumberCheck ||
     checkPhoneNumberExist ||
@@ -214,7 +215,7 @@ export default function ClientDetails() {
         if (response.status === 200) {
           if (response.data === "accepted_email") {
             setEmailCheck("");
-            setCompanyEmailCheck(response.data);
+            setEmailCheckError(response.data);
           } else if (response.data === "rejected_email") {
             setEmailCheck("");
             setEmailCheckError(response.data);
@@ -224,14 +225,11 @@ export default function ClientDetails() {
           }
         } else {
           if (response.status === 500) {
-            console.log("Internal Server Error:", response.status);
-          } else {
-            console.log("Unexpected Error:", response.status);
+            setEmailCheckError("");
           }
         }
       })
       .catch((error) => {
-        console.log("check emailable credentils");
       });
   };
 
@@ -379,12 +377,14 @@ export default function ClientDetails() {
               {emailCheck && (
                 <Alert severity="error">{emailCheck}</Alert>
               )}
-              {emailCheckError && (
-                <Alert severity="error">{emailCheckError}</Alert>
-              )}
               {companyEmailCheck && (
-                <Alert severity="success">{companyEmailCheck}</Alert>
+                <Alert severity="error">{companyEmailCheck}</Alert>
               )}
+
+              {emailCheckError === "accepted_email" && (
+                <Alert severity="success">{emailCheckError}</Alert>
+              )}
+              {emailCheckError && emailCheckError !== "accepted_email" && <Alert severity="error">{emailCheckError}</Alert>}
             </Grid>
             <Grid item xs={12} sm={4}>
               <TextField

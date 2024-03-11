@@ -196,15 +196,11 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
           }
         } else {
           if (response.status === 500) {
-            console.log("Internal Server Error:", response.status);
-          } else {
-            console.log("Unexpected Error:", response.status);
+            setVerifyEmail("");
           }
         }
       })
-      .catch((error) => {
-        console.log("check emailable credentils");
-      });
+      .catch((error) => {});
   };
 
   const handleCompanyWebsite = (companyWebsite) => {
@@ -328,14 +324,14 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
     companyNameCheck ||
     emailCheck ||
     phoneNumberCheck ||
-    checkEmailExist ||
+    checkEmailExist||
     nameCheck ||
     checkCompanyWebsite ||
     checkPhoneNumberExist ||
     error ||
     founderNameCheck ||
     addressError ||
-    (verifyEmail !== "accepted_email");
+    verifyEmail === "accepted_email";
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle>
