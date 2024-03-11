@@ -27,8 +27,6 @@ import {
   validateContactNumber,
   validateEmail
 } from "../constant/ValidationConstant";
-import { set } from "date-fns";
-
 const fieldStyle = { margin: "20px" };
 
 const EditModal = ({
@@ -83,10 +81,10 @@ const EditModal = ({
   const [sslcError, setSslcError] = useState("");
   const [pucError, setPucError] = useState("");
   const [degreeError, setDegreeError] = useState("");
-  const [checkXworkzEmail, setEmailXworkzCheck] = React.useState("");
   React.useEffect(
     () => {
-      setXworkzEmailErrorVerify("")
+      setXworkzEmailErrorVerify("");
+      setXworkzEmailCheckExists("");
       setEditedData(rowData);
       setUsnCheck("");
       setEmailError("");
@@ -102,7 +100,6 @@ const EditModal = ({
       setComments("");
       setXworkzEmailCheck("");
       setverifyHandleEmailError("");
-      setEmailXworkzCheck("");
     },
     [rowData]
   );
@@ -125,7 +122,7 @@ const EditModal = ({
       .then(response => {
         setDropDown(response.data);
       })
-      .catch(error => { });
+      .catch(error => {});
     axios
       .get(Urlconstant.url + "api/getCourseName?status=Active", {
         headers: {
@@ -138,7 +135,7 @@ const EditModal = ({
           fetchData(selectedValue); // Call fetchData with the selectedValue
         }
       })
-      .catch(e => { });
+      .catch(e => {});
   }, []);
   React.useEffect(
     () => {
@@ -173,7 +170,7 @@ const EditModal = ({
           startDate: data.startDate
         });
       })
-      .catch(error => { });
+      .catch(error => {});
   };
 
   const handleInputChange = event => {
@@ -215,22 +212,23 @@ const EditModal = ({
     if (name === "othersDto.xworkzEmail") {
       if (!validateEmail(value)) {
         setXworkzEmailErrorVerify("");
+        setXworkzEmailCheckExists("");
         setXworkzEmailCheck("Enter the correct E-mail ID");
         setDisable(true);
-
       } else {
         xworkzEmailExists(value);
         setXworkzEmailErrorVerify("");
+        setXworkzEmailCheckExists("");
         setXworkzEmailCheck("");
       }
     }
     if (name === "othersDto.referalContactNumber") {
       if (value.trim() === "") {
         setReferalContactNumber("");
-      } if (value.trim() !== "" && !validateContactNumber(value)) {
-        setReferalContactNumber("Enter the valid Contact Number");
       }
-      else {
+      if (value.trim() !== "" && !validateContactNumber(value)) {
+        setReferalContactNumber("Enter the valid Contact Number");
+      } else {
         setReferalContactNumber("");
       }
     }
@@ -352,22 +350,24 @@ const EditModal = ({
           }
         })
         .catch({});
-    }else{
-      setEmailCheck("Enter the valid Email")
+    } else {
+      setEmailCheck("Enter the valid Email");
     }
   };
 
   const xworkzEmailExists = email => {
-    const response = axios.get(
-      Urlconstant.url + `api/checkxworkzemail?email=${email}`
-    );
-    response.then(res => {
-      if (res.data === "Email Exist") {
-        setXworkzEmailCheckExists(res.data);
-      } else {
-        setXworkzEmailCheckExists("");
-      }
-    });
+    if (rowData.othersDto.xworkzEmail !== email) {
+      const response = axios.get(
+        Urlconstant.url + `api/checkxworkzemail?email=${email}`
+      );
+      response.then(res => {
+        if (res.data === "Email Exist") {
+          setXworkzEmailCheckExists(res.data);
+        } else {
+          setXworkzEmailCheckExists("");
+        }
+      });
+    }
   };
 
   const verifyEmail = email => {
@@ -412,7 +412,7 @@ const EditModal = ({
         axios
           .get(
             Urlconstant.url +
-            `api/contactNumberCheck?contactNumber=${contactNumber}`,
+              `api/contactNumberCheck?contactNumber=${contactNumber}`,
             {
               headers: {
                 spreadsheetId: Urlconstant.spreadsheetId
@@ -427,7 +427,7 @@ const EditModal = ({
               setNumberCheck("");
             }
           })
-          .catch(error => { });
+          .catch(error => {});
       }
     }
   };
@@ -458,15 +458,33 @@ const EditModal = ({
       },
       othersDto: {
         ...editedData.othersDto,
-        xworkzEmail: editedData.othersDto.xworkzEmail === "" ? rowData.othersDto.xworkzEmail : editedData.othersDto.xworkzEmail,
-        referalContactNumber: editedData.othersDto.referalContactNumber === "" ? rowData.othersDto.referalContactNumber : editedData.othersDto.referalContactNumber,
-        referalName: editedData.othersDto.referalName === "" ? rowData.othersDto.referalName : editedData.othersDto.referalName,
-        comments: editedData.othersDto.comments === "" ? rowData.othersDto.comments : editedData.othersDto.comments
+        xworkzEmail:
+          editedData.othersDto.xworkzEmail === ""
+            ? rowData.othersDto.xworkzEmail
+            : editedData.othersDto.xworkzEmail,
+        referalContactNumber:
+          editedData.othersDto.referalContactNumber === ""
+            ? rowData.othersDto.referalContactNumber
+            : editedData.othersDto.referalContactNumber,
+        referalName:
+          editedData.othersDto.referalName === ""
+            ? rowData.othersDto.referalName
+            : editedData.othersDto.referalName,
+        comments:
+          editedData.othersDto.comments === ""
+            ? rowData.othersDto.comments
+            : editedData.othersDto.comments
       },
       csrDto: {
         ...editedData.csrDto,
-        usnNumber: editedData.csrDto.usnNumber === "" ? rowData.csrDto.usnNumber : editedData.csrDto.usnNumber,
-        alternateContactNumber: editedData.csrDto.alternateContactNumber === "" ? rowData.csrDto.alternateContactNumber : editedData.csrDto.alternateContactNumber,
+        usnNumber:
+          editedData.csrDto.usnNumber === ""
+            ? rowData.csrDto.usnNumber
+            : editedData.csrDto.usnNumber,
+        alternateContactNumber:
+          editedData.csrDto.alternateContactNumber === ""
+            ? rowData.csrDto.alternateContactNumber
+            : editedData.csrDto.alternateContactNumber
       }
     };
     if (emailValue !== "") {
@@ -477,8 +495,8 @@ const EditModal = ({
     setLoading(true);
     axios.put(
       Urlconstant.url +
-      `api/updateFeesDetailsChangeEmailAndFeeConcession/${feesConcession}/${updatedData
-        .basicInfo.traineeName}/${rowData.basicInfo
+        `api/updateFeesDetailsChangeEmailAndFeeConcession/${feesConcession}/${updatedData
+          .basicInfo.traineeName}/${rowData.basicInfo
           .email}/${newEmail}/${updatedData.adminDto.updatedBy}`
     );
     axios
@@ -565,11 +583,13 @@ const EditModal = ({
         if (!validateEmail(xworkzemail)) {
           setXworkzEmailErrorVerify("");
           setXworkzEmailCheck("Enter the Valid Email");
-          setEmailXworkzCheck("");
         } else {
           setXworkzEmailCheck("");
           setDisable(false);
-          if (xworkzEmailCheckExists === "") {
+          if (
+            xworkzEmailCheckExists === "" &&
+            rowData.othersDto.xworkzEmail !== xworkzemail
+          ) {
             handleEmailCheck(xworkzemail);
           }
         }
@@ -577,11 +597,9 @@ const EditModal = ({
         setXworkzEmailCheck("");
         setXworkzEmailErrorVerify("");
         setDisable(false);
-
       } else {
         setXworkzEmailErrorVerify("");
         setXworkzEmailCheck("Email should contains xworkz");
-        setEmailXworkzCheck("");
       }
     }
   };
@@ -606,7 +624,7 @@ const EditModal = ({
               setUsnCheck("");
             }
           })
-          .catch(error => { });
+          .catch(error => {});
       }
     }
   };
@@ -614,14 +632,16 @@ const EditModal = ({
     return axios.get(Urlconstant.url + `api/verify-email?email=${email}`);
   };
 
-  const isValidate = usnCheck ||
+  const isValidate =
+    usnCheck ||
     traineeNameCheck ||
     referalNameCheck ||
     referalContactNumber ||
-    xworkzemailCheck ||
     emailCheck ||
-    !verifyHandaleEmail ||
+    (xworkzEmailErrorVerify !== "accepted_email" && xworkzEmailErrorVerify) ||
     verifyHandaleEmailerror ||
+    xworkzemailCheck ||
+    xworkzEmailCheckExists ||
     phoneNumberError ||
     numberCheck ||
     emailError ||
@@ -651,24 +671,24 @@ const EditModal = ({
             />
             {verifyHandaleEmailerror
               ? <Alert severity="error">
-                {verifyHandaleEmailerror}
-              </Alert>
+                  {verifyHandaleEmailerror}
+                </Alert>
               : " "}
             {emailError
               ? <Alert severity="error">
-                {emailError}{" "}
-              </Alert>
+                  {emailError}{" "}
+                </Alert>
               : " "}
             {emailCheck
               ? <Alert severity="error">
-                {emailCheck}
-              </Alert>
+                  {emailCheck}
+                </Alert>
               : " "}
 
             {verifyHandaleEmail
               ? <Alert severity="success">
-                {verifyHandaleEmail}
-              </Alert>
+                  {verifyHandaleEmail}
+                </Alert>
               : " "}
           </Grid>
           <Grid item xs={4}>
@@ -681,8 +701,8 @@ const EditModal = ({
             />
             {traineeNameCheck
               ? <Alert severity="error">
-                {traineeNameCheck}{" "}
-              </Alert>
+                  {traineeNameCheck}{" "}
+                </Alert>
               : " "}
           </Grid>
           <Grid item xs={4}>
@@ -696,13 +716,13 @@ const EditModal = ({
             />
             {phoneNumberError
               ? <Alert severity="error">
-                {phoneNumberError}
-              </Alert>
+                  {phoneNumberError}
+                </Alert>
               : " "}
             {numberCheck
               ? <Alert severity="error">
-                {numberCheck}
-              </Alert>
+                  {numberCheck}
+                </Alert>
               : " "}
           </Grid>
           <Grid item xs={4}>
@@ -739,7 +759,6 @@ const EditModal = ({
                   marginRight: "20px",
                   width: "225px"
                 }}
-
               >
                 {dropdown.qualification.map((item, index) =>
                   <MenuItem value={item} key={index}>
@@ -764,7 +783,6 @@ const EditModal = ({
                   marginRight: "20px",
                   width: "225px"
                 }}
-
               >
                 {dropdown.stream.map((item, index) =>
                   <MenuItem value={item} key={index}>
@@ -791,7 +809,6 @@ const EditModal = ({
                   marginRight: "20px",
                   width: "225px"
                 }}
-
               >
                 {dropdown.yearofpass.map((item, index) =>
                   <MenuItem value={item} key={index}>
@@ -812,14 +829,15 @@ const EditModal = ({
               InputProps={{
                 readOnly: true
               }}
-
             />
           </Grid>
           <Grid item xs={4}>
             <TextField
               label="USN Number"
               name="csrDto.usnNumber"
-              defaultValue={rowData.csrDto.usnNumber != "NA" ? rowData.csrDto.usnNumber : ""}
+              defaultValue={
+                rowData.csrDto.usnNumber != "NA" ? rowData.csrDto.usnNumber : ""
+              }
               onChange={handleInputChange}
               style={fieldStyle}
               onBlur={handleUsnNumber}
@@ -827,8 +845,8 @@ const EditModal = ({
             />
             {usnCheck
               ? <Alert severity="error">
-                {usnCheck}
-              </Alert>
+                  {usnCheck}
+                </Alert>
               : " "}
           </Grid>
 
@@ -836,15 +854,19 @@ const EditModal = ({
             <TextField
               label="WhatsApp Number"
               name="csrDto.alternateContactNumber"
-              defaultValue={rowData.csrDto.alternateContactNumber != 0 ? rowData.csrDto.alternateContactNumber : ""}
+              defaultValue={
+                rowData.csrDto.alternateContactNumber != 0
+                  ? rowData.csrDto.alternateContactNumber
+                  : ""
+              }
               onChange={handleInputChange}
               style={fieldStyle}
               placeholder={rowData.csrDto.alternateContactNumber === 0 ? 0 : ""}
             />
             {alternativeNumberCheck
               ? <Alert severity="error">
-                {alternativeNumberCheck}
-              </Alert>
+                  {alternativeNumberCheck}
+                </Alert>
               : " "}
           </Grid>
           <Grid item xs={4}>
@@ -864,7 +886,6 @@ const EditModal = ({
                   marginRight: "20px",
                   width: "225px"
                 }}
-
               >
                 {dropdown.college.map((item, index) =>
                   <MenuItem value={item} key={index}>
@@ -889,7 +910,6 @@ const EditModal = ({
                   marginRight: "20px",
                   width: "225px"
                 }}
-
               >
                 {batchDetails.map((item, index) =>
                   <MenuItem value={item} key={index}>
@@ -906,7 +926,6 @@ const EditModal = ({
               value={formData.branch || ""}
               onChange={handleInputChange}
               style={fieldStyle}
-
             />
           </Grid>
           <Grid item xs={4}>
@@ -916,7 +935,6 @@ const EditModal = ({
               value={formData.batchType || ""}
               onChange={handleInputChange}
               style={fieldStyle}
-
             />
           </Grid>
           <Grid item xs={4}>
@@ -926,7 +944,6 @@ const EditModal = ({
               value={formData.trainerName || ""}
               onChange={handleInputChange}
               style={fieldStyle}
-
             />
           </Grid>
           <Grid item xs={4}>
@@ -936,7 +953,6 @@ const EditModal = ({
               value={formData.batchTiming || ""}
               onChange={handleInputChange}
               style={fieldStyle}
-
             />
           </Grid>
           <Grid item xs={4}>
@@ -946,7 +962,6 @@ const EditModal = ({
               value={formData.startDate || ""}
               onChange={handleInputChange}
               style={fieldStyle}
-
             />
           </Grid>
 
@@ -978,37 +993,51 @@ const EditModal = ({
             <TextField
               label="Referal Name"
               name="othersDto.referalName"
-              defaultValue={rowData.othersDto.referalName != "NA" ? rowData.othersDto.referalName : ""}
+              defaultValue={
+                rowData.othersDto.referalName != "NA"
+                  ? rowData.othersDto.referalName
+                  : ""
+              }
               placeholder={rowData.othersDto.referalName === "NA" ? "NA" : ""}
               onChange={handleInputChange}
               style={fieldStyle}
             />
             {referalNameCheck
               ? <Alert severity="error">
-                {referalNameCheck}
-              </Alert>
+                  {referalNameCheck}
+                </Alert>
               : " "}
           </Grid>
           <Grid item xs={4}>
             <TextField
               label="Referal Contact Number"
               name="othersDto.referalContactNumber"
-              defaultValue={rowData.othersDto.referalContactNumber != 0 ? rowData.othersDto.referalContactNumber : ""}
-              placeholder={rowData.othersDto.referalContactNumber === 0 ? 0 : ""}
+              defaultValue={
+                rowData.othersDto.referalContactNumber != 0
+                  ? rowData.othersDto.referalContactNumber
+                  : ""
+              }
+              placeholder={
+                rowData.othersDto.referalContactNumber === 0 ? 0 : ""
+              }
               onChange={handleInputChange}
               style={fieldStyle}
             />
             {referalContactNumber
               ? <Alert severity="error">
-                {referalContactNumber}
-              </Alert>
+                  {referalContactNumber}
+                </Alert>
               : " "}
           </Grid>
           <Grid item xs={4}>
             <TextField
               label="X-workz E-mail"
               name="othersDto.xworkzEmail"
-              defaultValue={rowData.othersDto.xworkzEmail != "NA" ? rowData.othersDto.xworkzEmail : ""}
+              defaultValue={
+                rowData.othersDto.xworkzEmail != "NA"
+                  ? rowData.othersDto.xworkzEmail
+                  : ""
+              }
               placeholder={rowData.othersDto.xworkzEmail === "NA" ? "NA" : ""}
               onChange={handleInputChange}
               style={fieldStyle}
@@ -1019,7 +1048,7 @@ const EditModal = ({
                   {xworkzemailCheck}
                   {xworkzEmailCheckExists}
                 </Alert>
-
+              : ""}
             {xworkzEmailErrorVerify &&
             xworkzEmailErrorVerify === "accepted_email"
               ? <Alert severity="success">
@@ -1050,7 +1079,6 @@ const EditModal = ({
                   width: "225px"
                 }}
                 style={fieldStyle}
-
               >
                 {dropdown.branchname.map((item, index) =>
                   <MenuItem value={item} key={index}>
@@ -1078,7 +1106,6 @@ const EditModal = ({
                   width: "225px"
                 }}
                 style={fieldStyle}
-
               >
                 {dropdown.batch.map((item, index) =>
                   <MenuItem value={item} key={index}>
@@ -1091,33 +1118,32 @@ const EditModal = ({
           {attemptStatus
             ? attemptStatus === "Joined"
               ? <Grid item xs={4}>
-                <FormControl>
-                  <InputLabel id="demo-simple-select-label">
-                    Fees Concession
-                  </InputLabel>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    label="Concession"
-                    name="feeConcession"
-                    onChange={handleInputChange}
-                    defaultValue={feeConcession}
-                    variant="outlined"
-                    sx={{
-                      marginRight: "20px",
-                      width: "225px"
-                    }}
-                    style={fieldStyle}
-
-                  >
-                    {[...Array(26).keys()].map((item, index) =>
-                      <MenuItem value={item} key={index}>
-                        {item}
-                      </MenuItem>
-                    )}
-                  </Select>
-                </FormControl>
-              </Grid>
+                  <FormControl>
+                    <InputLabel id="demo-simple-select-label">
+                      Fees Concession
+                    </InputLabel>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      label="Concession"
+                      name="feeConcession"
+                      onChange={handleInputChange}
+                      defaultValue={feeConcession}
+                      variant="outlined"
+                      sx={{
+                        marginRight: "20px",
+                        width: "225px"
+                      }}
+                      style={fieldStyle}
+                    >
+                      {[...Array(26).keys()].map((item, index) =>
+                        <MenuItem value={item} key={index}>
+                          {item}
+                        </MenuItem>
+                      )}
+                    </Select>
+                  </FormControl>
+                </Grid>
               : ""
             : ""}
 
@@ -1162,7 +1188,11 @@ const EditModal = ({
             <TextField
               label="Comments"
               name="othersDto.comments"
-              defaultValue={rowData.othersDto.comments != "NA" ? rowData.othersDto.comments : ""}
+              defaultValue={
+                rowData.othersDto.comments != "NA"
+                  ? rowData.othersDto.comments
+                  : ""
+              }
               placeholder={rowData.othersDto.comments === "NA" ? "NA" : ""}
               onChange={handleInputChange}
               style={fieldStyle}
@@ -1176,8 +1206,8 @@ const EditModal = ({
             />
             {comments
               ? <Alert severity="error">
-                {comments}{" "}
-              </Alert>
+                  {comments}{" "}
+                </Alert>
               : " "}
           </Grid>
         </Grid>
@@ -1186,9 +1216,13 @@ const EditModal = ({
       <DialogActions>
         {loading
           ? <CircularProgress size={20} /> // Show loading spinner
-          : <Button disabled={isValidate} onClick={handleEditClick} color="primary">
-            Edit
-          </Button>}
+          : <Button
+              disabled={isValidate}
+              onClick={handleEditClick}
+              color="primary"
+            >
+              Edit
+            </Button>}
       </DialogActions>
 
       {/* Snackbar for response message */}

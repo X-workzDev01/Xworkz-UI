@@ -1,7 +1,7 @@
 export const Urlconstant = {
   // url:'https://ombn.in/Dream/', //Production
   // url: "https://ombn.in/Dream-dev/", //Development
-  url: "https://ombn.in/Dream-pre/", //Development
+  url: "https://ombn.in/Dream-pre/", //Pre-Production
 //  url: "http://localhost:8081/",//local
 
 
