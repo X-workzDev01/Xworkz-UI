@@ -83,7 +83,7 @@ const EditModal = ({
   const [sslcError, setSslcError] = useState("");
   const [pucError, setPucError] = useState("");
   const [degreeError, setDegreeError] = useState("");
-
+  const [checkXworkzEmail, setEmailXworkzCheck] = React.useState("");
   React.useEffect(
     () => {
       setXworkzEmailErrorVerify("")
@@ -101,6 +101,8 @@ const EditModal = ({
       setReferalNameCheck("");
       setComments("");
       setXworkzEmailCheck("");
+      setverifyHandleEmailError("");
+      setEmailXworkzCheck("");
     },
     [rowData]
   );
@@ -326,25 +328,33 @@ const EditModal = ({
       setEmailCheck(null);
       return;
     }
-    axios
-      .get(Urlconstant.url + `api/emailCheck?email=${email}`, {
-        headers: {
-          spreadsheetId: Urlconstant.spreadsheetId
-        }
-      })
-      .then(response => {
-        if (response.data === "Email does not exist") {
-          setEmailCheck(response.data);
-          if (validateEmail(email)) {
-            verifyEmail(email);
+    if (validateEmail(email)) {
+      axios
+        .get(Urlconstant.url + `api/emailCheck?email=${email}`, {
+          headers: {
+            spreadsheetId: Urlconstant.spreadsheetId
+          }
+        })
+        .then(response => {
+          if (response.data === "Email does not exist") {
+            setverifyHandleEmail("");
+            setverifyHandleEmailError("");
+            setEmailCheck(response.data);
             setEmailCheck("");
             setEmailError("");
+            if (validateEmail(email)) {
+              verifyEmail(email);
+              setEmailCheck("");
+              setEmailError("");
+            }
+          } else {
+            setEmailCheck(null);
           }
-        } else {
-          setEmailCheck(null);
-        }
-      })
-      .catch({});
+        })
+        .catch({});
+    }else{
+      setEmailCheck("Enter the valid Email")
+    }
   };
 
   const xworkzEmailExists = email => {
@@ -365,6 +375,7 @@ const EditModal = ({
       .then(response => {
         if (response.data === "accepted_email") {
           setverifyHandleEmail(response.data);
+          setverifyHandleEmailError("");
         }
         if (response.data === "rejected_email") {
           setverifyHandleEmailError(response.data);
@@ -374,8 +385,6 @@ const EditModal = ({
         } else {
           if (response.status === 500) {
             setverifyHandleEmailError("");
-          } else {
-            setverifyHandleEmailError("Unexpected Error:");
           }
         }
       })
@@ -556,6 +565,7 @@ const EditModal = ({
         if (!validateEmail(xworkzemail)) {
           setXworkzEmailErrorVerify("");
           setXworkzEmailCheck("Enter the Valid Email");
+          setEmailXworkzCheck("");
         } else {
           setXworkzEmailCheck("");
           setDisable(false);
@@ -571,6 +581,7 @@ const EditModal = ({
       } else {
         setXworkzEmailErrorVerify("");
         setXworkzEmailCheck("Email should contains xworkz");
+        setEmailXworkzCheck("");
       }
     }
   };
@@ -609,7 +620,7 @@ const EditModal = ({
     referalContactNumber ||
     xworkzemailCheck ||
     emailCheck ||
-    verifyHandaleEmail ||
+    !verifyHandaleEmail ||
     verifyHandaleEmailerror ||
     phoneNumberError ||
     numberCheck ||
@@ -638,11 +649,6 @@ const EditModal = ({
               onBlur={handleVerifyEmail}
               style={fieldStyle}
             />
-            {verifyHandaleEmailerror
-              ? <Alert severity="success">
-                {verifyHandaleEmailerror}
-              </Alert>
-              : " "}
             {verifyHandaleEmailerror
               ? <Alert severity="error">
                 {verifyHandaleEmailerror}
@@ -1025,7 +1031,6 @@ const EditModal = ({
                     {xworkzEmailErrorVerify}
                   </Alert>
                 : ""}
-
           </Grid>
           <Grid item xs={4}>
             <FormControl>
