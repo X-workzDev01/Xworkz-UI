@@ -199,9 +199,7 @@ const AddHr = ({ open, handleClose, rowData, dropdown, handleAfterResponse }) =>
           } else {
             if (response.status === 500) {
               setVerifyEmail("");
-            } else {
-              setVerifyEmail("Unexpected Error:");
-            }
+            } 
            }
           })
           .catch((error) => {
