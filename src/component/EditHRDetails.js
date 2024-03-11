@@ -38,6 +38,7 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
   const [validateDesignation, setValidateDesignation] = React.useState("");
   const [isConfirmed, setIsConfirmed] = React.useState(false);
   const [commentError, setCommentError] = React.useState("");
+  const [emailError, setEmailError] = React.useState("");
   const handleOpenForm = () => {
     setEditedData(rowData);
     setIsConfirming(false);
@@ -53,6 +54,7 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
     setValidateDesignation("");
     setIsConfirmed(false);
     setCommentError("");
+    setEmailError("");
   };
   React.useEffect(() => {
     if (open) {
@@ -92,6 +94,8 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
       } else {
         setEmailCheck("Enter the valid E-mail");
         setCheckEmailExist("");
+        setEmailError("");
+        setVerifyEmail("");
       }
     }
     if (name === "hrContactNumber") {
@@ -170,11 +174,14 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
           if (response.data === "accepted_email") {
             setVerifyEmail(response.data);
           } else if (response.data === "rejected_email") {
-            setVerifyEmail(response.data);
+            setVerifyEmail("");
+            setEmailError(response.data);
           } else {
             setVerifyEmail("");
+            setEmailError(response.data);
           }
-        } else {
+        }
+        else {
           if (response.status === 500) {
             console.log("Internal Server Error:", response.status);
           } else {
@@ -198,9 +205,14 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
             if (response.data === "Email already exists.") {
               setEmailCheck("");
               setCheckEmailExist(response.data);
+              setEmailError("");
             } else {
-              validatingEmail(email);
+              if (validateEmail(email)) {
+                validatingEmail(email);
+              }
               setCheckEmailExist("");
+              setEmailError("");
+              setVerifyEmail("");
             }
           });
       } else {
@@ -254,7 +266,8 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
     phoneNumber ||
     checkEmailExist ||
     checkPhoneNumberExist ||
-    verifyEmail ||
+    !verifyEmail ||
+    emailError ||
     validateName ||
     commentError ||
     validateDesignation;
@@ -304,7 +317,9 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
             ) : (
               " "
             )}
-            {verifyEmail ? <Alert severity="error">{verifyEmail}</Alert> : " "}
+
+            {verifyEmail ? <Alert severity="success">{verifyEmail}</Alert> : " "}
+            {emailError ? <Alert severity="error">{emailError}</Alert> : " "}
           </Grid>
           <Grid item xs={12} sm={4}>
             <TextField
