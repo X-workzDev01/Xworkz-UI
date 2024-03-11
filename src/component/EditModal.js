@@ -622,7 +622,7 @@ const EditModal = ({
     referalContactNumber ||
     emailCheck ||
     (xworkzEmailErrorVerify !== "accepted_email" && xworkzEmailErrorVerify) ||
-    verifyHandleEmailerror !== "accepted_email" ||
+    verifyHandleEmailerror === "accepted_email" ||
     xworkzemailCheck ||
     xworkzEmailCheckExists ||
     phoneNumberError ||
