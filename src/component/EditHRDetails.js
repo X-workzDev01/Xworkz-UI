@@ -181,17 +181,11 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
             setEmailError(response.data);
           }
         }
-        else {
-          if (response.status === 500) {
-            console.log("Internal Server Error:", response.status);
-          } else {
-            console.log("Unexpected Error:", response.status);
-          }
+        else if (response.status === 500) {
+          setEmailError("");
         }
       })
-      .catch((error) => {
-        console.log("check emailable credentils");
-      });
+      .catch((error) => {});
   };
 
   const handleEmailCheck = (email) => {
@@ -210,9 +204,6 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
               if (validateEmail(email)) {
                 validatingEmail(email);
               }
-              setCheckEmailExist("");
-              setEmailError("");
-              setVerifyEmail("");
             }
           });
       } else {
@@ -266,7 +257,7 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
     phoneNumber ||
     checkEmailExist ||
     checkPhoneNumberExist ||
-    !verifyEmail ||
+    verifyEmail === "accepted_email" ||
     emailError ||
     validateName ||
     commentError ||
