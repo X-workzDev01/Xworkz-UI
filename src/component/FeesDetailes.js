@@ -1,3 +1,4 @@
+import { PersonOutline } from "@mui/icons-material";
 import {
   Button,
   FormControl,
@@ -10,24 +11,29 @@ import {
 import { DataGrid } from "@mui/x-data-grid";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import SyncLoader from "react-spinners/SyncLoader";
 import { Urlconstant } from "../constant/Urlconstant";
 import "./FeesDetailes";
-import { PersonOutline } from "@mui/icons-material";
+import {
+  saveCallbackDate,
+  saveFeesBatchName,
+  saveFeesStatus,
+  savePaymentMode
+} from "../store/feesDetials/FeesDetiles";
 export const FeesDetailes = () => {
-  const [batch, setBatch] = useState(sessionStorage.getItem("feesBatch"));
-  const [date, setDate] = useState(sessionStorage.getItem("feesDate"));
-  const [paymentMode, setPaymentMode] = useState(
-    sessionStorage.getItem("feesPaymentMode")
-  );
+  const feesDetilesStore = useSelector(state => state.feesDetiles);
+  const dispatch = useDispatch();
+  const [batch, setBatch] = useState(feesDetilesStore.batchName);
+  const [date, setDate] = useState(feesDetilesStore.callBackDate);
+  const [paymentMode, setPaymentMode] = useState(feesDetilesStore.paymentMode);
   const initialPageSize = 25;
   const selectPaymentMode = ["Online", "Upi", "Cash", "NA"];
   const [batchDetiles, setBatchDetiles] = useState([]);
   const [openSyncLoader, setOpenSyncLoader] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const feesDropdownStatus = ["Fees_due", "Pending", "Free", "Completed"];
-  const [status, setStatus] = useState(sessionStorage.getItem("feesStatus"));
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: initialPageSize
@@ -47,10 +53,10 @@ export const FeesDetailes = () => {
         date,
         batch,
         paymentMode,
-        status
+        feesDetilesStore.feesStatus
       );
     },
-    [batch, paymentMode, date, paginationModel, status]
+    [batch, paymentMode, date, paginationModel, feesDetilesStore.feesStatus]
   );
   useEffect(() => {
     getBatch();
@@ -72,7 +78,7 @@ export const FeesDetailes = () => {
   const fetchingGridData = (
     minIndex,
     maxIndex,
-    date,
+    callBackDate,
     batch,
     paymentMode,
     status
@@ -81,10 +87,9 @@ export const FeesDetailes = () => {
     const maxRows = maxIndex;
     const response = axios.get(
       Urlconstant.url +
-        `api/getFeesDetilesBySelectedOption/${startingIndex}/${maxRows}/${date}/${batch}/${paymentMode}/${status}`
+        `api/getFeesDetilesBySelectedOption/${startingIndex}/${maxRows}/${callBackDate}/${batch}/${paymentMode}/${status}`
     );
     response.then(res => {
-      console.log(res.data.listOfFeesDto);
       setGridData({
         rows: res.data.listOfFeesDto
           ? res.data.listOfFeesDto.map(row => ({
@@ -268,30 +273,28 @@ export const FeesDetailes = () => {
     const { name, value } = event.target;
     if (name === "paymentMode") {
       setPaymentMode(value);
-      sessionStorage.setItem("feesPaymentMode", value);
+      dispatch(savePaymentMode(value));
     }
     if (name === "date") {
-      sessionStorage.setItem("feesDate", value);
       setDate(value);
+      dispatch(saveCallbackDate(value));
     }
     if (name === "batch") {
-      sessionStorage.setItem("feesBatch", value);
       setBatch(value);
+      dispatch(saveFeesBatchName(value));
     }
     if (name === "status") {
-      sessionStorage.setItem("feesStatus", value);
-      setStatus(value);
+      dispatch(saveFeesStatus(value));
     }
   };
   const handleClear = () => {
-    setStatus("null");
+    dispatch(savePaymentMode(null));
+    dispatch(saveCallbackDate("null"));
+    dispatch(saveFeesBatchName(null));
+    dispatch(saveFeesStatus("null"));
     setBatch("null");
-    setDate("null");
     setPaymentMode("null");
-    sessionStorage.setItem("feesBatch", "null");
-    sessionStorage.setItem("feesDate", "null");
-    sessionStorage.setItem("feesPaymentMode", "null");
-    sessionStorage.setItem("feesStatus", "null");
+    setDate("null");
   };
   return (
     <div style={{ marginTop: "7%", marginBottom: "2%", marginLeft: "0.7%" }}>
@@ -311,7 +314,9 @@ export const FeesDetailes = () => {
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             label="Select Status"
-            value={status ? status : " "}
+            value={
+              feesDetilesStore.feesStatus ? feesDetilesStore.feesStatus : " "
+            }
             required
             name="status"
             onChange={handleSetData}
@@ -338,7 +343,9 @@ export const FeesDetailes = () => {
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             label="Select batch"
-            value={batch ? batch : " "}
+            value={
+              feesDetilesStore.batchName ? feesDetilesStore.batchName : " "
+            }
             required
             name="batch"
             onChange={handleSetData}
@@ -364,7 +371,9 @@ export const FeesDetailes = () => {
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
-            value={paymentMode ? paymentMode : " "}
+            value={
+              feesDetilesStore.paymentMode ? feesDetilesStore.paymentMode : " "
+            }
             label="Select payment mode "
             required
             name="paymentMode"
@@ -386,23 +395,20 @@ export const FeesDetailes = () => {
         <TextField
           type="date"
           name="date"
-          onChange={handleSetData}
           label="Call Back Date"
           id="outlined-size-small"
           size="small"
-          value={
-            date
-              ? date
-              : "null" &&
-                setDate("null") &&
-                sessionStorage.setItem("feesDate", "null")
-          }
+          value={feesDetilesStore.callBackDate || "null"}
           color="primary"
           sx={{
             marginRight: "10px",
             width: "200px",
             fontSize: "12px"
           }}
+          InputLabelProps={{
+            shrink: true
+          }}
+          onChange={handleSetData}
           focused
         />
         <Button variant="contained" color="primary" onClick={handleClear}>
