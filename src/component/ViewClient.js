@@ -10,6 +10,9 @@ import { GridToolbarContainer } from "@mui/x-data-grid";
 import { GridToolbarFilterButton } from "@mui/x-data-grid";
 import { GridToolbarExport } from "@mui/x-data-grid";
 import "./Company.css"
+import { setClientType, setSearchValue, setCallBackDate } from './actions';
+import { connect } from "react-redux";
+
 
 function loadServerRows(page, pageSize, callBackDate, clientType) {
   const startingIndex = page * pageSize;
@@ -72,7 +75,8 @@ async function fetchFilteredData(searchValue, callBackDate, clientType) {
   }
 }
 
-export default function ViewClient() {
+function ViewClient(props) {
+  const { clientType, searchValue, callBackDate, setClientType, setSearchValue, setCallBackDate } = props;
   const initialPageSize = 25;
   const [paginationModel, setPaginationModel] = React.useState({
     page: 0,
@@ -84,12 +88,9 @@ export default function ViewClient() {
   });
 
   const [loading, setLoading] = React.useState(false);
-  const [searchValue, setSearchValue] = React.useState("");
   const [autocompleteOptions, setAutocompleteOptions] = React.useState([]);
   const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
-  const [selectedOption, setSelectedOption] = React.useState(null);
-  const [callBackDate, setCallBackDate] = React.useState("null");
-  const [clientType, setClientType] = React.useState("null");
+  const [selectedOption, setSelectedOption] = React.useState(searchValue || "");
   const [dropdown, setDropDown] = React.useState({
     clientType: [],
     sourceOfConnection: [],
@@ -147,16 +148,19 @@ export default function ViewClient() {
   };
   React.useEffect(() => {
     refreshPageEveryTime();
+    handleSearchInput();
   }, [paginationModel.page, paginationModel.pageSize, searchValue, callBackDate, clientType]);
 
   React.useEffect(() => {
     getDropdown();
   }, []);
   const handleSearchInput = () => {
-    searchServerRows(searchValue, callBackDate, clientType).then((newGridData) => {
-      setGridData(newGridData);
-      setPaginationModel({ page: 0, pageSize: initialPageSize });
-    });
+    if (searchValue !== "" && searchValue.length >= 2) {
+      searchServerRows(searchValue, callBackDate, clientType).then((newGridData) => {
+        setGridData(newGridData);
+        setPaginationModel({ page: 0, pageSize: initialPageSize });
+      });
+    }
   };
 
   const getDropdown = () => {
@@ -283,12 +287,12 @@ export default function ViewClient() {
     setSearchValue("");
     setCallBackDate("null");
     setClientType("null");
-    setSelectedOption(null);
+    setSelectedOption("");
     sessionStorage.setItem("Search", "null");
     setSelectedOption({ companyName: '' });
   }
   const handleAutoSuggestion = (event, newValue) => {
-    setSearchValue(newValue.companyName);
+    setSearchValue(newValue?.companyName || "");
     sessionStorage.setItem("Search", newValue.companyName);
   }
 
@@ -330,7 +334,7 @@ export default function ViewClient() {
           getOptionLabel={(option) =>
             option.companyName
           }
-          value={selectedOption}
+          defaultValue={autocompleteOptions.find(option => option.companyName === searchValue) || null}
           onChange={handleAutoSuggestion}
           renderInput={(params) => (
             <TextField
@@ -431,7 +435,7 @@ export default function ViewClient() {
           slots={{
             toolbar: () => (
               <GridToolbarContainer>
-                <Button onClick={handleColumnChange}> <MoreVert/> Columns</Button>
+                <Button onClick={handleColumnChange}> <MoreVert /> Columns</Button>
                 <GridToolbarFilterButton />
                 <GridToolbarDensitySelector />
                 <GridToolbarExport />
@@ -464,20 +468,32 @@ export default function ViewClient() {
           }}
         >
           <h4>COLUMNS</h4>
-            {column.map(column => (
-              <FormControlLabel
-                key={column.field}
-                control={
-                  <Checkbox
-                    checked={displayColumn.includes(column.field)}
-                    onChange={() => handleChangeColumnVisibility(column.field)}
-                  />
-                }
-                label={column.headerName}
-              />
-            ))}
+          {column.map(column => (
+            <FormControlLabel
+              key={column.field}
+              control={
+                <Checkbox
+                  checked={displayColumn.includes(column.field)}
+                  onChange={() => handleChangeColumnVisibility(column.field)}
+                />
+              }
+              label={column.headerName}
+            />
+          ))}
         </Popover>
       </div>
     </div>
   );
 }
+const mapStateToProps = (state) => ({
+  clientType: state.clientType,
+  searchValue: state.searchValue,
+  callBackDate: state.callBackDate,
+});
+
+const mapDispatchToProps = {
+  setClientType,
+  setSearchValue,
+  setCallBackDate,
+};
+export default connect(mapStateToProps, mapDispatchToProps)(ViewClient);
