@@ -140,6 +140,7 @@ export default function ControlledSelectionServerPaginationGrid() {
   const [courseName, setCourseName] = React.useState(
     traineeDropDown.courseName);
   const [collegeName, setCollegeName] = React.useState(traineeDropDown.collegeName);
+
   const [courseDropdown, setCourseDropdown] = React.useState("");
   const [dropdown, setDropDown] = useState({
     course: [],
@@ -531,6 +532,7 @@ if(event.target.name==="followUpStatus"){
   setCourseName(null)
  
 
+
     setSearchValue("");
     setSelectedOption({ basicInfo: { traineeName: '' } });
   };
@@ -549,6 +551,7 @@ if(event.target.name==="followUpStatus"){
   const handleCollegeChange = (event) => {
    dispatch(saveCollegeName(event.target.value))
     setCollegeName(event.target.value);
+
   }
 
   const open = Boolean(anchorEl);

@@ -51,8 +51,8 @@ const EditModal = ({
   const [numberCheck, setNumberCheck] = React.useState(null);
   const [emailError, setEmailError] = React.useState(null);
   const [phoneNumberError, setPhoneNumberError] = React.useState("");
-  const [verifyHandaleEmail, setverifyHandleEmail] = React.useState("");
-  const [verifyHandaleEmailerror, setverifyHandleEmailError] = React.useState(
+  const [verifyHandleEmail, setverifyHandleEmail] = React.useState("");
+  const [verifyHandleEmailerror, setverifyHandleEmailError] = React.useState(
     ""
   );
   const [xworkzEmailErrorVerify, setXworkzEmailErrorVerify] = useState("");
@@ -122,7 +122,7 @@ const EditModal = ({
       .then(response => {
         setDropDown(response.data);
       })
-      .catch(error => {});
+      .catch(error => { });
     axios
       .get(Urlconstant.url + "api/getCourseName?status=Active", {
         headers: {
@@ -135,7 +135,7 @@ const EditModal = ({
           fetchData(selectedValue); // Call fetchData with the selectedValue
         }
       })
-      .catch(e => {});
+      .catch(e => { });
   }, []);
   React.useEffect(
     () => {
@@ -170,7 +170,7 @@ const EditModal = ({
           startDate: data.startDate
         });
       })
-      .catch(error => {});
+      .catch(error => { });
   };
 
   const handleInputChange = event => {
@@ -199,12 +199,12 @@ const EditModal = ({
       setEmailValue(value);
       if (!value) {
         setEmailError("Email is required");
-        setverifyHandleEmail("");
         setEmailCheck("");
+        setverifyHandleEmailError("");
       } else if (!validateEmail(value)) {
         setEmailError("Invalid email address");
-        setverifyHandleEmail("");
         setEmailCheck("");
+        setverifyHandleEmailError("");
       } else {
         setEmailError("");
       }
@@ -335,18 +335,11 @@ const EditModal = ({
         })
         .then(response => {
           if (response.data === "Email does not exist") {
-            setverifyHandleEmail("");
-            setverifyHandleEmailError("");
-            setEmailCheck(response.data);
-            setEmailCheck("");
-            setEmailError("");
             if (validateEmail(email)) {
               verifyEmail(email);
-              setEmailCheck("");
-              setEmailError("");
             }
           } else {
-            setEmailCheck(null);
+            setEmailCheck(response.data);
           }
         })
         .catch({});
@@ -371,28 +364,18 @@ const EditModal = ({
   };
 
   const verifyEmail = email => {
-    emailVerification(email)
-      .then(response => {
-        if (response.data === "accepted_email") {
-          setverifyHandleEmail(response.data);
-          setverifyHandleEmailError("");
-        }
-        if (response.data === "rejected_email") {
-          setverifyHandleEmailError(response.data);
-          setverifyHandleEmail("");
-          setEmailError("");
-          setEmailCheck("");
-        } else {
-          if (response.status === 500) {
-            setverifyHandleEmailError("");
-          }
-        }
-      })
-      .catch(error => {
-        console.log("check emailable credentils");
-      });
-
-    //}
+    
+    emailVerification(email).then(response => {
+      if (response.data === "accepted_email") {
+        setverifyHandleEmailError(response.data);
+      } else if (response.data === "rejected_email") {
+        setverifyHandleEmailError(response.data);
+      } else if (response.status === 500) {
+        setverifyHandleEmailError("");
+      } else {
+        setverifyHandleEmailError(response.data);
+      }
+    }).catch(e=>{})
   };
   const handleVerifyEmail = event => {
     const email = event.target.value;
@@ -412,7 +395,7 @@ const EditModal = ({
         axios
           .get(
             Urlconstant.url +
-              `api/contactNumberCheck?contactNumber=${contactNumber}`,
+            `api/contactNumberCheck?contactNumber=${contactNumber}`,
             {
               headers: {
                 spreadsheetId: Urlconstant.spreadsheetId
@@ -427,7 +410,7 @@ const EditModal = ({
               setNumberCheck("");
             }
           })
-          .catch(error => {});
+          .catch(error => { });
       }
     }
   };
@@ -495,8 +478,8 @@ const EditModal = ({
     setLoading(true);
     axios.put(
       Urlconstant.url +
-        `api/updateFeesDetailsChangeEmailAndFeeConcession/${feesConcession}/${updatedData
-          .basicInfo.traineeName}/${rowData.basicInfo
+      `api/updateFeesDetailsChangeEmailAndFeeConcession/${feesConcession}/${updatedData
+        .basicInfo.traineeName}/${rowData.basicInfo
           .email}/${newEmail}/${updatedData.adminDto.updatedBy}`
     );
     axios
@@ -624,7 +607,7 @@ const EditModal = ({
               setUsnCheck("");
             }
           })
-          .catch(error => {});
+          .catch(error => { });
       }
     }
   };
@@ -639,7 +622,7 @@ const EditModal = ({
     referalContactNumber ||
     emailCheck ||
     (xworkzEmailErrorVerify !== "accepted_email" && xworkzEmailErrorVerify) ||
-    verifyHandaleEmailerror ||
+    verifyHandleEmailerror === "accepted_email" ||
     xworkzemailCheck ||
     xworkzEmailCheckExists ||
     phoneNumberError ||
@@ -669,26 +652,22 @@ const EditModal = ({
               onBlur={handleVerifyEmail}
               style={fieldStyle}
             />
-            {verifyHandaleEmailerror
-              ? <Alert severity="error">
-                  {verifyHandaleEmailerror}
-                </Alert>
+
+            {verifyHandleEmailerror === "accepted_email"
+              ? <Alert severity="success">
+                {verifyHandleEmailerror}
+              </Alert>
               : " "}
+            {verifyHandleEmailerror && verifyHandleEmailerror !== "accepted_email" && <Alert severity="error">{verifyHandleEmailerror}</Alert>}
             {emailError
               ? <Alert severity="error">
-                  {emailError}{" "}
-                </Alert>
+                {emailError}{" "}
+              </Alert>
               : " "}
             {emailCheck
               ? <Alert severity="error">
-                  {emailCheck}
-                </Alert>
-              : " "}
-
-            {verifyHandaleEmail
-              ? <Alert severity="success">
-                  {verifyHandaleEmail}
-                </Alert>
+                {emailCheck}
+              </Alert>
               : " "}
           </Grid>
           <Grid item xs={4}>
@@ -701,8 +680,8 @@ const EditModal = ({
             />
             {traineeNameCheck
               ? <Alert severity="error">
-                  {traineeNameCheck}{" "}
-                </Alert>
+                {traineeNameCheck}{" "}
+              </Alert>
               : " "}
           </Grid>
           <Grid item xs={4}>
@@ -716,13 +695,13 @@ const EditModal = ({
             />
             {phoneNumberError
               ? <Alert severity="error">
-                  {phoneNumberError}
-                </Alert>
+                {phoneNumberError}
+              </Alert>
               : " "}
             {numberCheck
               ? <Alert severity="error">
-                  {numberCheck}
-                </Alert>
+                {numberCheck}
+              </Alert>
               : " "}
           </Grid>
           <Grid item xs={4}>
@@ -845,8 +824,8 @@ const EditModal = ({
             />
             {usnCheck
               ? <Alert severity="error">
-                  {usnCheck}
-                </Alert>
+                {usnCheck}
+              </Alert>
               : " "}
           </Grid>
 
@@ -865,8 +844,8 @@ const EditModal = ({
             />
             {alternativeNumberCheck
               ? <Alert severity="error">
-                  {alternativeNumberCheck}
-                </Alert>
+                {alternativeNumberCheck}
+              </Alert>
               : " "}
           </Grid>
           <Grid item xs={4}>
@@ -1004,8 +983,8 @@ const EditModal = ({
             />
             {referalNameCheck
               ? <Alert severity="error">
-                  {referalNameCheck}
-                </Alert>
+                {referalNameCheck}
+              </Alert>
               : " "}
           </Grid>
           <Grid item xs={4}>
@@ -1025,8 +1004,8 @@ const EditModal = ({
             />
             {referalContactNumber
               ? <Alert severity="error">
-                  {referalContactNumber}
-                </Alert>
+                {referalContactNumber}
+              </Alert>
               : " "}
           </Grid>
           <Grid item xs={4}>
@@ -1045,20 +1024,20 @@ const EditModal = ({
             />
             {xworkzemailCheck || xworkzEmailCheckExists
               ? <Alert severity="error">
-                  {xworkzemailCheck}
-                  {xworkzEmailCheckExists}
-                </Alert>
+                {xworkzemailCheck}
+                {xworkzEmailCheckExists}
+              </Alert>
               : ""}
             {xworkzEmailErrorVerify &&
-            xworkzEmailErrorVerify === "accepted_email"
+              xworkzEmailErrorVerify === "accepted_email"
               ? <Alert severity="success">
-                  {xworkzEmailErrorVerify}
-                </Alert>
+                {xworkzEmailErrorVerify}
+              </Alert>
               : xworkzEmailErrorVerify !== "accepted_email" &&
                 xworkzEmailErrorVerify !== ""
                 ? <Alert severity="error">
-                    {xworkzEmailErrorVerify}
-                  </Alert>
+                  {xworkzEmailErrorVerify}
+                </Alert>
                 : ""}
           </Grid>
           <Grid item xs={4}>
@@ -1118,32 +1097,32 @@ const EditModal = ({
           {attemptStatus
             ? attemptStatus === "Joined"
               ? <Grid item xs={4}>
-                  <FormControl>
-                    <InputLabel id="demo-simple-select-label">
-                      Fees Concession
-                    </InputLabel>
-                    <Select
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
-                      label="Concession"
-                      name="feeConcession"
-                      onChange={handleInputChange}
-                      defaultValue={feeConcession}
-                      variant="outlined"
-                      sx={{
-                        marginRight: "20px",
-                        width: "225px"
-                      }}
-                      style={fieldStyle}
-                    >
-                      {[...Array(26).keys()].map((item, index) =>
-                        <MenuItem value={item} key={index}>
-                          {item}
-                        </MenuItem>
-                      )}
-                    </Select>
-                  </FormControl>
-                </Grid>
+                <FormControl>
+                  <InputLabel id="demo-simple-select-label">
+                    Fees Concession
+                  </InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    label="Concession"
+                    name="feeConcession"
+                    onChange={handleInputChange}
+                    defaultValue={feeConcession}
+                    variant="outlined"
+                    sx={{
+                      marginRight: "20px",
+                      width: "225px"
+                    }}
+                    style={fieldStyle}
+                  >
+                    {[...Array(26).keys()].map((item, index) =>
+                      <MenuItem value={item} key={index}>
+                        {item}
+                      </MenuItem>
+                    )}
+                  </Select>
+                </FormControl>
+              </Grid>
               : ""
             : ""}
 
@@ -1206,8 +1185,8 @@ const EditModal = ({
             />
             {comments
               ? <Alert severity="error">
-                  {comments}{" "}
-                </Alert>
+                {comments}{" "}
+              </Alert>
               : " "}
           </Grid>
         </Grid>
@@ -1217,12 +1196,12 @@ const EditModal = ({
         {loading
           ? <CircularProgress size={20} /> // Show loading spinner
           : <Button
-              disabled={isValidate}
-              onClick={handleEditClick}
-              color="primary"
-            >
-              Edit
-            </Button>}
+            disabled={isValidate}
+            onClick={handleEditClick}
+            color="primary"
+          >
+            Edit
+          </Button>}
       </DialogActions>
 
       {/* Snackbar for response message */}

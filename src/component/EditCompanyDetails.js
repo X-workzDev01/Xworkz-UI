@@ -72,11 +72,12 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
       }
     }
     if (name === "companyEmail") {
-      if (validateEmail(value)) {
-        setEmailCheck("");
-      } else {
+      if (!validateEmail(value)) {
+        setEmailCheck("Enter the valid E-mail");
         setCheckEmailExist("");
-        setEmailCheck("Enter the correct Email");
+        setVerifyEmail("");
+      } else {
+        setEmailCheck("");
       }
     }
     if (name === "companyLandLineNumber") {
@@ -191,19 +192,15 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
           } else if (response.data === "rejected_email") {
             setVerifyEmail(response.data);
           } else {
-            setVerifyEmail("");
+            setVerifyEmail(response.data);
           }
         } else {
           if (response.status === 500) {
-            console.log("Internal Server Error:", response.status);
-          } else {
-            console.log("Unexpected Error:", response.status);
+            setVerifyEmail("");
           }
         }
       })
-      .catch((error) => {
-        console.log("check emailable credentils");
-      });
+      .catch((error) => {});
   };
 
   const handleCompanyWebsite = (companyWebsite) => {
@@ -327,14 +324,14 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
     companyNameCheck ||
     emailCheck ||
     phoneNumberCheck ||
-    checkEmailExist ||
+    checkEmailExist||
     nameCheck ||
     checkCompanyWebsite ||
     checkPhoneNumberExist ||
     error ||
     founderNameCheck ||
     addressError ||
-    verifyEmail;
+    verifyEmail === "accepted_email";
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle>
@@ -380,13 +377,12 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
               margin="normal"
               onBlur={handleEmail}
             />
-            {emailCheck ? <Alert severity="error">{emailCheck}</Alert> : " "}
-            {checkEmailExist ? (
-              <Alert severity="error">{checkEmailExist}</Alert>
-            ) : (
-              " "
-            )}
-            {verifyEmail ? <Alert severity="error">{verifyEmail}</Alert> : " "}
+            {emailCheck ? <Alert severity="error">{emailCheck}</Alert> : ""}
+            {checkEmailExist ? <Alert severity="error">{checkEmailExist}</Alert> : ""}
+            {verifyEmail === "accepted_email" && <Alert severity="success">{verifyEmail}</Alert>}
+            {verifyEmail && verifyEmail !== "accepted_email" && <Alert severity="error">{verifyEmail}</Alert>}
+
+
           </Grid>
           <Grid item xs={12} sm={4}>
             <TextField

@@ -38,6 +38,7 @@ export default function ClientDetails() {
   const [checkCompanyWebsiteExist, setCheckCompanyWebsiteExist] = React.useState("");
   const [catchErrors, setCatchErrors] = React.useState("");
   const [checkCompanyNameExist, setCompanyNameCheckExist] = React.useState("");
+  const [emailCheckError, setEmailCheckError] = React.useState("");
 
   const [dropdownState, setDropdownState] = React.useState({
     college: [],
@@ -118,6 +119,8 @@ export default function ClientDetails() {
     if (name === "companyEmail" && !validateEmail(value) && value.trim() !== "") {
       setEmailCheck("Enter the valid E-mail");
       setCompanyEmailCheck("");
+      setEmailCheckError("");
+      setEmailCheckError("");
     } else if (validateEmail(value)) {
       setEmailCheck("");
     }
@@ -140,14 +143,13 @@ export default function ClientDetails() {
     !formData.companyType ||
     companyNameCheck ||
     companyEmailCheck ||
+    (emailCheckError === "accepted_email") ||
     emailCheck ||
     phoneNumberCheck ||
     checkPhoneNumberExist ||
     checkCompanyNameExist ||
     checkCompanyWebsiteExist ||
-    checkCompanyWebsite
-
-
+    checkCompanyWebsite;
   const handleSubmit = (e) => {
     setIsSubmitting(true)
     try {
@@ -158,7 +160,7 @@ export default function ClientDetails() {
       axios.post(Urlconstant.url + "api/registerclient", clientData).then((response) => {
         setOpen(true);
         setSnackbarMessage(response.data);
-        setFormData({ status: "Active",});
+        setFormData({ status: "Active", });
       });
     } catch (error) {
       setCatchErrors("Wait for some time");
@@ -213,26 +215,21 @@ export default function ClientDetails() {
         if (response.status === 200) {
           if (response.data === "accepted_email") {
             setEmailCheck("");
-            setCompanyEmailCheck("");
+            setEmailCheckError(response.data);
           } else if (response.data === "rejected_email") {
             setEmailCheck("");
-            setCompanyEmailCheck(response.data);
-          } else if (response.data === "invalid_domain") {
-            setEmailCheck("");
-            setCompanyEmailCheck(response.data);
+            setEmailCheckError(response.data);
           } else {
-            setCompanyEmailCheck("")
+            setEmailCheck("")
+            setEmailCheckError(response.data)
           }
         } else {
           if (response.status === 500) {
-            console.log("Internal Server Error:", response.status);
-          } else {
-            console.log("Unexpected Error:", response.status);
+            setEmailCheckError("");
           }
         }
       })
       .catch((error) => {
-        console.log("check emailable credentils");
       });
   };
 
@@ -283,7 +280,7 @@ export default function ClientDetails() {
 
   const handleClearAction = () => {
     valueDisabled = true;
-    setFormData({ status: "Active",})
+    setFormData({ status: "Active", })
     setCheckCompanyWebsite("")
     setCheckPhoneNumberExist("")
     setPhoneNumberCheck("")
@@ -293,6 +290,7 @@ export default function ClientDetails() {
     setCompanyNameCheckExist("")
     setCheckCompanyWebsiteExist("")
     setCheckCompanyWebsite("")
+    setEmailCheckError("")
   }
   return (
     <div>
@@ -382,6 +380,11 @@ export default function ClientDetails() {
               {companyEmailCheck && (
                 <Alert severity="error">{companyEmailCheck}</Alert>
               )}
+
+              {emailCheckError === "accepted_email" && (
+                <Alert severity="success">{emailCheckError}</Alert>
+              )}
+              {emailCheckError && emailCheckError !== "accepted_email" && <Alert severity="error">{emailCheckError}</Alert>}
             </Grid>
             <Grid item xs={12} sm={4}>
               <TextField
