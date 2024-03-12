@@ -88,19 +88,18 @@ export default function ClientDetails() {
     }));
 
     if (name === "companyType") {
+      if (value !== formData.companyType) {
+        setFormData({ status: "Active" });
+        handleClearAction();
+      };
       if (value === "College") {
         getCollegeDropDown();
       }
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
-    } else {
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
     }
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
     if (name === "companyName" && value.length <= 3 && value.trim() === "") {
       setCompanyNameCheck("Name should not be empty");
       setCompanyNameCheckExist("");
@@ -292,6 +291,7 @@ export default function ClientDetails() {
     setCheckCompanyWebsite("")
     setEmailCheckError("")
   }
+
   return (
     <div>
       <h1>Register Client</h1>
