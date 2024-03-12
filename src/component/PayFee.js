@@ -19,7 +19,6 @@ import { Container } from "react-bootstrap";
 import { TfiClose } from "react-icons/tfi";
 import { Urlconstant } from "../constant/Urlconstant";
 import "./PayFee.css";
-import { toHaveStyle } from "@testing-library/jest-dom/matchers";
 
 export const PayFee = ({
   open,
