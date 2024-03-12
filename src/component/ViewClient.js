@@ -92,11 +92,11 @@ export default function ViewClient() {
   });
 
   const [loading, setLoading] = React.useState(false);
-  const [searchValue, setSearchValue] = React.useState("");
+  const [searchValue, setSearchValue] = React.useState(clientDetails.searchValue);
   const [autocompleteOptions, setAutocompleteOptions] = React.useState([]);
   const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
   const [selectedOption, setSelectedOption] = React.useState(null);
-  const [callBackDate, setCallBackDate] = React.useState("null");
+  const [callBackDate, setCallBackDate] = React.useState(clientDetails.callBackDate);
   const [clientType, setClientType] = React.useState(clientDetails.clientType);
   const [dropdown, setDropDown] = React.useState({
     clientType: [],
@@ -155,16 +155,19 @@ export default function ViewClient() {
   };
   React.useEffect(() => {
     refreshPageEveryTime();
+    handleSearchInput();
   }, [paginationModel.page, paginationModel.pageSize, searchValue, callBackDate, clientType]);
 
   React.useEffect(() => {
     getDropdown();
   }, []);
+
   const handleSearchInput = () => {
-    searchServerRows(searchValue, callBackDate, clientType).then((newGridData) => {
-      setGridData(newGridData);
-      setPaginationModel({ page: 0, pageSize: initialPageSize });
-    });
+    if (searchValue !== "" && searchValue.length >= 3)
+      searchServerRows(searchValue, callBackDate, clientType).then((newGridData) => {
+        setGridData(newGridData);
+        setPaginationModel({ page: 0, pageSize: initialPageSize });
+      });
   };
 
   const getDropdown = () => {
