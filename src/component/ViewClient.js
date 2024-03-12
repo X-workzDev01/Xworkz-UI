@@ -10,6 +10,12 @@ import { GridToolbarContainer } from "@mui/x-data-grid";
 import { GridToolbarFilterButton } from "@mui/x-data-grid";
 import { GridToolbarExport } from "@mui/x-data-grid";
 import "./Company.css"
+import {
+  saveSearchValue,
+  saveClientType,
+  saveCallBackDate
+} from "../store/Client/ClientDetails"
+import { useDispatch, useSelector } from "react-redux";
 
 function loadServerRows(page, pageSize, callBackDate, clientType) {
   const startingIndex = page * pageSize;
@@ -73,6 +79,8 @@ async function fetchFilteredData(searchValue, callBackDate, clientType) {
 }
 
 export default function ViewClient() {
+  const clientDetails = useSelector(state => state.clientDetails);
+  const dispatch = useDispatch();
   const initialPageSize = 25;
   const [paginationModel, setPaginationModel] = React.useState({
     page: 0,
@@ -89,7 +97,7 @@ export default function ViewClient() {
   const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
   const [selectedOption, setSelectedOption] = React.useState(null);
   const [callBackDate, setCallBackDate] = React.useState("null");
-  const [clientType, setClientType] = React.useState("null");
+  const [clientType, setClientType] = React.useState(clientDetails.clientType);
   const [dropdown, setDropDown] = React.useState({
     clientType: [],
     sourceOfConnection: [],
@@ -275,21 +283,24 @@ export default function ViewClient() {
 
   const handleCallBackDateChange = (event) => {
     setCallBackDate(event.target.value);
+    dispatch(saveCallBackDate(event.target.value))
   }
   const handleCompanyType = (event) => {
     setClientType(event.target.value);
+    dispatch(saveClientType(event.target.value))
   }
   const handleClear = () => {
+    dispatch(saveCallBackDate(null));
+    dispatch(saveClientType(null));
+    dispatch(saveSearchValue(""));
     setSearchValue("");
     setCallBackDate("null");
     setClientType("null");
     setSelectedOption(null);
-    sessionStorage.setItem("Search", "null");
-    setSelectedOption({ companyName: '' });
   }
   const handleAutoSuggestion = (event, newValue) => {
     setSearchValue(newValue.companyName);
-    sessionStorage.setItem("Search", newValue.companyName);
+    dispatch(saveSearchValue(newValue.companyName))
   }
 
   const handleColumnChange = (event) => {
@@ -431,7 +442,7 @@ export default function ViewClient() {
           slots={{
             toolbar: () => (
               <GridToolbarContainer>
-                <Button onClick={handleColumnChange}> <MoreVert/> Columns</Button>
+                <Button onClick={handleColumnChange}> <MoreVert /> Columns</Button>
                 <GridToolbarFilterButton />
                 <GridToolbarDensitySelector />
                 <GridToolbarExport />
@@ -464,18 +475,18 @@ export default function ViewClient() {
           }}
         >
           <h4>COLUMNS</h4>
-            {column.map(column => (
-              <FormControlLabel
-                key={column.field}
-                control={
-                  <Checkbox
-                    checked={displayColumn.includes(column.field)}
-                    onChange={() => handleChangeColumnVisibility(column.field)}
-                  />
-                }
-                label={column.headerName}
-              />
-            ))}
+          {column.map(column => (
+            <FormControlLabel
+              key={column.field}
+              control={
+                <Checkbox
+                  checked={displayColumn.includes(column.field)}
+                  onChange={() => handleChangeColumnVisibility(column.field)}
+                />
+              }
+              label={column.headerName}
+            />
+          ))}
         </Popover>
       </div>
     </div>
