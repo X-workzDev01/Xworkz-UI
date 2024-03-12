@@ -38,17 +38,10 @@ const AddHr = ({ open, handleClose, rowData, dropdown, handleAfterResponse }) =>
   const [verifyEmail, setVerifyEmail] = React.useState("");
   const [validateName, setValidateName] = React.useState("");
   const [validateDesignation, setValidateDesignation] = React.useState("");
-  const isDisable = checkEmailExist || validateName || emailCheck || checkPhoneNumberExist || phoneNumber || !formData.hrSpocName || !formData.hrContactNumber || !formData.designation
-
+  const [emailError, setEmailError] = React.useState("");
   React.useEffect(() => {
     if (open) {
-      setFormData({
-        hrSpocName: "",
-        hrEmail: "",
-        hrContactNumber: "",
-        designation: "",
-        status: "",
-      });
+      setFormData([]);
       setPhoneNumberCheck("");
       setEmailCheck("");
       setCheckEmailExist("");
@@ -56,6 +49,7 @@ const AddHr = ({ open, handleClose, rowData, dropdown, handleAfterResponse }) =>
       setVerifyEmail("");
       setValidateName("");
       setCharCount("");
+      setEmailError("");
     }
   }, [open]);
 
@@ -76,6 +70,8 @@ const AddHr = ({ open, handleClose, rowData, dropdown, handleAfterResponse }) =>
       } else {
         setEmailCheck("Invalid email");
         setCheckEmailExist("");
+        setEmailError("");
+        setVerifyEmail("");
       }
     }
     if (name === "hrContactNumber") {
@@ -149,13 +145,7 @@ const AddHr = ({ open, handleClose, rowData, dropdown, handleAfterResponse }) =>
               setTimeout(() => {
                 handleCloseForm();
               }, 1000);
-              setFormData({
-                hrSpocName: "",
-                hrEmail: "",
-                hrContactNumber: "",
-                designation: "",
-                status: "",
-              });
+              setFormData({});
               handleAfterResponse();
             }
           })
@@ -188,22 +178,28 @@ const AddHr = ({ open, handleClose, rowData, dropdown, handleAfterResponse }) =>
       .then((response) => {
         if (response.status === 200) {
           if (response.data === "accepted_email") {
-            setVerifyEmail("");
-          } else if (response.data === "rejected_email") {
             setVerifyEmail(response.data);
+            setEmailError("");
+            setEmailCheck("");
+            setCheckEmailExist("");
+          } else if (response.data === "rejected_email") {
+            setVerifyEmail();
+            setEmailCheck();
+            setCheckEmailExist("");
+            setEmailError(response.data);
           } else {
             setVerifyEmail("");
+            setEmailCheck("");
+            setCheckEmailExist("");
+            setEmailError(response.data);
           }
         } else {
           if (response.status === 500) {
             setVerifyEmail("");
-          } else {
-            setVerifyEmail("Unexpected Error:");
           }
         }
       })
       .catch((error) => {
-        console.log("check emailable credentils");
       });
   };
 
@@ -215,11 +211,10 @@ const AddHr = ({ open, handleClose, rowData, dropdown, handleAfterResponse }) =>
         .then((response) => {
           if (response.data === "Email already exists.") {
             setEmailCheck("");
+            setEmailError("");
             setCheckEmailExist(response.data);
           } else {
             if (validateEmail(email)) {
-              setEmailCheck("");
-              setCheckEmailExist("");
               validatingEmail(email)
             }
           }
@@ -248,6 +243,7 @@ const AddHr = ({ open, handleClose, rowData, dropdown, handleAfterResponse }) =>
     }
   };
 
+  const isDisable = verifyEmail === "accepted_email" || emailError || checkEmailExist || validateName || emailCheck || checkPhoneNumberExist || phoneNumber || !formData.hrSpocName || !formData.hrContactNumber || !formData.designation
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle>
@@ -293,7 +289,8 @@ const AddHr = ({ open, handleClose, rowData, dropdown, handleAfterResponse }) =>
             ) : (
               " "
             )}
-            {verifyEmail ? <Alert severity="error">{verifyEmail}</Alert> : " "}
+            {verifyEmail ? <Alert severity="success">{verifyEmail}</Alert> : " "}
+            {emailError ? <Alert severity="error">{emailError}</Alert> : " "}
           </Grid>
           <Grid item xs={12} sm={4}>
             <TextField
@@ -341,10 +338,10 @@ const AddHr = ({ open, handleClose, rowData, dropdown, handleAfterResponse }) =>
               multiline
               rows={4}
               InputProps={{
-                style: {  right: 1, bottom: 1 },
+                style: { right: 1, bottom: 1 },
                 endAdornment: (
                   <InputAdornment position="left">
-                    {charCount} 
+                    {charCount}
                   </InputAdornment>
                 ),
               }}
