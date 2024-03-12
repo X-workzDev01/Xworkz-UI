@@ -6,16 +6,19 @@ import {
   TextField,
   Button,
   Alert,
-  CircularProgress,
+  CircularProgress
 } from "@mui/material";
 import { Form } from "react-bootstrap";
 import { AccountCircle, LockClock, Send } from "@mui/icons-material";
 import axios from "axios";
 import { Urlconstant } from "../constant/Urlconstant";
 import Navbar from "./NavBar";
+import { useDispatch } from "react-redux";
+import { saveLoginEmail } from "../store/loginAuth/LoginEmail";
 
-const LoginPage = (props) => {
+const LoginPage = props => {
   let navigate = useNavigate();
+  const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [enable, setEnable] = useState(true);
@@ -26,21 +29,24 @@ const LoginPage = (props) => {
   const [effect, setEffect] = useState(false);
   const [loginProg, setLoginProg] = useState(false);
 
-  const handleEmailChange = (event) => {
+  const handleEmailChange = event => {
     //storing
     setEmail(event.target.value);
   };
 
-  useEffect(() => {
-    if (effect) {
-    }
-  }, [effect]);
+  useEffect(
+    () => {
+      if (effect) {
+      }
+    },
+    [effect]
+  );
 
-  const handlePasswordChange = (event) => {
+  const handlePasswordChange = event => {
     setPassword(event.target.value);
   };
 
-  const handleFormSubmit = async (event) => {
+  const handleFormSubmit = async event => {
     event.preventDefault();
     setLoginProg(true);
     setEnable(true);
@@ -49,14 +55,14 @@ const LoginPage = (props) => {
       setOtpError("Enter Otp");
       setLoginProg(false);
       setEnable(false);
-    } else {  
+    } else {
       axios
         .post(Urlconstant.url + `otp?email=${email}&otp=${password}`, {
           headers: {
-            spreadsheetId: Urlconstant.spreadsheetId,
-          },
+            spreadsheetId: Urlconstant.spreadsheetId
+          }
         })
-        .then((response) => {
+        .then(response => {
           props.get(true);
           console.log(response.data);
           if (response.data === "OTP Wrong") {
@@ -69,28 +75,22 @@ const LoginPage = (props) => {
           }
           setEffect(true);
         })
-        .catch((error) => { });
+        .catch(error => {});
     }
   };
 
   const handleOtp = () => {
     setIsSending(true);
-    sessionStorage.setItem("userId", email);
+    dispatch(saveLoginEmail(email));
+
     axios
       .post(Urlconstant.url + `login?email=${email}`, {
         headers: {
-          spreadsheetId: Urlconstant.spreadsheetId,
-        },
+          spreadsheetId: Urlconstant.spreadsheetId
+        }
       })
-      .then((response) => {
+      .then(response => {
         if (response.status === 200) {
-          sessionStorage.setItem("status", "null");
-          sessionStorage.setItem("course", "null");
-          sessionStorage.setItem("feesBatch","null");
-          sessionStorage.setItem("feesDate","null");
-          sessionStorage.setItem("feesPaymentMode","null")
-          sessionStorage.setItem("feesStatus","null")
-          sessionStorage.setItem("followUpStatus","null")
         } else {
           console.log("user not found:", response.status);
         }
@@ -100,7 +100,7 @@ const LoginPage = (props) => {
           "OTP has been sent to your mail ID it will Expire within 10 Minutes"
         );
       })
-      .catch((error) => {
+      .catch(error => {
         setEmailError("check the E-mail");
       })
       .finally(() => {
@@ -119,13 +119,16 @@ const LoginPage = (props) => {
           maxWidth: "400px",
           borderRadius: "6px",
           marginTop: "80px",
-          height: "70vh",
+          height: "70vh"
         }}
       >
         <Typography component="div" style={{ height: "50vh" }}>
           <Form onSubmit={handleFormSubmit} style={{ textAlign: "center" }}>
             <h2>Login</h2>
-            {emailError && <Alert severity="error">{emailError}</Alert>}
+            {emailError &&
+              <Alert severity="error">
+                {emailError}
+              </Alert>}
             <TextField
               label="Email"
               type="email"
@@ -139,7 +142,7 @@ const LoginPage = (props) => {
                   <AccountCircle
                     sx={{ color: "action.active", marginRight: "8px" }}
                   />
-                ),
+                )
               }}
               helperText={emailError}
             />
@@ -152,14 +155,15 @@ const LoginPage = (props) => {
               disabled={isSending}
               startIcon={<Send />}
             >
-              {isSending ? (
-                <CircularProgress size={24} color="inherit" />
-              ) : (
-                "Send OTP"
-              )}
+              {isSending
+                ? <CircularProgress size={24} color="inherit" />
+                : "Send OTP"}
             </Button>
-            <br></br>
-            {displayMessage && <Alert severity="info">{displayMessage}</Alert>}
+            <br />
+            {displayMessage &&
+              <Alert severity="info">
+                {displayMessage}
+              </Alert>}
             <TextField
               label="OTP"
               disabled={enable}
@@ -173,23 +177,22 @@ const LoginPage = (props) => {
                   <LockClock
                     sx={{ color: "action.active", marginRight: "8px" }}
                   />
-                ),
+                )
               }}
             />
-            {otpError && <Alert severity="error">{otpError}</Alert>}
+            {otpError &&
+              <Alert severity="error">
+                {otpError}
+              </Alert>}
             <Button
               type="submit"
               variant="contained"
               color="primary"
               disabled={enable}
             >
-
-              {loginProg ? (
-                <CircularProgress size={24} color="inherit" />
-              ) : (
-                "Login"
-              )}
-
+              {loginProg
+                ? <CircularProgress size={24} color="inherit" />
+                : "Login"}
             </Button>
           </Form>
         </Typography>

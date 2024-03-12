@@ -12,6 +12,8 @@ import { Urlconstant } from "../constant/Urlconstant";
 import EditModal from "./EditModal";
 import Header from "./Header";
 import AttendanceModal from "./AttendanceModal";
+import { useDispatch, useSelector } from "react-redux";
+import { saveAttendanceCourseName } from "../store/attendence/Attendence";
 
 async function loadServerRows(page, pageSize, courseName) {
   const startingIndex = page * pageSize;
@@ -20,19 +22,19 @@ async function loadServerRows(page, pageSize, courseName) {
     Urlconstant.url +
     `api/attendance/readData?startingIndex=${startingIndex}&maxRows=${maxRows}&courseName=${courseName}`;
 
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     fetch(apiUrl)
-      .then((response) => response.json())
-      .then((data) => {
+      .then(response => response.json())
+      .then(data => {
         resolve({
-          rows: data.attendanceData.map((row) => ({
+          rows: data.attendanceData.map(row => ({
             ...row,
-            id: row.id.toString(),
+            id: row.id.toString()
           })),
-          rowCount: data.size,
+          rowCount: data.size
         });
       })
-      .catch((error) => {
+      .catch(error => {
         console.error("Error fetching attendance data:", error);
         resolve({ rows: [], rowCount: 0 });
       });
@@ -43,16 +45,16 @@ function searchServerRows(searchValue, courseName) {
   const apiUrl =
     Urlconstant.url +
     `api/attendance/filterData/${courseName}?searchValue=${searchValue}`;
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     fetch(apiUrl)
-      .then((response) => response.json())
-      .then((data) => {
+      .then(response => response.json())
+      .then(data => {
         resolve({
-          rows: data.map((row) => ({ id: row.id.toString(), ...row })),
-          rowCount: data.size,
+          rows: data.map(row => ({ id: row.id.toString(), ...row })),
+          rowCount: data.size
         });
       })
-      .catch((error) => {
+      .catch(error => {
         console.error("Error fetching data:", error);
         resolve({ rows: [], rowCount: 0 });
       });
@@ -63,12 +65,17 @@ export default function ControlledSelectionServerPaginationGrid() {
   const initialPageSize = 25;
   const [paginationModel, setPaginationModel] = React.useState({
     page: 0,
-    pageSize: initialPageSize,
+    pageSize: initialPageSize
   });
   const [gridData, setGridData] = React.useState({
     rows: [],
-    rowCount: 0,
+    rowCount: 0
   });
+  const courseNameStore = useSelector(
+    state => state.saveAttendanceCourseName.attendanceCourseName
+  );
+  const dispatch = useDispatch();
+
   const [handleOpen, setHandleOpen] = useState(false);
   const [loading, setLoading] = React.useState(false);
   const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
@@ -77,9 +84,7 @@ export default function ControlledSelectionServerPaginationGrid() {
   const [autocompleteOptions, setAutocompleteOptions] = React.useState([]);
   const [isModalOpen, setModalOpen] = React.useState(false);
   const [editedRowData, setEditedRowData] = React.useState(null);
-  const [courseName, setCourseName] = React.useState(
-    sessionStorage.getItem("courseName")
-  );
+  const [courseName, setCourseName] = React.useState(courseNameStore);
   const [courseDropdown, setCourseDropdown] = React.useState("");
   const [totalClass, setTotalClass] = useState(0);
   const [course, setCourse] = useState("");
@@ -92,29 +97,33 @@ export default function ControlledSelectionServerPaginationGrid() {
     getActiveCourse();
   }, []);
 
-  useEffect(() => {
-    if (courseName) {
-      getTotalClass();
-    }
-  }, [courseName]);
+  useEffect(
+    () => {
+      if (courseName) {
+        getTotalClass();
+      }
+    },
+    [courseName]
+  );
 
-  const handleCourseChange = (event) => {
+  const handleCourseChange = event => {
     const courseName = event.target.value;
-    sessionStorage.setItem("courseName", courseName);
+    dispatch(saveAttendanceCourseName(courseName));
     setCourseName(courseName);
   };
 
   function getTotalClass() {
     axios
       .get(
-        Urlconstant.url + `api/attendance/getBatchAttendanceCount?courseName=${courseName}`
+        Urlconstant.url +
+          `api/attendance/getBatchAttendanceCount?courseName=${courseName}`
       )
-      .then((response) => {
+      .then(response => {
         const batchAttendanceData = response.data;
         const key = Object.keys(batchAttendanceData)[0];
-        setTotalClass(key)
+        setTotalClass(key);
       })
-      .catch((error) => {
+      .catch(error => {
         console.error("Error fetching total class data:", error);
       });
   }
@@ -125,10 +134,10 @@ export default function ControlledSelectionServerPaginationGrid() {
         `api/attendance/suggestion/${courseName}?value=${searchValue}`;
 
       const response = await axios.get(apiUrl);
-      const suggestions = response.data.map((option) => ({
+      const suggestions = response.data.map(option => ({
         traineeName: option.name,
         email: option.email,
-        label: `${option.name}-${option.email}`,
+        label: `${option.name}-${option.email}`
       }));
       setAutocompleteOptions(suggestions);
       return suggestions;
@@ -191,16 +200,16 @@ export default function ControlledSelectionServerPaginationGrid() {
     axios
       .get(Urlconstant.url + "api/getCourseName?status=Active", {
         headers: {
-          spreadsheetId: Urlconstant.spreadsheetId,
-        },
+          spreadsheetId: Urlconstant.spreadsheetId
+        }
       })
-      .then((response) => {
+      .then(response => {
         setCourseDropdown(response.data);
       })
-      .catch((error) => { });
+      .catch(error => {});
   };
   const handleSearchClick = () => {
-    searchServerRows(searchValue, courseName).then((newGridData) => {
+    searchServerRows(searchValue, courseName).then(newGridData => {
       setGridData(newGridData);
       setPaginationModel({ page: 0, pageSize: initialPageSize });
       setSearchInputValue("");
@@ -212,7 +221,7 @@ export default function ControlledSelectionServerPaginationGrid() {
     setId(id);
   };
   const handleClear = () => {
-    sessionStorage.setItem("courseName", "null");
+    dispatch(saveAttendanceCourseName(null));
     sessionStorage.setItem("searchName", "null");
     setCourseName("null");
     setTotalClass(0);
@@ -221,44 +230,47 @@ export default function ControlledSelectionServerPaginationGrid() {
   };
   const handleAutocompleteChange = (event, newValue) => {
     setSelectedOption(isClearClicked ? null : newValue);
-    sessionStorage.setItem("searchName", newValue?.name);
+    sessionStorage.setItem("searchName", newValue);
     setIsClearClicked(false);
   };
-  React.useEffect(() => {
-    refreshPageEveryTime();
-  }, [paginationModel.page, paginationModel.pageSize, searchValue, courseName]);
+  React.useEffect(
+    () => {
+      refreshPageEveryTime();
+    },
+    [paginationModel.page, paginationModel.pageSize, searchValue, courseName]
+  );
 
   const columns = [
     {
       field: "traineeName",
       headerName: "Trainee Name",
       width: 350,
-      valueGetter: (params) => params.row.name,
+      valueGetter: params => params.row.name
     },
     {
       field: "email",
       headerName: "Email",
       width: 350,
-      valueGetter: (params) => params.row.email,
+      valueGetter: params => params.row.email
     },
     {
       field: "course",
       headerNam1e: "Course",
       width: 450,
-      valueGetter: (params) => params.row.courseName,
+      valueGetter: params => params.row.courseName
     },
 
     {
       field: "totalAbsent",
       headerName: "Total Absent",
       width: 300,
-      valueGetter: (params) => params.row.totalAbsent,
+      valueGetter: params => params.row.totalAbsent
     },
     {
       field: "actions",
       headerName: "Actions",
       width: 120,
-      renderCell: (params) => (
+      renderCell: params =>
         <div>
           <Button
             variant="outlined"
@@ -270,10 +282,8 @@ export default function ControlledSelectionServerPaginationGrid() {
             View
           </Button>
         </div>
-      ),
-    },
+    }
   ];
-
 
   return (
     <div>
@@ -284,7 +294,7 @@ export default function ControlledSelectionServerPaginationGrid() {
         style={{
           display: "flex",
           alignItems: "center",
-          marginTop: "100px",
+          marginTop: "100px"
         }}
       >
         <Autocomplete
@@ -292,21 +302,21 @@ export default function ControlledSelectionServerPaginationGrid() {
           freeSolo
           id="free-solo-2-demo"
           disableClearable
-          getOptionLabel={(option) => option.label}
+          getOptionLabel={option => option.label}
           style={{ width: "22rem", padding: "10px 20px" }}
           value={selectedOption}
           onChange={handleAutocompleteChange}
-          renderInput={(params) => (
+          renderInput={params =>
             <TextField
               {...params}
               type="text"
-              onChange={(e) => {
+              onChange={e => {
                 const value = e.target.value;
                 if (value.length >= 3) {
                   setSearchValue(value);
                   setPaginationModel({
                     page: 0,
-                    pageSize: initialPageSize,
+                    pageSize: initialPageSize
                   });
                 }
                 if (value.length >= 1 && value.length <= 3) {
@@ -314,11 +324,11 @@ export default function ControlledSelectionServerPaginationGrid() {
                 }
               }}
               placeholder="Search..."
-            />
-          )}
-          renderOption={(props, option) => (
-            <li {...props}>{option.label}</li>
-          )}
+            />}
+          renderOption={(props, option) =>
+            <li {...props}>
+              {option.label}
+            </li>}
         />
         <FormControl>
           <InputLabel id="demo-simple-select-label">Select Course</InputLabel>
@@ -333,16 +343,16 @@ export default function ControlledSelectionServerPaginationGrid() {
             sx={{
               marginRight: "10px",
               width: "200px",
-              fontSize: "12px",
+              fontSize: "12px"
             }}
             onChange={handleCourseChange}
           >
             {Array.isArray(courseDropdown)
-              ? courseDropdown.map((item, k) => (
-                <MenuItem value={item} key={k}>
-                  {item}
-                </MenuItem>
-              ))
+              ? courseDropdown.map((item, k) =>
+                  <MenuItem value={item} key={k}>
+                    {item}
+                  </MenuItem>
+                )
               : null}
           </Select>
         </FormControl>
@@ -361,8 +371,21 @@ export default function ControlledSelectionServerPaginationGrid() {
           </Button>
         </div>
         <div>
-          <span style={{ paddingLeft: "15px", marginRight: '8px' }}>Total Class  <span style={{ marginRight: '5px' }}>:</span>
-            <span style={{ backgroundColor: "darkgray", borderRadius: "15px", paddingTop: "5px", paddingLeft: "12px", paddingRight: "12px", padding: "4px" }} >{totalClass}</span></span>
+          <span style={{ paddingLeft: "15px", marginRight: "8px" }}>
+            Total Class <span style={{ marginRight: "5px" }}>:</span>
+            <span
+              style={{
+                backgroundColor: "darkgray",
+                borderRadius: "15px",
+                paddingTop: "5px",
+                paddingLeft: "12px",
+                paddingRight: "12px",
+                padding: "4px"
+              }}
+            >
+              {totalClass}
+            </span>
+          </span>
         </div>
       </div>
       <div style={{ height: "650px", width: "100%" }}>
@@ -376,7 +399,7 @@ export default function ControlledSelectionServerPaginationGrid() {
           rowCount={gridData.rowCount}
           paginationMode={searchValue === "" ? "server" : "client"}
           onPaginationModelChange={setPaginationModel}
-          onRowSelectionModelChange={(newRowSelectionModel) => {
+          onRowSelectionModelChange={newRowSelectionModel => {
             setRowSelectionModel(newRowSelectionModel);
           }}
           rowSelectionModel={rowSelectionModel}
@@ -393,16 +416,14 @@ export default function ControlledSelectionServerPaginationGrid() {
           setModalOpen(false);
         }}
       />
-      {id && course ? (
-        <AttendanceModal
-          open={handleOpen}
-          handleClose={() => setHandleOpen(false)}
-          id={id}
-          batch={course}
-        />
-      ) : (
-        ""
-      )}
+      {id && course
+        ? <AttendanceModal
+            open={handleOpen}
+            handleClose={() => setHandleOpen(false)}
+            id={id}
+            batch={course}
+          />
+        : ""}
     </div>
   );
 }
