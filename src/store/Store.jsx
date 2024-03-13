@@ -4,6 +4,7 @@ import followUpDropDowns from './followup/FollowUpDropdowns';
 import FeesDetiles from './feesDetials/FeesDetiles';
 import LoginEmail from './loginAuth/LoginEmail';
 import Attendence from './attendence/Attendence';
+import ClientDetails from './Client/ClientDetails';
 
 export default configureStore ({
   reducer: {
@@ -12,5 +13,6 @@ export default configureStore ({
     followUpDropDown: followUpDropDowns,
     feesDetiles: FeesDetiles,
     loginDetiles: LoginEmail,
+    clientDetails: ClientDetails,
   },
 });
