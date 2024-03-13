@@ -182,7 +182,6 @@ export default function FollowUp() {
       fetch(apiUrl, requestOptions)
         .then(response => response.json())
         .then(data => {
-          console.log("Received data from server:", data);
 
           const newGridData = {
             rows: data.followUpData.map(row => ({

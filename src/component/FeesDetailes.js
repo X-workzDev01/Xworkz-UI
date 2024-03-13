@@ -92,8 +92,9 @@ export const FeesDetailes = () => {
     response.then(res => {
       setGridData({
         rows: res.data.listOfFeesDto
-          ? res.data.listOfFeesDto.map(row => ({
-              ...row
+          ? res.data.listOfFeesDto.map((row, id) => ({
+              ...row,
+              id: id
             }))
           : "",
         rowCount: res.data.size

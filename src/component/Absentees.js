@@ -11,8 +11,10 @@ import TextField from "@mui/material/TextField";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Urlconstant } from "../constant/Urlconstant";
+import { useSelector } from "react-redux";
 
 const Absentees = () => {
+  const email = useSelector(state => state.loginDetiles.email)
   const [selectedBatch, setSelectedBatch] = useState("");
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [selectedStudents, setSelectedStudents] = useState([]);
@@ -183,7 +185,7 @@ const Absentees = () => {
         id: student.id,
         name: student.name,
         reason: reasons[student.id] || "",
-        updatedBy: sessionStorage.getItem("userId"),
+        updatedBy: email,
       }));
 
       axios
