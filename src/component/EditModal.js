@@ -344,8 +344,6 @@ const EditModal = ({
           }
         })
         .catch({});
-    } else {
-      setEmailCheck("Enter the valid Email");
     }
   };
 
@@ -365,7 +363,7 @@ const EditModal = ({
   };
 
   const verifyEmail = email => {
-    
+
     emailVerification(email).then(response => {
       if (response.data === "accepted_email") {
         setverifyHandleEmailError(response.data);
@@ -376,7 +374,7 @@ const EditModal = ({
       } else {
         setverifyHandleEmailError(response.data);
       }
-    }).catch(e=>{})
+    }).catch(e => { })
   };
   const handleVerifyEmail = event => {
     const email = event.target.value;
@@ -623,7 +621,7 @@ const EditModal = ({
     referalContactNumber ||
     emailCheck ||
     (xworkzEmailErrorVerify !== "accepted_email" && xworkzEmailErrorVerify) ||
-    verifyHandleEmailerror === "accepted_email" ||
+    (verifyHandleEmailerror !== "accepted_email" && verifyHandleEmailerror) ||
     xworkzemailCheck ||
     xworkzEmailCheckExists ||
     phoneNumberError ||
