@@ -27,6 +27,7 @@ import {
   validateContactNumber,
   validateEmail
 } from "../constant/ValidationConstant";
+import { useSelector } from "react-redux";
 const fieldStyle = { margin: "20px" };
 
 const EditModal = ({
@@ -37,8 +38,8 @@ const EditModal = ({
   attemptStatus
 }) => {
   const navigate = useNavigate();
+  const email = useSelector(state => state.loginDetiles.email)
   const [feesConcession, setFeesConcession] = useState(feeConcession);
-  const email = sessionStorage.getItem("userId");
   const [isConfirming, setIsConfirming] = React.useState(false);
   const [selectedValue, setSelectedValue] = React.useState(" ");
   const [editedData, setEditedData] = React.useState([]);
