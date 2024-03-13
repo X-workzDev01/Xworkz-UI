@@ -20,9 +20,9 @@ import {
 import { ClientDropDown } from "../constant/ClientDropDown";
 import { textFieldStyles } from "../constant/FormStyle";
 import "./Company.css"
+import { useSelector } from "react-redux";
 export default function ClientDetails() {
-
-  const email = sessionStorage.getItem("userId");
+  const email = useSelector(state => state.loginDetiles.email)
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [snackbarMessage, setSnackbarMessage] = React.useState("");
