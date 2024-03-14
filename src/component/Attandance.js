@@ -216,7 +216,7 @@ export default function ControlledSelectionServerPaginationGrid() {
     sessionStorage.setItem("searchName", "null");
     setCourseName("null");
     setTotalClass(0);
-    setSearchValue("");
+    setSearchValue("null");
     setSelectedOption({ traineeName: "" });
   };
   const handleAutocompleteChange = (event, newValue) => {
