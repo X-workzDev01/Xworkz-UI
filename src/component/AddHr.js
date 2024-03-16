@@ -178,7 +178,8 @@ const AddHr = ({ open, handleClose, rowData, dropdown, handleAfterResponse }) =>
       .get(`${Urlconstant.url}api/verify-email?email=${email}`)
       .then((response) => {
         if (response.status === 200) {
-          if (response.data === "accepted_email") {
+
+          if (response === "accepted_email") {
             setVerifyEmail(response.data);
             setEmailError("");
             setEmailCheck("");
@@ -213,6 +214,7 @@ const AddHr = ({ open, handleClose, rowData, dropdown, handleAfterResponse }) =>
           if (response.data === "Email already exists.") {
             setEmailCheck("");
             setEmailError("");
+            setVerifyEmail("");
             setCheckEmailExist(response.data);
           } else {
             if (validateEmail(email)) {
@@ -244,7 +246,7 @@ const AddHr = ({ open, handleClose, rowData, dropdown, handleAfterResponse }) =>
     }
   };
 
-  const isDisable = verifyEmail === "accepted_email" || emailError || checkEmailExist || validateName || emailCheck || checkPhoneNumberExist || phoneNumber || !formData.hrSpocName || !formData.hrContactNumber || !formData.designation
+  const isDisable = (verifyEmail !== "accepted_email" && verifyEmail) || emailError || checkEmailExist || validateName || emailCheck || checkPhoneNumberExist || phoneNumber || !formData.hrSpocName || !formData.hrContactNumber || !formData.designation
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle>
@@ -290,7 +292,11 @@ const AddHr = ({ open, handleClose, rowData, dropdown, handleAfterResponse }) =>
             ) : (
               " "
             )}
-            {verifyEmail ? <Alert severity="success">{verifyEmail}</Alert> : " "}
+
+            {verifyEmail === "accepted_email" && (
+              <Alert severity="success">{verifyEmail}</Alert>
+            )}
+            {verifyEmail && verifyEmail !== "accepted_email" && <Alert severity="error">{verifyEmail}</Alert>}
             {emailError ? <Alert severity="error">{emailError}</Alert> : " "}
           </Grid>
           <Grid item xs={12} sm={4}>

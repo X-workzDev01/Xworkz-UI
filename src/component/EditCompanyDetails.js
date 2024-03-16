@@ -169,6 +169,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
             if (res.data === "Company Email Already Exists") {
               setCheckEmailExist(res.data);
               setEmailCheck("");
+              setVerifyEmail("");
             } else {
               setCheckEmailExist("");
               if (validateEmail(companyEmail)) {
@@ -188,12 +189,12 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
       .get(`${Urlconstant.url}api/verify-email?email=${email}`)
       .then((response) => {
         if (response.status === 200) {
-          if (response.data === "accepted_email") {
-            setVerifyEmail(response.data);
+          if (response === "accepted_email") {
+            setVerifyEmail(response);
           } else if (response.data === "rejected_email") {
-            setVerifyEmail(response.data);
+            setVerifyEmail(response);
           } else {
-            setVerifyEmail(response.data);
+            setVerifyEmail(response);
           }
         } else {
           if (response.status === 500) {
@@ -201,7 +202,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
           }
         }
       })
-      .catch((error) => {});
+      .catch((error) => { });
   };
 
   const handleCompanyWebsite = (companyWebsite) => {
@@ -325,14 +326,14 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
     companyNameCheck ||
     emailCheck ||
     phoneNumberCheck ||
-    checkEmailExist||
+    checkEmailExist ||
     nameCheck ||
     checkCompanyWebsite ||
     checkPhoneNumberExist ||
     error ||
     founderNameCheck ||
     addressError ||
-    verifyEmail === "accepted_email";
+    (verifyEmail !== "accepted_email" && verifyEmail);
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle>

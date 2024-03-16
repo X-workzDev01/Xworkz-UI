@@ -174,8 +174,10 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
         if (response.status === 200) {
           if (response.data === "accepted_email") {
             setVerifyEmail(response.data);
+            setCheckEmailExist("");
           } else if (response.data === "rejected_email") {
             setVerifyEmail("");
+            setCheckEmailExist("");
             setEmailError(response.data);
           } else {
             setVerifyEmail("");
@@ -186,7 +188,8 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
           setEmailError("");
         }
       })
-      .catch((error) => {});
+      .catch((error) => { });
+
   };
 
   const handleEmailCheck = (email) => {
@@ -198,9 +201,11 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
           .get(Urlconstant.url + `api/hremailcheck?hrEmail=${email}`)
           .then((response) => {
             if (response.data === "Email already exists.") {
+              console.log(verifyEmail)
+              setVerifyEmail("");
               setEmailCheck("");
-              setCheckEmailExist(response.data);
               setEmailError("");
+              setCheckEmailExist(response.data);
             } else {
               if (validateEmail(email)) {
                 validatingEmail(email);
@@ -258,7 +263,7 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
     phoneNumber ||
     checkEmailExist ||
     checkPhoneNumberExist ||
-    verifyEmail === "accepted_email" ||
+    (verifyEmail !== "accepted_email" && verifyEmail) ||
     emailError ||
     validateName ||
     commentError ||
@@ -309,8 +314,11 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
             ) : (
               " "
             )}
+            {verifyEmail === "accepted_email" && (
+              <Alert severity="success">{verifyEmail}</Alert>
+            )}
+            {verifyEmail && verifyEmail !== "accepted_email" && <Alert severity="error">{verifyEmail}</Alert>}
 
-            {verifyEmail ? <Alert severity="success">{verifyEmail}</Alert> : " "}
             {emailError ? <Alert severity="error">{emailError}</Alert> : " "}
           </Grid>
           <Grid item xs={12} sm={4}>
