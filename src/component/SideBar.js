@@ -7,6 +7,7 @@ import {
   FaTh,
   FaUserAlt,
   FaWhatsapp,
+  FaBirthdayCake,
 } from "react-icons/fa";
 import { MdAccountBalanceWallet } from "react-icons/md";
 
@@ -77,8 +78,15 @@ const Sidebar = ({ children }) => {
       name: "Fees Details",
       icon: <MdAccountBalanceWallet />,
     },
+    {
+      path: "birthdays",
+      name: "Birthday Info",
+      icon: <FaBirthdayCake />,
+    },
+
+
   ];
-  const click = () => {};
+  const click = () => { };
   return (
     <div className="">
       <div style={{ width: isOpen ? "200px" : "50px" }} className="sidebar">
@@ -95,17 +103,15 @@ const Sidebar = ({ children }) => {
             activeClassName="active"
           >
             <div
-              className={`icon ${
-                defaultSelected === item.path ? "active" : ""
-              }`}
+              className={`icon ${defaultSelected === item.path ? "active" : ""
+                }`}
             >
               {item.icon}
             </div>
             <div
               style={{ display: isOpen ? "block" : "none" }}
-              className={`link_text ${
-                defaultSelected === item.path ? "active" : ""
-              }`}
+              className={`link_text ${defaultSelected === item.path ? "active" : ""
+                }`}
             >
               {item.name}
             </div>

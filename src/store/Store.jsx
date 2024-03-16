@@ -5,6 +5,7 @@ import FeesDetiles from './feesDetials/FeesDetiles';
 import LoginEmail from './loginAuth/LoginEmail';
 import Attendence from './attendence/Attendence';
 import ClientDetails from './Client/ClientDetails';
+import Birthday from './birthday/Birthday';
 
 export default configureStore ({
   reducer: {
@@ -14,5 +15,6 @@ export default configureStore ({
     feesDetiles: FeesDetiles,
     loginDetiles: LoginEmail,
     clientDetails: ClientDetails,
+    birthday:Birthday,
   },
 });
