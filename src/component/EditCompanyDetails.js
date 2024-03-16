@@ -169,6 +169,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
             if (res.data === "Company Email Already Exists") {
               setCheckEmailExist(res.data);
               setEmailCheck("");
+              setVerifyEmail("");
             } else {
               setCheckEmailExist("");
               if (validateEmail(companyEmail)) {
@@ -188,12 +189,12 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
       .get(`${Urlconstant.url}api/verify-email?email=${email}`)
       .then((response) => {
         if (response.status === 200) {
-          if (response.data === "accepted_email") {
-            setVerifyEmail(response.data);
+          if (response === "accepted_email") {
+            setVerifyEmail(response);
           } else if (response.data === "rejected_email") {
-            setVerifyEmail(response.data);
+            setVerifyEmail(response);
           } else {
-            setVerifyEmail(response.data);
+            setVerifyEmail(response);
           }
         } else {
           if (response.status === 500) {
@@ -333,245 +334,245 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
     founderNameCheck ||
     addressError ||
     (verifyEmail !== "accepted_email" && verifyEmail);
-return (
-  <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
-    <DialogTitle>
-      Edit Company Details
-      <IconButton
-        color="inherit"
-        onClick={handleClose}
-        edge="start"
-        aria-label="close"
-        style={style}
-      >
-        <GridCloseIcon />
-      </IconButton>
-    </DialogTitle>
-    <DialogContent>
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={4}>
-          <TextField
-            label="Company Name"
-            name="companyName"
-            defaultValue={rowData.companyName}
-            onChange={handleChange}
-            onBlur={handleCompanyName}
-            required
-            fullWidth
-            margin="normal"
-          />
-
-          {nameCheck ? <Alert severity="error">{nameCheck}</Alert> : " "}
-          {companyNameCheck ? (
-            <Alert severity="error">{companyNameCheck}</Alert>
-          ) : (
-            " "
-          )}
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <TextField
-            label="Company Email"
-            name="companyEmail"
-            defaultValue={rowData.companyEmail}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-            onBlur={handleEmail}
-          />
-          {emailCheck ? <Alert severity="error">{emailCheck}</Alert> : ""}
-          {checkEmailExist ? <Alert severity="error">{checkEmailExist}</Alert> : ""}
-          {verifyEmail === "accepted_email" && <Alert severity="success">{verifyEmail}</Alert>}
-          {verifyEmail && verifyEmail !== "accepted_email" && <Alert severity="error">{verifyEmail}</Alert>}
-
-
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <TextField
-            label="Company Contact Number"
-            name="companyLandLineNumber"
-            defaultValue={rowData.companyLandLineNumber}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-            onBlur={handlePhoneNumber}
-          />
-
-          {phoneNumberCheck ? (
-            <Alert severity="error">{phoneNumberCheck}</Alert>
-          ) : (
-            " "
-          )}
-          {checkPhoneNumberExist ? (
-            <Alert severity="error">{checkPhoneNumberExist}</Alert>
-          ) : (
-            " "
-          )}
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <TextField
-            label="Company Website"
-            name="companyWebsite"
-            defaultValue={rowData.companyWebsite != "NA" ? rowData.companyWebsite : ""}
-            placeholder={rowData.companyWebsite === "NA" ? "NA" : ""}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-            onBlur={handleWebsite}
-          />
-          {error ? <Alert severity="error">{error}</Alert> : " "}
-          {checkCompanyWebsite ? (
-            <Alert severity="error">{checkCompanyWebsite}</Alert>
-          ) : (
-            " "
-          )}
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <TextField
-            label="Company Location"
-            name="companyLocation"
-            defaultValue={rowData.companyLocation}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-            select
-          >{dropdown.sourceOfLocation.map((item, index) => (
-            <MenuItem key={index} value={item}>
-              {item}
-            </MenuItem>
-          ))}
-          </TextField>
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <TextField
-            label="Company Founder"
-            name="companyFounder"
-            defaultValue={rowData.companyFounder != "NA" ? rowData.companyFounder : ""}
-            placeholder={rowData.companyFounder === "NA" ? "NA" : ""}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-          />
-          {founderNameCheck ? (
-            <Alert severity="error">{founderNameCheck}</Alert>
-          ) : (
-            " "
-          )}
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <TextField
-            label="Source Of Connection"
-            name="sourceOfConnection"
-            defaultValue={rowData.sourceOfConnection}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-            select
-          >
-            {dropdown.sourceOfConnection.map((item, index) => (
-              <MenuItem key={index} value={item}>
-                {item}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <TextField
-            label="Company Type"
-            name="companyType"
-            defaultValue={rowData.companyType}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-            select
-          >
-            {dropdown.clientType.map((item, index) => (
-              <MenuItem key={index} value={item}>
-                {item}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Grid>
-
-        <Grid item xs={12} sm={4}>
-          <TextField
-            label="Company Status"
-            name="status"
-            defaultValue={rowData.status}
-            onChange={handleChange}
-            required
-            fullWidth
-            margin="normal"
-            select
-          >
-            {ClientDropDown.statusList.map((option) => (
-              <MenuItem key={option} value={option}>
-                {option}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <TextField
-            id="standard-multiline-static"
-            rows={4}
-            label="Company Address"
-            name="companyAddress"
-            defaultValue={rowData.companyAddress != "NA" ? rowData.companyAddress : ""}
-            placeholder={rowData.companyAddress === "NA" ? "NA" : ""}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-            multiline
-          />
-          {addressError ? (
-            <Alert severity="error">{addressError}</Alert>
-          ) : (
-            " "
-          )}
-
-        </Grid>
-      </Grid>
-    </DialogContent>
-    <DialogActions>
-      {loading ? (
-        <CircularProgress size={20} />
-      ) : (
-        <Button disabled={disable} onClick={handleHrAddClick} color="primary">
-          Edit
-        </Button>
-      )}
-    </DialogActions>
-    <Snackbar
-      open={snackbarOpen}
-      autoHideDuration={3000}
-      onClose={handleSnackbarClose}
-    >
-      <Alert onClose={handleClose} severity="success" sx={{ width: "100%" }}>
-        {responseMessage}
-      </Alert>
-    </Snackbar>
-    <Dialog open={isConfirming} onClose={handleClose} fullWidth maxWidth="xs" >
-      <DialogTitle>Confirm Edit</DialogTitle>
-      <DialogContent>
-        Are you sure want to Edit the Company Details?
-      </DialogContent>
-      <DialogActions>
+  return (
+    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
+      <DialogTitle>
+        Edit Company Details
         <IconButton
           color="inherit"
-          onClick={() => setIsConfirming(false)}
+          onClick={handleClose}
           edge="start"
           aria-label="close"
           style={style}
         >
           <GridCloseIcon />
         </IconButton>
-        <Button onClick={handleSaveClick} color="primary" disabled={isConfirmed}>
-          Confirm
-        </Button>
+      </DialogTitle>
+      <DialogContent>
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={4}>
+            <TextField
+              label="Company Name"
+              name="companyName"
+              defaultValue={rowData.companyName}
+              onChange={handleChange}
+              onBlur={handleCompanyName}
+              required
+              fullWidth
+              margin="normal"
+            />
+
+            {nameCheck ? <Alert severity="error">{nameCheck}</Alert> : " "}
+            {companyNameCheck ? (
+              <Alert severity="error">{companyNameCheck}</Alert>
+            ) : (
+              " "
+            )}
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <TextField
+              label="Company Email"
+              name="companyEmail"
+              defaultValue={rowData.companyEmail}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+              onBlur={handleEmail}
+            />
+            {emailCheck ? <Alert severity="error">{emailCheck}</Alert> : ""}
+            {checkEmailExist ? <Alert severity="error">{checkEmailExist}</Alert> : ""}
+            {verifyEmail === "accepted_email" && <Alert severity="success">{verifyEmail}</Alert>}
+            {verifyEmail && verifyEmail !== "accepted_email" && <Alert severity="error">{verifyEmail}</Alert>}
+
+
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <TextField
+              label="Company Contact Number"
+              name="companyLandLineNumber"
+              defaultValue={rowData.companyLandLineNumber}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+              onBlur={handlePhoneNumber}
+            />
+
+            {phoneNumberCheck ? (
+              <Alert severity="error">{phoneNumberCheck}</Alert>
+            ) : (
+              " "
+            )}
+            {checkPhoneNumberExist ? (
+              <Alert severity="error">{checkPhoneNumberExist}</Alert>
+            ) : (
+              " "
+            )}
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <TextField
+              label="Company Website"
+              name="companyWebsite"
+              defaultValue={rowData.companyWebsite != "NA" ? rowData.companyWebsite : ""}
+              placeholder={rowData.companyWebsite === "NA" ? "NA" : ""}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+              onBlur={handleWebsite}
+            />
+            {error ? <Alert severity="error">{error}</Alert> : " "}
+            {checkCompanyWebsite ? (
+              <Alert severity="error">{checkCompanyWebsite}</Alert>
+            ) : (
+              " "
+            )}
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <TextField
+              label="Company Location"
+              name="companyLocation"
+              defaultValue={rowData.companyLocation}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+              select
+            >{dropdown.sourceOfLocation.map((item, index) => (
+              <MenuItem key={index} value={item}>
+                {item}
+              </MenuItem>
+            ))}
+            </TextField>
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <TextField
+              label="Company Founder"
+              name="companyFounder"
+              defaultValue={rowData.companyFounder != "NA" ? rowData.companyFounder : ""}
+              placeholder={rowData.companyFounder === "NA" ? "NA" : ""}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+            />
+            {founderNameCheck ? (
+              <Alert severity="error">{founderNameCheck}</Alert>
+            ) : (
+              " "
+            )}
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <TextField
+              label="Source Of Connection"
+              name="sourceOfConnection"
+              defaultValue={rowData.sourceOfConnection}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+              select
+            >
+              {dropdown.sourceOfConnection.map((item, index) => (
+                <MenuItem key={index} value={item}>
+                  {item}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <TextField
+              label="Company Type"
+              name="companyType"
+              defaultValue={rowData.companyType}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+              select
+            >
+              {dropdown.clientType.map((item, index) => (
+                <MenuItem key={index} value={item}>
+                  {item}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+
+          <Grid item xs={12} sm={4}>
+            <TextField
+              label="Company Status"
+              name="status"
+              defaultValue={rowData.status}
+              onChange={handleChange}
+              required
+              fullWidth
+              margin="normal"
+              select
+            >
+              {ClientDropDown.statusList.map((option) => (
+                <MenuItem key={option} value={option}>
+                  {option}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <TextField
+              id="standard-multiline-static"
+              rows={4}
+              label="Company Address"
+              name="companyAddress"
+              defaultValue={rowData.companyAddress != "NA" ? rowData.companyAddress : ""}
+              placeholder={rowData.companyAddress === "NA" ? "NA" : ""}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+              multiline
+            />
+            {addressError ? (
+              <Alert severity="error">{addressError}</Alert>
+            ) : (
+              " "
+            )}
+
+          </Grid>
+        </Grid>
+      </DialogContent>
+      <DialogActions>
+        {loading ? (
+          <CircularProgress size={20} />
+        ) : (
+          <Button disabled={disable} onClick={handleHrAddClick} color="primary">
+            Edit
+          </Button>
+        )}
       </DialogActions>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert onClose={handleClose} severity="success" sx={{ width: "100%" }}>
+          {responseMessage}
+        </Alert>
+      </Snackbar>
+      <Dialog open={isConfirming} onClose={handleClose} fullWidth maxWidth="xs" >
+        <DialogTitle>Confirm Edit</DialogTitle>
+        <DialogContent>
+          Are you sure want to Edit the Company Details?
+        </DialogContent>
+        <DialogActions>
+          <IconButton
+            color="inherit"
+            onClick={() => setIsConfirming(false)}
+            edge="start"
+            aria-label="close"
+            style={style}
+          >
+            <GridCloseIcon />
+          </IconButton>
+          <Button onClick={handleSaveClick} color="primary" disabled={isConfirmed}>
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Dialog>
-  </Dialog>
-);
+  );
 };
 export default EditCompanyDetails;
 

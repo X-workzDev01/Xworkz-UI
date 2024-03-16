@@ -197,6 +197,7 @@ export default function ClientDetails() {
           if (res.data === "Company Email Already Exists") {
             setEmailCheck("");
             setCompanyEmailCheck("Email Already Exists");
+            setEmailCheckError("")
           } else {
             setCompanyEmailCheck("");
             if (validateEmail(companyEmail)) {
@@ -212,13 +213,17 @@ export default function ClientDetails() {
       .get(`${Urlconstant.url}api/verify-email?email=${email}`)
       .then((response) => {
         if (response.status === 200) {
+          const response = "accepted_email";
           if (response.data === "accepted_email") {
             setEmailCheck("");
             setEmailCheckError(response.data);
+            setCompanyEmailCheck("")
           } else if (response.data === "rejected_email") {
             setEmailCheck("");
+            setCompanyEmailCheck("")
             setEmailCheckError(response.data);
           } else {
+            setCompanyEmailCheck("");
             setEmailCheck("")
             setEmailCheckError(response.data)
           }
