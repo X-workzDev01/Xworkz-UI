@@ -10,11 +10,12 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Urlconstant } from "../constant/Urlconstant";
 import Header from "./Header";
-import { GridToolbar } from "@mui/x-data-grid";
-import ExportData from "./ExportData";
 import { GridToolbarFilterButton } from "@mui/x-data-grid";
 import { GridToolbarDensitySelector } from "@mui/x-data-grid";
 import { GridToolbarExport } from "@mui/x-data-grid";
+import { useDispatch, useSelector } from "react-redux";
+import { saveCollegeName, saveCourse, saveFollowUpStatus } from "../store/trainee/TraineeDetilesDropdown";
+
 
 function loadServerRows(page, pageSize, courseName, collegeName,followupStatus) {
   const startingIndex = page * pageSize;
@@ -120,6 +121,8 @@ function debounce(func, delay) {
 }
 
 export default function ControlledSelectionServerPaginationGrid() {
+  const traineeDropDown = useSelector(state=>state.traineeDropDowns);
+  const dispatch=useDispatch();
   const initialPageSize = 25;
   const [paginationModel, setPaginationModel] = React.useState({
     page: 0,
@@ -135,9 +138,9 @@ export default function ControlledSelectionServerPaginationGrid() {
   const [searchInputValue, setSearchInputValue] = React.useState("");
   const [autocompleteOptions, setAutocompleteOptions] = React.useState([]);
   const [courseName, setCourseName] = React.useState(
-    sessionStorage.getItem("courseValue")
-  );
-  const [collegeName, setCollegeName] = React.useState(sessionStorage.getItem("collegeName"));
+    traineeDropDown.courseName);
+  const [collegeName, setCollegeName] = React.useState(traineeDropDown.collegeName);
+
   const [courseDropdown, setCourseDropdown] = React.useState("");
   const [dropdown, setDropDown] = useState({
     course: [],
@@ -153,7 +156,7 @@ export default function ControlledSelectionServerPaginationGrid() {
   const initiallySelectedFields = ['traineeName', 'email', 'contactNumber','course', 'actions'];
   const [displayColumn, setDisplayColumn] = React.useState(initiallySelectedFields);
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const [followupStatus, setFollowupStatus] = useState(sessionStorage.getItem("followUpStatus"));
+  const [followupStatus, setFollowupStatus] = useState(traineeDropDown.followUpstatus);
   const handleSearchClick = () => {
     searchServerRows(searchValue, courseName, collegeName,followupStatus).then((newGridData) => {
       setGridData(newGridData);
@@ -278,10 +281,11 @@ export default function ControlledSelectionServerPaginationGrid() {
    if(event.target.name==="courseName")
    {
     const courseValue = event.target.value;
-    sessionStorage.setItem("courseValue", courseValue);
+    dispatch(saveCourse(event.target.value))
     setCourseName(courseValue);
    }
 if(event.target.name==="followUpStatus"){
+  dispatch(saveFollowUpStatus(event.target.value))
   setFollowupStatus(event.target.value)
 }
 
@@ -520,14 +524,15 @@ if(event.target.name==="followUpStatus"){
   ];
 
   const handleClear = () => {
-    sessionStorage.setItem("courseValue", "null");
-    sessionStorage.setItem("name", "null");
-    sessionStorage.setItem("searchValue", "null");
-    sessionStorage.setItem("followUpStatus", "null");
-    sessionStorage.setItem("collegeName", "null");
-    setCourseName(null);
-    setCollegeName(null);
-    setFollowupStatus(null);
+  dispatch(saveCourse(null))
+  dispatch(saveCollegeName(null))
+  dispatch(saveFollowUpStatus(null))
+  setCollegeName(null)
+  setFollowupStatus(null)
+  setCourseName(null)
+ 
+
+
     setSearchValue("");
     setSelectedOption({ basicInfo: { traineeName: '' } });
   };
@@ -544,9 +549,9 @@ if(event.target.name==="followUpStatus"){
     setSearchValue(newValue?.basicInfo?.email || '');
   };
   const handleCollegeChange = (event) => {
-    const collegeName = event.target.value;
-    sessionStorage.setItem("collegeName", collegeName);
-    setCollegeName(collegeName);
+   dispatch(saveCollegeName(event.target.value))
+    setCollegeName(event.target.value);
+
   }
 
   const open = Boolean(anchorEl);
@@ -618,7 +623,7 @@ if(event.target.name==="followUpStatus"){
             id="demo-simple-select"
             label="Course Name"
             name="courseName"
-            value={courseName}
+            value={traineeDropDown.courseName}
             required
             variant="outlined"
             sx={{
@@ -645,7 +650,7 @@ if(event.target.name==="followUpStatus"){
             id="demo-simple-select"
             label="College Name"
             name="collegeName"
-            value={collegeName}
+            value={traineeDropDown.collegeName}
             required
             variant="outlined"
             sx={{
@@ -670,7 +675,7 @@ if(event.target.name==="followUpStatus"){
             id="demo-simple-select"
             label="FollowUp Status"
             name="followUpStatus"
-            value={followupStatus}
+            value={traineeDropDown.followUpstatus}
             required
             variant="outlined"
             sx={{

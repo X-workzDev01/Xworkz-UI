@@ -27,6 +27,7 @@ import {
   validateContactNumber,
   validateEmail
 } from "../constant/ValidationConstant";
+import { useSelector } from "react-redux";
 const fieldStyle = { margin: "20px" };
 
 const EditModal = ({
@@ -37,8 +38,8 @@ const EditModal = ({
   attemptStatus
 }) => {
   const navigate = useNavigate();
+  const email = useSelector(state => state.loginDetiles.email)
   const [feesConcession, setFeesConcession] = useState(feeConcession);
-  const email = sessionStorage.getItem("userId");
   const [isConfirming, setIsConfirming] = React.useState(false);
   const [selectedValue, setSelectedValue] = React.useState(" ");
   const [editedData, setEditedData] = React.useState([]);
@@ -343,8 +344,6 @@ const EditModal = ({
           }
         })
         .catch({});
-    } else {
-      setEmailCheck("Enter the valid Email");
     }
   };
 
@@ -364,8 +363,9 @@ const EditModal = ({
   };
 
   const verifyEmail = email => {
-    
+
     emailVerification(email).then(response => {
+      setEmailCheck("");
       if (response.data === "accepted_email") {
         setverifyHandleEmailError(response.data);
       } else if (response.data === "rejected_email") {
@@ -375,7 +375,7 @@ const EditModal = ({
       } else {
         setverifyHandleEmailError(response.data);
       }
-    }).catch(e=>{})
+    }).catch(e => { })
   };
   const handleVerifyEmail = event => {
     const email = event.target.value;
@@ -622,7 +622,7 @@ const EditModal = ({
     referalContactNumber ||
     emailCheck ||
     (xworkzEmailErrorVerify !== "accepted_email" && xworkzEmailErrorVerify) ||
-    verifyHandleEmailerror === "accepted_email" ||
+    (verifyHandleEmailerror !== "accepted_email" && verifyHandleEmailerror) ||
     xworkzemailCheck ||
     xworkzEmailCheckExists ||
     phoneNumberError ||

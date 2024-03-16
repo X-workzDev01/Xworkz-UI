@@ -20,9 +20,9 @@ import {
 import { ClientDropDown } from "../constant/ClientDropDown";
 import { textFieldStyles } from "../constant/FormStyle";
 import "./Company.css"
+import { useSelector } from "react-redux";
 export default function ClientDetails() {
-
-  const email = sessionStorage.getItem("userId");
+  const email = useSelector(state => state.loginDetiles.email)
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [snackbarMessage, setSnackbarMessage] = React.useState("");
@@ -88,19 +88,18 @@ export default function ClientDetails() {
     }));
 
     if (name === "companyType") {
+      if (value !== formData.companyType) {
+        setFormData({ status: "Active" });
+        handleClearAction();
+      };
       if (value === "College") {
         getCollegeDropDown();
       }
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
-    } else {
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
     }
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
     if (name === "companyName" && value.length <= 3 && value.trim() === "") {
       setCompanyNameCheck("Name should not be empty");
       setCompanyNameCheckExist("");
@@ -292,6 +291,7 @@ export default function ClientDetails() {
     setCheckCompanyWebsite("")
     setEmailCheckError("")
   }
+
   return (
     <div>
       <h1>Register Client</h1>

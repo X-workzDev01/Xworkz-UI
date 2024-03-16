@@ -13,7 +13,6 @@ import { Urlconstant } from "../constant/Urlconstant";
 const fieldStyle = { margin: "20px" };
 
 const EditFollowUp = ({ open, handleClose, rowData }) => {
-  console.log(rowData);
   const [isConfirming, setIsConfirming] = React.useState(false);
   const [editedData, setEditedData] = React.useState({ ...rowData });
   const [loading, setLoading] = React.useState(false);

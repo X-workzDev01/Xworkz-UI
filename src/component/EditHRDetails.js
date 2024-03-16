@@ -21,14 +21,15 @@ import {
   validateContactNumber,
   validateEmail,
 } from "../constant/ValidationConstant";
+import { useSelector } from "react-redux";
 
 const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
+  const email = useSelector(state => state.loginDetiles.email)
   const [editedData, setEditedData] = React.useState([]);
   const [isConfirming, setIsConfirming] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [responseMessage, setResponseMessage] = React.useState("");
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
-  const attemptedEmail = sessionStorage.getItem("userId");
   const [emailCheck, setEmailCheck] = React.useState("");
   const [phoneNumber, setPhoneNumberCheck] = React.useState("");
   const [checkEmailExist, setCheckEmailExist] = React.useState("");
@@ -136,7 +137,7 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
           ...editedData,
           adminDto: {
             ...editedData.adminDto,
-            updatedBy: attemptedEmail,
+            updatedBy: email,
           },
           status: editedData.status === "" ? rowData.status : editedData.status,
         };

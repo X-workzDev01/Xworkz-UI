@@ -19,7 +19,7 @@ import { Container } from "react-bootstrap";
 import { TfiClose } from "react-icons/tfi";
 import { Urlconstant } from "../constant/Urlconstant";
 import "./PayFee.css";
-import { toHaveStyle } from "@testing-library/jest-dom/matchers";
+import { useSelector } from "react-redux";
 
 export const PayFee = ({
   open,
@@ -28,6 +28,7 @@ export const PayFee = ({
   feesData,
   feesDetils
 }) => {
+  const email = useSelector(state => state.loginDetiles.email)
   const [finalUpdateBalence, setFinalUpdateBalence] = useState("");
   const [updateFeesData, setUpdateFeesData] = useState({});
   const [amountError, setAmountError] = useState("");
@@ -83,7 +84,7 @@ export const PayFee = ({
     setConfirmIsDisabled(true);
     const feesDto = {
       admin: {
-        updatedBy: sessionStorage.getItem("userId")
+        updatedBy: email
       },
       feesHistoryDto: {
         email: traineeEmail,

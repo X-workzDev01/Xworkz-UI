@@ -11,9 +11,10 @@ import Header from "./Header";
 import { Urlconstant } from "../constant/Urlconstant";
 import { Navigate, Route, Router } from "react-router-dom";
 import { Percentage } from "./percentage";
+import { useSelector } from "react-redux";
 
 export default function Registration() {
-  const email = sessionStorage.getItem("userId");
+  const email = useSelector(state => state.loginDetiles.email)
   const [currentSection, setCurrentSection] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [batchDetiles, setBatchDetiles] = useState("");

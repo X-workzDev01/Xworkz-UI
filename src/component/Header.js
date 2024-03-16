@@ -17,6 +17,8 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Urlconstant } from "../constant/Urlconstant";
 import { FeesNotificationModal } from "./FeesNotificationModal";
+import { useSelector } from "react-redux";
+
 
 function stringToColor(string) {
   let hash = 0;
@@ -51,7 +53,7 @@ function stringAvatar(name) {
   };
 }
 function Header() {
-  const email = sessionStorage.getItem("userId");
+  const email = useSelector(state => state.loginDetiles.email);
   const [yesterDayCandidate, setYesterDayCandidate] = useState([]);
   const [todayDayCandidate, setTodayDayCandidate] = useState([]);
   const [afterFourDayCandidate, setAfterFourDayCandidate] = useState([]);
@@ -628,7 +630,7 @@ setFeesShow(anchorEl ? null : event.currentTarget);
                   marginRight: "1rem",
                 }}
               >
-                {extractNameFromEmail(sessionStorage.getItem("userId", email))}
+                {extractNameFromEmail(email)}
               </Typography>
               <div style={{ marginRight: "1rem" }}>{notificationDisplay()}</div>
               {popup()}
@@ -644,7 +646,7 @@ setFeesShow(anchorEl ? null : event.currentTarget);
                   textTransform: "capitalize",
                 }}
                 {...stringAvatar(
-                  extractNameFromEmail(sessionStorage.getItem("userId", email))
+                  extractNameFromEmail(email)
                 )}
               />
               <br></br>

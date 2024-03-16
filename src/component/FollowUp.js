@@ -5,32 +5,38 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  TextField,
+  TextField
 } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import axios from "axios";
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { Urlconstant } from "../constant/Urlconstant";
+import {
+  saveFollowUpCallBackDate,
+  saveFollowUpCollegeName,
+  saveFollowUpCourseName,
+  saveFollowUpstatus
+} from "../store/followup/FollowUpDropdowns";
 import EditFollowUp from "./EditFollowUp";
-import Course from "./Course";
 import Header from "./Header";
-import { GridToolbar } from "@mui/x-data-grid";
-import { nullLiteral } from "@babel/types";
 
 export default function FollowUp() {
+  const followUpDropDown = useSelector(state => state.followUpDropDown);
+  const dispatch = useDispatch();
   const [isModalOpen, setModalOpen] = React.useState(false);
   const [editedRowData, setEditedRowData] = React.useState(null);
   const [loading, setLoading] = useState(false);
   const [searchValue, setSearchValue] = useState(
-    sessionStorage.getItem("status")
+    followUpDropDown.followUpStatus
   );
   const [name, setName] = useState("status");
   const [selectCollege, setSelectCollege] = useState(
-    sessionStorage.getItem("selectCollege")
+    followUpDropDown.followUpCollegename
   );
   const [courseName, setCourseName] = React.useState(
-    sessionStorage.getItem("course")
+    followUpDropDown.followUpCourseName
   );
   const [courseDropdown, setCourseDropdown] = React.useState("");
   const [status, setStatus] = React.useState("");
@@ -38,7 +44,7 @@ export default function FollowUp() {
   const statusList = ["Interested", "RNR", "Not Interested", "Others"];
   const [dropdown, setDropDown] = useState({
     status: [],
-    college: [],
+    college: []
   });
   const [statusLists, setStatusLists] = useState([
     "New",
@@ -50,41 +56,43 @@ export default function FollowUp() {
     "Past followUp",
     "Never followUp",
     "CSR",
-    "NonCSR",
+    "NonCSR"
   ]);
-  const [date, setDate] = useState(sessionStorage.getItem("date"));
+  const [date, setDate] = useState(followUpDropDown.followUpCallBackDate);
   const initialPageSize = 25;
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
-    pageSize: initialPageSize,
+    pageSize: initialPageSize
   });
   const [gridData, setGridData] = useState({
     rows: [],
-    rowCount: 0,
+    rowCount: 0
   });
 
-  React.useMemo(() => {
-    setLoading(true);
-    searchServerRows(
+  React.useMemo(
+    () => {
+      setLoading(true);
+      searchServerRows(
+        paginationModel.page,
+        paginationModel.pageSize,
+        name,
+        date
+      ).then(newGridData => {
+        setGridData(newGridData);
+        setLoading(false);
+      });
+    },
+    [
       paginationModel.page,
       paginationModel.pageSize,
-      name,
-      date
-    ).then((newGridData) => {
-      setGridData(newGridData);
-      setLoading(false);
-    });
-  }, [
-    paginationModel.page,
-    paginationModel.pageSize,
-    searchValue,
-    date,
-    courseName,
-    selectCollege,
-  ]);
+      searchValue,
+      date,
+      courseName,
+      selectCollege
+    ]
+  );
 
   React.useEffect(() => {
-    // sessionStorage.setItem("status", "New");
     getDropDown();
     getActiveCourse();
   }, []);
@@ -93,11 +101,10 @@ export default function FollowUp() {
     axios
       .get(Urlconstant.url + "api/getCourseName?status=Active", {
         headers: {
-          spreadsheetId: Urlconstant.spreadsheetId,
-        },
+          spreadsheetId: Urlconstant.spreadsheetId
+        }
       })
-
-      .then((response) => {
+      .then(response => {
         setCourseDropdown(response.data);
       })
       .catch(() => {});
@@ -109,20 +116,20 @@ export default function FollowUp() {
     }
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = e => {
     setPaginationModel({ page: 0, pageSize: initialPageSize });
     const { name, value } = e.target;
     setSearchValue(value);
-    sessionStorage.setItem("status", value);
+    dispatch(saveFollowUpstatus(value));
     setName(name);
     setStatus(value);
   };
 
-  const handleCourseChange = (event) => {
+  const handleCourseChange = event => {
     setPaginationModel({ page: 0, pageSize: initialPageSize });
     const { name, value } = event.target;
     setName(name);
-    sessionStorage.setItem("course", value);
+    dispatch(saveFollowUpCourseName(value));
     setCourseName(value);
   };
 
@@ -136,16 +143,16 @@ export default function FollowUp() {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          spreadsheetId: Urlconstant.spreadsheetId,
-        },
+          spreadsheetId: Urlconstant.spreadsheetId
+        }
       };
       const response = await axios.get(apiUrl, requestOptions);
       setGridData({
-        rows: response.data.map((row) => ({
+        rows: response.data.map(row => ({
           id: row.id.toString(),
-          ...row,
+          ...row
         })),
-        rowCount: response.data.length,
+        rowCount: response.data.length
       });
     } catch (error) {
       setGridData({ rows: [], rowCount: 0 });
@@ -166,29 +173,27 @@ export default function FollowUp() {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          spreadsheetId: spreadsheetId,
-        },
+          spreadsheetId: spreadsheetId
+        }
       };
     }
 
     return new Promise((resolve, reject) => {
       fetch(apiUrl, requestOptions)
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("Received data from server:", data);
+        .then(response => response.json())
+        .then(data => {
 
           const newGridData = {
-            rows: data.followUpData.map((row) => ({
+            rows: data.followUpData.map(row => ({
               id: row.id.toString(),
-              ...row,
+              ...row
             })),
-            rowCount: data.size,
+            rowCount: data.size
           };
 
           resolve(newGridData);
         }, 1000)
-
-        .catch((error) => {
+        .catch(error => {
           resolve({ rows: [], rowCount: 0 });
         });
     });
@@ -197,18 +202,18 @@ export default function FollowUp() {
     axios
       .get(Urlconstant.url + "utils/dropdown", {
         headers: {
-          spreadsheetId: Urlconstant.spreadsheetId,
-        },
+          spreadsheetId: Urlconstant.spreadsheetId
+        }
       })
-      .then((response) => {
+      .then(response => {
         setDropDown(response.data);
       })
-      .catch((error) => {});
+      .catch(error => {});
   };
-  const dateByfollowupStatus = (e) => {
+  const dateByfollowupStatus = e => {
     const { value } = e.target;
     setPaginationModel({ page: 0, pageSize: initialPageSize });
-    sessionStorage.setItem("date", value);
+    dispatch(saveFollowUpCallBackDate(value));
     setDate(value);
   };
 
@@ -221,14 +226,14 @@ export default function FollowUp() {
     setSelectCollege(null);
     setSearchValue(null);
     setDate("null");
-    sessionStorage.setItem("status", null);
-    sessionStorage.setItem("course", null);
-    sessionStorage.setItem("date", null);
-    sessionStorage.setItem("selectCollege", null);
+    dispatch(saveFollowUpCallBackDate(null));
+    dispatch(saveFollowUpCollegeName(null));
+    dispatch(saveFollowUpCourseName(null));
+    dispatch(saveFollowUpstatus(null));
   };
-  const handleColegeChange = (event) => {
+  const handleColegeChange = event => {
     setPaginationModel({ page: 0, pageSize: initialPageSize });
-    sessionStorage.setItem("selectCollege", event.target.value);
+    dispatch(saveFollowUpCollegeName(event.target.value));
     setSelectCollege(event.target.value);
   };
   return (
@@ -241,7 +246,7 @@ export default function FollowUp() {
           marginTop: "50px",
           marginBottom: "0.5rem",
           display: "flex",
-          alignItems: "center",
+          alignItems: "center"
         }}
       >
         <FormControl>
@@ -252,23 +257,23 @@ export default function FollowUp() {
             label="Status Values"
             onChange={handleInputChange}
             name="status"
-            value={searchValue}
+            value={followUpDropDown.followUpStatus}
             fullWidth
             required
             variant="outlined"
             sx={{
               marginRight: "10px",
               width: "200px",
-              fontSize: "14px",
+              fontSize: "14px"
             }}
           >
             <MenuItem value={null}> Select status </MenuItem>
             {}
-            {statusLists.map((item, index) => (
+            {statusLists.map((item, index) =>
               <MenuItem value={item} key={index}>
                 {item}
               </MenuItem>
-            ))}
+            )}
           </Select>
         </FormControl>
 
@@ -280,22 +285,22 @@ export default function FollowUp() {
             label="Course Name"
             onChange={handleCourseChange}
             name="CourseName"
-            value={courseName}
+            value={followUpDropDown.followUpCourseName}
             required
             variant="outlined"
             sx={{
               marginRight: "10px",
               width: "200px",
-              fontSize: "14px",
+              fontSize: "14px"
             }}
           >
             <MenuItem value={null}> Select course </MenuItem>
             {Array.isArray(courseDropdown)
-              ? courseDropdown.map((item, k) => (
+              ? courseDropdown.map((item, k) =>
                   <MenuItem value={item} key={k}>
                     {item}
                   </MenuItem>
-                ))
+                )
               : null}
           </Select>
         </FormControl>
@@ -304,10 +309,13 @@ export default function FollowUp() {
           <TextField
             type="date"
             name="date"
-            value={date || ("null" && sessionStorage.setItem("date", null))}
+            value={
+              followUpDropDown.followUpCallBackDate ||
+              ("null" && dispatch(saveFollowUpCallBackDate(null)))
+            }
             label="Select call back date"
             InputLabelProps={{
-              shrink: true,
+              shrink: true
             }}
             sx={{ marginRight: "10px" }}
             onChange={dateByfollowupStatus}
@@ -320,22 +328,22 @@ export default function FollowUp() {
             id="demo-simple-select"
             label="Select College"
             name="college"
-            value={selectCollege}
+            value={followUpDropDown.followUpCollegename}
             required
             variant="outlined"
             sx={{
               marginRight: "10px",
               width: "200px",
-              fontSize: "14px",
+              fontSize: "14px"
             }}
             onChange={handleColegeChange}
           >
             <MenuItem value={null}> Select College </MenuItem>
-            {dropdown.college.map((item, k) => (
+            {dropdown.college.map((item, k) =>
               <MenuItem value={item} key={k}>
                 {item}
               </MenuItem>
-            ))}
+            )}
           </Select>
         </FormControl>
 
@@ -353,49 +361,49 @@ export default function FollowUp() {
               field: "traineeName",
               headerName: "Trainee Name",
               flex: 1,
-              valueGetter: (params) => params.row.basicInfo.traineeName,
+              valueGetter: params => params.row.basicInfo.traineeName
             },
             {
               field: "email",
               headerName: "Email",
               flex: 1,
-              valueGetter: (params) => params.row.basicInfo.email,
+              valueGetter: params => params.row.basicInfo.email
             },
             {
               field: "contactNumber",
               headerName: "Contact Number",
               flex: 1,
-              valueGetter: (params) => params.row.basicInfo.contactNumber,
+              valueGetter: params => params.row.basicInfo.contactNumber
             },
             {
               field: "joiningDate",
               headerName: "Joining Date",
               flex: 1,
-              valueGetter: (params) => params.row.joiningDate,
+              valueGetter: params => params.row.joiningDate
             },
             {
               field: "courseName",
               headerName: "Course Name",
               flex: 1,
-              valueGetter: (params) => params.row.courseName,
+              valueGetter: params => params.row.courseName
             },
             {
               field: "currentStatus",
               headerName: "Current Status",
               flex: 1,
-              valueGetter: (params) => params.row.currentStatus,
+              valueGetter: params => params.row.currentStatus
             },
             {
               field: "registrationDate",
               headerName: "RegistrationDate",
               flex: 1,
-              valueGetter: (params) => params.row.registrationDate,
+              valueGetter: params => params.row.registrationDate
             },
             {
               field: "actions",
               headerName: "Actions",
               width: 120,
-              renderCell: (params) => (
+              renderCell: params =>
                 <div>
                   <Button
                     variant="outlined"
@@ -410,8 +418,7 @@ export default function FollowUp() {
                     View
                   </Button>
                 </div>
-              ),
-            },
+            }
           ]}
           rows={gridData.rows}
           pagination

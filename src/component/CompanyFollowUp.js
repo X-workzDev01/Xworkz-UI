@@ -18,15 +18,16 @@ import React, { useEffect } from "react";
 import { fieldStyle, style } from "../constant/FormStyle";
 import { Urlconstant } from "../constant/Urlconstant";
 import { getCurrentDate } from "../constant/ValidationConstant";
+import { useSelector } from "react-redux";
 
 const CompanyFollowUp = ({ open, handleClose, rowData, dropdown }) => {
+  const email = useSelector(state => state.loginDetiles.email)
   const [isConfirmed, setIsConfirmed] = React.useState(false);
   const [responseMessage, setResponseMessage] = React.useState("");
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [isConfirming, setIsConfirming] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [formData, setFormData] = React.useState("");
-  const attemtedUser = sessionStorage.getItem("userId");
   const [hrNameList, setHrNameList] = React.useState([]);
   const [hrDetails, setHrDetails] = React.useState("");
   const getdetailsbyCompanyId = () => {
@@ -45,14 +46,7 @@ const CompanyFollowUp = ({ open, handleClose, rowData, dropdown }) => {
     setIsConfirmed(false);
     if (open) {
       getdetailsbyCompanyId();
-      setFormData({
-        hrSpocName: "",
-        attemptStatus: "",
-        callDuration: "",
-        callBackTime: "",
-        callBackTime: "",
-        comments: "",
-      });
+      setFormData({});
     }
   }, [rowData, open]);
 
@@ -98,7 +92,7 @@ const CompanyFollowUp = ({ open, handleClose, rowData, dropdown }) => {
         const hrFollowUpData = {
           ...formData,
           hrId: hrDetails.id,
-          attemptBy: attemtedUser,
+          attemptBy: email,
         };
         axios
           .post(Urlconstant.url + `api/hrfollowup`, hrFollowUpData)
@@ -158,12 +152,12 @@ const CompanyFollowUp = ({ open, handleClose, rowData, dropdown }) => {
 
           <Grid item xs={12} sm={4}>
             <TextField
-              label="attemptBy"
+              label="Attempt By"
               name="attemptBy"
               onChange={handleInputChange}
               style={fieldStyle}
               value={formData.attemptBy}
-              defaultValue={attemtedUser}
+              defaultValue={email}
               InputProps={{
                 readOnly: true,
               }}

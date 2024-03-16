@@ -22,15 +22,16 @@ import {
   validateContactNumber,
   validateEmail,
 } from "../constant/ValidationConstant";
+import { useSelector } from "react-redux";
 
 const AddHr = ({ open, handleClose, rowData, dropdown, handleAfterResponse }) => {
+  const email = useSelector(state => state.loginDetiles.email)
   const [loading, setLoading] = React.useState(false);
   const [isConfirming, setIsConfirming] = React.useState(false);
   const [isConfirmed, setIsConfirmed] = React.useState(false);
   const [responseMessage, setResponseMessage] = React.useState("");
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [formData, setFormData] = React.useState("");
-  const attemptedEmail = sessionStorage.getItem("userId");
   const [emailCheck, setEmailCheck] = React.useState("");
   const [phoneNumber, setPhoneNumberCheck] = React.useState("");
   const [checkEmailExist, setCheckEmailExist] = React.useState("");
@@ -124,7 +125,7 @@ const AddHr = ({ open, handleClose, rowData, dropdown, handleAfterResponse }) =>
         const hrData = {
           ...formData,
           companyId: rowData.id,
-          adminDto: { createdBy: attemptedEmail },
+          adminDto: { createdBy: email },
         };
 
         for (const field in hrData) {
