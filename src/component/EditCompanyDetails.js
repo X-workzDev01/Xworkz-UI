@@ -23,13 +23,14 @@ import {
   validateWebsite,
 } from "../constant/ValidationConstant";
 import { ClientDropDown } from "../constant/ClientDropDown";
+import { useSelector } from "react-redux";
 
 const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
+  const email = useSelector(state => state.loginDetiles.email)
   const [isConfirming, setIsConfirming] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [responseMessage, setResponseMessage] = React.useState("");
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
-  const attemptedEmail = sessionStorage.getItem("userId");
   const [editedData, setEditedData] = React.useState([]);
   const [isConfirmed, setIsConfirmed] = React.useState(false);
   const [companyNameCheck, setCompanyNameCheck] = React.useState("");
@@ -288,7 +289,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
           ...editedData,
           adminDto: {
             ...editedData.adminDto,
-            updatedBy: attemptedEmail,
+            updatedBy: email,
           },
           companyFounder: editedData.companyFounder === "" ? rowData.companyFounder : editedData.companyFounder,
           companyWebsite: editedData.companyWebsite === "" ? rowData.companyWebsite : editedData.companyWebsite,

@@ -365,6 +365,7 @@ const EditModal = ({
   const verifyEmail = email => {
 
     emailVerification(email).then(response => {
+      setEmailCheck("");
       if (response.data === "accepted_email") {
         setverifyHandleEmailError(response.data);
       } else if (response.data === "rejected_email") {
