@@ -9,7 +9,7 @@ import ClientDetails from './Client/ClientDetails';
 export default configureStore ({
   reducer: {
     traineeDropDowns: TraineeDetilesDropdown,
-    saveAttendanceCourseName: Attendence,
+    attendaceDropdown: Attendence,
     followUpDropDown: followUpDropDowns,
     feesDetiles: FeesDetiles,
     loginDetiles: LoginEmail,
