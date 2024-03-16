@@ -1,6 +1,7 @@
 import { AccountCircle, NotificationsActiveRounded } from "@mui/icons-material";
-import { RxCountdownTimer } from "react-icons/rx";
+import { BiRupee } from "react-icons/bi";
 import { IoPower } from "react-icons/io5";
+import { RxCountdownTimer } from "react-icons/rx";
 
 import {
   AppBar,
@@ -15,7 +16,9 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Urlconstant } from "../constant/Urlconstant";
+import { FeesNotificationModal } from "./FeesNotificationModal";
 import { useSelector } from "react-redux";
+
 
 function stringToColor(string) {
   let hash = 0;
@@ -56,8 +59,12 @@ function Header() {
   const [afterFourDayCandidate, setAfterFourDayCandidate] = useState([]);
   const [count, setCount] = useState();
   const [anchorEl, setAnchorEl] = useState(null);
+  const [feesShow, setFeesShow] = useState(false);
+  const [feesData, setFeesData] = useState({});
+  const [feesCount, setFeesCount] = useState();
   useEffect(() => {
     if (email) {
+      feesNotification();
       axios(Urlconstant.url + `api/notification?email=${email}`)
         .then((res) => {
           setYesterDayCandidate(res.data.yesterdayCandidates);
@@ -65,11 +72,11 @@ function Header() {
           setAfterFourDayCandidate(res.data.afterFourDayCandidates);
           setCount(
             res.data.yesterdayCandidates.length +
-              res.data.todayCandidates.length +
-              res.data.afterFourDayCandidates.length
+            res.data.todayCandidates.length +
+            res.data.afterFourDayCandidates.length
           );
         })
-        .catch((e) => {});
+        .catch((e) => { });
     }
   }, [email]);
 
@@ -81,6 +88,19 @@ function Header() {
   };
   const open = Boolean(anchorEl);
   const id = open ? "simple-popper" : undefined;
+
+  const feesNotification = () => {
+    axios(Urlconstant.url + `api/feesNotification?email=${email}`)
+      .then((res) => {
+        setFeesData(res.data);
+        setFeesCount(
+          res.data.yesterdayCandidates.length +
+          res.data.todayCandidates.length +
+          res.data.afterFourDayCandidates.length
+        );
+      })
+      .catch((e) => { });
+  } 
 
   const popup = () => {
     return (
@@ -205,7 +225,7 @@ function Header() {
                                   style={{
                                     display: "flex",
                                     alignItems: "flex-start",
-                                    marginLeft:"5px",
+                                    marginLeft: "5px",
                                     paddingTop: "5.3px",
                                   }}
                                 >
@@ -216,10 +236,10 @@ function Header() {
                                   style={{
                                     display: "flex",
                                     alignItems: "flex-start",
-                                    marginLeft:"5px",
+                                    marginLeft: "5px",
                                     paddingTop: "5.3px",
-                                    color:"green",
-                                    marginRight:"-20rem"
+                                    color: "green",
+                                    marginRight: "-20rem"
                                   }}
                                 >
                                   {" "}
@@ -282,9 +302,8 @@ function Header() {
                             paddingTop: "2px",
                           }}
                         >
-                          {`${
-                            new Date().getDate() - 1
-                          }/${new Date().getMonth()}/${new Date().getFullYear()}`}
+                          {`${new Date().getDate() - 1
+                            }/${new Date().getMonth()}/${new Date().getFullYear()}`}
                         </span>
                       </div>
                       <div>
@@ -342,7 +361,7 @@ function Header() {
                                   style={{
                                     display: "flex",
                                     alignItems: "flex-start",
-                                    marginLeft:"5px",
+                                    marginLeft: "5px",
                                     paddingTop: "5.3px",
                                   }}
                                 >
@@ -352,10 +371,10 @@ function Header() {
                                   style={{
                                     display: "flex",
                                     alignItems: "flex-start",
-                                    marginLeft:"5px",
+                                    marginLeft: "5px",
                                     paddingTop: "5.3px",
-                                    color:"green",
-                                    marginRight:"-20rem"
+                                    color: "green",
+                                    marginRight: "-20rem"
                                   }}
                                 >
                                   {" "}
@@ -423,9 +442,8 @@ function Header() {
                           paddingTop: "2px",
                         }}
                       >
-                        {`${
-                          new Date().getDate() + 4
-                        }/${new Date().getMonth()}/${new Date().getFullYear()}`}
+                        {`${new Date().getDate() + 4
+                          }/${new Date().getMonth()}/${new Date().getFullYear()}`}
                       </span>
                     </div>
                     <div>
@@ -537,6 +555,28 @@ function Header() {
     );
   };
 
+const  FeesNotificationClick=(event)=>{
+setFeesShow(anchorEl ? null : event.currentTarget);
+}
+
+  const feesNotificationDisplay = () => {
+    return (
+      <div>
+        <IconButton
+          variant="contained"
+          color="inherit"
+          aria-label="Notification"
+          onClick={FeesNotificationClick}
+          aria-describedby={id}
+        >
+          <Badge badgeContent={feesCount} color="warning">
+            <BiRupee />
+          </Badge>
+        </IconButton>
+      </div>
+    );
+  };
+
   // Extract the name from the email
   const extractNameFromEmail = (email) => {
     const parts = email.split("@");
@@ -594,6 +634,12 @@ function Header() {
               </Typography>
               <div style={{ marginRight: "1rem" }}>{notificationDisplay()}</div>
               {popup()}
+              <div style={{ marginRight: "1rem" }}>{feesNotificationDisplay()}</div>
+              <FeesNotificationModal
+              plsOpen={feesShow}
+              feesData={feesData}
+              handleClose={()=>setFeesShow(null)}
+              />
               <Avatar
                 style={{
                   marginRight: "1rem",

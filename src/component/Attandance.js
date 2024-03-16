@@ -196,49 +196,49 @@ export default function ControlledSelectionServerPaginationGrid() {
 		};
 	};
 
-	const getActiveCourse = () => {
-		axios
-			.get(Urlconstant.url + "api/getCourseName?status=Active", {
-				headers: {
-					spreadsheetId: Urlconstant.spreadsheetId
-				}
-			})
-			.then(response => {
-				setCourseDropdown(response.data);
-			})
-			.catch(error => {});
-	};
-	const handleSearchClick = () => {
-		searchServerRows(searchValue, courseName).then(newGridData => {
-			setGridData(newGridData);
-			setPaginationModel({ page: 0, pageSize: initialPageSize });
-			setSearchInputValue("");
-		});
-	};
-	const handleModelOpen = (batch, id) => {
-		setHandleOpen(true);
-		setCourse(batch);
-		setId(id);
-	};
-	const handleClear = () => {
-		dispatch(saveAttendanceCourseName(null));
-		sessionStorage.setItem("searchName", "null");
-		setCourseName("null");
-		setTotalClass(0);
-		setSearchValue("");
-		setSelectedOption({ traineeName: "" });
-	};
-	const handleAutocompleteChange = (event, newValue) => {
-		setSelectedOption(isClearClicked ? null : newValue);
-		sessionStorage.setItem("searchName", newValue);
-		setIsClearClicked(false);
-	};
-	React.useEffect(
-		() => {
-			refreshPageEveryTime();
-		},
-		[paginationModel.page, paginationModel.pageSize, searchValue, courseName]
-	);
+  const getActiveCourse = () => {
+    axios
+      .get(Urlconstant.url + "api/getCourseName?status=Active", {
+        headers: {
+          spreadsheetId: Urlconstant.spreadsheetId
+        }
+      })
+      .then(response => {
+        setCourseDropdown(response.data);
+      })
+      .catch(error => {});
+  };
+  const handleSearchClick = () => {
+    searchServerRows(searchValue, courseName).then(newGridData => {
+      setGridData(newGridData);
+      setPaginationModel({ page: 0, pageSize: initialPageSize });
+      setSearchInputValue("");
+    });
+  };
+  const handleModelOpen = (batch, id) => {
+    setHandleOpen(true);
+    setCourse(batch);
+    setId(id);
+  };
+  const handleClear = () => {
+    dispatch(saveAttendanceCourseName(null));
+    sessionStorage.setItem("searchName", "null");
+    setCourseName("null");
+    setTotalClass(0);
+    setSearchValue("null");
+    setSelectedOption({ traineeName: "" });
+  };
+  const handleAutocompleteChange = (event, newValue) => {
+    setSelectedOption(isClearClicked ? null : newValue);
+    sessionStorage.setItem("searchName", newValue);
+    setIsClearClicked(false);
+  };
+  React.useEffect(
+    () => {
+      refreshPageEveryTime();
+    },
+    [paginationModel.page, paginationModel.pageSize, searchValue, courseName]
+  );
 
 	const columns = [
 		{
