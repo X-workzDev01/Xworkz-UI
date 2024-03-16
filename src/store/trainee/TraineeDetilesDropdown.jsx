@@ -10,15 +10,12 @@ const TraineeDetilesDropdown = createSlice ({
   reducers: {
     saveCourse: (state, action) => {
       state.courseName = action.payload;
-      console.log (action);
     },
     saveCollegeName: (state, action) => {
       state.collegeName = action.payload;
-      console.log (action);
     },
     saveFollowUpStatus: (state, action) => {
       state.followUpstatus = action.payload;
-      console.log (action);
     },
   },
 });
