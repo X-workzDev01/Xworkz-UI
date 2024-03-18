@@ -297,15 +297,9 @@ export const FeesDetailes = () => {
 		setPaymentMode("null");
 		setDate("null");
 	};
-	const onButtonClick = () => {
-		const link = document.createElement("a");
-		link.download = `download.txt`;
-		link.href = "./download.txt";
-		link.click();
-	};
+
 	return (
 		<div style={{ marginTop: "7%", marginBottom: "2%", marginLeft: "0.7%" }}>
-			<button onClick={onButtonClick}>Download PDF</button>
 			<div
 				style={{
 					display: "flex",

@@ -6,14 +6,17 @@ import TextField from "@mui/material/TextField";
 import { DataGrid } from "@mui/x-data-grid";
 import axios from "axios";
 import * as React from "react";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { Urlconstant } from "../constant/Urlconstant";
+import {
+	saveAttendanceCourseName,
+	saveSearch
+} from "../store/attendence/Attendence";
+import AttendanceModal from "./AttendanceModal";
 import EditModal from "./EditModal";
 import Header from "./Header";
-import AttendanceModal from "./AttendanceModal";
-import { useDispatch, useSelector } from "react-redux";
-import { saveAttendanceCourseName } from "../store/attendence/Attendence";
 
 async function loadServerRows(page, pageSize, courseName) {
 	const startingIndex = page * pageSize;
@@ -196,49 +199,55 @@ export default function ControlledSelectionServerPaginationGrid() {
 		};
 	};
 
-  const getActiveCourse = () => {
-    axios
-      .get(Urlconstant.url + "api/getCourseName?status=Active", {
-        headers: {
-          spreadsheetId: Urlconstant.spreadsheetId
-        }
-      })
-      .then(response => {
-        setCourseDropdown(response.data);
-      })
-      .catch(error => {});
-  };
-  const handleSearchClick = () => {
-    searchServerRows(searchValue, courseName).then(newGridData => {
-      setGridData(newGridData);
-      setPaginationModel({ page: 0, pageSize: initialPageSize });
-      setSearchInputValue("");
-    });
-  };
-  const handleModelOpen = (batch, id) => {
-    setHandleOpen(true);
-    setCourse(batch);
-    setId(id);
-  };
-  const handleClear = () => {
-    dispatch(saveAttendanceCourseName(null));
-    sessionStorage.setItem("searchName", "null");
-    setCourseName("null");
-    setTotalClass(0);
-    setSearchValue("null");
-    setSelectedOption({ traineeName: "" });
-  };
-  const handleAutocompleteChange = (event, newValue) => {
-    setSelectedOption(isClearClicked ? null : newValue);
-    sessionStorage.setItem("searchName", newValue);
-    setIsClearClicked(false);
-  };
-  React.useEffect(
-    () => {
-      refreshPageEveryTime();
-    },
-    [paginationModel.page, paginationModel.pageSize, searchValue, courseName]
-  );
+	const getActiveCourse = () => {
+		axios
+			.get(Urlconstant.url + "api/getCourseName?status=Active", {
+				headers: {
+					spreadsheetId: Urlconstant.spreadsheetId
+				}
+			})
+			.then(response => {
+				setCourseDropdown(response.data);
+			})
+			.catch(error => {});
+	};
+	const handleSearchClick = () => {
+		searchServerRows(searchValue, courseName).then(newGridData => {
+			setGridData(newGridData);
+			setPaginationModel({ page: 0, pageSize: initialPageSize });
+			setSearchInputValue("");
+		});
+	};
+	const handleModelOpen = (batch, id) => {
+		setHandleOpen(true);
+		setCourse(batch);
+		setId(id);
+	};
+	const handleClear = () => {
+		dispatch(saveAttendanceCourseName("null"));
+		dispatch(saveSearch(" "));
+		setCourseName("null");
+		setTotalClass(0);
+		setSearchValue("");
+		setSelectedOption({ traineeName: "" });
+	};
+	const handleAutocompleteChange = (event, newValue) => {
+		setSelectedOption(isClearClicked ? null : newValue);
+		dispatch(saveSearch(newValue.traineeName));
+		setIsClearClicked(false);
+	};
+	React.useEffect(
+		() => {
+			refreshPageEveryTime();
+		},
+		[
+			paginationModel.page,
+			paginationModel.pageSize,
+			searchValue,
+			courseName,
+			attendaceDropdown.attendanceCourseName
+		]
+	);
 
 	const columns = [
 		{
@@ -302,9 +311,10 @@ export default function ControlledSelectionServerPaginationGrid() {
 					freeSolo
 					id="free-solo-2-demo"
 					disableClearable
-					getOptionLabel={option => option.label}
+					getOptionLabel={option =>
+						option.traineeName ? option.traineeName : attendaceDropdown.search}
 					style={{ width: "22rem", padding: "10px 20px" }}
-					value={selectedOption}
+					value={attendaceDropdown.search}
 					onChange={handleAutocompleteChange}
 					renderInput={params =>
 						<TextField
@@ -337,7 +347,7 @@ export default function ControlledSelectionServerPaginationGrid() {
 						id="demo-simple-select"
 						label="Course Name"
 						name="courseName"
-						value={courseName}
+						value={attendaceDropdown.attendanceCourseName}
 						required
 						variant="outlined"
 						sx={{

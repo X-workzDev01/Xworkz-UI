@@ -4,7 +4,7 @@ const Attendence = createSlice ({
   name: 'attendanceCourseName',
   initialState: {
     attendanceCourseName: null,
-    search: null,
+    search: '',
   },
   reducers: {
     saveAttendanceCourseName: (state, action) => {
