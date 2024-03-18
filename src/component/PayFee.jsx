@@ -6,7 +6,6 @@ import {
   InputLabel,
   MenuItem,
   Modal,
-  Popper,
   Select,
   Snackbar,
   TextField,
@@ -69,6 +68,7 @@ export const PayFee = ({
       setUpdateFeesData ('');
       setPaidAmountError ('');
       setAmountError ('');
+      setConfirmIsDisabled (true);
       setLateFeesError ('');
       setTotalBalance (feesData.totalAmount);
       setupdatedTotalAmount (totalBalance);
@@ -142,11 +142,13 @@ export const PayFee = ({
       (name === 'transectionId' && value !== '' && value.length < 5) ||
       (name === 'transectionId' && value !== '' && value.length > 14)
     ) {
+      setConfirmIsDisabled (true);
       setTransactionErr ('Please Enter Valid Transaction ID');
     } else if (
       (name === 'transectionId' && value !== '' && value.length > 5) ||
       (name === 'transectionId' && value !== '' && value.length < 14)
     ) {
+      setConfirmIsDisabled (false);
       setTransactionErr ('');
     }
   };
@@ -173,7 +175,6 @@ export const PayFee = ({
   if (updateFeesData.selectlateFees === 'Yes') {
     isDisabled =
       !updateFeesData.lateFees ||
-      !updateFeesData.transectionId ||
       !updateFeesData.lastFeesPaidDate ||
       !updateFeesData.paidAmount ||
       !updateFeesData.followupCallbackDate ||
@@ -183,7 +184,6 @@ export const PayFee = ({
       transactionErr;
   } else {
     isDisabled =
-      !updateFeesData.transectionId ||
       !updateFeesData.lastFeesPaidDate ||
       !updateFeesData.paidAmount ||
       !updateFeesData.followupCallbackDate ||
@@ -242,19 +242,6 @@ export const PayFee = ({
                 {lateFeesError}
               </span>
             </div>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'flex-end',
-                fontSize: '0.7rem',
-                paddingBottom: '8px',
-                marginRight: '4rem',
-              }}
-            >
-              <span style={{color: 'red', padding: '2px'}}>
-                {transactionErr}
-              </span>
-            </div>
 
             <Box>
               <Typography
@@ -295,15 +282,12 @@ export const PayFee = ({
                   color="primary"
                   focused
                 />
-
-              </Typography>
-              <div className="field">
                 <TextField
                   required
                   type="date"
                   name="lastFeesPaidDate"
                   onChange={handleSetData}
-                  label="Fees Paid Date"
+                  label="Fees pay date"
                   id="outlined-size-small"
                   size="small"
                   color="primary"
@@ -311,6 +295,28 @@ export const PayFee = ({
                   sx={{width: '28.5%'}}
                   inputProps={{
                     max: getCurrentDate (),
+                  }}
+                />
+
+              </Typography>
+              <div className="field">
+
+                <TextField
+                  required
+                  type="date"
+                  name="followupCallbackDate"
+                  onChange={handleSetData}
+                  label="Fees Call Back Date"
+                  id="outlined-size-small"
+                  size="small"
+                  color="primary"
+                  focused
+                  sx={{width: '27.5%', marginRight: '6.5%'}}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  inputProps={{
+                    min: getCurrentDate (),
                   }}
                 />
                 <TextField
@@ -411,24 +417,7 @@ export const PayFee = ({
                   marginBottom: '2rem',
                 }}
               >
-                <TextField
-                  required
-                  type="date"
-                  name="followupCallbackDate"
-                  onChange={handleSetData}
-                  label="Fees Call Back Date"
-                  id="outlined-size-small"
-                  size="small"
-                  color="primary"
-                  focused
-                  sx={{width: '27.5%', marginRight: '6.5%'}}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  inputProps={{
-                    min: getCurrentDate (),
-                  }}
-                />
+
                 <FormControl>
                   <InputLabel id="demo-simple-select-label">
                     <span>Select Late Fees</span>
@@ -564,19 +553,37 @@ export const PayFee = ({
             >
               <p>Scan and Pay using QR Code </p>
 
+            </div>
+            <div
+              style={{
+                fontSize: '11px',
+                display: 'flex',
+                justifyContent: 'center',
+              }}
+            >
+              <span style={{color: 'red', padding: '2px'}}>
+                {transactionErr}
+              </span>
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                marginBottom: '3px',
+              }}
+            >
+
               <TextField
                 required
-                label="Transaction id "
+                label="Enter transaction id "
                 placeholder="Enter Transaction Id"
                 name="transectionId"
                 onChange={handleSetData}
                 id="outlined-size-small"
                 size="small"
                 color="primary"
-                focused
               />
             </div>
-
             <div
               style={{
                 display: 'flex',
