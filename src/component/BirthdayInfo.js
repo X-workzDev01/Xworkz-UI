@@ -3,6 +3,7 @@ import {
     Button,
     FormControl,
     InputLabel,
+    LinearProgress,
     MenuItem,
     Select,
     TextField
@@ -21,6 +22,7 @@ import {
 export const BirthdayInfo = () => {
     const birthdayStore = useSelector(state => state.birthday);
     const dispatch = useDispatch();
+    const [isOpen, setIsOpen] = useState(true);
     const [batch, setBatch] = useState(birthdayStore.batchName);
     const [date, setDate] = useState(birthdayStore.date);
     const [birthdayMonth, setBirthdayMonth] = useState(birthdayStore.month);
@@ -71,6 +73,7 @@ export const BirthdayInfo = () => {
         batch,
         birthdayMonth,
     ) => {
+        setIsOpen(true);
         const startingIndex = minIndex * maxIndex;
         const maxRows = maxIndex;
         const response = axios.get(
@@ -91,6 +94,7 @@ export const BirthdayInfo = () => {
                     : "",
                 rowCount: res.data.size
             });
+            setIsOpen(false);
         });
         response.catch(() => { });
     };
@@ -120,6 +124,12 @@ export const BirthdayInfo = () => {
             valueGetter: params => params.row.courseName
         },
         {
+            field: "birthDayMailSent",
+            headerName: "Mail Sent",
+            flex: 1,
+            valueGetter: params => params.row.birthDayMailSent,
+        },
+        {
             flex: 1,
             headerName: "Action",
             field: "Action",
@@ -143,23 +153,27 @@ export const BirthdayInfo = () => {
     const handleSetData = event => {
         const { name, value } = event.target;
         if (name === "month") {
+            setPaginationModel({ page: 0, pageSize: initialPageSize });
             setDate("null");
             dispatch(savebirthdayDate("null"));
             setBirthdayMonth(value);
             dispatch(savebirthdayMonth(value));
         }
         if (name === "date") {
+            setPaginationModel({ page: 0, pageSize: initialPageSize });
             setBirthdayMonth("null");
             dispatch(savebirthdayMonth("null"));
             setDate(value);
             dispatch(savebirthdayDate(value));
         }
         if (name === "batch") {
+            setPaginationModel({ page: 0, pageSize: initialPageSize });
             setBatch(value);
             dispatch(saveBatchName(value));
         }
     };
     const handleClear = () => {
+        setPaginationModel({ page: 0, pageSize: initialPageSize });
         dispatch(savebirthdayMonth("null"));
         dispatch(savebirthdayDate("null"));
         dispatch(saveBatchName(null));
@@ -248,8 +262,7 @@ export const BirthdayInfo = () => {
                 </Button>
             </div>
 
-
-
+            {isOpen ? <LinearProgress size={24} color="primary" ></LinearProgress> : ""}
             <DataGrid
                 style={{ height: "42rem", width: "100%" }}
                 columns={columns}
