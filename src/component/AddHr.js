@@ -8,6 +8,7 @@ import {
   DialogTitle,
   Grid,
   IconButton,
+  InputAdornment,
   MenuItem,
   Snackbar,
   TextField
@@ -21,16 +22,16 @@ import {
   validateContactNumber,
   validateEmail,
 } from "../constant/ValidationConstant";
+import { useSelector } from "react-redux";
 
-const AddHr = ({ open, handleClose, rowData }) => {
-
+const AddHr = ({ open, handleClose, rowData, dropdown, handleAfterResponse }) => {
+  const email = useSelector(state => state.loginDetiles.email)
   const [loading, setLoading] = React.useState(false);
   const [isConfirming, setIsConfirming] = React.useState(false);
   const [isConfirmed, setIsConfirmed] = React.useState(false);
   const [responseMessage, setResponseMessage] = React.useState("");
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [formData, setFormData] = React.useState("");
-  const attemptedEmail = sessionStorage.getItem("userId");
   const [emailCheck, setEmailCheck] = React.useState("");
   const [phoneNumber, setPhoneNumberCheck] = React.useState("");
   const [checkEmailExist, setCheckEmailExist] = React.useState("");
@@ -38,36 +39,20 @@ const AddHr = ({ open, handleClose, rowData }) => {
   const [verifyEmail, setVerifyEmail] = React.useState("");
   const [validateName, setValidateName] = React.useState("");
   const [validateDesignation, setValidateDesignation] = React.useState("");
-  const [dropdown, setDropDown] = React.useState({
-    clientType: [],
-    sourceOfConnection: [],
-    sourceOfLocation: [],
-    hrDesignation: [],
-    callingStatus: []
-  });
+  const [emailError, setEmailError] = React.useState("");
   React.useEffect(() => {
-    getDropdown();
     if (open) {
-      setFormData({
-        hrSpocName: "",
-        hrEmail: "",
-        hrContactNumber: "",
-        designation: "",
-        status: "",
-      });
+      setFormData([]);
       setPhoneNumberCheck("");
       setEmailCheck("");
       setCheckEmailExist("");
       setCheckPhoneNumberExist("");
       setVerifyEmail("");
       setValidateName("");
+      setCharCount("");
+      setEmailError("");
     }
   }, [open]);
-  const getDropdown = () => {
-    axios.get(Urlconstant.url + `utils/clientdropdown`).then((response) => {
-      setDropDown(response.data);
-    })
-  }
 
   const [charCount, setCharCount] = React.useState("");
   const handleInputChange = (event) => {
@@ -86,14 +71,16 @@ const AddHr = ({ open, handleClose, rowData }) => {
       } else {
         setEmailCheck("Invalid email");
         setCheckEmailExist("");
+        setEmailError("");
+        setVerifyEmail("");
       }
     }
     if (name === "hrContactNumber") {
-      if (validateContactNumber(value)) {
-        setPhoneNumberCheck("");
-      } else {
+      if (value.length <= 9 || value.length > 10 && !validateContactNumber(value)) {
         setPhoneNumberCheck("Invalid Contact Number");
         setCheckPhoneNumberExist("");
+      } else {
+        setPhoneNumberCheck("");
       }
     }
     if (name === "designation") {
@@ -127,6 +114,7 @@ const AddHr = ({ open, handleClose, rowData }) => {
     setResponseMessage("");
     setSnackbarOpen(false);
     handleClose();
+    handleAfterResponse();
   };
 
   const handleSaveClick = () => {
@@ -137,7 +125,7 @@ const AddHr = ({ open, handleClose, rowData }) => {
         const hrData = {
           ...formData,
           companyId: rowData.id,
-          adminDto: { createdBy: attemptedEmail },
+          adminDto: { createdBy: email },
         };
 
         for (const field in hrData) {
@@ -158,13 +146,8 @@ const AddHr = ({ open, handleClose, rowData }) => {
               setTimeout(() => {
                 handleCloseForm();
               }, 1000);
-              setFormData({
-                hrSpocName: "",
-                hrEmail: "",
-                hrContactNumber: "",
-                designation: "",
-                status: "",
-              });
+              setFormData({});
+              handleAfterResponse();
             }
           })
           .catch((error) => {
@@ -178,7 +161,7 @@ const AddHr = ({ open, handleClose, rowData }) => {
             } else {
               // Handle other errors
               setLoading(false);
-              setResponseMessage("HR information not saved");
+              setResponseMessage("HR information saved");
               setSnackbarOpen(true);
             }
           });
@@ -195,79 +178,75 @@ const AddHr = ({ open, handleClose, rowData }) => {
       .get(`${Urlconstant.url}api/verify-email?email=${email}`)
       .then((response) => {
         if (response.status === 200) {
-          if (response.data === "accepted_email") {
-            setVerifyEmail("");
-          } else if (response.data === "rejected_email") {
+
+          if (response === "accepted_email") {
             setVerifyEmail(response.data);
+            setEmailError("");
+            setEmailCheck("");
+            setCheckEmailExist("");
+          } else if (response.data === "rejected_email") {
+            setVerifyEmail();
+            setEmailCheck();
+            setCheckEmailExist("");
+            setEmailError(response.data);
           } else {
             setVerifyEmail("");
+            setEmailCheck("");
+            setCheckEmailExist("");
+            setEmailError(response.data);
           }
         } else {
           if (response.status === 500) {
             setVerifyEmail("");
-          } else {
-            setVerifyEmail("Unexpected Error:");
           }
         }
       })
       .catch((error) => {
-        console.log("check emailable credentils");
       });
   };
 
   const handleEmailCheck = (event) => {
     let email = event.target.value;
-    axios
-      .get(Urlconstant.url + `api/hremailcheck?hrEmail=${email}`)
-      .then((response) => {
-        if (response.data === "Email already exists.") {
-          setEmailCheck("");
-          setCheckEmailExist(response.data);
-        } else {
-          validatingEmail(email);
-          setCheckEmailExist("");
-        }
-      })
-      .catch((error) => {
-        if (error.response && error.response.status === 500) {
-          setCheckEmailExist("");
-        } else {
-          setCheckEmailExist("Error in API call");
-        }
-      });
+    if (email.trim() !== "" && validateEmail(email)) {
+      axios
+        .get(Urlconstant.url + `api/hremailcheck?hrEmail=${email}`)
+        .then((response) => {
+          if (response.data === "Email already exists.") {
+            setEmailCheck("");
+            setEmailError("");
+            setVerifyEmail("");
+            setCheckEmailExist(response.data);
+          } else {
+            if (validateEmail(email)) {
+              validatingEmail(email)
+            }
+          }
+        })
+        .catch((error) => { });
+    }
   };
 
   const handleNumberCheck = (event) => {
     let contactNumber = event.target.value;
-    axios
-      .get(
-        Urlconstant.url +
-        `api/hrcontactnumbercheck?contactNumber=${contactNumber}`
-      )
-      .then((response) => {
-        if (response.data === "Contact Number Already exist.") {
-          setCheckPhoneNumberExist(response.data);
-        } else {
-          setCheckPhoneNumberExist("");
-          setPhoneNumberCheck("");
-        }
-      })
-      .catch((error) => {
-        if (error.response && error.response.status === 500) {
-          setCheckPhoneNumberExist("");
-        } else {
-          setCheckPhoneNumberExist("Error in API call");
-        }
-      });
+    if (contactNumber.trim() !== "" && validateContactNumber(contactNumber)) {
+      axios
+        .get(
+          Urlconstant.url +
+          `api/hrcontactnumbercheck?contactNumber=${contactNumber}`
+        )
+        .then((response) => {
+          if (response.data === "Contact Number Already exist.") {
+            setCheckPhoneNumberExist(response.data);
+          } else {
+            setCheckPhoneNumberExist("");
+            setPhoneNumberCheck("");
+          }
+        })
+        .catch((error) => { });
+    }
   };
 
-  const isDisabled =
-    checkPhoneNumberExist ||
-    checkEmailExist ||
-    emailCheck ||
-    !formData.hrSpocName ||
-    !formData.hrContactNumber ||
-    !formData.designation;
+  const isDisable = (verifyEmail !== "accepted_email" && verifyEmail) || emailError || checkEmailExist || validateName || emailCheck || checkPhoneNumberExist || phoneNumber || !formData.hrSpocName || !formData.hrContactNumber || !formData.designation
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle>
@@ -313,7 +292,12 @@ const AddHr = ({ open, handleClose, rowData }) => {
             ) : (
               " "
             )}
-            {verifyEmail ? <Alert severity="error">{verifyEmail}</Alert> : " "}
+
+            {verifyEmail === "accepted_email" && (
+              <Alert severity="success">{verifyEmail}</Alert>
+            )}
+            {verifyEmail && verifyEmail !== "accepted_email" && <Alert severity="error">{verifyEmail}</Alert>}
+            {emailError ? <Alert severity="error">{emailError}</Alert> : " "}
           </Grid>
           <Grid item xs={12} sm={4}>
             <TextField
@@ -353,7 +337,6 @@ const AddHr = ({ open, handleClose, rowData }) => {
             <TextField
               label="Comments"
               name="status"
-              helperText={`${charCount}`}
               onChange={handleInputChange}
               style={fieldStyle}
               value={formData.status}
@@ -361,6 +344,14 @@ const AddHr = ({ open, handleClose, rowData }) => {
               margin="normal"
               multiline
               rows={4}
+              InputProps={{
+                style: { right: 1, bottom: 1 },
+                endAdornment: (
+                  <InputAdornment position="left">
+                    {charCount}
+                  </InputAdornment>
+                ),
+              }}
             />
           </Grid>
         </Grid>
@@ -370,7 +361,7 @@ const AddHr = ({ open, handleClose, rowData }) => {
           <CircularProgress size={20} />
         ) : (
           <Button
-            disabled={isDisabled}
+            disabled={isDisable}
             onClick={handleHrAddClick}
             color="primary"
           >

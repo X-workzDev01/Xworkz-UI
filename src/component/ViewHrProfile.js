@@ -57,6 +57,24 @@ const ViewHrProfile = () => {
     React.useState(false);
   const [isHrFollowUpModalOpen, setHrFollowUpModalOpen] = React.useState("");
   const [companyId,setCompanyId] = React.useState("");
+  const [dropdown, setDropDown] = React.useState({
+    clientType: [],
+    sourceOfConnection: [],
+    sourceOfLocation: [],
+    hrDesignation: [],
+    callingStatus: []
+  });
+
+  const getDropdown = () => {
+    axios.get(Urlconstant.url + `utils/clientdropdown`).then((response) => {
+      setDropDown(response.data);
+    })
+  }
+
+  React.useEffect(() => {
+    getDropdown();
+  }, []);
+
 
   const fetchHrDetails = (id) => {
     axios
@@ -96,7 +114,6 @@ const ViewHrProfile = () => {
   const handleEditHRDetails = () => {
     setEditHRDetailsModalOpen(true);
   };
-
   const handleHRDetailsClick = () => {
     setEditHRDetailsModalOpen(false);
   };
@@ -161,12 +178,14 @@ const ViewHrProfile = () => {
           handleClose={() => setEditHRDetailsModalOpen(false)}
           rowData={HrDetails}
           handleSaveClick={handleHRDetailsClick}
+          dropdown={dropdown}
         />
         <HrFollowUp
           open={isHrFollowUpModalOpen}
           handleClose={() => setHrFollowUpModalOpen(false)}
           rowData={HrDetails}
           handleSaveClick={handleHRFollowUpClick}
+          dropdown={dropdown}
         />
       </div>
       {HrFollowUpStatus ? (

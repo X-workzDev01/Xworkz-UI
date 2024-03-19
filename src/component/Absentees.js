@@ -1,5 +1,6 @@
 import Autocomplete from "@mui/material/Autocomplete";
 import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import List from "@mui/material/List";
@@ -10,8 +11,10 @@ import TextField from "@mui/material/TextField";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Urlconstant } from "../constant/Urlconstant";
+import { useSelector } from "react-redux";
 
 const Absentees = () => {
+  const email = useSelector(state => state.loginDetiles.email)
   const [selectedBatch, setSelectedBatch] = useState("");
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [selectedStudents, setSelectedStudents] = useState([]);
@@ -26,10 +29,10 @@ const Absentees = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [isTraineePresent, setIsTraineePresent] = useState(true);
   const [totalClass, setTotalClass] = useState(0);
-
+  const [submittingAttendance, setSubmittingAttendance] = useState(false); 
+  const [updatingBatchAttendance, setUpdatingBatchAttendance] = useState(false);
 
   useEffect(() => {
-
     axios
       .get(Urlconstant.url + "api/getCourseName?status=Active", {
         headers: {
@@ -42,7 +45,7 @@ const Absentees = () => {
       .catch((error) => {
         console.error("Error fetching batch data:", error);
       });
-  }, []); // Run only once when the component mounts
+  }, []);
 
   useEffect(() => {
     if (selectedBatch) {
@@ -68,8 +71,8 @@ const Absentees = () => {
   }
 
   const handleStudentChange = (event, value) => {
+    setSuccessMessage("");
     setErrorMessage("");
-    setSuccessMessage("")
     if (value && !selectedStudents.some((student) => student.id === value.id)) {
       setSelectedStudents([...selectedStudents, value]);
       setReasons({ ...reasons, [value.id]: "" });
@@ -87,17 +90,15 @@ const Absentees = () => {
     setSelectedStudents([]);
     setSubmitDisabled(true);
     setSuccessMessage("")
-
-
     axios
       .get(
         Urlconstant.url + `api/attendance/trainee?batch=${selectedBatchValue}`
       )
       .then((response) => {
         const fetchedStudents = response.data;
+
         setErrorMessage("");
         setStudents(fetchedStudents);
-        // Update the student options for Autocomplete component
         setStudentOptions(fetchedStudents);
       })
       .catch((error) => {
@@ -141,6 +142,7 @@ const Absentees = () => {
 
   const handleUpdateBatchAttendance = () => {
     setIsTraineePresent(true);
+    setUpdatingBatchAttendance(true); 
     axios
       .post(
         Urlconstant.url +
@@ -152,7 +154,6 @@ const Absentees = () => {
           setSuccessMessage(response.data);
           getBatchAttendanceCount();
           handleBatchChange(selectedBatch);
-
         } else {
           setErrorMessage(response.data);
           getBatchAttendanceCount();
@@ -160,6 +161,9 @@ const Absentees = () => {
       })
       .catch((error) => {
         console.error("API Error:", error);
+      })
+      .finally(() => {
+        setUpdatingBatchAttendance(false); 
       });
   };
 
@@ -176,11 +180,12 @@ const Absentees = () => {
     setErrors(validationErrors);
 
     if (isAllReasonsProvided) {
+      setSubmittingAttendance(true); 
       const attendanceData = selectedStudents.map((student) => ({
         id: student.id,
         name: student.name,
         reason: reasons[student.id] || "",
-        updatedBy: sessionStorage.getItem("userId"),
+        updatedBy: email,
       }));
 
       axios
@@ -197,9 +202,13 @@ const Absentees = () => {
           getBatchAttendanceCount();
           handleBatchChange({ target: { value: selectedBatch } });
           setSuccessMessage("Attendance submitted successfully!");
+
         })
         .catch((error) => {
           console.error("API Error:", error);
+        })
+        .finally(() => {
+          setSubmittingAttendance(false); 
         });
     }
   };
@@ -239,7 +248,8 @@ const Absentees = () => {
     },
     totalClassContainer: {
       marginLeft: "270px",
-      marginTop: "-1.7rem",
+      marginTop: "-1.7rem"
+      ,
     },
     totalClassCircle: {
       display: "inline-block",
@@ -260,16 +270,14 @@ const Absentees = () => {
     },
   };
 
-
-
   return (
     <div style={styles.container}>
       <div style={styles.form}>
         <div style={styles.formFields}>
           <h1> Absentees Form </h1>{" "}
-          {successMessage ?  (
+          {successMessage && (
             <div style={styles.successMessage}> {successMessage} </div>
-          ):""}
+          )}{" "}
           {errorMessage && (
             <div style={styles.errorMessage}> {errorMessage} </div>
           )}
@@ -303,12 +311,16 @@ const Absentees = () => {
               <div style={styles.toggleContainer}>
                 <h3> Trainee Attendance: </h3>{" "}
                 <Button
-                  disabled={isSubmitBatch}
+                  disabled={isSubmitBatch ||  updatingBatchAttendance}
                   variant={isTraineePresent ? "contained" : "outlined"}
                   color="primary"
                   onClick={handleUpdateBatchAttendance}
                 >
-                  Yes{" "}
+                  {updatingBatchAttendance ? (
+                    <CircularProgress size={24} /> 
+                  ) : (
+                    "Yes"
+                  )}
                 </Button>{" "}
               </div>{" "}
               <h3> Select Students: </h3>{" "}
@@ -356,9 +368,13 @@ const Absentees = () => {
           <Button
             variant="contained"
             onClick={handleAttendanceSubmit}
-            disabled={!selectedBatch || isSubmitDisabled}
+            disabled={!selectedBatch || isSubmitDisabled || submittingAttendance} 
           >
-            Submit Attendance{" "}
+            {submittingAttendance ? (
+              <CircularProgress size={24} /> 
+            ) : (
+              "Submit Attendance"
+            )}
           </Button>{" "}
         </div>{" "}
       </div>

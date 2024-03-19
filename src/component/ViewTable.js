@@ -10,19 +10,20 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Urlconstant } from "../constant/Urlconstant";
 import Header from "./Header";
-import { GridToolbar } from "@mui/x-data-grid";
-import ExportData from "./ExportData";
 import { GridToolbarFilterButton } from "@mui/x-data-grid";
 import { GridToolbarDensitySelector } from "@mui/x-data-grid";
 import { GridToolbarExport } from "@mui/x-data-grid";
+import { useDispatch, useSelector } from "react-redux";
+import { saveCollegeName, saveCourse, saveFollowUpStatus } from "../store/trainee/TraineeDetilesDropdown";
 
-function loadServerRows(page, pageSize, courseName, collegeName) {
+
+function loadServerRows(page, pageSize, courseName, collegeName,followupStatus) {
   const startingIndex = page * pageSize;
   const maxRows = pageSize;
   const spreadsheetId = Urlconstant.spreadsheetId;
   const apiUrl =
     Urlconstant.url +
-    `api/readData?startingIndex=${startingIndex}&maxRows=${maxRows}&courseName=${courseName}&collegeName=${collegeName}`;
+    `api/readData?startingIndex=${startingIndex}&maxRows=${maxRows}&courseName=${courseName}&collegeName=${collegeName}&followupStatus=${followupStatus}`;
   const requestOptions = {
     method: "GET",
     headers: {
@@ -60,9 +61,9 @@ function loadClientRows(page, pageSize, allData) {
   });
 }
 
-function searchServerRows(searchValue, courseName, collegeName) {
+function searchServerRows(searchValue, courseName, collegeName,followupStatus) {
   const apiUrl =
-    Urlconstant.url + `api/filterData/${courseName}?searchValue=${searchValue}&&collegeName=${collegeName}`;
+    Urlconstant.url + `api/filterData/${courseName}?searchValue=${searchValue}&&collegeName=${collegeName}&&followupStatus=${followupStatus}`;
   const requestOptions = {
     method: "GET",
     headers: {
@@ -86,11 +87,11 @@ function searchServerRows(searchValue, courseName, collegeName) {
       });
   });
 }
-async function fetchFilteredData(searchValue, courseName, collegeName) {
+async function fetchFilteredData(searchValue, courseName, collegeName,followupStatus) {
   try {
     const apiUrl =
       Urlconstant.url +
-      `api/register/suggestion/${courseName}?value=${searchValue}&&collegeName=${collegeName}`;
+      `api/register/suggestion/${courseName}?value=${searchValue}&&collegeName=${collegeName}&&followupStatus=${followupStatus}`;
     const requestOptions = {
       method: "GET",
       headers: {
@@ -120,6 +121,8 @@ function debounce(func, delay) {
 }
 
 export default function ControlledSelectionServerPaginationGrid() {
+  const traineeDropDown = useSelector(state=>state.traineeDropDowns);
+  const dispatch=useDispatch();
   const initialPageSize = 25;
   const [paginationModel, setPaginationModel] = React.useState({
     page: 0,
@@ -135,9 +138,9 @@ export default function ControlledSelectionServerPaginationGrid() {
   const [searchInputValue, setSearchInputValue] = React.useState("");
   const [autocompleteOptions, setAutocompleteOptions] = React.useState([]);
   const [courseName, setCourseName] = React.useState(
-    sessionStorage.getItem("courseValue")
-  );
-  const [collegeName, setCollegeName] = React.useState("null");
+    traineeDropDown.courseName);
+  const [collegeName, setCollegeName] = React.useState(traineeDropDown.collegeName);
+
   const [courseDropdown, setCourseDropdown] = React.useState("");
   const [dropdown, setDropDown] = useState({
     course: [],
@@ -153,9 +156,9 @@ export default function ControlledSelectionServerPaginationGrid() {
   const initiallySelectedFields = ['traineeName', 'email', 'contactNumber','course', 'actions'];
   const [displayColumn, setDisplayColumn] = React.useState(initiallySelectedFields);
   const [anchorEl, setAnchorEl] = React.useState(null);
-
+  const [followupStatus, setFollowupStatus] = useState(traineeDropDown.followUpstatus);
   const handleSearchClick = () => {
-    searchServerRows(searchValue, courseName, collegeName).then((newGridData) => {
+    searchServerRows(searchValue, courseName, collegeName,followupStatus).then((newGridData) => {
       setGridData(newGridData);
       setPaginationModel({ page: 0, pageSize: initialPageSize });
       setSearchInputValue("");
@@ -172,7 +175,8 @@ export default function ControlledSelectionServerPaginationGrid() {
             collegeName,
             paginationModel.page,
             paginationModel.pageSize,
-            setPaginationModel
+            setPaginationModel,
+            followupStatus
           )
             .then((suggestions) => {
               setAutocompleteOptions(suggestions);
@@ -203,7 +207,8 @@ export default function ControlledSelectionServerPaginationGrid() {
             paginationModel.page,
             paginationModel.pageSize,
             courseName,
-            collegeName
+            collegeName,
+            followupStatus,
           );
 
           if (active) {
@@ -216,9 +221,10 @@ export default function ControlledSelectionServerPaginationGrid() {
             searchValue,
             courseName,
             collegeName,
+            followupStatus,
             paginationModel.page,
             paginationModel.pageSize,
-            setPaginationModel
+            setPaginationModel,
           );
 
           if (active) {
@@ -272,14 +278,23 @@ export default function ControlledSelectionServerPaginationGrid() {
   };
 
   const handleCourseChange = (event) => {
+   if(event.target.name==="courseName")
+   {
     const courseValue = event.target.value;
-    sessionStorage.setItem("courseValue", courseValue);
+    dispatch(saveCourse(event.target.value))
     setCourseName(courseValue);
+   }
+if(event.target.name==="followUpStatus"){
+  dispatch(saveFollowUpStatus(event.target.value))
+  setFollowupStatus(event.target.value)
+}
+
+
   };
 
   React.useEffect(() => {
     refreshPageEveryTime();
-  }, [paginationModel.page, paginationModel.pageSize, searchValue, courseName, collegeName]);
+  }, [paginationModel.page, paginationModel.pageSize, searchValue, courseName, collegeName,followupStatus]);
   const columns = [
     {
       field: "traineeName",
@@ -444,24 +459,31 @@ export default function ControlledSelectionServerPaginationGrid() {
       flex: 1,
       valueGetter: (params) => params.row.othersDto.sendWhatsAppLink,
     },
+    
     {
-      field: "percentageDto.sslcPercentage",
-      headerName: "SSLC Percentage",
+      field: "othersDto.followupStatus",
+      headerName: "FollowupStatus",
       flex: 1,
-      valueGetter: (params) => params.row.percentageDto.sslcPercentage,
+      valueGetter: (params) => params.row.followupStatus,
     },
-    {
-      field: "percentageDto.pucPercentage",
-      headerName: "PUC Percentage",
-      flex: 1,
-      valueGetter: (params) => params.row.percentageDto.pucPercentage,
-    },
-    {
-      field: "percentageDto.degreePercentage",
-      headerName: "Degree Percentage",
-      flex: 1,
-      valueGetter: (params) => params.row.percentageDto.degreePercentage,
-    },
+    // {
+    //   field: "percentageDto.sslcPercentage",
+    //   headerName: "SSLC Percentage",
+    //   flex: 1,
+    //   valueGetter: (params) => params.row.percentageDto.sslcPercentage,
+    // },
+    // {
+    //   field: "percentageDto.pucPercentage",
+    //   headerName: "PUC Percentage",
+    //   flex: 1,
+    //   valueGetter: (params) => params.row.percentageDto.pucPercentage,
+    // },
+    // {
+    //   field: "percentageDto.degreePercentage",
+    //   headerName: "Degree Percentage",
+    //   flex: 1,
+    //   valueGetter: (params) => params.row.percentageDto.degreePercentage,
+    // },
     {
       field: "adminDto.createdOn",
       headerName: "Created On",
@@ -502,11 +524,15 @@ export default function ControlledSelectionServerPaginationGrid() {
   ];
 
   const handleClear = () => {
-    sessionStorage.setItem("courseValue", "null");
-    sessionStorage.setItem("name", "null");
-    sessionStorage.setItem("searchValue", "null");
-    setCourseName(null);
-    setCollegeName(null);
+  dispatch(saveCourse(null))
+  dispatch(saveCollegeName(null))
+  dispatch(saveFollowUpStatus(null))
+  setCollegeName(null)
+  setFollowupStatus(null)
+  setCourseName(null)
+ 
+
+
     setSearchValue("");
     setSelectedOption({ basicInfo: { traineeName: '' } });
   };
@@ -523,8 +549,9 @@ export default function ControlledSelectionServerPaginationGrid() {
     setSearchValue(newValue?.basicInfo?.email || '');
   };
   const handleCollegeChange = (event) => {
-    const collegeName = event.target.value;
-    setCollegeName(collegeName);
+   dispatch(saveCollegeName(event.target.value))
+    setCollegeName(event.target.value);
+
   }
 
   const open = Boolean(anchorEl);
@@ -596,13 +623,12 @@ export default function ControlledSelectionServerPaginationGrid() {
             id="demo-simple-select"
             label="Course Name"
             name="courseName"
-            value={courseName}
+            value={traineeDropDown.courseName}
             required
             variant="outlined"
             sx={{
               marginRight: "10px",
               width: "200px",
-              marginLeft: "10px",
               fontSize: "14px",
             }}
             onChange={handleCourseChange}
@@ -624,13 +650,12 @@ export default function ControlledSelectionServerPaginationGrid() {
             id="demo-simple-select"
             label="College Name"
             name="collegeName"
-            value={collegeName}
+            value={traineeDropDown.collegeName}
             required
             variant="outlined"
             sx={{
               marginRight: "10px",
               width: "200px",
-              marginLeft: "10px",
               fontSize: "14px",
             }}
             onChange={handleCollegeChange}
@@ -641,6 +666,33 @@ export default function ControlledSelectionServerPaginationGrid() {
                 {item}
               </MenuItem>
             ))}
+          </Select>
+        </FormControl>
+        <FormControl>
+          <InputLabel id="demo-simple-select-label">Select FollowUp Status</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            label="FollowUp Status"
+            name="followUpStatus"
+            value={traineeDropDown.followUpstatus}
+            required
+            variant="outlined"
+            sx={{
+              marginRight: "10px",
+              width: "200px",
+              fontSize: "14px",
+            }}
+            onChange={handleCourseChange}
+          >
+            <MenuItem value={null} > Select course </MenuItem>
+            {dropdown && dropdown.status
+              ? dropdown.status.map((item, k) => (
+                <MenuItem value={item} key={k}>
+                  {item}
+                </MenuItem>
+              ))
+              : null}
           </Select>
         </FormControl>
         <div style={{ marginLeft: "10px" }}>
@@ -657,9 +709,9 @@ export default function ControlledSelectionServerPaginationGrid() {
             Clear
           </Button>
         </div>
-        <div style={{ marginLeft: "35%" }}>
+        {/* <div style={{ marginLeft: "35%" }}>
           <Button variant="contained" color="primary" onClick={handleExportClick}>Export Data</Button>
-        </div>
+        </div> */}
 
       </div>
       <div style={{ height: "650px", width: "100%" }}>
@@ -726,11 +778,11 @@ export default function ControlledSelectionServerPaginationGrid() {
           ))}
         </Popover>
       </div>
-      <ExportData
+      {/* <ExportData
         open={isExportModalOpen}
         handleClose={() => setExportModalOpen(false)}
         handleSaveClick={handleExportClickModal}
-      />
+      /> */}
     </div>
   );
 }

@@ -53,13 +53,36 @@ const CompanyProfile = () => {
   const [companyDetails, setCompanyDetails] = React.useState("");
   const [companyName, setCompanyName] = React.useState("");
   const [isAddHrModalOpen, setAddHrModalOpen] = React.useState(false);
-  const [isHrFollowupModalOpen, setHrFollowupModalOpen] = React.useState(false);
   const [isGetHRDetailsModalOpen, setGetHRDetailsModalOpen] =
     React.useState(false);
   const [isEditCompanyDetailsModalOpen, setEditCompanyDetailsModalOpen] =
     React.useState(false);
   const [isHrFollowUpModalOpen, setHrFollowUpModalOpen] = React.useState("");
   const [HrFollowUpStatus, setHrFollowUpStatus] = React.useState("");
+  const [hrDetails, setHrDetails] = React.useState("");
+  const [dropdown, setDropDown] = React.useState({
+    clientType: [],
+    sourceOfConnection: [],
+    sourceOfLocation: [],
+    hrDesignation: [],
+    callingStatus: []
+  });
+
+  const fetchHRFollowUp = (id) => {
+    const companyId = id;
+    axios
+      .get(
+        Urlconstant.url + `api/getFollowUpDetailsById?companyId=${companyId}`
+      )
+      .then((response) => {
+        setHrFollowUpStatus(response.data);
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 500) {
+          setHrFollowUpStatus("");
+        }
+      });
+  };
 
   const fetchData = (id) => {
     axios
@@ -76,26 +99,36 @@ const CompanyProfile = () => {
       });
   };
 
+  const getHrDetailsbyCompanyId = () => {
+    if (id !== 0) {
+      axios
+        .get(Urlconstant.url + `api/gethrdetails?companyId=${id}`)
+        .then((response) => {
+          setHrDetails(response.data);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    }
+  };
+  React.useEffect(() => {
+    getHrDetailsbyCompanyId();
+  }, []);
+
+  React.useEffect(() => {
+    fetchHRFollowUp(id);
+  }, [id, isHrFollowUpModalOpen]);
+
   React.useEffect(() => {
     fetchData(id);
-    fetchHRFollowUp(id);
-  }, [id, isEditCompanyDetailsModalOpen, isHrFollowUpModalOpen]);
-  
-  const fetchHRFollowUp = (id) => {
-    const companyId = id;
-    axios
-      .get(
-        Urlconstant.url + `api/getFollowUpDetailsById?companyId=${companyId}`
-      )
-      .then((response) => {
-        setHrFollowUpStatus(response.data);
-      })
-      .catch((error) => {
-        if (error.response && error.response.status === 500) {
-          setHrFollowUpStatus("");
-        }
-      });
-  };
+  }, [id, isEditCompanyDetailsModalOpen]);
+
+  React.useEffect(() => {
+    axios.get(Urlconstant.url + `utils/clientdropdown`).then((response) => {
+      setDropDown(response.data);
+    });
+  }, []);
+
 
   const handleAddClientHr = () => {
     setAddHrModalOpen(true);
@@ -128,6 +161,10 @@ const CompanyProfile = () => {
   const handleHRFollowUpClick = () => {
     setHrFollowUpModalOpen(false);
   };
+  const handleAfterResponse = () => {
+    getHrDetailsbyCompanyId(); 
+  };
+
   return (
     <div>
       <h2>CompanyProfile</h2>
@@ -178,31 +215,34 @@ const CompanyProfile = () => {
             >
               Edit Profile
             </Button>
-            <Button
-              variant="outlined"
-              startIcon={<AddCircleOutline />}
-              onClick={() => {
-                handlegetHRDetails(companyDetails);
-              }}
-              sx={{ marginRight: "10px" }}
-            >
-              Get HR Details
-            </Button>
-            <Button
-              variant="outlined"
-              startIcon={<AddCircleOutline />}
-              onClick={() => {
-                handleHRFollowUp();
-              }}
-            >
-              Add Follow up
-            </Button>
+            {hrDetails.length > 0 && (
+              <>
+                <Button
+                  variant="outlined"
+                  startIcon={<AddCircleOutline />}
+                  onClick={handlegetHRDetails}
+                  sx={{ marginRight: "10px" }}
+                >
+                  Get HR Details
+                </Button>
+                <Button
+                  variant="outlined"
+                  startIcon={<AddCircleOutline />}
+                  onClick={handleHRFollowUp}
+                >
+                  Add Follow up
+                </Button>
+              </>
+            )}
           </div>
           <AddHr
             open={isAddHrModalOpen}
             handleClose={() => setAddHrModalOpen(false)}
             rowData={companyDetails}
             handleSaveClick={handleSaveClick}
+            dropdown={dropdown}
+            handleAfterResponse={handleAfterResponse} 
+            getHrDetailsbyCompanyId={getHrDetailsbyCompanyId} 
           />
           <HRDetails
             open={isGetHRDetailsModalOpen}
@@ -215,13 +255,19 @@ const CompanyProfile = () => {
             open={isEditCompanyDetailsModalOpen}
             handleClose={() => setEditCompanyDetailsModalOpen(false)}
             rowData={companyDetails}
-            handleSaveClick={handleCompanyDetailsClick}
+            handleSaveClick={() => {
+              handleCompanyDetailsClick();
+            }}
+            dropdown={dropdown}
           />
           <CompanyFollowUp
             open={isHrFollowUpModalOpen}
             handleClose={() => setHrFollowUpModalOpen(false)}
             rowData={companyDetails}
-            handleSaveClick={handleHRFollowUpClick}
+            handleSaveClick={() => {
+              handleHRFollowUpClick();
+            }}
+            dropdown={dropdown}
           />
         </div>
       </div>

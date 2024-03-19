@@ -18,7 +18,6 @@ const Sidebar = ({ children }) => {
   const [isOpen, setIsOpen] = useState(true);
   const toggle = () => setIsOpen(!isOpen);
   const location = useLocation();
-  const email = sessionStorage.getItem("userId");
 
   const [defaultSelected, setDefaultSelected] = useState("display");
 

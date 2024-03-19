@@ -21,14 +21,15 @@ import {
   validateContactNumber,
   validateEmail,
 } from "../constant/ValidationConstant";
+import { useSelector } from "react-redux";
 
-const EditHRDetails = ({ open, handleClose, rowData }) => {
+const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
+  const email = useSelector(state => state.loginDetiles.email)
   const [editedData, setEditedData] = React.useState([]);
   const [isConfirming, setIsConfirming] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [responseMessage, setResponseMessage] = React.useState("");
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
-  const attemptedEmail = sessionStorage.getItem("userId");
   const [emailCheck, setEmailCheck] = React.useState("");
   const [phoneNumber, setPhoneNumberCheck] = React.useState("");
   const [checkEmailExist, setCheckEmailExist] = React.useState("");
@@ -37,31 +38,31 @@ const EditHRDetails = ({ open, handleClose, rowData }) => {
   const [validateName, setValidateName] = React.useState("");
   const [validateDesignation, setValidateDesignation] = React.useState("");
   const [isConfirmed, setIsConfirmed] = React.useState(false);
-  const [dropdown, setDropDown] = React.useState({
-    clientType: [],
-    sourceOfConnection: [],
-    sourceOfLocation: [],
-    hrDesignation: [],
-    callingStatus: []
-  });
-  
-  const getDropdown = () => {
-    axios.get(Urlconstant.url + `utils/clientdropdown`).then((response) => {
-      setDropDown(response.data);
-    })
-  }
-
-  React.useEffect(() => {
-    getDropdown();
+  const [commentError, setCommentError] = React.useState("");
+  const [emailError, setEmailError] = React.useState("");
+  const handleOpenForm = () => {
     setEditedData(rowData);
-    setValidateDesignation("");
+    setIsConfirming(false);
+    setLoading(false);
+    setResponseMessage("");
+    setSnackbarOpen(false);
     setEmailCheck("");
     setPhoneNumberCheck("");
     setCheckEmailExist("");
     setCheckPhoneNumberExist("");
-    setValidateName("");
     setVerifyEmail("");
-  }, [rowData]);
+    setValidateName("");
+    setValidateDesignation("");
+    setIsConfirmed(false);
+    setCommentError("");
+    setEmailError("");
+  };
+  React.useEffect(() => {
+    if (open) {
+      handleOpenForm();
+    }
+  }, [open, rowData]);
+
 
   const handleEditClick = () => {
     setIsConfirming(true);
@@ -78,6 +79,7 @@ const EditHRDetails = ({ open, handleClose, rowData }) => {
     handleClose();
   };
 
+
   const handleInput = (event) => {
     const { name, value } = event.target;
     if (name === "hrSpocName") {
@@ -91,8 +93,10 @@ const EditHRDetails = ({ open, handleClose, rowData }) => {
       if (validateEmail(value)) {
         setEmailCheck("");
       } else {
-        setEmailCheck("invalid email");
+        setEmailCheck("Enter the valid E-mail");
         setCheckEmailExist("");
+        setEmailError("");
+        setVerifyEmail("");
       }
     }
     if (name === "hrContactNumber") {
@@ -110,6 +114,15 @@ const EditHRDetails = ({ open, handleClose, rowData }) => {
         setValidateDesignation("");
       }
     }
+    if (name === "status") {
+      if (value === "") {
+        setCommentError("");
+      } else if (value <= 2) {
+        setCommentError("Comments should not be empty");
+      } else {
+        setCommentError("");
+      }
+    }
     setEditedData((prevData) => ({
       ...prevData,
       [name]: value,
@@ -124,8 +137,9 @@ const EditHRDetails = ({ open, handleClose, rowData }) => {
           ...editedData,
           adminDto: {
             ...editedData.adminDto,
-            updatedBy: attemptedEmail,
+            updatedBy: email,
           },
+          status: editedData.status === "" ? rowData.status : editedData.status,
         };
         axios
           .put(
@@ -160,64 +174,78 @@ const EditHRDetails = ({ open, handleClose, rowData }) => {
         if (response.status === 200) {
           if (response.data === "accepted_email") {
             setVerifyEmail(response.data);
+            setCheckEmailExist("");
           } else if (response.data === "rejected_email") {
-            setVerifyEmail(response.data);
+            setVerifyEmail("");
+            setCheckEmailExist("");
+            setEmailError(response.data);
           } else {
             setVerifyEmail("");
-          }
-        } else {
-          if (response.status === 500) {
-            console.log("Internal Server Error:", response.status);
-          } else {
-            console.log("Unexpected Error:", response.status);
+            setEmailError(response.data);
           }
         }
+        else if (response.status === 500) {
+          setEmailError("");
+        }
       })
-      .catch((error) => {
-        console.log("check emailable credentils");
-      });
+      .catch((error) => { });
+
   };
 
   const handleEmailCheck = (email) => {
     if (email === "NA") {
       setCheckEmailExist("");
     } else {
-      axios
-        .get(Urlconstant.url + `api/hremailcheck?hrEmail=${email}`)
-        .then((response) => {
-          if (response.data === "Email already exists.") {
-            setEmailCheck("");
-            setCheckEmailExist(response.data);
-          } else {
-            validatingEmail(email);
-            setCheckEmailExist("");
-          }
-        });
+      if (email.trim() != "" && validateEmail(email)) {
+        axios
+          .get(Urlconstant.url + `api/hremailcheck?hrEmail=${email}`)
+          .then((response) => {
+            if (response.data === "Email already exists.") {
+              console.log(verifyEmail)
+              setVerifyEmail("");
+              setEmailCheck("");
+              setEmailError("");
+              setCheckEmailExist(response.data);
+            } else {
+              if (validateEmail(email)) {
+                validatingEmail(email);
+              }
+            }
+          });
+      } else {
+        setEmailCheck("")
+        setCheckEmailExist("Enter the valid E-mail")
+      }
     }
   };
   const handleNumberCheck = (contactNumber) => {
     if (contactNumber === "0") {
       setCheckPhoneNumberExist("");
     } else {
-      axios
-        .get(
-          Urlconstant.url +
-          `api/hrcontactnumbercheck?contactNumber=${contactNumber}`
-        )
-        .then((response) => {
-          if (response.data === "Contact Number Already exist.") {
-            setCheckPhoneNumberExist(response.data);
-          } else {
-            setCheckPhoneNumberExist("");
-            setPhoneNumberCheck("");
-          }
-        });
+      if (contactNumber.trim() != "" && validateContactNumber(contactNumber)) {
+        axios
+          .get(
+            Urlconstant.url +
+            `api/hrcontactnumbercheck?contactNumber=${contactNumber}`
+          )
+          .then((response) => {
+            if (response.data === "Contact Number Already exist.") {
+              setCheckPhoneNumberExist(response.data);
+            } else {
+              setCheckPhoneNumberExist("");
+              setPhoneNumberCheck("");
+            }
+          });
+      } else {
+        setCheckPhoneNumberExist("Enter the valid contact Number");
+        setPhoneNumberCheck("");
+      }
     }
   };
 
   const handleEmail = (event) => {
     let email = event.target.value;
-    if (email != rowData.hrEmail) {
+    if (email !== rowData.hrEmail) {
       handleEmailCheck(email);
     }
   };
@@ -235,9 +263,12 @@ const EditHRDetails = ({ open, handleClose, rowData }) => {
     phoneNumber ||
     checkEmailExist ||
     checkPhoneNumberExist ||
-    verifyEmail ||
+    (verifyEmail !== "accepted_email" && verifyEmail) ||
+    emailError ||
     validateName ||
+    commentError ||
     validateDesignation;
+
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle>
@@ -283,7 +314,12 @@ const EditHRDetails = ({ open, handleClose, rowData }) => {
             ) : (
               " "
             )}
-            {verifyEmail ? <Alert severity="error">{verifyEmail}</Alert> : " "}
+            {verifyEmail === "accepted_email" && (
+              <Alert severity="success">{verifyEmail}</Alert>
+            )}
+            {verifyEmail && verifyEmail !== "accepted_email" && <Alert severity="error">{verifyEmail}</Alert>}
+
+            {emailError ? <Alert severity="error">{emailError}</Alert> : " "}
           </Grid>
           <Grid item xs={12} sm={4}>
             <TextField
@@ -312,7 +348,7 @@ const EditHRDetails = ({ open, handleClose, rowData }) => {
               fullWidth
               margin="normal"
             >
-             {dropdown.hrDesignation.map((item, index) => (
+              {dropdown.hrDesignation.map((item, index) => (
                 <MenuItem key={index} value={item}>
                   {item}
                 </MenuItem>
@@ -325,13 +361,16 @@ const EditHRDetails = ({ open, handleClose, rowData }) => {
               label="Comments"
               name="status"
               style={fieldStyle}
-              defaultValue={rowData.status}
+              defaultValue={rowData.status != "NA" ? rowData.status : ""}
+              placeholder={rowData.status === "NA" ? "NA" : ""}
               onChange={handleInput}
               fullWidth
               margin="normal"
               multiline
               rows={4}
             />
+            {commentError ? <Alert severity="error">{commentError}</Alert> : " "}
+
           </Grid>
         </Grid>
       </DialogContent>

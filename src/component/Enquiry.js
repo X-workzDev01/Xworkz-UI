@@ -7,6 +7,7 @@ import axios from "axios";
 import { Urlconstant } from "../constant/Urlconstant";
 import { MenuItem } from "@mui/material";
 import Header from "./Header";
+import { useSelector } from "react-redux";
 
 const formStyle = {
   maxWidth: "400px",
@@ -32,7 +33,7 @@ function Enquiry() {
   const [phoneNumberExists, setPhoneNumberExists] = useState(false);
   const [emailExists, setEmailExists] = useState(false);
   const [qualificationOptions, setQualification] = useState([]);
-  const email = sessionStorage.getItem("userId");
+  const email = useSelector(state => state.loginDetiles.email)
 
   const [streamOptions, setStreamOptions] = useState([]); // For storing stream options
   const [yearOfPassoutOptions, setYearOfPassoutOptions] = useState([]); // For storing year of passout options

@@ -1,73 +1,73 @@
 .containe {
-  height: auto;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 50rem;
-  border-radius: 1.2rem;
-  background-color: white;
-  transform: translate(-50%,-50%);
+	height: auto;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 50rem;
+	border-radius: 1.2rem;
+	background-color: white;
+	transform: translate(-50%, -50%);
 }
 
 .field {
-  padding-left: 2rem;
-  padding-right: 2rem;
-  height: auto;
-  width: auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  justify-self: center;
-  margin-bottom: 2rem;
+	padding-left: 2rem;
+	padding-right: 2rem;
+	height: auto;
+	width: auto;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	justify-self: center;
+	margin-bottom: 2rem;
 }
 .success {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 0.5rem;
-  margin-right: 1rem;
+	display: flex;
+	justify-content: flex-end;
+	margin-top: 0.5rem;
+	margin-right: 1rem;
 }
 
 .popup {
-  height: 10rem;
-  width: 25rem;
-  position: absolute;
-  top:50%;
-  left:50%;
-  border-radius: 1.2rem;
-  background-color: white;
-  transform: translate(-50%, -50%);
+	height: auto;
+	width: 25rem;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	border-radius: 1.2rem;
+	background-color: white;
+	transform: translate(-50%, -50%);
 }
 .confirm {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: -2.5rem;
-  margin-right: 0.4rem;
+	display: flex;
+	justify-content: flex-end;
+	margin-top: -2.5rem;
+	margin-right: 0.4rem;
 }
 .error {
-  display: flex;
-  transform: translate(35.1rem, 4.3rem);
-  color: red;
-  size: 0rem;
+	display: flex;
+	transform: translate(35.1rem, 4.3rem);
+	color: red;
+	size: 0rem;
 }
 
 .error {
-  font-size: 0.7rem;
+	font-size: 0.7rem;
 }
 .text {
-  margin-left: 1rem;
-  color: green;
-  font-weight: bolder;
-  font-size: 1.2rem;
+	margin-left: 1rem;
+	color: green;
+	font-weight: bolder;
+	font-size: 1.2rem;
 }
 .closed {
-  display: flex;
-  justify-content: flex-end;
-  margin-right: 1rem;
-  padding-top: 0.8rem;
+	display: flex;
+	justify-content: flex-end;
+	margin-right: 1rem;
+	padding-top: 0.8rem;
 }
 .late-error {
-  display: flex;
-  transform: translate(34rem, 15rem);
-  color: red;
-  size: 0rem;
+	display: flex;
+	transform: translate(34rem, 15rem);
+	color: red;
+	size: 0rem;
 }

@@ -18,8 +18,13 @@ import React from "react";
 import { Urlconstant } from "../constant/Urlconstant";
 import { fieldStyle, style } from "../constant/FormStyle";
 import { getCurrentDate } from "../constant/ValidationConstant";
+import { LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
+import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { useSelector } from "react-redux";
 
-const HrFollowUp = ({ open, handleClose, rowData }) => {
+const HrFollowUp = ({ open, handleClose, rowData, dropdown }) => {
+  const email = useSelector(state => state.loginDetiles.email)
   const [isConfirmed, setIsConfirmed] = React.useState(false);
   const [responseMessage, setResponseMessage] = React.useState("");
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
@@ -27,31 +32,17 @@ const HrFollowUp = ({ open, handleClose, rowData }) => {
   const [loading, setLoading] = React.useState(false);
   const [formData, setFormData] = React.useState("");
   const attemtedUser = sessionStorage.getItem("userId");
-  const [dropdown, setDropDown] = React.useState({
-    clientType: [],
-    sourceOfConnection: [],
-    sourceOfLocation: [],
-    hrDesignation: [],
-    callingStatus: []
-  });
-
-  const getDropdown = () => {
-    axios.get(Urlconstant.url + `utils/clientdropdown`).then((response) => {
-      setDropDown(response.data);
-    })
-  }
 
   React.useEffect(() => {
     if (open) {
       setFormData({
-        attemptBy: attemtedUser,
+        attemptBy: email,
         attemptStatus: "",
         callDuration: "",
         callBackDate: "",
         callBackTime: "",
         comments: "",
       });
-      getDropdown();
     }
   }, [open]);
 
@@ -85,7 +76,7 @@ const HrFollowUp = ({ open, handleClose, rowData }) => {
         const hrFollowUpData = {
           ...formData,
           hrId: rowData.id,
-          attemptBy: attemtedUser,
+          attemptBy: email,
         };
 
         axios
@@ -110,7 +101,8 @@ const HrFollowUp = ({ open, handleClose, rowData }) => {
       }
     }
   };
-  const isDisabled = !formData.attemptStatus;
+ 
+  const isDisabled = !formData.attemptStatus
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle>
@@ -129,12 +121,12 @@ const HrFollowUp = ({ open, handleClose, rowData }) => {
         <Grid container spacing={3}>
           <Grid item xs={12} sm={4}>
             <TextField
-              label="attemptBy"
+              label="Attempt By"
               name="attemptBy"
               onChange={handleInputChange}
               style={fieldStyle}
               value={formData.attemptBy}
-              defaultValue={attemtedUser}
+              defaultValue={email}
               InputProps={{
                 readOnly: true,
               }}
@@ -158,17 +150,27 @@ const HrFollowUp = ({ open, handleClose, rowData }) => {
               ))}
             </TextField>
           </Grid>
-
           <Grid item xs={12} sm={4}>
             <TextField
+              type="time"
               label="Call Duration"
               name="callDuration"
-              placeholder="mm:ss"
+              placeholder="hh:mm:ss"
               onChange={handleInputChange}
               style={fieldStyle}
               value={formData.callDuration}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              sx={{
+                marginRight: "20px",
+                width: "200px",
+                marginLeft: "40px",
+                fontSize: "14px",
+              }}
             />
           </Grid>
+         
           <Grid item xs={12} sm={4}>
             <TextField
               type="date"
@@ -225,6 +227,7 @@ const HrFollowUp = ({ open, handleClose, rowData }) => {
             />
           </Grid>
         </Grid>
+
       </DialogContent>
       <DialogActions>
         {loading ? (

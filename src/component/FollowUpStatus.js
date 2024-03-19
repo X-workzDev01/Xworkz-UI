@@ -21,9 +21,11 @@ import { Urlconstant } from "../constant/Urlconstant";
 
 import "dayjs/locale/de";
 import "dayjs/locale/en-gb";
+import { useSelector } from "react-redux";
 const fieldStyle = { margin: "20px" };
 
 const FollowUpStatus = ({ open, handleClose, rowData, followUpdata }) => {
+  const email = useSelector(state => state.loginDetiles.email)
   const [joinedError, setJoinedError] = useState("");
   const [isConfirming, setIsConfirming] = React.useState(false);
   const [editedData, setEditedData] = React.useState({ ...rowData });
@@ -109,7 +111,7 @@ const FollowUpStatus = ({ open, handleClose, rowData, followUpdata }) => {
       setAttemptStatus(updatedValue);
       if (value == "Joined" && rowData.courseInfo.course === "NA") {
         setIdDisabled(true);
-        setJoinedError("Please trainee update batch before select joined Trainee");
+        setJoinedError("Please update batch details before making changes in Trainee status");
       } else {
         setJoinedError("");
         setIdDisabled(false);
@@ -134,7 +136,8 @@ const FollowUpStatus = ({ open, handleClose, rowData, followUpdata }) => {
     setAttemptStatus("");
     handleClose();
   };
-  const attemtedUser = sessionStorage.getItem("userId");
+  const attemtedUser = email;
+  
 
   const validateAndSaveData = (statusDto, attendanceDto, dto) => {
     setIsConfirmed(true);
@@ -193,7 +196,7 @@ const FollowUpStatus = ({ open, handleClose, rowData, followUpdata }) => {
       traineeName: statusDto.basicInfo.traineeName,
       id: statusDto.id,
       course: statusDto.courseInfo.course,
-      adminDto: { createdBy: sessionStorage.getItem("userId") },
+      adminDto: { createdBy: email },
     };
     if (isConfirming) {
       setLoading(true);
