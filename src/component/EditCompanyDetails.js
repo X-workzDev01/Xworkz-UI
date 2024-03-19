@@ -193,8 +193,6 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
             setVerifyEmail(response);
           } else if (response.data === "rejected_email") {
             setVerifyEmail(response);
-          } else {
-            setVerifyEmail(response);
           }
         } else {
           if (response.status === 500) {

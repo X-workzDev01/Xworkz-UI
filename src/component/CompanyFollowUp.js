@@ -44,9 +44,10 @@ const CompanyFollowUp = ({ open, handleClose, rowData, dropdown }) => {
 
   useEffect(() => {
     setIsConfirmed(false);
+    setFormData({ attemptBy: email, });
     if (open) {
       getdetailsbyCompanyId();
-      setFormData({});
+      setFormData({ attemptBy: email, });
     }
   }, [rowData, open]);
 
@@ -63,6 +64,17 @@ const CompanyFollowUp = ({ open, handleClose, rowData, dropdown }) => {
           setHrDetails(hrItem);
         }
       });
+    }
+    if (name === 'attemptStatus') {
+      setFormData((prevData) => ({
+        ...prevData,
+        attemptBy: email,
+        attemptStatus: value,
+        callDuration: '',
+        callBackDate: '',
+        callBackTime: '',
+        comments: '',
+      }));
     }
 
     setFormData((prevData) => ({
@@ -114,7 +126,7 @@ const CompanyFollowUp = ({ open, handleClose, rowData, dropdown }) => {
       }
     }
   };
-  const isDisabled = !formData.attemptStatus || !hrDetails || !formData.hrSpocName
+  const isDisabled = !formData.attemptStatus || !hrDetails || !formData.hrSpocName || (!['Busy', 'RNR', 'Switch Off', 'OTHERS'].includes(formData.attemptStatus) && !formData.callDuration);
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle>

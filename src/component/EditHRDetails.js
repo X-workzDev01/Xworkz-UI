@@ -179,9 +179,6 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
             setVerifyEmail("");
             setCheckEmailExist("");
             setEmailError(response.data);
-          } else {
-            setVerifyEmail("");
-            setEmailError(response.data);
           }
         }
         else if (response.status === 500) {
