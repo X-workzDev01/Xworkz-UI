@@ -531,11 +531,11 @@ export const PayFee = ({
                     writingMode: 'vertical-lr',
                   }}
                 >
-                  hareeshahareeshahr746-2@okaxis
+                  9986667354@upi
                 </span>
               </div>
               <img
-                src={`https://chart.googleapis.com/chart?chs=500x500&choe=UTF-8&chld=M|0&cht=qr&chl=upi%3A%2F%2Fpay%3Fpa%3Dhareeshahareeshahr746-2%40okaxis%26am%3D${updateFeesData.paidAmount}.00%26cu%3DINR`}
+                src={`https://chart.googleapis.com/chart?chs=500x500&choe=UTF-8&chld=M|0&cht=qr&chl=upi%3A%2F%2Fpay%3Fpa%3D9986667354%40upi%26am%3D${updateFeesData.paidAmount}.00%26cu%3DINR`}
                 height="150px"
                 width="150px"
                 alt="QR Code"
