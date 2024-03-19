@@ -84,6 +84,7 @@ export default function Registration() {
         setFormData({
           basicInfo: [],
           educationInfo: [],
+          percentageDto:[],
           courseInfo: [],
           othersDto: [],
           adminDto: { createdBy: email }

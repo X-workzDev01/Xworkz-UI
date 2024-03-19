@@ -82,6 +82,11 @@ const EditModal = ({
   const [sslcError, setSslcError] = useState("");
   const [pucError, setPucError] = useState("");
   const [degreeError, setDegreeError] = useState("");
+
+  const [sslcToPerc, setSslcToPerc] = useState("");
+  const [pucToPerc, setPucToPerc] = useState("");
+  const [degreeToPerc, setDegreeToPerc] = useState("");
+
   React.useEffect(
     () => {
       setXworkzEmailErrorVerify("");
@@ -101,17 +106,25 @@ const EditModal = ({
       setComments("");
       setXworkzEmailCheck("");
       setverifyHandleEmailError("");
+      setSslcError("");
+      setPucError("");
+      setDegreeError("");
     },
     [rowData]
   );
 
-  useEffect(
-    () => {
-      const percDisabled = sslcError || pucError || degreeError;
-      setDisable(percDisabled);
-    },
-    [sslcError, pucError, degreeError]
-  );
+  useEffect(() => {
+    if(open){
+    rowData.percentageDto.sslcPercentage ? setSslcToPerc(((rowData.percentageDto.sslcPercentage / 10) + 0.7).toFixed(2) + " CGPA") : setSslcToPerc(null);
+    rowData.percentageDto.pucPercentage ? setPucToPerc(((rowData.percentageDto.pucPercentage / 10) + 0.7).toFixed(2) + " CGPA") : setPucToPerc(null);
+    rowData.percentageDto.degreePercentage ? setDegreeToPerc(((rowData.percentageDto.degreePercentage / 10) + 0.7).toFixed(2) + " CGPA") : setDegreeToPerc(null);
+    }
+  }, [open]);
+  useEffect(() => {
+    const percDisabled = sslcError || pucError || degreeError;
+    setDisable(percDisabled);
+
+  }, [sslcError, pucError, degreeError]);
 
   React.useEffect(() => {
     axios
@@ -271,36 +284,61 @@ const EditModal = ({
     if (name === "percentageDto.sslcPercentage") {
       if (!value) {
         setSslcError("SSLC (10th) Percentage is required");
-      } else if (value < 1 || value > 99.99) {
+        setSslcToPerc("");
+      }
+      else if (value < 1 || value > 99.99) {
         setSslcError("Enter proper percentage");
       } else if (!/^[0-9]*(\.[0-9]{0,2})?$/.test(value)) {
         setSslcError("Only two decimals are allowed");
       } else {
+        setSslcToPerc("");
         setSslcError("");
+      }
+      if (/^\d{1}\.\d{1,2}$/.test(value) || value.length == 1) {
+        setSslcToPerc(((value - .7) * 10).toFixed(2) + "%");
+      }
+      if (/^\d{2}\.\d{1,2}$/.test(value)||/^\d{2}$/.test(value)) {
+        setSslcToPerc(((value / 10) + 0.7).toFixed(2) + " CGPA");
       }
     }
 
     if (name === "percentageDto.pucPercentage") {
       if (!value) {
         setPucError("PUC Percentage is required");
+        setPucToPerc("");
       } else if (value < 1 || value > 99.99) {
         setPucError("Enter proper percentage");
       } else if (!/^[0-9]*(\.[0-9]{0,2})?$/.test(value)) {
         setPucError("Only two decimals are allowed");
       } else {
+        setPucToPerc("");
         setPucError("");
+      }
+      if (/^\d{1}\.\d{1,2}$/.test(value) || value.length == 1) {
+        setPucToPerc(((value - .7) * 10).toFixed(2) + "%");
+      }
+      if (/^\d{2}\.\d{1,2}$/.test(value)||/^\d{2}$/.test(value)) {
+        setPucToPerc(((value / 10) + 0.7).toFixed(2) + " CGPA");
       }
     }
 
     if (name === "percentageDto.degreePercentage") {
       if (!value) {
         setDegreeError("Degree Percentage  is required");
+        setDegreeToPerc("");
       } else if (value < 1 || value > 99.99) {
         setDegreeError("Enter proper percentage");
       } else if (!/^[0-9]*(\.[0-9]{0,2})?$/.test(value)) {
         setDegreeError("Only two decimals are allowed");
       } else {
+        setDegreeToPerc("");
         setDegreeError("");
+      }
+      if (/^\d{1}\.\d{1,2}$/.test(value) || value.length == 1) {
+        setDegreeToPerc(((value - .7) * 10).toFixed(2) + "%");
+      }
+      if (/^\d{2}\.\d{1,2}$/.test(value)||/^\d{2}$/.test(value)) {
+        setDegreeToPerc(((value / 10) + 0.7).toFixed(2) + " CGPA");
       }
     }
 
@@ -655,7 +693,12 @@ const EditModal = ({
 
             {verifyHandleEmailerror === "accepted_email"
               ? <Alert severity="success">
-                {verifyHandleEmailerror}
+                {verifyHandaleEmailerror}
+              </Alert>
+              : " "}
+            {verifyHandaleEmailerror
+              ? <Alert severity="error">
+                {verifyHandaleEmailerror}
               </Alert>
               : " "}
             {verifyHandleEmailerror && verifyHandleEmailerror !== "accepted_email" && <Alert severity="error">{verifyHandleEmailerror}</Alert>}
@@ -667,6 +710,12 @@ const EditModal = ({
             {emailCheck
               ? <Alert severity="error">
                 {emailCheck}
+              </Alert>
+              : " "}
+
+            {verifyHandaleEmail
+              ? <Alert severity="success">
+                {verifyHandaleEmail}
               </Alert>
               : " "}
           </Grid>
@@ -1039,6 +1088,7 @@ const EditModal = ({
                   {xworkzEmailErrorVerify}
                 </Alert>
                 : ""}
+
           </Grid>
           <Grid item xs={4}>
             <FormControl>
@@ -1136,7 +1186,12 @@ const EditModal = ({
               style={fieldStyle}
               
             />
-            {sslcError ? (<Alert severity="error">{sslcError}</Alert>) : " "}
+            <div style={{ marginTop: "-57px", marginLeft: "250px" }}>
+              {sslcToPerc ? <span>{sslcToPerc}</span> : ""}
+            </div>
+            <div style={{ marginTop: "45px" }}>
+              {sslcError ? (<Alert severity="error">{sslcError}</Alert>) : " "}
+            </div>
           </Grid>
           <Grid item xs={4}>
             <TextField
@@ -1148,7 +1203,13 @@ const EditModal = ({
               style={fieldStyle}
               
             />
-            {pucError ? (<Alert severity="error">{pucError}</Alert>) : " "}
+            <div style={{ marginTop: "-57px", marginLeft: "250px" }}>
+              {pucToPerc ? <span>{pucToPerc}</span> : ""}
+            </div>
+            <div style={{ marginTop: "45px" }}>
+              {pucError ? (<Alert severity="error">{pucError}</Alert>) : " "}
+            </div>
+
           </Grid>
 
           <Grid item xs={4}>
@@ -1161,8 +1222,13 @@ const EditModal = ({
               style={fieldStyle}
               
             />
-            {degreeError ? (<Alert severity="error">{degreeError}</Alert>) : " "}
-          </Grid> */}
+            <div style={{ marginTop: "-57px", marginLeft: "250px" }}>
+              {degreeToPerc ? <span>{degreeToPerc}</span> : ""}
+            </div>
+            <div style={{ marginTop: "45px" }}>
+              {degreeError ? (<Alert severity="error">{degreeError}</Alert>) : " "}
+            </div>
+          </Grid>
           <Grid item xs={4}>
             <TextField
               label="Comments"
@@ -1200,6 +1266,7 @@ const EditModal = ({
             onClick={handleEditClick}
             color="primary"
           >
+
             Edit
           </Button>}
       </DialogActions>
