@@ -89,7 +89,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
         setPhoneNumberCheck("Contact number should be 10 digit");
       }
     }
-    if (name === "companyWebsite" && value.length <= 1 && !validateWebsite(value)) {
+    if (name === "companyWebsite" && value.length <= 3 && !validateWebsite(value)) {
       setCheckCompanyWebsite("");
       setError("Enter the valid website");
     } else if (validateWebsite(value)) {
