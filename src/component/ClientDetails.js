@@ -143,7 +143,7 @@ export default function ClientDetails() {
     !formData.companyLocation ||
     companyNameCheck ||
     companyEmailCheck ||
-    (emailCheckError !== "accepted_email" || emailCheckError !== "low_quality" && emailCheckError) ||
+    ((emailCheckError !== "accepted_email" || emailCheckError !== "low_quality") && emailCheckError) ||
     emailCheck ||
     phoneNumberCheck ||
     checkPhoneNumberExist ||

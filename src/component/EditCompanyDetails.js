@@ -256,6 +256,8 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
     const email = event.target.value;
     if (email !== rowData.companyEmail) {
       handleCompanyEmail(email);
+    } else {
+      setCheckEmailExist("");
     }
   };
 
@@ -381,10 +383,8 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
             />
             {emailCheck ? <Alert severity="error">{emailCheck}</Alert> : ""}
             {checkEmailExist ? <Alert severity="error">{checkEmailExist}</Alert> : ""}
-            {(verifyEmail !== "accepted_email" || verifyEmail !== "low_quality") && <Alert severity="success">{verifyEmail}</Alert>}
+            {(verifyEmail === "accepted_email" || verifyEmail === "low_quality") && <Alert severity="success">{verifyEmail}</Alert>}
             {verifyEmail && (verifyEmail !== "accepted_email" || verifyEmail !== "low_quality") && <Alert severity="error">{verifyEmail}</Alert>}
-
-
           </Grid>
           <Grid item xs={12} sm={4}>
             <TextField
