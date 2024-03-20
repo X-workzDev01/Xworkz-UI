@@ -93,7 +93,6 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
       setCheckCompanyWebsite("");
       setError("Enter the valid website");
     } else if (validateWebsite(value)) {
-      console.log(validateWebsite(value))
       setError("");
     }
 
