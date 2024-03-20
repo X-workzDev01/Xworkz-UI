@@ -140,13 +140,13 @@ export const PayFee = ({
     }
     if (
       (name === 'transectionId' && value !== '' && value.length < 5) ||
-      (name === 'transectionId' && value !== '' && value.length > 14)
+      (name === 'transectionId' && value !== '' && value.length > 26)
     ) {
       setConfirmIsDisabled (true);
       setTransactionErr ('Please Enter Valid Transaction ID');
     } else if (
       (name === 'transectionId' && value !== '' && value.length > 5) ||
-      (name === 'transectionId' && value !== '' && value.length < 14)
+      (name === 'transectionId' && value !== '' && value.length < 26)
     ) {
       setConfirmIsDisabled (false);
       setTransactionErr ('');
