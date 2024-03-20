@@ -193,6 +193,8 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
             setVerifyEmail(response);
           } else if (response.data === "rejected_email") {
             setVerifyEmail(response);
+          } else if (response.data === "low_quality") {
+            setVerifyEmail(response);
           }
         } else {
           if (response.status === 500) {
@@ -331,7 +333,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
     error ||
     founderNameCheck ||
     addressError ||
-    (verifyEmail !== "accepted_email" && verifyEmail);
+    ((verifyEmail !== "accepted_email" || verifyEmail !== "low_quality") && verifyEmail);
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle>
@@ -379,8 +381,8 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
             />
             {emailCheck ? <Alert severity="error">{emailCheck}</Alert> : ""}
             {checkEmailExist ? <Alert severity="error">{checkEmailExist}</Alert> : ""}
-            {verifyEmail === "accepted_email" && <Alert severity="success">{verifyEmail}</Alert>}
-            {verifyEmail && verifyEmail !== "accepted_email" && <Alert severity="error">{verifyEmail}</Alert>}
+            {(verifyEmail !== "accepted_email" || verifyEmail !== "low_quality") && <Alert severity="success">{verifyEmail}</Alert>}
+            {verifyEmail && (verifyEmail !== "accepted_email" || verifyEmail !== "low_quality") && <Alert severity="error">{verifyEmail}</Alert>}
 
 
           </Grid>

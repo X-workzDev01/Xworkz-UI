@@ -180,6 +180,11 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
             setCheckEmailExist("");
             setEmailError(response.data);
           }
+          else if (response.data === "low_quality") {
+            setVerifyEmail("");
+            setCheckEmailExist("");
+            setEmailError(response.data);
+          }
         }
         else if (response.status === 500) {
           setEmailError("");
@@ -260,7 +265,7 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
     phoneNumber ||
     checkEmailExist ||
     checkPhoneNumberExist ||
-    (verifyEmail !== "accepted_email" && verifyEmail) ||
+    ((verifyEmail !== "accepted_email" || verifyEmail !== "low_quality") && verifyEmail) ||
     emailError ||
     validateName ||
     commentError ||
@@ -311,10 +316,11 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
             ) : (
               " "
             )}
-            {verifyEmail === "accepted_email" && (
+
+            {(verifyEmail !== "accepted_email" || verifyEmail !== "low_quality") && (
               <Alert severity="success">{verifyEmail}</Alert>
             )}
-            {verifyEmail && verifyEmail !== "accepted_email" && <Alert severity="error">{verifyEmail}</Alert>}
+            {verifyEmail && (verifyEmail !== "accepted_email" || verifyEmail !== "low_quality") && <Alert severity="error">{verifyEmail}</Alert>}
 
             {emailError ? <Alert severity="error">{emailError}</Alert> : " "}
           </Grid>
