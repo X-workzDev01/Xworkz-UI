@@ -143,7 +143,7 @@ export default function ClientDetails() {
     !formData.companyLocation ||
     companyNameCheck ||
     companyEmailCheck ||
-    (emailCheckError !== "accepted_email" && emailCheckError) ||
+    (emailCheckError !== "accepted_email" || emailCheckError !== "low_quality" && emailCheckError) ||
     emailCheck ||
     phoneNumberCheck ||
     checkPhoneNumberExist ||
@@ -214,12 +214,16 @@ export default function ClientDetails() {
       .get(`${Urlconstant.url}api/verify-email?email=${email}`)
       .then((response) => {
         if (response.status === 200) {
-          const response = "accepted_email";
           if (response.data === "accepted_email") {
             setEmailCheck("");
             setEmailCheckError(response.data);
             setCompanyEmailCheck("")
           } else if (response.data === "rejected_email") {
+            setEmailCheck("");
+            setCompanyEmailCheck("")
+            setEmailCheckError(response.data);
+          }
+          else if (response.data === "low_quality") {
             setEmailCheck("");
             setCompanyEmailCheck("")
             setEmailCheckError(response.data);
@@ -383,10 +387,10 @@ export default function ClientDetails() {
                 <Alert severity="error">{companyEmailCheck}</Alert>
               )}
 
-              {emailCheckError === "accepted_email" && (
+              {emailCheckError === "accepted_email" || emailCheckError === "low_quality" && (
                 <Alert severity="success">{emailCheckError}</Alert>
               )}
-              {emailCheckError && emailCheckError !== "accepted_email" && <Alert severity="error">{emailCheckError}</Alert>}
+              {emailCheckError && (emailCheckError === "accepted_email" || emailCheckError === "low_quality") && <Alert severity="error">{emailCheckError}</Alert>}
             </Grid>
             <Grid item xs={12} sm={4}>
               <TextField

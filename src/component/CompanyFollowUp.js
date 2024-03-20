@@ -126,7 +126,7 @@ const CompanyFollowUp = ({ open, handleClose, rowData, dropdown }) => {
       }
     }
   };
-  const isDisabled = !formData.attemptStatus || !hrDetails || !formData.hrSpocName || (!['Busy', 'RNR', 'Switch Off', 'OTHERS'].includes(formData.attemptStatus) && !formData.callDuration);
+  const isDisabled = !formData.attemptStatus || !hrDetails || !formData.hrSpocName || (!['Busy', 'RNR', 'Switch Off', 'Not Reachable','OTHERS'].includes(formData.attemptStatus) && !formData.callDuration);
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle>
