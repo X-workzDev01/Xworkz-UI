@@ -31,7 +31,7 @@ const AddHr = ({ open, handleClose, rowData, dropdown, handleAfterResponse }) =>
   const [isConfirmed, setIsConfirmed] = React.useState(false);
   const [responseMessage, setResponseMessage] = React.useState("");
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
-  const [formData, setFormData] = React.useState("");
+  const [formData, setFormData] = React.useState({});
   const [emailCheck, setEmailCheck] = React.useState("");
   const [phoneNumber, setPhoneNumberCheck] = React.useState("");
   const [checkEmailExist, setCheckEmailExist] = React.useState("");
@@ -41,8 +41,8 @@ const AddHr = ({ open, handleClose, rowData, dropdown, handleAfterResponse }) =>
   const [validateDesignation, setValidateDesignation] = React.useState("");
   const [emailError, setEmailError] = React.useState("");
   React.useEffect(() => {
+    setFormData({});
     if (open) {
-      setFormData([]);
       setPhoneNumberCheck("");
       setEmailCheck("");
       setCheckEmailExist("");
@@ -187,11 +187,6 @@ const AddHr = ({ open, handleClose, rowData, dropdown, handleAfterResponse }) =>
           } else if (response.data === "rejected_email") {
             setVerifyEmail();
             setEmailCheck();
-            setCheckEmailExist("");
-            setEmailError(response.data);
-          } else {
-            setVerifyEmail("");
-            setEmailCheck("");
             setCheckEmailExist("");
             setEmailError(response.data);
           }

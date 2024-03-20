@@ -140,6 +140,7 @@ export default function ClientDetails() {
     !formData.companyEmail ||
     !formData.companyLandLineNumber ||
     !formData.companyType ||
+    !formData.companyLocation ||
     companyNameCheck ||
     companyEmailCheck ||
     (emailCheckError !== "accepted_email" && emailCheckError) ||
@@ -222,10 +223,6 @@ export default function ClientDetails() {
             setEmailCheck("");
             setCompanyEmailCheck("")
             setEmailCheckError(response.data);
-          } else {
-            setCompanyEmailCheck("");
-            setEmailCheck("")
-            setEmailCheckError(response.data)
           }
         } else {
           if (response.status === 500) {

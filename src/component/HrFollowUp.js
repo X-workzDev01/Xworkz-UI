@@ -30,28 +30,33 @@ const HrFollowUp = ({ open, handleClose, rowData, dropdown }) => {
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [isConfirming, setIsConfirming] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
-  const [formData, setFormData] = React.useState("");
+  const [formData, setFormData] = React.useState({});
   const attemtedUser = sessionStorage.getItem("userId");
 
   React.useEffect(() => {
+    setFormData({ attemptBy: email, });
     if (open) {
-      setFormData({
-        attemptBy: email,
-        attemptStatus: "",
-        callDuration: "",
-        callBackDate: "",
-        callBackTime: "",
-        comments: "",
-      });
+      setFormData({ attemptBy: email, });
     }
   }, [open]);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    if (name === 'attemptStatus') {
+      setFormData({
+        attemptBy: email,
+        attemptStatus: value,
+        callDuration: '',
+        callBackDate: '',
+        callBackTime: '',
+        comments: '',
+      });
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
   };
 
   const handleHrAddClick = () => {
@@ -92,7 +97,7 @@ const HrFollowUp = ({ open, handleClose, rowData, dropdown }) => {
                 handleCloseForm();
               }, 1000);
             }
-            setFormData("");
+            setFormData({});
           });
       } catch (response) {
         setResponseMessage("Not added to follow up");
@@ -101,8 +106,9 @@ const HrFollowUp = ({ open, handleClose, rowData, dropdown }) => {
       }
     }
   };
- 
-  const isDisabled = !formData.attemptStatus
+
+  const isDisabled = !formData.attemptStatus ||
+    (!['Busy', 'RNR', 'Switch Off', 'OTHERS'].includes(formData.attemptStatus) && !formData.callDuration);
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle>
@@ -170,7 +176,7 @@ const HrFollowUp = ({ open, handleClose, rowData, dropdown }) => {
               }}
             />
           </Grid>
-         
+
           <Grid item xs={12} sm={4}>
             <TextField
               type="date"
