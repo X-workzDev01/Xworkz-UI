@@ -175,8 +175,7 @@ const AddHr = ({ open, handleClose, rowData, dropdown, handleAfterResponse }) =>
       .get(`${Urlconstant.url}api/verify-email?email=${email}`)
       .then((response) => {
         if (response.status === 200) {
-
-          if (response === "accepted_email") {
+          if (response.data === "accepted_email") {
             setVerifyEmail(response.data);
             setEmailCheck("");
             setCheckEmailExist("");
@@ -246,7 +245,10 @@ const AddHr = ({ open, handleClose, rowData, dropdown, handleAfterResponse }) =>
     }
   };
 
-  const isDisable = ((verifyEmail !== "accepted_email" || verifyEmail !== "low_quality") && verifyEmail) || checkEmailExist || validateName || emailCheck || checkPhoneNumberExist || phoneNumber || !formData.hrSpocName || !formData.hrContactNumber || !formData.designation
+  const isDisable = ((verifyEmail !== "accepted_email" && verifyEmail !== "low_quality") && verifyEmail)
+    || checkEmailExist || validateName || emailCheck || checkPhoneNumberExist
+    || phoneNumber || !formData.hrSpocName || !formData.hrContactNumber ||
+    !formData.designation || !formData.hrEmail
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle>
@@ -296,7 +298,7 @@ const AddHr = ({ open, handleClose, rowData, dropdown, handleAfterResponse }) =>
             {(verifyEmail === "accepted_email" || verifyEmail === "low_quality") && (
               <Alert severity="success">{verifyEmail}</Alert>
             )}
-            {verifyEmail && (verifyEmail !== "accepted_email" || verifyEmail !== "low_quality") && <Alert severity="error">{verifyEmail}</Alert>}
+            {verifyEmail && (verifyEmail !== "accepted_email" && verifyEmail !== "low_quality") && <Alert severity="error">{verifyEmail}</Alert>}
           </Grid>
           <Grid item xs={12} sm={4}>
             <TextField

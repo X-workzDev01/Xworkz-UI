@@ -89,11 +89,13 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
         setPhoneNumberCheck("Contact number should be 10 digit");
       }
     }
-    if (name === "companyWebsite" && value.length <= 3 && !validateWebsite(value)) {
-      setCheckCompanyWebsite("");
-      setError("Enter the valid website");
-    } else if (validateWebsite(value)) {
-      setError("");
+    if (name === "companyWebsite") {
+      if (value.trim() === "") {
+        setError("");
+      } else if (!validateWebsite(value)) {
+        setCheckCompanyWebsite("");
+        setError("Enter a valid website");
+      }
     }
 
     if (name === "companyFounder") {
@@ -188,14 +190,14 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
       .get(`${Urlconstant.url}api/verify-email?email=${email}`)
       .then((response) => {
         if (response.status === 200) {
-          if (response === "accepted_email") {
-            setVerifyEmail(response);
+          if (response.data === "accepted_email") {
+            setVerifyEmail(response.data);
           } else if (response.data === "rejected_email") {
-            setVerifyEmail(response);
+            setVerifyEmail(response.data);
           } else if (response.data === "low_quality") {
-            setVerifyEmail(response);
+            setVerifyEmail(response.data);
           } else {
-            setVerifyEmail(response);
+            setVerifyEmail(response.data);
           }
         } else {
           if (response.status === 500) {
@@ -209,6 +211,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
   const handleCompanyWebsite = (companyWebsite) => {
     if (companyWebsite === "NA") {
       setCheckCompanyWebsite("");
+      setError("");
     } else {
       if (companyWebsite.trim() != "" && validateWebsite(companyWebsite)) {
         axios
@@ -222,10 +225,9 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
               setError("");
             } else {
               setCheckCompanyWebsite("");
+              setError("");
             }
           });
-      } else {
-        setError("");
       }
     }
   };
@@ -336,7 +338,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
     error ||
     founderNameCheck ||
     addressError ||
-    ((verifyEmail !== "accepted_email" || verifyEmail !== "low_quality") && verifyEmail);
+    ((verifyEmail !== "accepted_email" && verifyEmail !== "low_quality") && verifyEmail);
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle>
@@ -385,7 +387,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
             {emailCheck ? <Alert severity="error">{emailCheck}</Alert> : ""}
             {checkEmailExist ? <Alert severity="error">{checkEmailExist}</Alert> : ""}
             {(verifyEmail === "accepted_email" || verifyEmail === "low_quality") && <Alert severity="success">{verifyEmail}</Alert>}
-            {verifyEmail && (verifyEmail !== "accepted_email" || verifyEmail !== "low_quality") && <Alert severity="error">{verifyEmail}</Alert>}
+            {verifyEmail && (verifyEmail !== "accepted_email" && verifyEmail !== "low_quality") && <Alert severity="error">{verifyEmail}</Alert>}
           </Grid>
           <Grid item xs={12} sm={4}>
             <TextField
