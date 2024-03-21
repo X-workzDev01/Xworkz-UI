@@ -17,7 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { saveCollegeName, saveCourse, saveFollowUpStatus } from "../store/trainee/TraineeDetilesDropdown";
 
 
-function loadServerRows(page, pageSize, courseName, collegeName,followupStatus) {
+function loadServerRows(page, pageSize, courseName, collegeName, followupStatus) {
   const startingIndex = page * pageSize;
   const maxRows = pageSize;
   const spreadsheetId = Urlconstant.spreadsheetId;
@@ -61,7 +61,7 @@ function loadClientRows(page, pageSize, allData) {
   });
 }
 
-function searchServerRows(searchValue, courseName, collegeName,followupStatus) {
+function searchServerRows(searchValue, courseName, collegeName, followupStatus) {
   const apiUrl =
     Urlconstant.url + `api/filterData/${courseName}?searchValue=${searchValue}&&collegeName=${collegeName}&&followupStatus=${followupStatus}`;
   const requestOptions = {
@@ -87,7 +87,7 @@ function searchServerRows(searchValue, courseName, collegeName,followupStatus) {
       });
   });
 }
-async function fetchFilteredData(searchValue, courseName, collegeName,followupStatus) {
+async function fetchFilteredData(searchValue, courseName, collegeName, followupStatus) {
   try {
     const apiUrl =
       Urlconstant.url +
@@ -121,8 +121,8 @@ function debounce(func, delay) {
 }
 
 export default function ControlledSelectionServerPaginationGrid() {
-  const traineeDropDown = useSelector(state=>state.traineeDropDowns);
-  const dispatch=useDispatch();
+  const traineeDropDown = useSelector(state => state.traineeDropDowns);
+  const dispatch = useDispatch();
   const initialPageSize = 25;
   const [paginationModel, setPaginationModel] = React.useState({
     page: 0,
@@ -153,12 +153,12 @@ export default function ControlledSelectionServerPaginationGrid() {
   const [selectedOption, setSelectedOption] = useState(null);
   const [isClearClicked, setIsClearClicked] = useState(false);
 
-  const initiallySelectedFields = ['traineeName', 'email', 'contactNumber','course', 'actions'];
+  const initiallySelectedFields = ['traineeName', 'email', 'contactNumber', 'course', 'actions'];
   const [displayColumn, setDisplayColumn] = React.useState(initiallySelectedFields);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [followupStatus, setFollowupStatus] = useState(traineeDropDown.followUpstatus);
   const handleSearchClick = () => {
-    searchServerRows(searchValue, courseName, collegeName,followupStatus).then((newGridData) => {
+    searchServerRows(searchValue, courseName, collegeName, followupStatus).then((newGridData) => {
       setGridData(newGridData);
       setPaginationModel({ page: 0, pageSize: initialPageSize });
       setSearchInputValue("");
@@ -278,23 +278,22 @@ export default function ControlledSelectionServerPaginationGrid() {
   };
 
   const handleCourseChange = (event) => {
-   if(event.target.name==="courseName")
-   {
-    const courseValue = event.target.value;
-    dispatch(saveCourse(event.target.value))
-    setCourseName(courseValue);
-   }
-if(event.target.name==="followUpStatus"){
-  dispatch(saveFollowUpStatus(event.target.value))
-  setFollowupStatus(event.target.value)
-}
+    if (event.target.name === "courseName") {
+      const courseValue = event.target.value;
+      dispatch(saveCourse(event.target.value))
+      setCourseName(courseValue);
+    }
+    if (event.target.name === "followUpStatus") {
+      dispatch(saveFollowUpStatus(event.target.value))
+      setFollowupStatus(event.target.value)
+    }
 
 
   };
 
   React.useEffect(() => {
     refreshPageEveryTime();
-  }, [paginationModel.page, paginationModel.pageSize, searchValue, courseName, collegeName,followupStatus]);
+  }, [paginationModel.page, paginationModel.pageSize, searchValue, courseName, collegeName, followupStatus]);
   const columns = [
     {
       field: "traineeName",
@@ -324,7 +323,11 @@ if(event.target.name==="followUpStatus"){
       field: "registrationDate",
       headerName: "Registration Date",
       flex: 1,
-      valueGetter: (params) => params.row.othersDto.registrationDate,
+      valueGetter: params => {
+        const registrationDate = params.row.othersDto.registrationDate;
+        const datePart = registrationDate.includes('T') ? registrationDate.split('T')[0] : registrationDate.split(' ')[0];
+        return datePart;
+      }
     },
     {
       field: "qualification",
@@ -396,7 +399,7 @@ if(event.target.name==="followUpStatus"){
       field: "usnNumber",
       headerName: "USN number",
       flex: 1,
-      valueGetter: (params) => params.row.csrDto.usnNumber,
+      valueGetter: (params) => params.row.csrDto.usnNumber.toUpperCase(),
     },
     {
       field: "alternateContactNumber",
@@ -459,7 +462,7 @@ if(event.target.name==="followUpStatus"){
       flex: 1,
       valueGetter: (params) => params.row.othersDto.sendWhatsAppLink,
     },
-    
+
     {
       field: "othersDto.followupStatus",
       headerName: "FollowupStatus",
@@ -489,6 +492,12 @@ if(event.target.name==="followUpStatus"){
       headerName: "Created On",
       flex: 1,
       valueGetter: (params) => params.row.adminDto.createdOn,
+    },
+    {
+      field: "adminDto.createdBy",
+      headerName: "Created By",
+      flex: 1,
+      valueGetter: (params) => params.row.adminDto.createdBy,
     },
     {
       field: "adminDto.updatedBy",
@@ -524,15 +533,12 @@ if(event.target.name==="followUpStatus"){
   ];
 
   const handleClear = () => {
-  dispatch(saveCourse(null))
-  dispatch(saveCollegeName(null))
-  dispatch(saveFollowUpStatus(null))
-  setCollegeName(null)
-  setFollowupStatus(null)
-  setCourseName(null)
- 
-
-
+    dispatch(saveCourse(null))
+    dispatch(saveCollegeName(null))
+    dispatch(saveFollowUpStatus(null))
+    setCollegeName(null)
+    setFollowupStatus(null)
+    setCourseName(null)
     setSearchValue("");
     setSelectedOption({ basicInfo: { traineeName: '' } });
   };
@@ -549,9 +555,8 @@ if(event.target.name==="followUpStatus"){
     setSearchValue(newValue?.basicInfo?.email || '');
   };
   const handleCollegeChange = (event) => {
-   dispatch(saveCollegeName(event.target.value))
+    dispatch(saveCollegeName(event.target.value))
     setCollegeName(event.target.value);
-
   }
 
   const open = Boolean(anchorEl);

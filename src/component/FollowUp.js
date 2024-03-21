@@ -107,7 +107,7 @@ export default function FollowUp() {
       .then(response => {
         setCourseDropdown(response.data);
       })
-      .catch(() => {});
+      .catch(() => { });
   };
 
   const filterData = () => {
@@ -208,7 +208,7 @@ export default function FollowUp() {
       .then(response => {
         setDropDown(response.data);
       })
-      .catch(error => {});
+      .catch(error => { });
   };
   const dateByfollowupStatus = e => {
     const { value } = e.target;
@@ -268,7 +268,7 @@ export default function FollowUp() {
             }}
           >
             <MenuItem value={null}> Select status </MenuItem>
-            {}
+            { }
             {statusLists.map((item, index) =>
               <MenuItem value={item} key={index}>
                 {item}
@@ -297,10 +297,10 @@ export default function FollowUp() {
             <MenuItem value={null}> Select course </MenuItem>
             {Array.isArray(courseDropdown)
               ? courseDropdown.map((item, k) =>
-                  <MenuItem value={item} key={k}>
-                    {item}
-                  </MenuItem>
-                )
+                <MenuItem value={item} key={k}>
+                  {item}
+                </MenuItem>
+              )
               : null}
           </Select>
         </FormControl>
@@ -397,7 +397,11 @@ export default function FollowUp() {
               field: "registrationDate",
               headerName: "RegistrationDate",
               flex: 1,
-              valueGetter: params => params.row.registrationDate
+              valueGetter: params => {
+                const registrationDate = params.row.registrationDate;
+                const datePart = registrationDate.includes('T') ? registrationDate.split('T')[0] : registrationDate.split(' ')[0];
+                return datePart;
+              }
             },
             {
               field: "actions",
