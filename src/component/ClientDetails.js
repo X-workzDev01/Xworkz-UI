@@ -100,12 +100,14 @@ export default function ClientDetails() {
       ...prevData,
       [name]: value,
     }));
-    if (name === "companyName" && value.length <= 3 && value.trim() === "") {
-      setCompanyNameCheck("Name should not be empty");
-      setCompanyNameCheckExist("");
-    }
-    else if (value.length >= 3) {
-      setCompanyNameCheck("")
+    if (name === "companyName") {
+      if (value.trim() === "") {
+        setCompanyNameCheck("Name should not be empty");
+        setCompanyNameCheckExist("");
+      } else if (value.length <= 3) {
+        setCompanyNameCheck("Name should not be empty");
+        setCompanyNameCheckExist("");
+      }
     }
     if (name === "companyLandLineNumber") {
       if (!validateContactNumber(value) && value.trim() !== "") {
