@@ -143,7 +143,7 @@ export default function ClientDetails() {
     !formData.companyLocation ||
     companyNameCheck ||
     companyEmailCheck ||
-    ((emailCheckError !== "accepted_email" || emailCheckError !== "low_quality") && emailCheckError) ||
+    ((emailCheckError !== "accepted_email" && emailCheckError !== "low_quality") && emailCheckError) ||
     emailCheck ||
     phoneNumberCheck ||
     checkPhoneNumberExist ||
@@ -224,6 +224,11 @@ export default function ClientDetails() {
             setEmailCheckError(response.data);
           }
           else if (response.data === "low_quality") {
+            setEmailCheck("");
+            setCompanyEmailCheck("")
+            setEmailCheckError(response.data);
+          }
+          else {
             setEmailCheck("");
             setCompanyEmailCheck("")
             setEmailCheckError(response.data);
@@ -386,11 +391,10 @@ export default function ClientDetails() {
               {companyEmailCheck && (
                 <Alert severity="error">{companyEmailCheck}</Alert>
               )}
-
-              {emailCheckError === "accepted_email" || emailCheckError === "low_quality" && (
+              {(emailCheckError === "accepted_email" || emailCheckError === "low_quality") && (
                 <Alert severity="success">{emailCheckError}</Alert>
               )}
-              {emailCheckError && (emailCheckError === "accepted_email" || emailCheckError === "low_quality") && <Alert severity="error">{emailCheckError}</Alert>}
+              {emailCheckError && (emailCheckError !== "accepted_email" && emailCheckError !== "low_quality") && <Alert severity="error">{emailCheckError}</Alert>}
             </Grid>
             <Grid item xs={12} sm={4}>
               <TextField

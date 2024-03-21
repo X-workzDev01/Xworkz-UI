@@ -184,6 +184,10 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
             setVerifyEmail(response.data);
             setCheckEmailExist("");
             setEmailError("");
+          } else {
+            setVerifyEmail("");
+            setCheckEmailExist("");
+            setEmailError(response.data);
           }
         }
         else if (response.status === 500) {
@@ -267,7 +271,7 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
     phoneNumber ||
     checkEmailExist ||
     checkPhoneNumberExist ||
-    ((verifyEmail !== "accepted_email" || verifyEmail !== "low_quality") && verifyEmail) ||
+    ((verifyEmail !== "accepted_email" && verifyEmail !== "low_quality") && verifyEmail) ||
     emailError ||
     validateName ||
     commentError ||
@@ -322,7 +326,7 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
             {(verifyEmail === "accepted_email" || verifyEmail === "low_quality") && (
               <Alert severity="success">{verifyEmail}</Alert>
             )}
-            {verifyEmail && (verifyEmail !== "accepted_email" || verifyEmail !== "low_quality") && <Alert severity="error">{verifyEmail}</Alert>}
+            {verifyEmail && (verifyEmail !== "accepted_email" && verifyEmail !== "low_quality") && <Alert severity="error">{verifyEmail}</Alert>}
 
             {emailError ? <Alert severity="error">{emailError}</Alert> : " "}
           </Grid>
@@ -401,7 +405,7 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
           {responseMessage}
         </Alert>
       </Snackbar>
-      <Dialog open={isConfirming} onClose={handleClose} fullWidth maxWidth="xs">
+      <Dialog open={isConfirming} onClose={() => setIsConfirming(false)} fullWidth maxWidth="xs">
         <DialogTitle>Confirm Save</DialogTitle>
         <DialogContent>
           Are you sure Want to Update the HR Details
