@@ -97,6 +97,7 @@ export default function FollowUp() {
 		getActiveCourse();
 	}, []);
 
+
 	const getActiveCourse = () => {
 		axios
 			.get(Urlconstant.url + "api/getCourseName?status=Active", {
@@ -216,10 +217,10 @@ export default function FollowUp() {
 		dispatch(saveFollowUpCallBackDate(value));
 		setDate(value);
 	};
-
 	const handleSaveClick = () => {
 		setModalOpen(false);
 	};
+
 
 	const handleClear = () => {
 		setCourseName(null);
@@ -347,6 +348,7 @@ export default function FollowUp() {
 					</Select>
 				</FormControl>
 
+
 				<div>
 					<Button variant="contained" onClick={handleClear} size="small">
 						Clear
@@ -396,8 +398,11 @@ export default function FollowUp() {
 							field: "registrationDate",
 							headerName: "RegistrationDate",
 							flex: 1,
-							valueGetter: params => params.row.registrationDate
-						},
+              valueGetter: params => {
+                const registrationDate = params.row.registrationDate;
+                const datePart = registrationDate.includes('T') ? registrationDate.split('T')[0] : registrationDate.split(' ')[0];
+                return datePart;
+              }						},
 						{
 							field: "actions",
 							headerName: "Actions",
