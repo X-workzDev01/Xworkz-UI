@@ -55,8 +55,8 @@ export default function FollowUp() {
 		"Joined",
 		"Past followUp",
 		"Never followUp",
-		"CSR",
-		"NonCSR"
+		"CSR Offered",
+		"Non-CSR Offered"
 	]);
 	const [date, setDate] = useState(followUpDropDown.followUpCallBackDate);
 	const initialPageSize = 25;
@@ -121,6 +121,7 @@ export default function FollowUp() {
 		const { name, value } = e.target;
 		setSearchValue(value);
 		dispatch(saveFollowUpstatus(value));
+
 		setName(name);
 		setStatus(value);
 	};
@@ -355,7 +356,6 @@ export default function FollowUp() {
 			<div style={{ height: "650px", width: "100%" }}>
 				<DataGrid
 					columns={[
-						//  { headerName: "ID", field: "id", flex: 1 },
 						{
 							field: "traineeName",
 							headerName: "Trainee Name",
@@ -427,7 +427,6 @@ export default function FollowUp() {
 					paginationMode="server"
 					onPaginationModelChange={setPaginationModel}
 					loading={loading}
-					keepNonExistentRowsSelected
 					slots={{ toolbar: GridToolbar }}
 				/>
 
