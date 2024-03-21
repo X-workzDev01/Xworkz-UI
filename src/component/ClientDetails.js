@@ -228,6 +228,11 @@ export default function ClientDetails() {
             setCompanyEmailCheck("")
             setEmailCheckError(response.data);
           }
+          else {
+            setEmailCheck("");
+            setCompanyEmailCheck("")
+            setEmailCheckError(response.data);
+          }
         } else {
           if (response.status === 500) {
             setEmailCheckError("");
@@ -390,7 +395,7 @@ export default function ClientDetails() {
               {emailCheckError === "accepted_email" || emailCheckError === "low_quality" && (
                 <Alert severity="success">{emailCheckError}</Alert>
               )}
-              {emailCheckError && (emailCheckError === "accepted_email" || emailCheckError === "low_quality") && <Alert severity="error">{emailCheckError}</Alert>}
+              {emailCheckError && (emailCheckError !== "accepted_email" || emailCheckError !== "low_quality") && <Alert severity="error">{emailCheckError}</Alert>}
             </Grid>
             <Grid item xs={12} sm={4}>
               <TextField

@@ -194,6 +194,8 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
             setVerifyEmail(response);
           } else if (response.data === "low_quality") {
             setVerifyEmail(response);
+          } else {
+            setVerifyEmail(response);
           }
         } else {
           if (response.status === 500) {
