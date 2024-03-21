@@ -52,7 +52,7 @@ const AddHr = ({ open, handleClose, rowData, dropdown, handleAfterResponse }) =>
       setCharCount("");
       setEmailError("");
     }
-  }, [open]);
+  }, [open, handleClose]);
 
   const [charCount, setCharCount] = React.useState("");
   const handleInputChange = (event) => {
@@ -380,7 +380,7 @@ const AddHr = ({ open, handleClose, rowData, dropdown, handleAfterResponse }) =>
           {responseMessage}
         </Alert>
       </Snackbar>
-      <Dialog open={isConfirming} onClose={handleClose} fullWidth maxWidth="xs">
+      <Dialog open={isConfirming} onClose={() => setIsConfirming(false)} fullWidth maxWidth="xs">
         <DialogTitle>Confirm Save</DialogTitle>
         <DialogContent>Adding New HR Details</DialogContent>
         <DialogActions>
