@@ -181,9 +181,9 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
             setEmailError(response.data);
           }
           else if (response.data === "low_quality") {
-            setVerifyEmail("");
+            setVerifyEmail(response.data);
             setCheckEmailExist("");
-            setEmailError(response.data);
+            setEmailError("");
           }
         }
         else if (response.status === 500) {
@@ -203,7 +203,6 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
           .get(Urlconstant.url + `api/hremailcheck?hrEmail=${email}`)
           .then((response) => {
             if (response.data === "Email already exists.") {
-              console.log(verifyEmail)
               setVerifyEmail("");
               setEmailCheck("");
               setEmailError("");
@@ -211,6 +210,7 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
             } else {
               if (validateEmail(email)) {
                 validatingEmail(email);
+                setCheckEmailExist("");
               }
             }
           });
@@ -247,7 +247,9 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
 
   const handleEmail = (event) => {
     let email = event.target.value;
-    if (email !== rowData.hrEmail) {
+    if (email === rowData.hrEmail) {
+      setCheckEmailExist("");
+    } else {
       handleEmailCheck(email);
     }
   };
@@ -317,7 +319,7 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
               " "
             )}
 
-            {(verifyEmail !== "accepted_email" || verifyEmail !== "low_quality") && (
+            {(verifyEmail === "accepted_email" || verifyEmail === "low_quality") && (
               <Alert severity="success">{verifyEmail}</Alert>
             )}
             {verifyEmail && (verifyEmail !== "accepted_email" || verifyEmail !== "low_quality") && <Alert severity="error">{verifyEmail}</Alert>}

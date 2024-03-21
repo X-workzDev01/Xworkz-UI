@@ -191,10 +191,10 @@ const AddHr = ({ open, handleClose, rowData, dropdown, handleAfterResponse }) =>
             setEmailError(response.data);
           }
           else if (response.data === "low_quality") {
-            setVerifyEmail();
             setEmailCheck();
             setCheckEmailExist("");
-            setEmailError(response.data);
+            setEmailError("");
+            setVerifyEmail(response.data);
           }
         } else {
           if (response.status === 500) {
@@ -220,6 +220,7 @@ const AddHr = ({ open, handleClose, rowData, dropdown, handleAfterResponse }) =>
           } else {
             if (validateEmail(email)) {
               validatingEmail(email)
+              setCheckEmailExist("");
             }
           }
         })
@@ -294,7 +295,7 @@ const AddHr = ({ open, handleClose, rowData, dropdown, handleAfterResponse }) =>
               " "
             )}
 
-            {(verifyEmail !== "accepted_email" || verifyEmail !== "low_quality") && (
+            {(verifyEmail === "accepted_email" || verifyEmail === "low_quality") && (
               <Alert severity="success">{verifyEmail}</Alert>
             )}
             {verifyEmail && (verifyEmail !== "accepted_email" || verifyEmail !== "low_quality") && <Alert severity="error">{verifyEmail}</Alert>}
