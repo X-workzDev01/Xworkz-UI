@@ -59,8 +59,8 @@ export default function FollowUp() {
     "Joined",
     "Past followUp",
     "Never followUp",
-    "CSR",
-    "NonCSR"
+    "CSR Offered",
+    "Non-CSR Offered"
   ]);
   const [date, setDate] = useState(followUpDropDown.followUpCallBackDate);
   const initiallySelectedFields = ['traineeName', 'email', 'contactNumber', 'registrationDate', 'currentStatus', 'courseName', 'joiningDate', 'actions'];

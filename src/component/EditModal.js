@@ -716,11 +716,6 @@ const EditModal = ({
                 {verifyHandleEmailerror}
               </Alert>
               : " "}
-            {verifyHandleEmailerror
-              ? <Alert severity="error">
-                {verifyHandleEmailerror}
-              </Alert>
-              : " "}
             {verifyHandleEmailerror &&
               verifyHandleEmailerror !== "accepted_email" &&
               <Alert severity="error">
