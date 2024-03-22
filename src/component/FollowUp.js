@@ -18,10 +18,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { Urlconstant } from "../constant/Urlconstant";
 import {
-	saveFollowUpCallBackDate,
-	saveFollowUpCollegeName,
-	saveFollowUpCourseName,
-	saveFollowUpstatus
+  saveFollowUpCallBackDate,
+  saveFollowUpCollegeName,
+  saveFollowUpCourseName,
+  saveFollowUpstatus
 } from "../store/followup/FollowUpDropdowns";
 import EditFollowUp from "./EditFollowUp";
 import Header from "./Header";
@@ -77,33 +77,33 @@ export default function FollowUp() {
   });
 
 
-	React.useMemo(
-		() => {
-			setLoading(true);
-			searchServerRows(
-				paginationModel.page,
-				paginationModel.pageSize,
-				name,
-				date
-			).then(newGridData => {
-				setGridData(newGridData);
-				setLoading(false);
-			});
-		},
-		[
-			paginationModel.page,
-			paginationModel.pageSize,
-			searchValue,
-			date,
-			courseName,
-			selectCollege
-		]
-	);
+  React.useMemo(
+    () => {
+      setLoading(true);
+      searchServerRows(
+        paginationModel.page,
+        paginationModel.pageSize,
+        name,
+        date
+      ).then(newGridData => {
+        setGridData(newGridData);
+        setLoading(false);
+      });
+    },
+    [
+      paginationModel.page,
+      paginationModel.pageSize,
+      searchValue,
+      date,
+      courseName,
+      selectCollege
+    ]
+  );
 
-	React.useEffect(() => {
-		getDropDown();
-		getActiveCourse();
-	}, []);
+  React.useEffect(() => {
+    getDropDown();
+    getActiveCourse();
+  }, []);
 
   const getActiveCourse = () => {
     axios
@@ -118,128 +118,114 @@ export default function FollowUp() {
       .catch(() => { });
   };
 
+  const filterData = () => {
+    if (status && courseName) {
+      getTraineeDetailsByCourseAndStatus(courseName, status);
+    }
+  };
 
-	const getActiveCourse = () => {
-		axios
-			.get(Urlconstant.url + "api/getCourseName?status=Active", {
-				headers: {
-					spreadsheetId: Urlconstant.spreadsheetId
-				}
-			})
-			.then(response => {
-				setCourseDropdown(response.data);
-			})
-			.catch(() => {});
-	};
+  const handleInputChange = e => {
+    setPaginationModel({ page: 0, pageSize: initialPageSize });
+    const { name, value } = e.target;
+    setSearchValue(value);
+    dispatch(saveFollowUpstatus(value));
 
-	const filterData = () => {
-		if (status && courseName) {
-			getTraineeDetailsByCourseAndStatus(courseName, status);
-		}
-	};
+    setName(name);
+    setStatus(value);
+  };
 
-	const handleInputChange = e => {
-		setPaginationModel({ page: 0, pageSize: initialPageSize });
-		const { name, value } = e.target;
-		setSearchValue(value);
-		dispatch(saveFollowUpstatus(value));
+  const handleCourseChange = event => {
+    setPaginationModel({ page: 0, pageSize: initialPageSize });
+    const { name, value } = event.target;
+    setName(name);
+    dispatch(saveFollowUpCourseName(value));
+    setCourseName(value);
+  };
 
-		setName(name);
-		setStatus(value);
-	};
+  const getTraineeDetailsByCourseAndStatus = async (courseName, status) => {
+    console.log(courseName, status);
+    try {
+      const apiUrl =
+        Urlconstant.url +
+        `api/getByCourseAndStatus?status=${status}&date=${date}&courseName=${courseName}`;
+      const requestOptions = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          spreadsheetId: Urlconstant.spreadsheetId
+        }
+      };
+      const response = await axios.get(apiUrl, requestOptions);
+      setGridData({
+        rows: response.data.map(row => ({
+          id: row.id.toString(),
+          ...row
+        })),
+        rowCount: response.data.length
+      });
+    } catch (error) {
+      setGridData({ rows: [], rowCount: 0 });
+    }
+  };
 
-	const handleCourseChange = event => {
-		setPaginationModel({ page: 0, pageSize: initialPageSize });
-		const { name, value } = event.target;
-		setName(name);
-		dispatch(saveFollowUpCourseName(value));
-		setCourseName(value);
-	};
+  function searchServerRows(page, pageSize, name, date) {
+    const startingIndex = page * pageSize;
+    const spreadsheetId = Urlconstant.spreadsheetId;
 
-	const getTraineeDetailsByCourseAndStatus = async (courseName, status) => {
-		console.log(courseName, status);
-		try {
-			const apiUrl =
-				Urlconstant.url +
-				`api/getByCourseAndStatus?status=${status}&date=${date}&courseName=${courseName}`;
-			const requestOptions = {
-				method: "GET",
-				headers: {
-					"Content-Type": "application/json",
-					spreadsheetId: Urlconstant.spreadsheetId
-				}
-			};
-			const response = await axios.get(apiUrl, requestOptions);
-			setGridData({
-				rows: response.data.map(row => ({
-					id: row.id.toString(),
-					...row
-				})),
-				rowCount: response.data.length
-			});
-		} catch (error) {
-			setGridData({ rows: [], rowCount: 0 });
-		}
-	};
+    var apiUrl;
+    if (name === "status" || name === "CourseName") {
+      apiUrl =
+        Urlconstant.url +
+        `api/followUp?startingIndex=${startingIndex}&maxRows=25&status=${searchValue}&date=${date}&courseName=${courseName}&collegeName=${selectCollege}`;
 
-	function searchServerRows(page, pageSize, name, date) {
-		const startingIndex = page * pageSize;
-		const spreadsheetId = Urlconstant.spreadsheetId;
+      var requestOptions = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          spreadsheetId: spreadsheetId
+        }
+      };
+    }
+    return new Promise((resolve, reject) => {
+      fetch(apiUrl, requestOptions)
+        .then(response => response.json())
+        .then(data => {
+          const newGridData = {
+            rows: data.followUpData.map(row => ({
+              id: row.id.toString(),
+              ...row
+            })),
+            rowCount: data.size
+          };
 
-		var apiUrl;
-		if (name === "status" || name === "CourseName") {
-			apiUrl =
-				Urlconstant.url +
-				`api/followUp?startingIndex=${startingIndex}&maxRows=25&status=${searchValue}&date=${date}&courseName=${courseName}&collegeName=${selectCollege}`;
-
-			var requestOptions = {
-				method: "GET",
-				headers: {
-					"Content-Type": "application/json",
-					spreadsheetId: spreadsheetId
-				}
-			};
-		}
-		return new Promise((resolve, reject) => {
-			fetch(apiUrl, requestOptions)
-				.then(response => response.json())
-				.then(data => {
-					const newGridData = {
-						rows: data.followUpData.map(row => ({
-							id: row.id.toString(),
-							...row
-						})),
-						rowCount: data.size
-					};
-
-					resolve(newGridData);
-				}, 1000)
-				.catch(error => {
-					resolve({ rows: [], rowCount: 0 });
-				});
-		});
-	}
-	const getDropDown = () => {
-		axios
-			.get(Urlconstant.url + "utils/dropdown", {
-				headers: {
-					spreadsheetId: Urlconstant.spreadsheetId
-				}
-			})
-			.then(response => {
-				setDropDown(response.data);
-			})
-			.catch(error => {});
-	};
-	const dateByfollowupStatus = e => {
-		const { value } = e.target;
-		setPaginationModel({ page: 0, pageSize: initialPageSize });
-		dispatch(saveFollowUpCallBackDate(value));
-		setDate(value);
-	};
-	const handleSaveClick = () => {
-		setModalOpen(false);
-	};
+          resolve(newGridData);
+        }, 1000)
+        .catch(error => {
+          resolve({ rows: [], rowCount: 0 });
+        });
+    });
+  }
+  const getDropDown = () => {
+    axios
+      .get(Urlconstant.url + "utils/dropdown", {
+        headers: {
+          spreadsheetId: Urlconstant.spreadsheetId
+        }
+      })
+      .then(response => {
+        setDropDown(response.data);
+      })
+      .catch(error => { });
+  };
+  const dateByfollowupStatus = e => {
+    const { value } = e.target;
+    setPaginationModel({ page: 0, pageSize: initialPageSize });
+    dispatch(saveFollowUpCallBackDate(value));
+    setDate(value);
+  };
+  const handleSaveClick = () => {
+    setModalOpen(false);
+  };
 
   const handleClear = () => {
     setCourseName(null);
@@ -257,7 +243,7 @@ export default function FollowUp() {
     setSelectCollege(event.target.value);
   };
 
-  const columns=[ {
+  const columns = [{
     field: "traineeName",
     headerName: "Trainee Name",
     flex: 1,
@@ -297,29 +283,33 @@ export default function FollowUp() {
     field: "registrationDate",
     headerName: "RegistrationDate",
     flex: 1,
-    valueGetter: params => params.row.registrationDate
-  },{
+    valueGetter: params => {
+      const registrationDate = params.row.registrationDate;
+      const datePart = registrationDate.includes('T') ? registrationDate.split('T')[0] : registrationDate.split(' ')[0];
+      return datePart;
+    }
+  }, {
     field: "updatedOn",
     headerName: "Updated On",
     flex: 1,
-    valueGetter: params => params.row.adminDto.updatedOn
-  },{
+    valueGetter: params => params.row.adminDto.updatedOn.slice(0,10)
+  }, {
     field: "updatedBy",
     headerName: "Updated By",
     flex: 1,
     valueGetter: params => params.row.adminDto.updatedBy
-  },{
+  }, {
     field: "createdBy",
     headerName: "Created By",
     flex: 1,
     valueGetter: params => params.row.adminDto.createdBy
   },
-  ,{
+    , {
     field: "createdOn",
     headerName: "Created On",
     flex: 1,
-    valueGetter: params => params.row.adminDto.createdOn
-  },{
+    valueGetter: params => params.row.adminDto.createdOn.slice(0,10)
+  }, {
     field: "collegeName",
     headerName: "College Name",
     flex: 1,
@@ -345,7 +335,7 @@ export default function FollowUp() {
         </Button>
       </div>
   }
-];
+  ];
 
   const open = Boolean(anchorEl);
 
@@ -436,35 +426,47 @@ export default function FollowUp() {
               : null}
           </Select>
         </FormControl>
-
-
-				<FormControl>
-					<InputLabel id="demo-simple-select-label">Select Course</InputLabel>
-					<Select
-						labelId="demo-simple-select-label"
-						id="demo-simple-select"
-						label="Course Name"
-						onChange={handleCourseChange}
-						name="CourseName"
-						value={followUpDropDown.followUpCourseName}
-						required
-						variant="outlined"
-						sx={{
-							marginRight: "10px",
-							width: "200px",
-							fontSize: "14px"
-						}}
-					>
-						<MenuItem value={null}> Select course </MenuItem>
-						{Array.isArray(courseDropdown)
-							? courseDropdown.map((item, k) =>
-									<MenuItem value={item} key={k}>
-										{item}
-									</MenuItem>
-								)
-							: null}
-					</Select>
-				</FormControl>
+        {
+          <TextField
+            type="date"
+            name="date"
+            value={
+              followUpDropDown.followUpCallBackDate ||
+              ("null" && dispatch(saveFollowUpCallBackDate(null)))
+            }
+            label="Select call back date"
+            InputLabelProps={{
+              shrink: true
+            }}
+            sx={{ marginRight: "10px" }}
+            onChange={dateByfollowupStatus}
+          />
+        }
+        <FormControl>
+          <InputLabel id="demo-simple-select-label">Select College</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            label="Select College"
+            name="college"
+            value={followUpDropDown.followUpCollegename}
+            required
+            variant="outlined"
+            sx={{
+              marginRight: "10px",
+              width: "200px",
+              fontSize: "14px"
+            }}
+            onChange={handleColegeChange}
+          >
+            <MenuItem value={null}> Select College </MenuItem>
+            {dropdown.college.map((item, k) =>
+              <MenuItem value={item} key={k}>
+                {item}
+              </MenuItem>
+            )}
+          </Select>
+        </FormControl>
 
         <div>
           <Button variant="contained" onClick={handleClear} size="small">
@@ -494,10 +496,10 @@ export default function FollowUp() {
                 <GridToolbarExport />
               </GridToolbarContainer>
             )
-          }} > 
+          }} >
         </DataGrid>
 
-            <Popover
+        <Popover
           open={open}
           anchorEl={anchorEl}
           onClose={handleClosePopover}
@@ -531,103 +533,8 @@ export default function FollowUp() {
             />
           ))}
         </Popover>
+      </div>
+    </div>
 
-
-				<div>
-					<Button variant="contained" onClick={handleClear} size="small">
-						Clear
-					</Button>
-				</div>
-			</div>
-			<div style={{ height: "650px", width: "100%" }}>
-				<DataGrid
-					columns={[
-						{
-							field: "traineeName",
-							headerName: "Trainee Name",
-							flex: 1,
-							valueGetter: params => params.row.basicInfo.traineeName
-						},
-						{
-							field: "email",
-							headerName: "Email",
-							flex: 1,
-							valueGetter: params => params.row.basicInfo.email
-						},
-						{
-							field: "contactNumber",
-							headerName: "Contact Number",
-							flex: 1,
-							valueGetter: params => params.row.basicInfo.contactNumber
-						},
-						{
-							field: "joiningDate",
-							headerName: "Joining Date",
-							flex: 1,
-							valueGetter: params => params.row.joiningDate
-						},
-						{
-							field: "courseName",
-							headerName: "Course Name",
-							flex: 1,
-							valueGetter: params => params.row.courseName
-						},
-						{
-							field: "currentStatus",
-							headerName: "Current Status",
-							flex: 1,
-							valueGetter: params => params.row.currentStatus
-						},
-						{
-							field: "registrationDate",
-							headerName: "RegistrationDate",
-							flex: 1,
-              valueGetter: params => {
-                const registrationDate = params.row.registrationDate;
-                const datePart = registrationDate.includes('T') ? registrationDate.split('T')[0] : registrationDate.split(' ')[0];
-                return datePart;
-              }						},
-						{
-							field: "actions",
-							headerName: "Actions",
-							width: 120,
-							renderCell: params =>
-								<div>
-									<Button
-										variant="outlined"
-										color="secondary"
-										startIcon={<PersonOutline />}
-										component={Link} // Use Link component for navigation
-										to={
-											Urlconstant.navigate +
-											`profile/${params.row.basicInfo.email}`
-										}
-									>
-										View
-									</Button>
-								</div>
-						}
-					]}
-					rows={gridData.rows}
-					pagination
-					paginationModel={paginationModel}
-					pageSizeOptions={[25, 50, 100]}
-					rowCount={gridData.rowCount}
-					paginationMode="server"
-					onPaginationModelChange={setPaginationModel}
-					loading={loading}
-					slots={{ toolbar: GridToolbar }}
-				/>
-
-				<EditFollowUp
-					open={isModalOpen}
-					handleClose={() => setModalOpen(false)}
-					rowData={editedRowData}
-					setRowData={setEditedRowData}
-					handleSaveClick={handleSaveClick}
-					dropdown={dropdown}
-				/>
-			</div>
-		</div>
-	);
+  );
 }
