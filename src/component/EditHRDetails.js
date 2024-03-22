@@ -181,7 +181,7 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
             setEmailError(response.data);
           }
           else if (response.data === "low_quality") {
-            setVerifyEmail(response.data);
+            setVerifyEmail("accepted_email");
             setCheckEmailExist("");
             setEmailError("");
           } else {

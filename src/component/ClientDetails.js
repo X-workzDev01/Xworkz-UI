@@ -163,6 +163,7 @@ export default function ClientDetails() {
         setOpen(true);
         setSnackbarMessage(response.data);
         setFormData({ status: "Active", });
+        setEmailCheckError("");
       });
     } catch (error) {
       setCatchErrors("Wait for some time");
@@ -228,7 +229,7 @@ export default function ClientDetails() {
           else if (response.data === "low_quality") {
             setEmailCheck("");
             setCompanyEmailCheck("")
-            setEmailCheckError(response.data);
+            setEmailCheckError("accepted_email");
           }
           else {
             setEmailCheck("");
