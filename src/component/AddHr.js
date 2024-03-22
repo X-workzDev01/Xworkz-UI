@@ -185,7 +185,7 @@ const AddHr = ({ open, handleClose, rowData, dropdown, handleAfterResponse }) =>
             setCheckEmailExist("");
           }
           else if (response.data === "low_quality") {
-            setVerifyEmail(response.data);
+            setVerifyEmail("accepted_email");
             setEmailCheck("");
             setCheckEmailExist("");
           }

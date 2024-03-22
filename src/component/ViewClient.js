@@ -248,7 +248,7 @@ export default function ViewClient() {
       field: "adminDto.createdOn",
       headerName: "Created On",
       flex: 1,
-      valueGetter: (params) => params.row.adminDto.createdOn,
+      valueGetter: (params) => params.row.adminDto.createdOn.slice(0,10),
     },
     {
       field: "adminDto.updatedBy",
@@ -260,7 +260,7 @@ export default function ViewClient() {
       field: "adminDto.updatedOn",
       headerName: "Updated On",
       flex: 1,
-      valueGetter: (params) => params.row.adminDto.updatedOn,
+      valueGetter: (params) => params.row.adminDto.updatedOn.slice(0,10),
     },
     {
       field: "actions",
