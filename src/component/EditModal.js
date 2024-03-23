@@ -316,10 +316,13 @@ const EditModal = ({
 				setSslcToPerc("");
 				setSslcError("");
 			}
-			if (/^\d{1}\.\d{1,2}$/.test(value) || value <= 9.99 && value > 0) {
+			if (/^\d{1}\.\d{1,2}$/.test(value) || (value <= 9.99 && value > 0)) {
 				setSslcToPerc(((value - 0.7) * 10).toFixed(2) + "%");
 			}
-			if (/^\d{2}\.\d{1,2}$/.test(value) || /^\d{2}$/.test(value) && value > 0) {
+			if (
+				/^\d{2}\.\d{1,2}$/.test(value) ||
+				(/^\d{2}$/.test(value) && value > 0)
+			) {
 				setSslcToPerc((value / 10 + 0.7).toFixed(2) + " CGPA");
 			}
 		}
@@ -336,10 +339,13 @@ const EditModal = ({
 				setPucToPerc("");
 				setPucError("");
 			}
-			if (/^\d{1}\.\d{1,2}$/.test(value) || value <= 9.99 && value > 0) {
+			if (/^\d{1}\.\d{1,2}$/.test(value) || (value <= 9.99 && value > 0)) {
 				setPucToPerc(((value - 0.7) * 10).toFixed(2) + "%");
 			}
-			if (/^\d{2}\.\d{1,2}$/.test(value) || /^\d{2}$/.test(value) && value > 0) {
+			if (
+				/^\d{2}\.\d{1,2}$/.test(value) ||
+				(/^\d{2}$/.test(value) && value > 0)
+			) {
 				setPucToPerc((value / 10 + 0.7).toFixed(2) + " CGPA");
 			}
 		}
@@ -356,10 +362,13 @@ const EditModal = ({
 				setDegreeToPerc("");
 				setDegreeError("");
 			}
-			if (/^\d{1}\.\d{1,2}$/.test(value) || value <= 9.99 && value > 0) {
+			if (/^\d{1}\.\d{1,2}$/.test(value) || (value <= 9.99 && value > 0)) {
 				setDegreeToPerc(((value - 0.7) * 10).toFixed(2) + "%");
 			}
-			if (/^\d{2}\.\d{1,2}$/.test(value) || /^\d{2}$/.test(value) && value > 0) {
+			if (
+				/^\d{2}\.\d{1,2}$/.test(value) ||
+				(/^\d{2}$/.test(value) && value > 0)
+			) {
 				setDegreeToPerc((value / 10 + 0.7).toFixed(2) + " CGPA");
 			}
 		}
@@ -692,7 +701,7 @@ const EditModal = ({
 		numberCheck ||
 		disble ||
 		emailError ||
-		disable||
+		disable ||
 		comments;
 	return (
 		<Dialog open={open} onClose={handleClose} fullWidth maxWidth="lg">
