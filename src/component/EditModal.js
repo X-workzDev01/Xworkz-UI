@@ -57,7 +57,7 @@ const EditModal = ({
 		""
 	);
 	const [xworkzEmailErrorVerify, setXworkzEmailErrorVerify] = useState("");
-	const [disble, setDisable] = useState(false);
+	const [disable, setDisable] = useState(false);
 	const [emailValue, setEmailValue] = React.useState("");
 	const [formData, setFormData] = React.useState({
 		branch: "",
@@ -686,6 +686,7 @@ const EditModal = ({
 		phoneNumberError ||
 		numberCheck ||
 		emailError ||
+		disable||
 		comments;
 	return (
 		<Dialog open={open} onClose={handleClose} fullWidth maxWidth="lg">
