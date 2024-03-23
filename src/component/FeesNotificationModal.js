@@ -105,7 +105,8 @@ export const FeesNotificationModal = ({ plsOpen, feesData, handleClose }) => {
 													paddingTop: "2px"
 												}}
 											>
-												{`${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}`}
+												{`${new Date().getDate()}/${new Date().getMonth() +
+													1}/${new Date().getFullYear()}`}
 											</span>
 										</div>
 										<div>
@@ -236,7 +237,8 @@ export const FeesNotificationModal = ({ plsOpen, feesData, handleClose }) => {
 													}}
 												>
 													{`${new Date().getDate() -
-														1}/${new Date().getMonth()}/${new Date().getFullYear()}`}
+														1}/${new Date().getMonth() +
+														1}/${new Date().getFullYear()}`}
 												</span>
 											</div>
 											<div>
@@ -374,8 +376,8 @@ export const FeesNotificationModal = ({ plsOpen, feesData, handleClose }) => {
 													paddingTop: "2px"
 												}}
 											>
-												{`${new Date().getDate() +
-													4}/${new Date().getMonth()}/${new Date().getFullYear()}`}
+												{`${new Date().getDate() + 4}/${new Date().getMonth() +
+													1}/${new Date().getFullYear()}`}
 											</span>
 										</div>
 										<div>
