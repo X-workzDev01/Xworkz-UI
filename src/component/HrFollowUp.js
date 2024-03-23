@@ -18,9 +18,6 @@ import React from "react";
 import { Urlconstant } from "../constant/Urlconstant";
 import { fieldStyle, style } from "../constant/FormStyle";
 import { getCurrentDate } from "../constant/ValidationConstant";
-import { LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
-import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useSelector } from "react-redux";
 
 const HrFollowUp = ({ open, handleClose, rowData, dropdown }) => {
@@ -30,28 +27,31 @@ const HrFollowUp = ({ open, handleClose, rowData, dropdown }) => {
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [isConfirming, setIsConfirming] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
-  const [formData, setFormData] = React.useState("");
-  const attemtedUser = sessionStorage.getItem("userId");
-
+  const [formData, setFormData] = React.useState({});
   React.useEffect(() => {
+    setFormData({ attemptBy: email, });
     if (open) {
-      setFormData({
-        attemptBy: email,
-        attemptStatus: "",
-        callDuration: "",
-        callBackDate: "",
-        callBackTime: "",
-        comments: "",
-      });
+      setFormData({ attemptBy: email, });
     }
   }, [open]);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    if (name === 'attemptStatus') {
+      setFormData({
+        attemptBy: email,
+        attemptStatus: value,
+        callDuration: '',
+        callBackDate: '',
+        callBackTime: '',
+        comments: '',
+      });
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
   };
 
   const handleHrAddClick = () => {
@@ -92,7 +92,7 @@ const HrFollowUp = ({ open, handleClose, rowData, dropdown }) => {
                 handleCloseForm();
               }, 1000);
             }
-            setFormData("");
+            setFormData({});
           });
       } catch (response) {
         setResponseMessage("Not added to follow up");
@@ -101,8 +101,9 @@ const HrFollowUp = ({ open, handleClose, rowData, dropdown }) => {
       }
     }
   };
- 
-  const isDisabled = !formData.attemptStatus
+
+  const isDisabled = !formData.attemptStatus ||
+    (!['Busy', 'RNR', 'Switch Off', 'Not Reachable', 'OTHERS'].includes(formData.attemptStatus) && !formData.callDuration);
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle>
@@ -170,7 +171,7 @@ const HrFollowUp = ({ open, handleClose, rowData, dropdown }) => {
               }}
             />
           </Grid>
-         
+
           <Grid item xs={12} sm={4}>
             <TextField
               type="date"
@@ -252,7 +253,7 @@ const HrFollowUp = ({ open, handleClose, rowData, dropdown }) => {
         </Alert>
       </Snackbar>
 
-      <Dialog open={isConfirming} onClose={handleClose} fullWidth maxWidth="xs">
+      <Dialog open={isConfirming} onClose={() => setIsConfirming(false)} fullWidth maxWidth="xs">
         <DialogTitle>Confirm Save</DialogTitle>
         <DialogContent>Adding Follow Up</DialogContent>
         <DialogActions>
