@@ -86,6 +86,7 @@ const EditModal = ({
 	const [sslcToPerc, setSslcToPerc] = useState("");
 	const [pucToPerc, setPucToPerc] = useState("");
 	const [degreeToPerc, setDegreeToPerc] = useState("");
+	const [githubLink, setGithubLink] = useState("");
 
 	React.useEffect(
 		() => {
@@ -213,7 +214,9 @@ const EditModal = ({
 		if (name === "feeConcession") {
 			setFeesConcession(value);
 		}
-
+		if (name === "githubLink") {
+			setGithubLink(value);
+		}
 		const [section, field] = name.split(".");
 
 		if (section === "courseInfo" && field === "course") {
@@ -313,10 +316,13 @@ const EditModal = ({
 				setSslcToPerc("");
 				setSslcError("");
 			}
-			if (/^\d{1}\.\d{1,2}$/.test(value) || value <= 9.99 && value > 0) {
+			if (/^\d{1}\.\d{1,2}$/.test(value) || (value <= 9.99 && value > 0)) {
 				setSslcToPerc(((value - 0.7) * 10).toFixed(2) + "%");
 			}
-			if (/^\d{2}\.\d{1,2}$/.test(value) || /^\d{2}$/.test(value) && value > 0) {
+			if (
+				/^\d{2}\.\d{1,2}$/.test(value) ||
+				(/^\d{2}$/.test(value) && value > 0)
+			) {
 				setSslcToPerc((value / 10 + 0.7).toFixed(2) + " CGPA");
 			}
 		}
@@ -333,10 +339,13 @@ const EditModal = ({
 				setPucToPerc("");
 				setPucError("");
 			}
-			if (/^\d{1}\.\d{1,2}$/.test(value) || value <= 9.99 && value > 0) {
+			if (/^\d{1}\.\d{1,2}$/.test(value) || (value <= 9.99 && value > 0)) {
 				setPucToPerc(((value - 0.7) * 10).toFixed(2) + "%");
 			}
-			if (/^\d{2}\.\d{1,2}$/.test(value) || /^\d{2}$/.test(value) && value > 0) {
+			if (
+				/^\d{2}\.\d{1,2}$/.test(value) ||
+				(/^\d{2}$/.test(value) && value > 0)
+			) {
 				setPucToPerc((value / 10 + 0.7).toFixed(2) + " CGPA");
 			}
 		}
@@ -353,10 +362,13 @@ const EditModal = ({
 				setDegreeToPerc("");
 				setDegreeError("");
 			}
-			if (/^\d{1}\.\d{1,2}$/.test(value) || value <= 9.99 && value > 0) {
+			if (/^\d{1}\.\d{1,2}$/.test(value) || (value <= 9.99 && value > 0)) {
 				setDegreeToPerc(((value - 0.7) * 10).toFixed(2) + "%");
 			}
-			if (/^\d{2}\.\d{1,2}$/.test(value) || /^\d{2}$/.test(value) && value > 0) {
+			if (
+				/^\d{2}\.\d{1,2}$/.test(value) ||
+				(/^\d{2}$/.test(value) && value > 0)
+			) {
 				setDegreeToPerc((value / 10 + 0.7).toFixed(2) + " CGPA");
 			}
 		}
@@ -485,6 +497,7 @@ const EditModal = ({
 		let newEmail;
 		const updatedData = {
 			...editedData,
+
 			adminDto: {
 				...editedData.adminDto,
 				updatedBy: email
@@ -526,7 +539,8 @@ const EditModal = ({
 					editedData.csrDto.alternateContactNumber === ""
 						? rowData.csrDto.alternateContactNumber
 						: editedData.csrDto.alternateContactNumber
-			}
+			},
+			githubLink: githubLink
 		};
 		if (emailValue !== "") {
 			newEmail = emailValue;
@@ -685,8 +699,9 @@ const EditModal = ({
 		xworkzEmailCheckExists ||
 		phoneNumberError ||
 		numberCheck ||
+		disble ||
 		emailError ||
-		disable||
+		disable ||
 		comments;
 	return (
 		<Dialog open={open} onClose={handleClose} fullWidth maxWidth="lg">
@@ -866,7 +881,6 @@ const EditModal = ({
 							</Select>
 						</FormControl>
 					</Grid>
-
 					<Grid item xs={4}>
 						<TextField
 							label="Unique ID"
@@ -897,7 +911,6 @@ const EditModal = ({
 								</Alert>
 							: " "}
 					</Grid>
-
 					<Grid item xs={4}>
 						<TextField
 							label="WhatsApp Number"
@@ -1012,7 +1025,6 @@ const EditModal = ({
 							style={fieldStyle}
 						/>
 					</Grid>
-
 					<Grid item xs={4}>
 						<FormControl style={fieldStyle}>
 							<InputLabel id="demo-simple-select-label">Offered As</InputLabel>
@@ -1194,63 +1206,93 @@ const EditModal = ({
 								</Grid>
 							: ""
 						: ""}
-
-					{/* <Grid item xs={4}>
-            <TextField
-              type="number"
-              label="SSLC or 10th Percentage"
-              name="percentageDto.sslcPercentage"
-              defaultValue={rowData.percentageDto.sslcPercentage}
-              onChange={handleInputChange}
-              style={fieldStyle}
-              
-            />
-            <div style={{ marginTop: "-57px", marginLeft: "250px" }}>
-              {sslcToPerc ? <span>{sslcToPerc}</span> : ""}
-            </div>
-            <div style={{ marginTop: "45px" }}>
-              {sslcError ? (<Alert severity="error">{sslcError}</Alert>) : " "}
-            </div>
-          </Grid>
-          <Grid item xs={4}>
-            <TextField
-              type="number"
-              label="PUC or Diploma Percentage"
-              name="percentageDto.pucPercentage"
-              defaultValue={rowData.percentageDto.pucPercentage}
-              onChange={handleInputChange}
-              style={fieldStyle}
-              
-            />
-            <div style={{ marginTop: "-57px", marginLeft: "250px" }}>
-              {pucToPerc ? <span>{pucToPerc}</span> : ""}
-            </div>
-            <div style={{ marginTop: "45px" }}>
-              {pucError ? (<Alert severity="error">{pucError}</Alert>) : " "}
-            </div>
-
-          </Grid>
-
-          <Grid item xs={4}>
-            <TextField
-              type="number"
-              label="Degree Percentage or CGPA"
-              name="percentageDto.degreePercentage"
-              defaultValue={rowData.percentageDto.degreePercentage}
-              onChange={handleInputChange}
-              style={fieldStyle}
-              
-            />
-            <div style={{ marginTop: "-57px", marginLeft: "250px" }}>
-              {degreeToPerc ? <span>{degreeToPerc}</span> : ""}
-            </div>
-            <div style={{ marginTop: "45px" }}>
-              {degreeError ? (<Alert severity="error">{degreeError}</Alert>) : " "}
-            </div>
-          </Grid>
-
-                    */}
-
+					<Grid item xs={4}>
+						<TextField
+							type="number"
+							label="SSLC or 10th Percentage"
+							name="percentageDto.sslcPercentage"
+							defaultValue={rowData.percentageDto.sslcPercentage}
+							onChange={handleInputChange}
+							style={fieldStyle}
+						/>
+						<div style={{ marginTop: "-57px", marginLeft: "250px" }}>
+							{sslcToPerc
+								? <span>
+										{sslcToPerc}
+									</span>
+								: ""}
+						</div>
+						<div style={{ marginTop: "45px" }}>
+							{sslcError
+								? <Alert severity="error">
+										{sslcError}
+									</Alert>
+								: " "}
+						</div>
+					</Grid>
+					<Grid item xs={4}>
+						<TextField
+							type="number"
+							label="PUC or Diploma Percentage"
+							name="percentageDto.pucPercentage"
+							defaultValue={rowData.percentageDto.pucPercentage}
+							onChange={handleInputChange}
+							style={fieldStyle}
+						/>
+						<div style={{ marginTop: "-57px", marginLeft: "250px" }}>
+							{pucToPerc
+								? <span>
+										{pucToPerc}
+									</span>
+								: ""}
+						</div>
+						<div style={{ marginTop: "45px" }}>
+							{pucError
+								? <Alert severity="error">
+										{pucError}
+									</Alert>
+								: " "}
+						</div>
+					</Grid>
+					<Grid item xs={4}>
+						<TextField
+							type="number"
+							label="Degree Percentage or CGPA"
+							name="percentageDto.degreePercentage"
+							defaultValue={rowData.percentageDto.degreePercentage}
+							onChange={handleInputChange}
+							style={fieldStyle}
+						/>
+						<div style={{ marginTop: "-57px", marginLeft: "250px" }}>
+							{degreeToPerc
+								? <span>
+										{degreeToPerc}
+									</span>
+								: ""}
+						</div>
+						<div style={{ marginTop: "45px" }}>
+							{degreeError
+								? <Alert severity="error">
+										{degreeError}
+									</Alert>
+								: " "}
+						</div>
+					</Grid>
+					<Grid item xs={4}>
+						<TextField
+							type="text"
+							label="Github Link"
+							name="githubLink"
+							defaultValue={rowData.githubLink}
+							placeholder={
+								rowData.githubLink === null || rowData.githubLink === "NA"
+									? "NA"
+									: rowData.githubLink
+							}
+							onChange={handleInputChange}
+							style={fieldStyle}
+						/>
+					</Grid>
 					<Grid item xs={4}>
 						<TextField
 							label="Comments"
@@ -1292,15 +1334,13 @@ const EditModal = ({
 						</Button>}
 			</DialogActions>
 
-			{/* Snackbar for response message */}
 			<Snackbar
 				open={snackbarOpen}
-				autoHideDuration={3000000} // Adjust as needed
+				autoHideDuration={3000000}
 				onClose={handleSnackbarClose}
 				message={responseMessage}
 			/>
 
-			{/* Confirmation Dialog */}
 			<Dialog open={isConfirming} onClose={handleClose} fullWidth maxWidth="xs">
 				<DialogTitle>Confirm Update</DialogTitle>
 				<DialogContent>Are you sure you want to update the data?</DialogContent>
