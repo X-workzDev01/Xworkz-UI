@@ -1,25 +1,27 @@
 import { AppBar, Container, IconButton, Toolbar } from "@mui/material";
 
 const Navbar = ({ children }) => {
-  return (
-    <>
-      <AppBar sx={{ background: "#070606" }}>
-        <Toolbar>
-          <IconButton edge="start" color="inherit" aria-label="logo">
-            <a href="https://www.x-workz.in/Logo.png">
-              <img
-                src="https://www.x-workz.in/Logo.png"
-                width={60}
-                height={40}
-                alt="Logo"
-              ></img>
-            </a>
-          </IconButton>
-        </Toolbar>
-      </AppBar>
-      <Container>{children}</Container>
-    </>
-  );
+	return (
+		<div>
+			<AppBar sx={{ background: "#070606" }}>
+				<Toolbar>
+					<IconButton edge="start" color="inherit" aria-label="logo">
+						<a href="https://www.x-workz.in/Logo.png">
+							<img
+								src="https://www.x-workz.in/Logo.png"
+								width={60}
+								height={40}
+								alt="Logo"
+							/>
+						</a>
+					</IconButton>
+				</Toolbar>
+			</AppBar>
+			<Container>
+				{children}
+			</Container>
+		</div>
+	);
 };
 
 export default Navbar;

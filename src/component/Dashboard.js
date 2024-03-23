@@ -22,42 +22,42 @@ import Attandance from "./Attandance";
 import AttendanceModal from "./AttendanceModal";
 import ExportData from "./ExportData";
 
-
 const Dashboard = ({ isLoggedIn }) => {
-  if (!isLoggedIn) {
-    return null;
-  }
+	if (!isLoggedIn) {
+		return null;
+	}
 
-  return (
-    <div className="dashboard">
-      <Header />
-      <div className="Sidebar">
-        <Sidebar />
-      </div>
-      <div className="content">
-        <Routes>
-          <Route path="/home" element={<Dashboard />} />
-          <Route path="/register" element={<Registration />} />
-          <Route path="/display" element={<ViewTable />} />
-          <Route path="/followup" element={<FollowUp />} />
-          <Route path="/profile/:email" element={<Profile />} />
-          <Route path="/absentees" element={<Absentees />} />
-          <Route path="/attenances" element={<Attandance />} />
-          <Route path="/enquiry" element={<Enquiry />} />
-          <Route path="/attenance/:id/:courseName" element={<AttendanceModal />} />
-          <Route path="/whatsapp" element={<WhatsAppLinkSender />} />
-          <Route path="/feesDetails" element={<FeesDetailes />} />
-          <Route path="/company" element={<ClientDetails />} />
-          <Route path="/companies" element={<ViewClient />} />
-          <Route path="/companies/:id" element={<CompanyProfile />} />
-          <Route path="/company/hr/:id" element={<ViewHrProfile />} />
-          <Route path="/exportdata" element={<ExportData />} />
-        </Routes>
-      </div>
-
-
-    </div>
-  );
+	return (
+		<div className="dashboard">
+			<Header />
+			<div className="Sidebar">
+				<Sidebar />
+			</div>
+			<div className="content">
+				<Routes>
+					<Route path="/home" element={<Dashboard />} />
+					<Route path="/register" element={<Registration />} />
+					<Route path="/display" element={<ViewTable />} />
+					<Route path="/followup" element={<FollowUp />} />
+					<Route path="/profile/:email" element={<Profile />} />
+					<Route path="/absentees" element={<Absentees />} />
+					<Route path="/attenances" element={<Attandance />} />
+					<Route path="/enquiry" element={<Enquiry />} />
+					<Route
+						path="/attenance/:id/:courseName"
+						element={<AttendanceModal />}
+					/>
+					<Route path="/whatsapp" element={<WhatsAppLinkSender />} />
+					<Route path="/feesDetails" element={<FeesDetailes />} />
+					<Route path="/company" element={<ClientDetails />} />
+					<Route path="/companies" element={<ViewClient />} />
+					<Route path="/companies/:id" element={<CompanyProfile />} />
+					<Route path="/company/hr/:id" element={<ViewHrProfile />} />
+					<Route path="/exportdata" element={<ExportData />} />
+				</Routes>
+			</div>
+		</div>
+	);
 };
 
 export default Dashboard;
