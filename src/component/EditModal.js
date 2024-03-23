@@ -888,7 +888,9 @@ const EditModal = ({
 							label="USN Number"
 							name="csrDto.usnNumber"
 							defaultValue={
-								rowData.csrDto.usnNumber != "NA" ? rowData.csrDto.usnNumber : ""
+								rowData.csrDto.usnNumber != "NA"
+									? rowData.csrDto.usnNumber.toUpperCase()
+									: ""
 							}
 							onChange={handleInputChange}
 							style={fieldStyle}
