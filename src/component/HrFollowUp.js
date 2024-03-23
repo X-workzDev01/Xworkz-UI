@@ -18,9 +18,6 @@ import React from "react";
 import { Urlconstant } from "../constant/Urlconstant";
 import { fieldStyle, style } from "../constant/FormStyle";
 import { getCurrentDate } from "../constant/ValidationConstant";
-import { LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
-import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useSelector } from "react-redux";
 
 const HrFollowUp = ({ open, handleClose, rowData, dropdown }) => {
@@ -31,8 +28,6 @@ const HrFollowUp = ({ open, handleClose, rowData, dropdown }) => {
   const [isConfirming, setIsConfirming] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [formData, setFormData] = React.useState({});
-  const attemtedUser = sessionStorage.getItem("userId");
-
   React.useEffect(() => {
     setFormData({ attemptBy: email, });
     if (open) {
@@ -258,7 +253,7 @@ const HrFollowUp = ({ open, handleClose, rowData, dropdown }) => {
         </Alert>
       </Snackbar>
 
-      <Dialog open={isConfirming} onClose={handleClose} fullWidth maxWidth="xs">
+      <Dialog open={isConfirming} onClose={() => setIsConfirming(false)} fullWidth maxWidth="xs">
         <DialogTitle>Confirm Save</DialogTitle>
         <DialogContent>Adding Follow Up</DialogContent>
         <DialogActions>

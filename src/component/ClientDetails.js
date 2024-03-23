@@ -100,12 +100,14 @@ export default function ClientDetails() {
       ...prevData,
       [name]: value,
     }));
-    if (name === "companyName" && value.length <= 3 && value.trim() === "") {
-      setCompanyNameCheck("Name should not be empty");
-      setCompanyNameCheckExist("");
-    }
-    else if (value.length >= 3) {
-      setCompanyNameCheck("")
+    if (name === "companyName") {
+      if (value.trim() === "") {
+        setCompanyNameCheck("Name should not be empty");
+        setCompanyNameCheckExist("");
+      } else if (value.length <= 3) {
+        setCompanyNameCheck("Name should not be empty");
+        setCompanyNameCheckExist("");
+      }
     }
     if (name === "companyLandLineNumber") {
       if (!validateContactNumber(value) && value.trim() !== "") {
@@ -143,7 +145,7 @@ export default function ClientDetails() {
     !formData.companyLocation ||
     companyNameCheck ||
     companyEmailCheck ||
-    ((emailCheckError !== "accepted_email" || emailCheckError !== "low_quality") && emailCheckError) ||
+    ((emailCheckError !== "accepted_email" && emailCheckError !== "low_quality") && emailCheckError) ||
     emailCheck ||
     phoneNumberCheck ||
     checkPhoneNumberExist ||
@@ -161,6 +163,7 @@ export default function ClientDetails() {
         setOpen(true);
         setSnackbarMessage(response.data);
         setFormData({ status: "Active", });
+        setEmailCheckError("");
       });
     } catch (error) {
       setCatchErrors("Wait for some time");
@@ -224,6 +227,11 @@ export default function ClientDetails() {
             setEmailCheckError(response.data);
           }
           else if (response.data === "low_quality") {
+            setEmailCheck("");
+            setCompanyEmailCheck("")
+            setEmailCheckError("accepted_email");
+          }
+          else {
             setEmailCheck("");
             setCompanyEmailCheck("")
             setEmailCheckError(response.data);
@@ -386,11 +394,10 @@ export default function ClientDetails() {
               {companyEmailCheck && (
                 <Alert severity="error">{companyEmailCheck}</Alert>
               )}
-
-              {emailCheckError === "accepted_email" || emailCheckError === "low_quality" && (
+              {(emailCheckError === "accepted_email" || emailCheckError === "low_quality") && (
                 <Alert severity="success">{emailCheckError}</Alert>
               )}
-              {emailCheckError && (emailCheckError === "accepted_email" || emailCheckError === "low_quality") && <Alert severity="error">{emailCheckError}</Alert>}
+              {emailCheckError && (emailCheckError !== "accepted_email" && emailCheckError !== "low_quality") && <Alert severity="error">{emailCheckError}</Alert>}
             </Grid>
             <Grid item xs={12} sm={4}>
               <TextField
