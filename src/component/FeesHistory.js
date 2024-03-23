@@ -1,22 +1,11 @@
 import {
-  Box,
-  Button,
   Container,
-  InputLabel,
-  MenuItem,
-  Modal,
-  Select,
-  TextField,
-  Typography,
+  Modal
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import "./PayFee.css";
-import { TfiClose } from "react-icons/tfi";
-import axios from "axios";
-import { Urlconstant } from "../constant/Urlconstant";
 import { DataGrid } from "@mui/x-data-grid";
-import { FormControl } from "react-bootstrap";
-import Popup from "reactjs-popup";
+import React, { useState } from "react";
+import { TfiClose } from "react-icons/tfi";
+import "./PayFee.css";
 
 export const FeesHistory = ({ isOpen, handleClose, row }) => {
   const currentDate = new Date();
