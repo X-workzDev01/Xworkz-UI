@@ -67,10 +67,10 @@ export const Percentage = ({
                 setSslcToPerc("");
                 setSslcError("");
             }
-            if (/^\d{2}\.\d{1,2}$/.test(value)||/^\d{2}$/.test(value)) {
+            if ((/^\d{2}\.\d{1,2}$/.test(value) || /^\d{2}$/.test(value) )&& value > 0) {
                 setSslcToPerc(((value / 10) + 0.7).toFixed(2) + " CGPA");
             }
-            if (/^\d{1}\.\d{1,2}$/.test(value) || value.length === 1) {
+            if ((/^\d{1}\.\d{1,2}$/.test(value) || value <= 9.99 )&& value > 0) {
                 setSslcToPerc(((value - .7) * 10).toFixed(2) + "%");
             }
 
@@ -88,10 +88,10 @@ export const Percentage = ({
                 setPucToPerc("");
                 setPucError("");
             }
-            if (/^\d{2}\.\d{1,2}$/.test(value)||/^\d{2}$/.test(value)) {
+            if ((/^\d{2}\.\d{1,2}$/.test(value) || /^\d{2}$/.test(value)) && value > 0) {
                 setPucToPerc(((value / 10) + 0.7).toFixed(2) + " CGPA");
             }
-            if (/^\d{1}\.\d{1,2}$/.test(value) || value.length === 1) {
+            if ((/^\d{1}\.\d{1,2}$/.test(value) || value <= 9.99) && value > 0) {
                 setPucToPerc(((value - .7) * 10).toFixed(2) + "%");
             }
         }
@@ -108,10 +108,10 @@ export const Percentage = ({
                 setDegreeToPerc("");
                 setDegreeError("");
             }
-            if (/^\d{2}\.\d{1,2}$/.test(value)||/^\d{2}$/.test(value)) {
+            if ((/^\d{2}\.\d{1,2}$/.test(value) || /^\d{2}$/.test(value)) && value > 0) {
                 setDegreeToPerc(((value / 10) + 0.7).toFixed(2) + " CGPA");
             }
-            if (/^\d{1}\.\d{1,2}$/.test(value) || value.length === 1) {
+            if ((/^\d{1}\.\d{1,2}$/.test(value) || value <= 9.99) && value > 0) {
                 setDegreeToPerc(((value - .7) * 10).toFixed(2) + "%");
             }
         }
