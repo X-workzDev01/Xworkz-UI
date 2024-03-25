@@ -127,7 +127,7 @@ export const BirthdayInfo = () => {
             field: "birthDayMailSent",
             headerName: "Mail Sent",
             flex: 1,
-            valueGetter: params => params.row.birthDayMailSent,
+            valueGetter: params => params.row.birthDayMailSent ? params.row.birthDayMailSent : "NA",
         },
         {
             flex: 1,

@@ -292,7 +292,7 @@ export default function FollowUp() {
     field: "updatedOn",
     headerName: "Updated On",
     flex: 1,
-    valueGetter: params => params.row.adminDto.updatedByOn?params.row.adminDto.updatedOn.slice(0,10):""
+    valueGetter: params => params.row.adminDto.updatedByOn ? params.row.adminDto.updatedOn.slice(0, 10) : ""
   }, {
     field: "updatedBy",
     headerName: "Updated By",
@@ -308,7 +308,7 @@ export default function FollowUp() {
     field: "createdOn",
     headerName: "Created On",
     flex: 1,
-    valueGetter: params => params.row.adminDto.createdOn.slice(0,10)
+    valueGetter: params => params.row.adminDto.createdOn ? params.row.adminDto.createdOn.slice(0, 10) : "NA"
   }, {
     field: "collegeName",
     headerName: "College Name",
