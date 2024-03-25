@@ -292,7 +292,7 @@ export default function FollowUp() {
     field: "updatedOn",
     headerName: "Updated On",
     flex: 1,
-    valueGetter: params => params.row.adminDto.updatedOn.slice(0,10)
+    valueGetter: params => params.row.adminDto.updatedByOn?params.row.adminDto.updatedOn.slice(0,10):""
   }, {
     field: "updatedBy",
     headerName: "Updated By",

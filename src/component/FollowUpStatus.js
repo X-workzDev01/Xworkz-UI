@@ -25,6 +25,7 @@ import { useSelector } from "react-redux";
 const fieldStyle = { margin: "20px" };
 
 const FollowUpStatus = ({ open, handleClose, rowData, followUpdata }) => {
+  console.log(rowData)
   const email = useSelector(state => state.loginDetiles.email)
   const [joinedError, setJoinedError] = useState("");
   const [isConfirming, setIsConfirming] = React.useState(false);
@@ -33,9 +34,10 @@ const FollowUpStatus = ({ open, handleClose, rowData, followUpdata }) => {
   const [responseMessage, setResponseMessage] = React.useState("");
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [dropdownData, setDropdownData] = React.useState([]);
-  const [isDisabled, setIdDisabled] = React.useState(false);
   const [feesData, setFeesData] = useState({});
   const [isConfirmed, setIsConfirmed] = React.useState(false);
+  const [commentErrors, setCommentErrors] = useState("")
+  const [joined, setJoined] = useState("");
   const reminingStatus = [
     "Drop after free course",
     "Drop after placement",
@@ -60,6 +62,7 @@ const FollowUpStatus = ({ open, handleClose, rowData, followUpdata }) => {
     const day = now.getDate().toString().padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
+  
 
   useEffect(() => {
     axios
@@ -69,7 +72,6 @@ const FollowUpStatus = ({ open, handleClose, rowData, followUpdata }) => {
         },
       })
       .then((response) => {
-        // Filter out "New" and "Enquiry" from the dropdownData.status array
         const filteredStatus = response.data.status.filter(
           (item) => item !== "New" && item !== "Enquiry"
         );
@@ -81,9 +83,9 @@ const FollowUpStatus = ({ open, handleClose, rowData, followUpdata }) => {
 
   React.useEffect(() => {
     setEditedData(rowData);
-    setIdDisabled(false);
     setJoinedError(null);
-    setIdDisabled(true)
+    setCount(0)
+      setCommentErrors("")
 
   }, [rowData]);
 
@@ -91,12 +93,20 @@ const FollowUpStatus = ({ open, handleClose, rowData, followUpdata }) => {
     return null;
   }
   const handlecount = (event) => {
-    const { name, value } = event.target;
     setCount(event.target.value.length);
   };
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
+    if (name === "comments" && value.length >= 25) {
+      setCommentErrors("")
+    }
+    if (name === "comments" && value.length < 25) {
+      setCommentErrors("Please enter minimun 25 character")
+    }
+    if (name === "comments" && value.length < 1) { 
+       setCommentErrors("")
+    }
     const updatedValue = (value ?? "").trim() === "" ? "NA" : value;
 
     setEditedData((prevData) => ({
@@ -104,20 +114,18 @@ const FollowUpStatus = ({ open, handleClose, rowData, followUpdata }) => {
       [name]: updatedValue,
     }));
     if (name === "joiningDate" && value !== "NA") {
-      setIdDisabled(false);
-    }
+      setJoined("")    }
 
     if (name === "attemptStatus") {
       setAttemptStatus(updatedValue);
-      if (value == "Joined" && rowData.courseInfo.course === "NA") {
-        setIdDisabled(true);
+      if (value === "Joined" && rowData.courseInfo.course === "NA") {
         setJoinedError("Please update batch details before making changes in Trainee status");
       } else {
+        setJoined("")    
         setJoinedError("");
-        setIdDisabled(false);
       }
       if (value === "Joined" && editedData.joiningDate !== "NA") {
-        setIdDisabled(true);
+       setJoined("Please select joined date")
       }
     }
   };
@@ -127,11 +135,11 @@ const FollowUpStatus = ({ open, handleClose, rowData, followUpdata }) => {
     setSnackbarOpen(false);
   };
   const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
+     setSnackbarOpen(false);
     handleClose();
   };
   const handleCloseForm = () => {
-    setResponseMessage("");
+     setResponseMessage("");
     setSnackbarOpen(false);
     setAttemptStatus("");
     handleClose();
@@ -209,15 +217,9 @@ const FollowUpStatus = ({ open, handleClose, rowData, followUpdata }) => {
       validateAndSaveData(statusDto, attendanceDto, dto);
     }
   };
-  const handleErrr = (e) => {
-    if (e.target.value.length < 20) {
-      setLoading(false);
-      setResponseMessage("Comment must be at least 20 characters.");
-      setIdDisabled(true);
-    } else {
-      setResponseMessage("");
-    }
-  };
+  var isDisabled = commentErrors || joinedError || joined || editedData != null && !editedData.attemptStatus;
+
+  
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle>
@@ -232,7 +234,7 @@ const FollowUpStatus = ({ open, handleClose, rowData, followUpdata }) => {
           <GridCloseIcon />
         </IconButton>
       </DialogTitle>
-      <div style={{ marginLeft: "19rem" }}>
+      <div style={{ marginLeft: "12rem" }}>
         {" "}
         <span style={{ color: "red" }}>{joinedError}</span>
       </div>
@@ -383,7 +385,6 @@ const FollowUpStatus = ({ open, handleClose, rowData, followUpdata }) => {
             labelId="demo-simple-select-label"
             label="Comments"
             name="comments"
-            onBlur={handleErrr}
             defaultValue={rowData.comments}
             onKeyUp={handleInputChange}
             onChange={handlecount}
@@ -399,16 +400,9 @@ const FollowUpStatus = ({ open, handleClose, rowData, followUpdata }) => {
             ].includes(attemptStatus)}
             rows={4}
             id="comments"
-            error={commentError}
-            helperText={commentError ? "Comment is mandatory." : ""}
           ></TextField>
-          {responseMessage ? (
-            <p style={{ color: "green", marginTop: "90px" }}>
-              {responseMessage}
-            </p>
-          ) : (
-            ""
-          )}
+          <div style={{marginTop:'5rem',marginLeft:'2.8rem'}}><span style={{color:"red"}}>{commentErrors?commentErrors:""}</span></div>
+          
         </FormControl>
       </DialogContent>
       <DialogActions>
@@ -429,7 +423,7 @@ const FollowUpStatus = ({ open, handleClose, rowData, followUpdata }) => {
         open={snackbarOpen}
         autoHideDuration={3000000}
         onClose={handleSnackbarClose}
-        // message={responseMessage}
+        message={responseMessage}
       />
 
       <Dialog open={isConfirming} onClose={handleClose} fullWidth maxWidth="xs">
