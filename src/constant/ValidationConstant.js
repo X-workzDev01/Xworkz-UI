@@ -3,13 +3,13 @@ export const validateEmail = email => {
 	return emailRegex.test(email);
 };
 
-export const validateContactNumber = phoneNumber => {
-	const phoneNumberRegex = /^\d{10}$/;
-	return phoneNumberRegex.test(phoneNumber);
-};
+
 export const validateWebsite = website => {
 	const websiteRegex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
 	return websiteRegex.test(website);
+export const validateContactNumber = (phoneNumber) => {
+  const phoneNumberRegex = /^[0-9]{10}$/;
+  return phoneNumberRegex.test(phoneNumber);
 };
 
 export const getCurrentDate = () => {
