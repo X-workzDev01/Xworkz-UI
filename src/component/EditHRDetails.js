@@ -370,7 +370,7 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
               label="Comments"
               name="status"
               style={fieldStyle}
-              defaultValue={rowData.status != "NA" ? rowData.status : ""}
+              defaultValue={rowData.status !== "NA" ? rowData.status : ""}
               placeholder={rowData.status === "NA" ? "NA" : ""}
               onChange={handleInput}
               fullWidth

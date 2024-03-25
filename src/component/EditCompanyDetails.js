@@ -140,7 +140,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
     if (companyName === "NA") {
       setCompanyNameCheck("");
     } else {
-      if (companyName.trim() != "") {
+      if (companyName.trim() !== "") {
         axios
           .get(
             Urlconstant.url + `/api/companynamecheck?companyName=${companyName}`
@@ -160,7 +160,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
     if (companyEmail === "NA") {
       setCheckEmailExist("");
     } else {
-      if (companyEmail.trim() != "" && validateEmail(companyEmail)) {
+      if (companyEmail.trim() !== "" && validateEmail(companyEmail)) {
         axios
           .get(
             Urlconstant.url +
@@ -213,7 +213,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
       setCheckCompanyWebsite("");
       setError("");
     } else {
-      if (companyWebsite.trim() != "" && validateWebsite(companyWebsite)) {
+      if (companyWebsite.trim() !== "" && validateWebsite(companyWebsite)) {
         axios
           .get(
             Urlconstant.url +
@@ -415,7 +415,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
             <TextField
               label="Company Website"
               name="companyWebsite"
-              defaultValue={rowData.companyWebsite != "NA" ? rowData.companyWebsite : ""}
+              defaultValue={rowData.companyWebsite !== "NA" ? rowData.companyWebsite : ""}
               placeholder={rowData.companyWebsite === "NA" ? "NA" : ""}
               onChange={handleChange}
               fullWidth
@@ -449,7 +449,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
             <TextField
               label="Company Founder"
               name="companyFounder"
-              defaultValue={rowData.companyFounder != "NA" ? rowData.companyFounder : ""}
+              defaultValue={rowData.companyFounder !== "NA" ? rowData.companyFounder : ""}
               placeholder={rowData.companyFounder === "NA" ? "NA" : ""}
               onChange={handleChange}
               fullWidth
@@ -520,7 +520,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
               rows={4}
               label="Company Address"
               name="companyAddress"
-              defaultValue={rowData.companyAddress != "NA" ? rowData.companyAddress : ""}
+              defaultValue={rowData.companyAddress !== "NA" ? rowData.companyAddress : ""}
               placeholder={rowData.companyAddress === "NA" ? "NA" : ""}
               onChange={handleChange}
               fullWidth

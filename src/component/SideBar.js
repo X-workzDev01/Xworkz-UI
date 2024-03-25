@@ -65,16 +65,16 @@ const Sidebar = ({ children }) => {
 			name: "WhatsApp",
 			icon: <FaWhatsapp />
 		},
-		// {
-		//   path: "company",
-		//   name: "Company Register",
-		//   icon: <FaTh />,
-		// },
-		// {
-		//   path: "companies",
-		//   name: "Company Details",
-		//   icon: <FaUserAlt />,
-		// },
+		{
+		  path: "company",
+		  name: "Company Register",
+		  icon: <FaTh />,
+		},
+		{
+		  path: "companies",
+		  name: "Company Details",
+		  icon: <FaUserAlt />,
+		},
 		{
 			path: "feesDetails",
 			name: "Fees Details",

@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const ClientDetails = createSlice({
     name: 'clientDetails',
     initialState: {
-        searchValue: "",
+        searchValue: '',
         clientType: "null",
         callBackDate: "null",
     },
