@@ -21,6 +21,7 @@ import WhatsAppLinkSender from "./WhatsApp";
 import Attandance from "./Attandance";
 import AttendanceModal from "./AttendanceModal";
 import ExportData from "./ExportData";
+import { BirthdayInfo } from "./BirthdayInfo";
 
 
 const Dashboard = ({ isLoggedIn }) => {
@@ -52,6 +53,7 @@ const Dashboard = ({ isLoggedIn }) => {
           <Route path="/companies/:id" element={<CompanyProfile />} />
           <Route path="/company/hr/:id" element={<ViewHrProfile />} />
           <Route path="/exportdata" element={<ExportData />} />
+          <Route path="/birthdays" element={<BirthdayInfo />} />
         </Routes>
       </div>
 
