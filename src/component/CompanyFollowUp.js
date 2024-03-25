@@ -18,15 +18,16 @@ import React, { useEffect } from "react";
 import { fieldStyle, style } from "../constant/FormStyle";
 import { Urlconstant } from "../constant/Urlconstant";
 import { getCurrentDate } from "../constant/ValidationConstant";
+import { useSelector } from "react-redux";
 
 const CompanyFollowUp = ({ open, handleClose, rowData, dropdown }) => {
+  const email = useSelector(state => state.loginDetiles.email)
   const [isConfirmed, setIsConfirmed] = React.useState(false);
   const [responseMessage, setResponseMessage] = React.useState("");
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [isConfirming, setIsConfirming] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [formData, setFormData] = React.useState("");
-  const attemtedUser = sessionStorage.getItem("userId");
   const [hrNameList, setHrNameList] = React.useState([]);
   const [hrDetails, setHrDetails] = React.useState("");
   const getdetailsbyCompanyId = () => {
@@ -43,16 +44,10 @@ const CompanyFollowUp = ({ open, handleClose, rowData, dropdown }) => {
 
   useEffect(() => {
     setIsConfirmed(false);
+    setFormData({ attemptBy: email, });
     if (open) {
       getdetailsbyCompanyId();
-      setFormData({
-        hrSpocName: "",
-        attemptStatus: "",
-        callDuration: "",
-        callBackTime: "",
-        callBackTime: "",
-        comments: "",
-      });
+      setFormData({ attemptBy: email, });
     }
   }, [rowData, open]);
 
@@ -69,6 +64,17 @@ const CompanyFollowUp = ({ open, handleClose, rowData, dropdown }) => {
           setHrDetails(hrItem);
         }
       });
+    }
+    if (name === 'attemptStatus') {
+      setFormData((prevData) => ({
+        ...prevData,
+        attemptBy: email,
+        attemptStatus: value,
+        callDuration: '',
+        callBackDate: '',
+        callBackTime: '',
+        comments: '',
+      }));
     }
 
     setFormData((prevData) => ({
@@ -98,7 +104,7 @@ const CompanyFollowUp = ({ open, handleClose, rowData, dropdown }) => {
         const hrFollowUpData = {
           ...formData,
           hrId: hrDetails.id,
-          attemptBy: attemtedUser,
+          attemptBy: email,
         };
         axios
           .post(Urlconstant.url + `api/hrfollowup`, hrFollowUpData)
@@ -120,7 +126,7 @@ const CompanyFollowUp = ({ open, handleClose, rowData, dropdown }) => {
       }
     }
   };
-  const isDisabled = !formData.attemptStatus || !hrDetails || !formData.hrSpocName
+  const isDisabled = !formData.attemptStatus || !hrDetails || !formData.hrSpocName || (!['Busy', 'RNR', 'Switch Off', 'Not Reachable', 'OTHERS'].includes(formData.attemptStatus) && !formData.callDuration);
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle>
@@ -158,12 +164,12 @@ const CompanyFollowUp = ({ open, handleClose, rowData, dropdown }) => {
 
           <Grid item xs={12} sm={4}>
             <TextField
-              label="attemptBy"
+              label="Attempt By"
               name="attemptBy"
               onChange={handleInputChange}
               style={fieldStyle}
               value={formData.attemptBy}
-              defaultValue={attemtedUser}
+              defaultValue={email}
               InputProps={{
                 readOnly: true,
               }}
@@ -287,7 +293,7 @@ const CompanyFollowUp = ({ open, handleClose, rowData, dropdown }) => {
         </Alert>
       </Snackbar>
 
-      <Dialog open={isConfirming} onClose={handleClose} fullWidth maxWidth="xs">
+      <Dialog open={isConfirming} onClose={() => setIsConfirming(false)} fullWidth maxWidth="xs">
         <DialogTitle>Confirm Save</DialogTitle>
         <DialogContent>Adding Follow Up</DialogContent>
         <DialogActions>

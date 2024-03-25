@@ -16,38 +16,40 @@ import { Urlconstant } from "../constant/Urlconstant";
 import "./SideBar.css";
 
 const Sidebar = ({ children }) => {
-  const [isOpen, setIsOpen] = useState(true);
-  const toggle = () => setIsOpen(!isOpen);
-  const location = useLocation();
+	const [isOpen, setIsOpen] = useState(true);
+	const toggle = () => setIsOpen(!isOpen);
+	const location = useLocation();
 
-  const [defaultSelected, setDefaultSelected] = useState("display");
+	const [defaultSelected, setDefaultSelected] = useState("display");
 
-  useEffect(() => {
-    setDefaultSelected(location.pathname.replace(Urlconstant.navigate, ""));
-  }, [location.pathname]);
+	useEffect(
+		() => {
+			setDefaultSelected(location.pathname.replace(Urlconstant.navigate, ""));
+		},
+		[location.pathname]
+	);
 
-  const menuItem = [
-    {
-      path: "register",
-      name: "Register",
-      icon: <FaTh />,
-    },
-    {
-      path: "display",
-      name: "Trainee Details",
-      icon: <FaUserAlt />,
-    },
-    {
-      path: "followup",
-      name: "Follow Up Details",
-      icon: <FaRegChartBar />,
-    },
-    {
-      path: "enquiry",
-      name: "Enquiry",
-      icon: <FaCommentAlt />,
-    },
-
+	const menuItem = [
+		{
+			path: "register",
+			name: "Register",
+			icon: <FaTh />
+		},
+		{
+			path: "display",
+			name: "Trainee Details",
+			icon: <FaUserAlt />
+		},
+		{
+			path: "followup",
+			name: "Follow Up Details",
+			icon: <FaRegChartBar />
+		},
+		{
+			path: "enquiry",
+			name: "Enquiry",
+			icon: <FaCommentAlt />
+		},
     {
       path: "absentees",
       name: "Add Absentees",

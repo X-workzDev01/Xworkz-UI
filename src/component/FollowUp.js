@@ -1,13 +1,17 @@
-import { PersonOutline } from "@mui/icons-material";
+import { MoreVert, PersonOutline } from "@mui/icons-material";
 import {
   Button,
+  Checkbox,
   FormControl,
   InputLabel,
   MenuItem,
+  Popover,
   Select,
-  TextField
+  TextField,
+  FormControlLabel
+
 } from "@mui/material";
-import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+import { DataGrid, GridToolbarContainer, GridToolbarDensitySelector, GridToolbarExport, GridToolbarFilterButton } from "@mui/x-data-grid";
 import axios from "axios";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -55,10 +59,13 @@ export default function FollowUp() {
     "Joined",
     "Past followUp",
     "Never followUp",
-    "CSR",
-    "NonCSR"
+    "CSR Offered",
+    "Non-CSR Offered"
   ]);
   const [date, setDate] = useState(followUpDropDown.followUpCallBackDate);
+  const initiallySelectedFields = ['traineeName', 'email', 'contactNumber', 'registrationDate', 'currentStatus', 'courseName', 'joiningDate', 'actions'];
+  const [displayColumn, setDisplayColumn] = React.useState(initiallySelectedFields);
+  const [anchorEl, setAnchorEl] = React.useState(null);
   const initialPageSize = 25;
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -68,6 +75,7 @@ export default function FollowUp() {
     rows: [],
     rowCount: 0
   });
+
 
   React.useMemo(
     () => {
@@ -107,7 +115,7 @@ export default function FollowUp() {
       .then(response => {
         setCourseDropdown(response.data);
       })
-      .catch(() => {});
+      .catch(() => { });
   };
 
   const filterData = () => {
@@ -121,6 +129,7 @@ export default function FollowUp() {
     const { name, value } = e.target;
     setSearchValue(value);
     dispatch(saveFollowUpstatus(value));
+
     setName(name);
     setStatus(value);
   };
@@ -177,12 +186,10 @@ export default function FollowUp() {
         }
       };
     }
-
     return new Promise((resolve, reject) => {
       fetch(apiUrl, requestOptions)
         .then(response => response.json())
         .then(data => {
-
           const newGridData = {
             rows: data.followUpData.map(row => ({
               id: row.id.toString(),
@@ -208,7 +215,7 @@ export default function FollowUp() {
       .then(response => {
         setDropDown(response.data);
       })
-      .catch(error => {});
+      .catch(error => { });
   };
   const dateByfollowupStatus = e => {
     const { value } = e.target;
@@ -216,7 +223,6 @@ export default function FollowUp() {
     dispatch(saveFollowUpCallBackDate(value));
     setDate(value);
   };
-
   const handleSaveClick = () => {
     setModalOpen(false);
   };
@@ -236,6 +242,122 @@ export default function FollowUp() {
     dispatch(saveFollowUpCollegeName(event.target.value));
     setSelectCollege(event.target.value);
   };
+
+  const columns = [{
+    field: "traineeName",
+    headerName: "Trainee Name",
+    flex: 1,
+    valueGetter: params => params.row.basicInfo.traineeName
+  },
+  {
+    field: "email",
+    headerName: "Email",
+    flex: 1,
+    valueGetter: params => params.row.basicInfo.email
+  },
+  {
+    field: "contactNumber",
+    headerName: "Contact Number",
+    flex: 1,
+    valueGetter: params => params.row.basicInfo.contactNumber
+  },
+  {
+    field: "joiningDate",
+    headerName: "Joining Date",
+    flex: 1,
+    valueGetter: params => params.row.joiningDate
+  },
+  {
+    field: "courseName",
+    headerName: "Course Name",
+    flex: 1,
+    valueGetter: params => params.row.courseName
+  },
+  {
+    field: "currentStatus",
+    headerName: "Current Status",
+    flex: 1,
+    valueGetter: params => params.row.currentStatus
+  },
+  {
+    field: "registrationDate",
+    headerName: "RegistrationDate",
+    flex: 1,
+    valueGetter: params => {
+      const registrationDate = params.row.registrationDate;
+      const datePart = registrationDate.includes('T') ? registrationDate.split('T')[0] : registrationDate.split(' ')[0];
+      return datePart;
+    }
+  }, {
+    field: "updatedOn",
+    headerName: "Updated On",
+    flex: 1,
+    valueGetter: params => params.row.adminDto.updatedOn.slice(0,10)
+  }, {
+    field: "updatedBy",
+    headerName: "Updated By",
+    flex: 1,
+    valueGetter: params => params.row.adminDto.updatedBy
+  }, {
+    field: "createdBy",
+    headerName: "Created By",
+    flex: 1,
+    valueGetter: params => params.row.adminDto.createdBy
+  },
+    , {
+    field: "createdOn",
+    headerName: "Created On",
+    flex: 1,
+    valueGetter: params => params.row.adminDto.createdOn.slice(0,10)
+  }, {
+    field: "collegeName",
+    headerName: "College Name",
+    flex: 1,
+    valueGetter: params => params.row.collegeName
+  },
+  {
+    field: "actions",
+    headerName: "Actions",
+    width: 120,
+    renderCell: params =>
+      <div>
+        <Button
+          variant="outlined"
+          color="secondary"
+          startIcon={<PersonOutline />}
+          component={Link} // Use Link component for navigation
+          to={
+            Urlconstant.navigate +
+            `profile/${params.row.basicInfo.email}`
+          }
+        >
+          View
+        </Button>
+      </div>
+  }
+  ];
+
+  const open = Boolean(anchorEl);
+
+  const handleChangeColumnVisibility = (field) => {
+    let updatedDisplayColumn;
+    if (displayColumn.includes(field)) {
+      updatedDisplayColumn = displayColumn.filter(col => col !== field);
+    } else {
+      updatedDisplayColumn = [...displayColumn, field];
+    }
+    setDisplayColumn(updatedDisplayColumn);
+  };
+  React.useEffect(() => {
+    setDisplayColumn(initiallySelectedFields);
+  }, []);
+  const handleColumnChange = (event) => {
+    setAnchorEl(event.currentTarget);
+  }
+  const handleClosePopover = () => {
+    setAnchorEl(null);
+  };
+
   return (
     <div>
       <Header />
@@ -268,7 +390,7 @@ export default function FollowUp() {
             }}
           >
             <MenuItem value={null}> Select status </MenuItem>
-            {}
+            { }
             {statusLists.map((item, index) =>
               <MenuItem value={item} key={index}>
                 {item}
@@ -297,14 +419,13 @@ export default function FollowUp() {
             <MenuItem value={null}> Select course </MenuItem>
             {Array.isArray(courseDropdown)
               ? courseDropdown.map((item, k) =>
-                  <MenuItem value={item} key={k}>
-                    {item}
-                  </MenuItem>
-                )
+                <MenuItem value={item} key={k}>
+                  {item}
+                </MenuItem>
+              )
               : null}
           </Select>
         </FormControl>
-
         {
           <TextField
             type="date"
@@ -355,71 +476,8 @@ export default function FollowUp() {
       </div>
       <div style={{ height: "650px", width: "100%" }}>
         <DataGrid
-          columns={[
-            //  { headerName: "ID", field: "id", flex: 1 },
-            {
-              field: "traineeName",
-              headerName: "Trainee Name",
-              flex: 1,
-              valueGetter: params => params.row.basicInfo.traineeName
-            },
-            {
-              field: "email",
-              headerName: "Email",
-              flex: 1,
-              valueGetter: params => params.row.basicInfo.email
-            },
-            {
-              field: "contactNumber",
-              headerName: "Contact Number",
-              flex: 1,
-              valueGetter: params => params.row.basicInfo.contactNumber
-            },
-            {
-              field: "joiningDate",
-              headerName: "Joining Date",
-              flex: 1,
-              valueGetter: params => params.row.joiningDate
-            },
-            {
-              field: "courseName",
-              headerName: "Course Name",
-              flex: 1,
-              valueGetter: params => params.row.courseName
-            },
-            {
-              field: "currentStatus",
-              headerName: "Current Status",
-              flex: 1,
-              valueGetter: params => params.row.currentStatus
-            },
-            {
-              field: "registrationDate",
-              headerName: "RegistrationDate",
-              flex: 1,
-              valueGetter: params => params.row.registrationDate
-            },
-            {
-              field: "actions",
-              headerName: "Actions",
-              width: 120,
-              renderCell: params =>
-                <div>
-                  <Button
-                    variant="outlined"
-                    color="secondary"
-                    startIcon={<PersonOutline />}
-                    component={Link} // Use Link component for navigation
-                    to={
-                      Urlconstant.navigate +
-                      `profile/${params.row.basicInfo.email}`
-                    }
-                  >
-                    View
-                  </Button>
-                </div>
-            }
-          ]}
+          style={{ width: "100%" }}
+          columns={columns.filter(col => displayColumn.includes(col.field))}
           rows={gridData.rows}
           pagination
           paginationModel={paginationModel}
@@ -429,18 +487,54 @@ export default function FollowUp() {
           onPaginationModelChange={setPaginationModel}
           loading={loading}
           keepNonExistentRowsSelected
-          slots={{ toolbar: GridToolbar }}
-        />
+          slots={{
+            toolbar: () => (
+              <GridToolbarContainer>
+                <Button onClick={handleColumnChange}> <MoreVert /> Columns</Button>
+                <GridToolbarFilterButton />
+                <GridToolbarDensitySelector />
+                <GridToolbarExport />
+              </GridToolbarContainer>
+            )
+          }} >
+        </DataGrid>
 
-        <EditFollowUp
-          open={isModalOpen}
-          handleClose={() => setModalOpen(false)}
-          rowData={editedRowData}
-          setRowData={setEditedRowData}
-          handleSaveClick={handleSaveClick}
-          dropdown={dropdown}
-        />
+        <Popover
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handleClosePopover}
+          anchorOrigin={{
+            vertical: "center",
+            horizontal: "center",
+          }}
+          transformOrigin={{
+            vertical: "center",
+            horizontal: "center",
+          }}
+          sx={{
+            position: 'absolute',
+            marginTop: '10%',
+            marginLeft: '11%',
+            marginRight: '10%',
+            width: '11%',
+          }}
+        >
+          <h4>COLUMNS</h4>
+          {columns.map(column => (
+            <FormControlLabel
+              key={column.field}
+              control={
+                <Checkbox
+                  checked={displayColumn.includes(column.field)}
+                  onChange={() => handleChangeColumnVisibility(column.field)}
+                />
+              }
+              label={column.headerName}
+            />
+          ))}
+        </Popover>
       </div>
     </div>
+
   );
 }

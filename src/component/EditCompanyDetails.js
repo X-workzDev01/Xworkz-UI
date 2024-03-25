@@ -23,13 +23,14 @@ import {
   validateWebsite,
 } from "../constant/ValidationConstant";
 import { ClientDropDown } from "../constant/ClientDropDown";
+import { useSelector } from "react-redux";
 
 const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
+  const email = useSelector(state => state.loginDetiles.email)
   const [isConfirming, setIsConfirming] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [responseMessage, setResponseMessage] = React.useState("");
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
-  const attemptedEmail = sessionStorage.getItem("userId");
   const [editedData, setEditedData] = React.useState([]);
   const [isConfirmed, setIsConfirmed] = React.useState(false);
   const [companyNameCheck, setCompanyNameCheck] = React.useState("");
@@ -88,12 +89,13 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
         setPhoneNumberCheck("Contact number should be 10 digit");
       }
     }
-    if (name === "companyWebsite" && value.length <= 1 && !validateWebsite(value)) {
-      setCheckCompanyWebsite("");
-      setError("Enter the valid website");
-    } else if (validateWebsite(value)) {
-      console.log(validateWebsite(value))
-      setError("");
+    if (name === "companyWebsite") {
+      if (value.trim() === "") {
+        setError("");
+      } else if (!validateWebsite(value)) {
+        setCheckCompanyWebsite("");
+        setError("Enter a valid website");
+      }
     }
 
     if (name === "companyFounder") {
@@ -168,6 +170,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
             if (res.data === "Company Email Already Exists") {
               setCheckEmailExist(res.data);
               setEmailCheck("");
+              setVerifyEmail("");
             } else {
               setCheckEmailExist("");
               if (validateEmail(companyEmail)) {
@@ -191,6 +194,8 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
             setVerifyEmail(response.data);
           } else if (response.data === "rejected_email") {
             setVerifyEmail(response.data);
+          } else if (response.data === "low_quality") {
+            setVerifyEmail("accepted_email");
           } else {
             setVerifyEmail(response.data);
           }
@@ -200,12 +205,13 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
           }
         }
       })
-      .catch((error) => {});
+      .catch((error) => { });
   };
 
   const handleCompanyWebsite = (companyWebsite) => {
     if (companyWebsite === "NA") {
       setCheckCompanyWebsite("");
+      setError("");
     } else {
       if (companyWebsite.trim() != "" && validateWebsite(companyWebsite)) {
         axios
@@ -219,10 +225,9 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
               setError("");
             } else {
               setCheckCompanyWebsite("");
+              setError("");
             }
           });
-      } else {
-        setError("");
       }
     }
   };
@@ -254,6 +259,8 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
     const email = event.target.value;
     if (email !== rowData.companyEmail) {
       handleCompanyEmail(email);
+    } else {
+      setCheckEmailExist("");
     }
   };
 
@@ -288,7 +295,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
           ...editedData,
           adminDto: {
             ...editedData.adminDto,
-            updatedBy: attemptedEmail,
+            updatedBy: email,
           },
           companyFounder: editedData.companyFounder === "" ? rowData.companyFounder : editedData.companyFounder,
           companyWebsite: editedData.companyWebsite === "" ? rowData.companyWebsite : editedData.companyWebsite,
@@ -324,14 +331,14 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
     companyNameCheck ||
     emailCheck ||
     phoneNumberCheck ||
-    checkEmailExist||
+    checkEmailExist ||
     nameCheck ||
     checkCompanyWebsite ||
     checkPhoneNumberExist ||
     error ||
     founderNameCheck ||
     addressError ||
-    verifyEmail === "accepted_email";
+    ((verifyEmail !== "accepted_email" && verifyEmail !== "low_quality") && verifyEmail);
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
       <DialogTitle>
@@ -379,10 +386,8 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
             />
             {emailCheck ? <Alert severity="error">{emailCheck}</Alert> : ""}
             {checkEmailExist ? <Alert severity="error">{checkEmailExist}</Alert> : ""}
-            {verifyEmail === "accepted_email" && <Alert severity="success">{verifyEmail}</Alert>}
-            {verifyEmail && verifyEmail !== "accepted_email" && <Alert severity="error">{verifyEmail}</Alert>}
-
-
+            {(verifyEmail === "accepted_email" || verifyEmail === "low_quality") && <Alert severity="success">{verifyEmail}</Alert>}
+            {verifyEmail && (verifyEmail !== "accepted_email" && verifyEmail !== "low_quality") && <Alert severity="error">{verifyEmail}</Alert>}
           </Grid>
           <Grid item xs={12} sm={4}>
             <TextField
@@ -549,7 +554,7 @@ const EditCompanyDetails = ({ open, handleClose, rowData, dropdown }) => {
           {responseMessage}
         </Alert>
       </Snackbar>
-      <Dialog open={isConfirming} onClose={handleClose} fullWidth maxWidth="xs" >
+      <Dialog open={isConfirming} onClose={() => setIsConfirming(false)} fullWidth maxWidth="xs" >
         <DialogTitle>Confirm Edit</DialogTitle>
         <DialogContent>
           Are you sure want to Edit the Company Details?

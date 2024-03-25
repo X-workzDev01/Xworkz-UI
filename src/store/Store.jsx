@@ -10,7 +10,7 @@ import Birthday from './birthday/Birthday';
 export default configureStore ({
   reducer: {
     traineeDropDowns: TraineeDetilesDropdown,
-    saveAttendanceCourseName: Attendence,
+    attendaceDropdown: Attendence,
     followUpDropDown: followUpDropDowns,
     feesDetiles: FeesDetiles,
     loginDetiles: LoginEmail,

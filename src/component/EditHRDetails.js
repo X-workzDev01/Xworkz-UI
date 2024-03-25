@@ -21,14 +21,15 @@ import {
   validateContactNumber,
   validateEmail,
 } from "../constant/ValidationConstant";
+import { useSelector } from "react-redux";
 
 const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
+  const email = useSelector(state => state.loginDetiles.email)
   const [editedData, setEditedData] = React.useState([]);
   const [isConfirming, setIsConfirming] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [responseMessage, setResponseMessage] = React.useState("");
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
-  const attemptedEmail = sessionStorage.getItem("userId");
   const [emailCheck, setEmailCheck] = React.useState("");
   const [phoneNumber, setPhoneNumberCheck] = React.useState("");
   const [checkEmailExist, setCheckEmailExist] = React.useState("");
@@ -136,7 +137,7 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
           ...editedData,
           adminDto: {
             ...editedData.adminDto,
-            updatedBy: attemptedEmail,
+            updatedBy: email,
           },
           status: editedData.status === "" ? rowData.status : editedData.status,
         };
@@ -173,11 +174,19 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
         if (response.status === 200) {
           if (response.data === "accepted_email") {
             setVerifyEmail(response.data);
+            setCheckEmailExist("");
           } else if (response.data === "rejected_email") {
             setVerifyEmail("");
+            setCheckEmailExist("");
             setEmailError(response.data);
+          }
+          else if (response.data === "low_quality") {
+            setVerifyEmail("accepted_email");
+            setCheckEmailExist("");
+            setEmailError("");
           } else {
             setVerifyEmail("");
+            setCheckEmailExist("");
             setEmailError(response.data);
           }
         }
@@ -185,7 +194,8 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
           setEmailError("");
         }
       })
-      .catch((error) => {});
+      .catch((error) => { });
+
   };
 
   const handleEmailCheck = (email) => {
@@ -197,12 +207,14 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
           .get(Urlconstant.url + `api/hremailcheck?hrEmail=${email}`)
           .then((response) => {
             if (response.data === "Email already exists.") {
+              setVerifyEmail("");
               setEmailCheck("");
-              setCheckEmailExist(response.data);
               setEmailError("");
+              setCheckEmailExist(response.data);
             } else {
               if (validateEmail(email)) {
                 validatingEmail(email);
+                setCheckEmailExist("");
               }
             }
           });
@@ -239,7 +251,9 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
 
   const handleEmail = (event) => {
     let email = event.target.value;
-    if (email !== rowData.hrEmail) {
+    if (email === rowData.hrEmail) {
+      setCheckEmailExist("");
+    } else {
       handleEmailCheck(email);
     }
   };
@@ -257,7 +271,7 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
     phoneNumber ||
     checkEmailExist ||
     checkPhoneNumberExist ||
-    verifyEmail === "accepted_email" ||
+    ((verifyEmail !== "accepted_email" && verifyEmail !== "low_quality") && verifyEmail) ||
     emailError ||
     validateName ||
     commentError ||
@@ -309,7 +323,11 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
               " "
             )}
 
-            {verifyEmail ? <Alert severity="success">{verifyEmail}</Alert> : " "}
+            {(verifyEmail === "accepted_email" || verifyEmail === "low_quality") && (
+              <Alert severity="success">{verifyEmail}</Alert>
+            )}
+            {verifyEmail && (verifyEmail !== "accepted_email" && verifyEmail !== "low_quality") && <Alert severity="error">{verifyEmail}</Alert>}
+
             {emailError ? <Alert severity="error">{emailError}</Alert> : " "}
           </Grid>
           <Grid item xs={12} sm={4}>
@@ -387,7 +405,7 @@ const EditHRDetails = ({ open, handleClose, rowData, dropdown }) => {
           {responseMessage}
         </Alert>
       </Snackbar>
-      <Dialog open={isConfirming} onClose={handleClose} fullWidth maxWidth="xs">
+      <Dialog open={isConfirming} onClose={() => setIsConfirming(false)} fullWidth maxWidth="xs">
         <DialogTitle>Confirm Save</DialogTitle>
         <DialogContent>
           Are you sure Want to Update the HR Details
