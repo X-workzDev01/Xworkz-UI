@@ -155,13 +155,16 @@ export default function ViewClient() {
   };
   React.useEffect(() => {
     refreshPageEveryTime();
-    handleSearchInput();
   }, [paginationModel.page, paginationModel.pageSize, searchValue, callBackDate, clientType]);
 
   React.useEffect(() => {
     getDropdown();
   }, []);
 
+  React.useEffect(() => {
+    handleSearchInput();
+  }, []);
+  
   const handleSearchInput = () => {
     if (searchValue !== "" && searchValue.length >= 3)
       searchServerRows(searchValue, callBackDate, clientType).then((newGridData) => {
@@ -248,7 +251,7 @@ export default function ViewClient() {
       field: "adminDto.createdOn",
       headerName: "Created On",
       flex: 1,
-      valueGetter: (params) => params.row.adminDto.createdOn.slice(0,10),
+      valueGetter: (params) => params.row.adminDto.createdOn.slice(0, 10),
     },
     {
       field: "adminDto.updatedBy",
@@ -260,7 +263,10 @@ export default function ViewClient() {
       field: "adminDto.updatedOn",
       headerName: "Updated On",
       flex: 1,
-      valueGetter: (params) => params.row.adminDto.updatedOn.slice(0,10),
+      valueGetter: (params) => {
+        const updatedOn = params.row.adminDto.updatedOn;
+        return updatedOn && updatedOn !== "" ? updatedOn.slice(0, 10) : "";
+      }
     },
     {
       field: "actions",
@@ -329,6 +335,8 @@ export default function ViewClient() {
     setDisplayColumn(initiallySelectedFields);
   }, []);
 
+
+
   return (
     <div style={gridStyle}>
       <div
@@ -342,9 +350,8 @@ export default function ViewClient() {
           disableClearable
           style={{ width: 300 }}
           getOptionLabel={(option) =>
-            option.companyName
-          }
-          value={selectedOption}
+            option.companyName ? option.companyName : clientDetails.searchValue}
+          value={clientDetails.searchValue}
           onChange={handleAutoSuggestion}
           renderInput={(params) => (
             <TextField
@@ -375,7 +382,7 @@ export default function ViewClient() {
             id="demo-simple-select"
             label="Select Company Type"
             name="clientType"
-            value={clientType}
+            value={clientDetails.clientType}
             required
             variant="outlined"
             sx={{

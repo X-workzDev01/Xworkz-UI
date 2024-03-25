@@ -43,7 +43,7 @@ export default function ClientDetails() {
   const [dropdownState, setDropdownState] = React.useState({
     college: [],
   });
-
+  const [isCompanyNameSelected, setIsCompanyNameSelected] = React.useState(false);
   const getCollegeDropDown = () => {
     axios
       .get(Urlconstant.url + "utils/dropdown", {
@@ -94,6 +94,7 @@ export default function ClientDetails() {
       };
       if (value === "College") {
         getCollegeDropDown();
+        setIsCompanyNameSelected(false);
       }
     }
     setFormData((prevData) => ({
@@ -101,11 +102,26 @@ export default function ClientDetails() {
       [name]: value,
     }));
     if (name === "companyName") {
-      if (value.trim() === "") {
-        setCompanyNameCheck("Name should not be empty");
-        setCompanyNameCheckExist("");
-      } else if (value.length <= 3) {
-        setCompanyNameCheck("Name should not be empty");
+      if (formData.companyType === "College") {
+        setIsCompanyNameSelected(!!value);
+        if (value.trim() === "") {
+          setCompanyNameCheck("Name should not be empty");
+          setCompanyNameCheckExist("");
+        } else if (value.length <= 3) {
+          setCompanyNameCheck("Name should be at least 3 characters");
+          setCompanyNameCheckExist("");
+        } else {
+          setCompanyNameCheck("");
+          setCompanyNameCheckExist("");
+        }
+      } else {
+        if (value.trim() === "") {
+          setCompanyNameCheck("Name should not be empty");
+        } else if (value.length <= 3) {
+          setCompanyNameCheck("Name should be at least 3 characters");
+        } else {
+          setCompanyNameCheck("");
+        }
         setCompanyNameCheckExist("");
       }
     }
@@ -170,7 +186,6 @@ export default function ClientDetails() {
     } finally {
     }
   };
-
   const handleCompanyName = (event) => {
     const companyName = event.target.value;
     if (companyName.trim() !== "" && companyName.length > 2) {
@@ -305,6 +320,22 @@ export default function ClientDetails() {
     setCheckCompanyWebsite("")
     setEmailCheckError("")
   }
+  const handleCompanyNameAutocomplete = (event, newValue) => {
+    const companyName = newValue;
+    handleChange({ target: { name: 'companyName', value: newValue } });
+    setIsCompanyNameSelected(!!newValue);
+    if (!newValue) {
+      setCompanyNameCheck("Name should not be empty");
+      setCompanyNameCheckExist("");
+    } else if (newValue.length <= 3) {
+      setCompanyNameCheck("Name should be at least 3 characters");
+      setCompanyNameCheckExist("");
+    } else {
+      setCompanyNameCheck("");
+      setCompanyNameCheckExist("");
+    }
+  };
+
 
   return (
     <div>
@@ -342,9 +373,7 @@ export default function ClientDetails() {
                   disableClearable
                   options={dropdownState.college}
                   value={formData.companyName}
-                  onChange={(event, newValue) => {
-                    handleChange({ target: { name: 'companyName', value: newValue } });
-                  }}
+                  onChange={handleCompanyNameAutocomplete}
                   renderInput={(params) => (
                     <TextField
                       {...params}
@@ -354,6 +383,8 @@ export default function ClientDetails() {
                       margin="normal"
                       sx={textFieldStyles}
                       onBlur={handleCompanyName}
+                      error={!isCompanyNameSelected}
+                      helperText={!isCompanyNameSelected && "please select the college name"}
                     />
                   )}
                 />

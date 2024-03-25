@@ -86,7 +86,6 @@ const Sidebar = ({ children }) => {
       icon: <FaBirthdayCake />,
     },
 
-
   ];
   const click = () => { };
   return (
@@ -123,6 +122,6 @@ const Sidebar = ({ children }) => {
       <main>{children}</main>
     </div>
   );
-};
+  };
 
 export default Sidebar;
