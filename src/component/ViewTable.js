@@ -14,16 +14,16 @@ import { GridToolbarFilterButton } from "@mui/x-data-grid";
 import { GridToolbarDensitySelector } from "@mui/x-data-grid";
 import { GridToolbarExport } from "@mui/x-data-grid";
 import { useDispatch, useSelector } from "react-redux";
-import { saveCollegeName, saveCourse, saveFollowUpStatus } from "../store/trainee/TraineeDetilesDropdown";
+import { saveCollegeName, saveCourse, saveFollowUpStatus, saveOfferedAs, saveYearOfPassOut } from "../store/trainee/TraineeDetilesDropdown";
 
 
-function loadServerRows(page, pageSize, courseName, collegeName, followupStatus) {
+function loadServerRows(page, pageSize, courseName, collegeName, followupStatus,offeredAs,yearOfPassOut) {
   const startingIndex = page * pageSize;
   const maxRows = pageSize;
   const spreadsheetId = Urlconstant.spreadsheetId;
   const apiUrl =
     Urlconstant.url +
-    `api/readData?startingIndex=${startingIndex}&maxRows=${maxRows}&courseName=${courseName}&collegeName=${collegeName}&followupStatus=${followupStatus}`;
+    `api/readData?startingIndex=${startingIndex}&maxRows=${maxRows}&courseName=${courseName}&collegeName=${collegeName}&followupStatus=${followupStatus}&offeredAs=${offeredAs}&yearOfPassOut=${yearOfPassOut}`;
   const requestOptions = {
     method: "GET",
     headers: {
@@ -43,7 +43,6 @@ function loadServerRows(page, pageSize, courseName, collegeName, followupStatus)
         });
       })
       .catch((error) => {
-        console.error("Error fetching data:", error);
         resolve({ rows: [], rowCount: 0 });
       });
   });
@@ -61,9 +60,9 @@ function loadClientRows(page, pageSize, allData) {
   });
 }
 
-function searchServerRows(searchValue, courseName, collegeName, followupStatus) {
+function searchServerRows(searchValue, courseName, collegeName, followupStatus,offeredAs,yearOfPassOut) {
   const apiUrl =
-    Urlconstant.url + `api/filterData/${courseName}?searchValue=${searchValue}&&collegeName=${collegeName}&&followupStatus=${followupStatus}`;
+    Urlconstant.url + `api/filterData/${courseName}?searchValue=${searchValue}&collegeName=${collegeName}&followupStatus=${followupStatus}&offeredAs=${offeredAs}&yearOfPassOut=${yearOfPassOut}`;
   const requestOptions = {
     method: "GET",
     headers: {
@@ -82,16 +81,15 @@ function searchServerRows(searchValue, courseName, collegeName, followupStatus) 
         });
       })
       .catch((error) => {
-        console.error("Error fetching data:", error);
         resolve({ rows: [], rowCount: 0 });
       });
   });
 }
-async function fetchFilteredData(searchValue, courseName, collegeName, followupStatus) {
+async function fetchFilteredData(searchValue, courseName, collegeName, followupStatus,offeredAs,yearOfPassOut) {
   try {
     const apiUrl =
       Urlconstant.url +
-      `api/register/suggestion/${courseName}?value=${searchValue}&&collegeName=${collegeName}&&followupStatus=${followupStatus}`;
+      `api/register/suggestion/${courseName}?value=${searchValue}&collegeName=${collegeName}&followupStatus=${followupStatus}&offeredAs=${offeredAs}&yearOfPassOut=${yearOfPassOut}`;
     const requestOptions = {
       method: "GET",
       headers: {
@@ -140,14 +138,15 @@ export default function ControlledSelectionServerPaginationGrid() {
   const [courseName, setCourseName] = React.useState(
     traineeDropDown.courseName);
   const [collegeName, setCollegeName] = React.useState(traineeDropDown.collegeName);
-
-  const [courseDropdown, setCourseDropdown] = React.useState("");
+  const [courseDropdown, setCourseDropdown] = React.useState(traineeDropDown.courseName);
   const [dropdown, setDropDown] = useState({
     course: [],
     qualification: [],
     batch: [],
     stream: [],
     college: [],
+    offered: [],
+    yearofpass: [],
   });
   const [isExportModalOpen, setExportModalOpen] = React.useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
@@ -157,8 +156,11 @@ export default function ControlledSelectionServerPaginationGrid() {
   const [displayColumn, setDisplayColumn] = React.useState(initiallySelectedFields);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [followupStatus, setFollowupStatus] = useState(traineeDropDown.followUpstatus);
+  const [yearOfPassout, setYearOfPassOut] = React.useState(traineeDropDown.yearOfPassOut);
+  const [offeredAs, setOfferedAs] = useState(traineeDropDown.offeredAs);
+
   const handleSearchClick = () => {
-    searchServerRows(searchValue, courseName, collegeName, followupStatus).then((newGridData) => {
+    searchServerRows(searchValue, courseName, collegeName, followupStatus,offeredAs,yearOfPassout).then((newGridData) => {
       setGridData(newGridData);
       setPaginationModel({ page: 0, pageSize: initialPageSize });
       setSearchInputValue("");
@@ -173,6 +175,8 @@ export default function ControlledSelectionServerPaginationGrid() {
             searchValue,
             courseName,
             collegeName,
+            offeredAs,
+            yearOfPassout,
             paginationModel.page,
             paginationModel.pageSize,
             setPaginationModel,
@@ -183,7 +187,6 @@ export default function ControlledSelectionServerPaginationGrid() {
               setLoading(false);
             })
             .catch((error) => {
-              console.error("Error fetching suggestions:", error);
               setAutocompleteOptions([]);
               setLoading(false);
             }),
@@ -209,6 +212,8 @@ export default function ControlledSelectionServerPaginationGrid() {
             courseName,
             collegeName,
             followupStatus,
+            offeredAs,
+            yearOfPassout,
           );
 
           if (active) {
@@ -222,6 +227,8 @@ export default function ControlledSelectionServerPaginationGrid() {
             courseName,
             collegeName,
             followupStatus,
+            offeredAs,
+            yearOfPassout,
             paginationModel.page,
             paginationModel.pageSize,
             setPaginationModel,
@@ -293,7 +300,7 @@ export default function ControlledSelectionServerPaginationGrid() {
 
   React.useEffect(() => {
     refreshPageEveryTime();
-  }, [paginationModel.page, paginationModel.pageSize, searchValue, courseName, collegeName, followupStatus]);
+  }, [paginationModel.page, paginationModel.pageSize, searchValue, courseName, collegeName, followupStatus,offeredAs,yearOfPassout]);
   const columns = [
     {
       field: "traineeName",
@@ -491,7 +498,7 @@ export default function ControlledSelectionServerPaginationGrid() {
       field: "adminDto.createdOn",
       headerName: "Created On",
       flex: 1,
-      valueGetter: (params) => params.row.adminDto.createdOn.slice(0,10),
+      valueGetter: (params) => params.row.adminDto.createdOn.slice(0, 10),
     },
     {
       field: "adminDto.createdBy",
@@ -509,7 +516,7 @@ export default function ControlledSelectionServerPaginationGrid() {
       field: "adminDto.updatedOn",
       headerName: "Updated On",
       flex: 1,
-      valueGetter: (params) => params.row.adminDto.updatedOn.slice(0,10),
+      valueGetter: (params) => params.row.adminDto.updatedOn.slice(0, 10),
     },
 
     {
@@ -536,9 +543,13 @@ export default function ControlledSelectionServerPaginationGrid() {
     dispatch(saveCourse(null))
     dispatch(saveCollegeName(null))
     dispatch(saveFollowUpStatus(null))
+    dispatch(saveOfferedAs(null))
+    dispatch(saveYearOfPassOut(null))
     setCollegeName(null)
     setFollowupStatus(null)
     setCourseName(null)
+    setYearOfPassOut(null)
+    setOfferedAs(null)
     setSearchValue("");
     setSelectedOption({ basicInfo: { traineeName: '' } });
   };
@@ -580,10 +591,17 @@ export default function ControlledSelectionServerPaginationGrid() {
     setAnchorEl(null);
   };
 
+  const handleOfferedAs = (event) => {
+    dispatch(saveOfferedAs(event.target.value))
+    setOfferedAs(event.target.value)
+  }
+  const handleYearOfPassOut = (event) => {
+    dispatch(saveYearOfPassOut(event.target.value));
+    setYearOfPassOut(event.target.value);
+  }
   return (
     <div>
       <Header />
-
       <div
         className="search"
         style={{ display: "flex", alignItems: "center", marginTop: "100px" }}
@@ -646,6 +664,7 @@ export default function ControlledSelectionServerPaginationGrid() {
                 </MenuItem>
               ))
               : null}
+               <MenuItem value="NA">NA</MenuItem>
           </Select>
         </FormControl>
         <FormControl>
@@ -671,6 +690,7 @@ export default function ControlledSelectionServerPaginationGrid() {
                 {item}
               </MenuItem>
             ))}
+             <MenuItem value="NA">NA</MenuItem>
           </Select>
         </FormControl>
         <FormControl>
@@ -690,7 +710,7 @@ export default function ControlledSelectionServerPaginationGrid() {
             }}
             onChange={handleCourseChange}
           >
-            <MenuItem value={null} > Select course </MenuItem>
+            <MenuItem value={null} > Select FollowUp Status </MenuItem>
             {dropdown && dropdown.status
               ? dropdown.status.map((item, k) => (
                 <MenuItem value={item} key={k}>
@@ -698,6 +718,57 @@ export default function ControlledSelectionServerPaginationGrid() {
                 </MenuItem>
               ))
               : null}
+          </Select>
+        </FormControl>
+        <FormControl>
+          <InputLabel id="demo-simple-select-label">Select Offered As</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            label="Offered As"
+            name="offeredAs"
+            value={traineeDropDown.offeredAs}
+            required
+            variant="outlined"
+            sx={{
+              marginRight: "10px",
+              width: "200px",
+              fontSize: "14px",
+            }}
+            onChange={handleOfferedAs}
+          >
+            <MenuItem value={null} > Select Offered As </MenuItem>
+            {dropdown.offered.map((item, index) => (
+              <MenuItem value={item} key={index}>
+                {item}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <FormControl>
+          <InputLabel id="demo-simple-select-label">Select Passout Year</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            label="Year of pass"
+            name="yearOfPassout"
+            value={traineeDropDown.yearOfPassOut}
+            required
+            variant="outlined"
+            sx={{
+              marginRight: "10px",
+              width: "200px",
+              fontSize: "14px",
+            }}
+            onChange={handleYearOfPassOut}
+          >
+            <MenuItem value={null} > Select Year of pass </MenuItem>
+            {dropdown.yearofpass.map((item, index) => (
+              <MenuItem value={item} key={index}>
+                {item}
+              </MenuItem>
+            ))}
+            <MenuItem value="NA">NA</MenuItem>
           </Select>
         </FormControl>
         <div style={{ marginLeft: "10px" }}>
