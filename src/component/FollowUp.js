@@ -23,6 +23,7 @@ import {
   saveFollowUpCourseName,
   saveFollowUpstatus,
   saveFollowUpSelectedColumns
+  saveYearOfPass
 } from "../store/followup/FollowUpDropdowns";
 import EditFollowUp from "./EditFollowUp";
 import Header from "./Header";
@@ -45,11 +46,12 @@ export default function FollowUp() {
   );
   const [courseDropdown, setCourseDropdown] = React.useState("");
   const [status, setStatus] = React.useState("");
-  const [college, setCollege] = React.useState("");
   const statusList = ["Interested", "RNR", "Not Interested", "Others"];
   const [dropdown, setDropDown] = useState({
     status: [],
-    college: []
+    college: [],
+    offered: [],
+    yearofpass: [],
   });
   const [statusLists, setStatusLists] = useState([
     "New",
@@ -72,6 +74,7 @@ export default function FollowUp() {
     page: 0,
     pageSize: initialPageSize
   });
+  const [yearOfPassOut, setYearOfPassOut] = useState(followUpDropDown.yearOfPass);
   const [gridData, setGridData] = useState({
     rows: [],
     rowCount: 0
@@ -85,7 +88,8 @@ export default function FollowUp() {
         paginationModel.page,
         paginationModel.pageSize,
         name,
-        date
+        date,
+        yearOfPassOut,
       ).then(newGridData => {
         setGridData(newGridData);
         setLoading(false);
@@ -97,7 +101,8 @@ export default function FollowUp() {
       searchValue,
       date,
       courseName,
-      selectCollege
+      selectCollege,
+      yearOfPassOut,
     ]
   );
 
@@ -121,7 +126,7 @@ export default function FollowUp() {
 
   const filterData = () => {
     if (status && courseName) {
-      getTraineeDetailsByCourseAndStatus(courseName, status);
+      getTraineeDetailsByCourseAndStatus(courseName, status,yearOfPassOut);
     }
   };
 
@@ -143,12 +148,11 @@ export default function FollowUp() {
     setCourseName(value);
   };
 
-  const getTraineeDetailsByCourseAndStatus = async (courseName, status) => {
-    console.log(courseName, status);
+  const getTraineeDetailsByCourseAndStatus = async (courseName, status,yearOfPassOut) => {
     try {
       const apiUrl =
         Urlconstant.url +
-        `api/getByCourseAndStatus?status=${status}&date=${date}&courseName=${courseName}`;
+        `api/getByCourseAndStatus?status=${status}&date=${date}&courseName=${courseName}&yearOfPassOut=${yearOfPassOut}`;
       const requestOptions = {
         method: "GET",
         headers: {
@@ -169,7 +173,7 @@ export default function FollowUp() {
     }
   };
 
-  function searchServerRows(page, pageSize, name, date) {
+  function searchServerRows(page, pageSize, name, date, yearOfPassOut) {
     const startingIndex = page * pageSize;
     const spreadsheetId = Urlconstant.spreadsheetId;
 
@@ -177,7 +181,7 @@ export default function FollowUp() {
     if (name === "status" || name === "CourseName") {
       apiUrl =
         Urlconstant.url +
-        `api/followUp?startingIndex=${startingIndex}&maxRows=25&status=${searchValue}&date=${date}&courseName=${courseName}&collegeName=${selectCollege}`;
+        `api/followUp?startingIndex=${startingIndex}&maxRows=25&status=${searchValue}&date=${date}&courseName=${courseName}&collegeName=${selectCollege}&yearOfPass=${yearOfPassOut}`;
 
       var requestOptions = {
         method: "GET",
@@ -233,16 +237,23 @@ export default function FollowUp() {
     setSelectCollege(null);
     setSearchValue(null);
     setDate("null");
+    setYearOfPassOut(null);
     dispatch(saveFollowUpCallBackDate(null));
     dispatch(saveFollowUpCollegeName(null));
     dispatch(saveFollowUpCourseName(null));
     dispatch(saveFollowUpstatus(null));
+    dispatch(saveYearOfPass(null));
   };
   const handleColegeChange = event => {
     setPaginationModel({ page: 0, pageSize: initialPageSize });
     dispatch(saveFollowUpCollegeName(event.target.value));
     setSelectCollege(event.target.value);
   };
+
+  const handleChangeYear = (event) => {
+    dispatch(saveYearOfPass(event.target.value));
+    setYearOfPassOut(event.target.value)
+  }
 
   const columns = [{
     field: "traineeName",
@@ -281,6 +292,12 @@ export default function FollowUp() {
     valueGetter: params => params.row.currentStatus
   },
   {
+    field: "year",
+    headerName: "Year of Pass",
+    flex: 1,
+    valueGetter: params => params.row.year
+  },
+  {
     field: "registrationDate",
     headerName: "RegistrationDate",
     flex: 1,
@@ -294,6 +311,7 @@ export default function FollowUp() {
     headerName: "Updated On",
     flex: 1,
     valueGetter: params => params.row.adminDto.updatedOn ? params.row.adminDto.updatedOn.slice(0, 10) : "NA"
+
   }, {
     field: "updatedBy",
     headerName: "Updated By",
@@ -309,6 +327,7 @@ export default function FollowUp() {
     field: "createdOn",
     headerName: "Created On",
     flex: 1,
+
     valueGetter: params => params.row.adminDto.createdOn ? params.row.adminDto.createdOn.slice(0, 10) : "NA"
   }, {
     field: "collegeName",
@@ -426,6 +445,7 @@ export default function FollowUp() {
                 </MenuItem>
               )
               : null}
+               <MenuItem value="NA">NA</MenuItem>
           </Select>
         </FormControl>
         {
@@ -467,6 +487,33 @@ export default function FollowUp() {
                 {item}
               </MenuItem>
             )}
+             <MenuItem value="NA">NA</MenuItem>
+          </Select>
+        </FormControl>
+        <FormControl>
+          <InputLabel id="demo-simple-select-label">Select Year</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            label="Select Year"
+            name="yearOfPassOut"
+             value={followUpDropDown.yearOfPass}
+            required
+            variant="outlined"
+            sx={{
+              marginRight: "10px",
+              width: "200px",
+              fontSize: "14px"
+            }}
+            onChange={handleChangeYear}
+          >
+            <MenuItem value={null}> Select Year </MenuItem>
+            {dropdown.yearofpass.map((item, k) =>
+              <MenuItem value={item} key={k}>
+                {item}
+              </MenuItem>
+            )}
+             <MenuItem value="NA">NA</MenuItem>
           </Select>
         </FormControl>
 

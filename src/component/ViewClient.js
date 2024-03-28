@@ -108,6 +108,7 @@ export default function ViewClient() {
   const initiallySelectedFields = ['companyName', 'companyEmail', 'companyLandLineNumber', 'actions'];
   const [displayColumn, setDisplayColumn] = React.useState(initiallySelectedFields);
   const [anchorEl, setAnchorEl] = React.useState(null);
+  
   const refreshPageEveryTime = () => {
     let active = true;
     setLoading(true);
