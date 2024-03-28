@@ -14,7 +14,7 @@ import { GridToolbarFilterButton } from "@mui/x-data-grid";
 import { GridToolbarDensitySelector } from "@mui/x-data-grid";
 import { GridToolbarExport } from "@mui/x-data-grid";
 import { useDispatch, useSelector } from "react-redux";
-import { saveCollegeName, saveCourse, saveFollowUpStatus, saveOfferedAs, saveYearOfPassOut } from "../store/trainee/TraineeDetilesDropdown";
+import { saveCollegeName, saveCourse, saveFollowUpStatus, saveOfferedAs, saveYearOfPassOut,saveSearchValue } from "../store/trainee/TraineeDetilesDropdown";
 
 
 function loadServerRows(page, pageSize, courseName, collegeName, followupStatus,offeredAs,yearOfPassOut) {
@@ -160,11 +160,13 @@ export default function ControlledSelectionServerPaginationGrid() {
   const [offeredAs, setOfferedAs] = useState(traineeDropDown.offeredAs);
 
   const handleSearchClick = () => {
+    if(searchValue!=""&&searchValue.length>=3){
     searchServerRows(searchValue, courseName, collegeName, followupStatus,offeredAs,yearOfPassout).then((newGridData) => {
       setGridData(newGridData);
       setPaginationModel({ page: 0, pageSize: initialPageSize });
       setSearchInputValue("");
     });
+  }
   };
 
   const debouncedFetchSuggestions = React.useMemo(
