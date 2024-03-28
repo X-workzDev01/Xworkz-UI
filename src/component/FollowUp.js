@@ -22,6 +22,7 @@ import {
   saveFollowUpCollegeName,
   saveFollowUpCourseName,
   saveFollowUpstatus,
+  saveFollowUpSelectedColumns
   saveYearOfPass
 } from "../store/followup/FollowUpDropdowns";
 import EditFollowUp from "./EditFollowUp";
@@ -65,8 +66,8 @@ export default function FollowUp() {
     "Non-CSR Offered"
   ]);
   const [date, setDate] = useState(followUpDropDown.followUpCallBackDate);
-  const initiallySelectedFields = ['traineeName', 'email', 'contactNumber', 'registrationDate', 'currentStatus', 'courseName', 'joiningDate', 'actions'];
-  const [displayColumn, setDisplayColumn] = React.useState(initiallySelectedFields);
+  // const initiallySelectedFields = ['traineeName', 'email', 'contactNumber', 'registrationDate', 'currentStatus', 'courseName', 'joiningDate', 'actions'];
+  const [displayColumn, setDisplayColumn] = React.useState(followUpDropDown.followUpSelectedColumns);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const initialPageSize = 25;
   const [paginationModel, setPaginationModel] = useState({
@@ -309,8 +310,8 @@ export default function FollowUp() {
     field: "updatedOn",
     headerName: "Updated On",
     flex: 1,
+    valueGetter: params => params.row.adminDto.updatedOn ? params.row.adminDto.updatedOn.slice(0, 10) : "NA"
 
-    valueGetter: params => params.row.adminDto.updatedByOn ? params.row.adminDto.updatedOn.slice(0, 10) : ""
   }, {
     field: "updatedBy",
     headerName: "Updated By",
@@ -365,11 +366,12 @@ export default function FollowUp() {
     } else {
       updatedDisplayColumn = [...displayColumn, field];
     }
+    dispatch(saveFollowUpSelectedColumns(updatedDisplayColumn));
     setDisplayColumn(updatedDisplayColumn);
   };
-  React.useEffect(() => {
-    setDisplayColumn(initiallySelectedFields);
-  }, []);
+  // React.useEffect(() => {
+  //   setDisplayColumn(initiallySelectedFields);
+  // }, []);
   const handleColumnChange = (event) => {
     setAnchorEl(event.currentTarget);
   }

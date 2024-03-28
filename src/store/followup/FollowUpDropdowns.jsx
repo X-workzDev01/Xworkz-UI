@@ -1,6 +1,6 @@
-import {createSlice} from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
-const FollowUpStatus = createSlice ({
+const FollowUpStatus = createSlice({
   name: 'followUpdropDown',
   initialState: {
     followUpStatus: 'null',
@@ -8,6 +8,7 @@ const FollowUpStatus = createSlice ({
     followUpCollegename: 'null',
     followUpCallBackDate: 'null',
     followUpUpdatedDate: 'null',
+    followUpSelectedColumns: ['traineeName', 'email', 'contactNumber', 'registrationDate', 'currentStatus', 'courseName', 'joiningDate', 'actions'],
     yearOfPass: 'null',
   },
   reducers: {
@@ -26,6 +27,9 @@ const FollowUpStatus = createSlice ({
     saveFollowUpUpdateDate: (state, action) => {
       state.followUpUpdatedDate = action.payload;
     },
+    saveFollowUpSelectedColumns: (state, action) => {
+      state.followUpSelectedColumns = action.payload;
+     }
     saveYearOfPass: (state, action) => {
       state.yearOfPass = action.payload;
     },
@@ -37,6 +41,7 @@ export const {
   saveFollowUpCourseName,
   saveFollowUpCollegeName,
   saveFollowUpCallBackDate,
+  saveFollowUpSelectedColumns,
   saveYearOfPass,
 } = FollowUpStatus.actions;
 export default FollowUpStatus.reducer;
