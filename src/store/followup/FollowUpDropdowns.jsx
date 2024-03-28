@@ -8,6 +8,7 @@ const FollowUpStatus = createSlice ({
     followUpCollegename: 'null',
     followUpCallBackDate: 'null',
     followUpUpdatedDate: 'null',
+    yearOfPass: 'null',
   },
   reducers: {
     saveFollowUpstatus: (state, action) => {
@@ -25,6 +26,10 @@ const FollowUpStatus = createSlice ({
     saveFollowUpUpdateDate: (state, action) => {
       state.followUpUpdatedDate = action.payload;
     },
+    saveYearOfPass: (state, action) => {
+      state.yearOfPass = action.payload;
+    },
+
   },
 });
 export const {
@@ -32,5 +37,6 @@ export const {
   saveFollowUpCourseName,
   saveFollowUpCollegeName,
   saveFollowUpCallBackDate,
+  saveYearOfPass,
 } = FollowUpStatus.actions;
 export default FollowUpStatus.reducer;
