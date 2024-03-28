@@ -10,7 +10,7 @@ import axios from "axios";
 import Header from "./Header";
 import { Urlconstant } from "../constant/Urlconstant";
 import { Navigate, Route, Router } from "react-router-dom";
-import { Percentage } from "./percentage";
+import { Percentage } from "./Percentage";
 import { useSelector } from "react-redux";
 
 export default function Registration() {
@@ -22,7 +22,7 @@ export default function Registration() {
 	const [formData, setFormData] = useState({
 		basicInfo: [],
 		educationInfo: [],
-		// percentageDto: [],
+		percentageDto: [],
 		courseInfo: [],
 		othersDto: [],
 		adminDto: { createdBy: email }
@@ -129,7 +129,7 @@ export default function Registration() {
 						onPrevious={handlePrevious}
 					/>
 				);
-			case 3:
+			case 4:
 				return (
 					<Course
 						formData={formData.courseInfo}
@@ -140,7 +140,7 @@ export default function Registration() {
 						batchDetiles={batchDetiles}
 					/>
 				);
-			case 4:
+			case 5:
 				return (
 					<Referral
 						formData={formData.othersDto}
@@ -175,9 +175,9 @@ export default function Registration() {
 					<StepLabel>Education</StepLabel>
 				</Step>
 
-				{/* <Step>
+				<Step>
           <StepLabel>Percentage</StepLabel>
-        </Step> */}
+           </Step>
 				<Step>
 					<StepLabel>Course</StepLabel>
 				</Step>

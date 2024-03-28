@@ -29,7 +29,7 @@ const Absentees = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [isTraineePresent, setIsTraineePresent] = useState(true);
   const [totalClass, setTotalClass] = useState(0);
-  const [submittingAttendance, setSubmittingAttendance] = useState(false); 
+  const [submittingAttendance, setSubmittingAttendance] = useState(false);
   const [updatingBatchAttendance, setUpdatingBatchAttendance] = useState(false);
 
   useEffect(() => {
@@ -79,7 +79,9 @@ const Absentees = () => {
       setErrors({ ...errors, [value.id]: "" });
       setSubmitDisabled(true);
     }
+    
   };
+  
 
   const handleBatchChange = (event) => {
     const selectedBatchValue = event.target.value;
@@ -96,10 +98,13 @@ const Absentees = () => {
       )
       .then((response) => {
         const fetchedStudents = response.data;
-
-        setErrorMessage("");
-        setStudents(fetchedStudents);
-        setStudentOptions(fetchedStudents);
+       
+      const sortedStudents = [...fetchedStudents].sort((a, b) =>
+      a.name.localeCompare(b.name)
+    );
+      setErrorMessage("");
+      setStudents(sortedStudents);
+      setStudentOptions(sortedStudents);
       })
       .catch((error) => {
         console.error("Error fetching student data:", error);
@@ -142,7 +147,7 @@ const Absentees = () => {
 
   const handleUpdateBatchAttendance = () => {
     setIsTraineePresent(true);
-    setUpdatingBatchAttendance(true); 
+    setUpdatingBatchAttendance(true);
     axios
       .post(
         Urlconstant.url +
@@ -163,7 +168,7 @@ const Absentees = () => {
         console.error("API Error:", error);
       })
       .finally(() => {
-        setUpdatingBatchAttendance(false); 
+        setUpdatingBatchAttendance(false);
       });
   };
 
@@ -180,7 +185,7 @@ const Absentees = () => {
     setErrors(validationErrors);
 
     if (isAllReasonsProvided) {
-      setSubmittingAttendance(true); 
+      setSubmittingAttendance(true);
       const attendanceData = selectedStudents.map((student) => ({
         id: student.id,
         name: student.name,
@@ -208,7 +213,7 @@ const Absentees = () => {
           console.error("API Error:", error);
         })
         .finally(() => {
-          setSubmittingAttendance(false); 
+          setSubmittingAttendance(false);
         });
     }
   };
@@ -311,13 +316,13 @@ const Absentees = () => {
               <div style={styles.toggleContainer}>
                 <h3> Trainee Attendance: </h3>{" "}
                 <Button
-                  disabled={isSubmitBatch ||  updatingBatchAttendance}
+                  disabled={isSubmitBatch || updatingBatchAttendance}
                   variant={isTraineePresent ? "contained" : "outlined"}
                   color="primary"
                   onClick={handleUpdateBatchAttendance}
                 >
                   {updatingBatchAttendance ? (
-                    <CircularProgress size={24} /> 
+                    <CircularProgress size={24} />
                   ) : (
                     "Yes"
                   )}
@@ -368,10 +373,10 @@ const Absentees = () => {
           <Button
             variant="contained"
             onClick={handleAttendanceSubmit}
-            disabled={!selectedBatch || isSubmitDisabled || submittingAttendance} 
+            disabled={!selectedBatch || isSubmitDisabled || submittingAttendance}
           >
             {submittingAttendance ? (
-              <CircularProgress size={24} /> 
+              <CircularProgress size={24} />
             ) : (
               "Submit Attendance"
             )}
